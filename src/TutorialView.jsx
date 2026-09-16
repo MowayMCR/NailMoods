@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronRight, Clock3, ListChecks, Pause, Play, RotateCcw, Sparkles, Timer } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookHeart, Check, CheckCircle2, ChevronRight, Clock3, ListChecks, Pause, Play, RotateCcw, Sparkles, Timer } from 'lucide-react';
 import NailPreview from './NailPreview';
 import Sheet from './Sheet';
 import { fingers, ideaAvailability } from './inspirations';
@@ -56,7 +56,7 @@ function StepTimer({ session, step, onAction, now, locked }) {
   </section>;
 }
 
-export default function TutorialView({ session, items, onAction, onOpenIdea, onCollection, onNew, onList }) {
+export default function TutorialView({ session, items, onAction, onOpenIdea, onCollection, onNew, onList, onJournal, journaled }) {
   const [planOpen, setPlanOpen] = useState(false);
   const heading = useRef(null);
   const now = useClock(session.timer.status === 'running');
@@ -75,7 +75,7 @@ export default function TutorialView({ session, items, onAction, onOpenIdea, onC
     <div className="tutorialStart"><button className="detailPrimary" onClick={() => onAction({ type: 'start' })}><Play />Commencer ma pose<ArrowRight /></button><small>≈ {session.idea.minutes} min pour la couleur et la décoration, hors préparation, dépose et séchage.</small></div>
   </div>;
 
-  if (session.status === 'completed') return <div className="tutorialPage">{toolbar}<section className="tutorialHero tutorialSuccess"><CheckCircle2 /><small>À TON RYTHME, JUSQU’AU BOUT</small><h1 ref={heading} tabIndex={-1}>Ta pose est<br /><em>terminée</em></h1><p>{session.idea.title}</p><NailPreview idea={session.idea} /><span>{session.steps.length} étapes validées · les deux mains</span></section><section className="tutorialIntro"><p>Ta progression et cette inspiration sont conservées. Les photos et notes de ton journal arriveront à la prochaine étape.</p><button className="detailPrimary" onClick={() => onOpenIdea(session.idea)}>Revoir l’inspiration<ArrowRight /></button><button className="detailSecondary" onClick={() => onNew(session.idea)}><RotateCcw />Refaire cette pose</button><button className="detailSecondary" onClick={onList}><ListChecks />Mes poses guidées</button></section></div>;
+  if (session.status === 'completed') return <div className="tutorialPage">{toolbar}<section className="tutorialHero tutorialSuccess"><CheckCircle2 /><small>À TON RYTHME, JUSQU’AU BOUT</small><h1 ref={heading} tabIndex={-1}>Ta pose est<br /><em>terminée</em></h1><p>{session.idea.title}</p><NailPreview idea={session.idea} /><span>{session.steps.length} étapes validées · les deux mains</span></section><section className="tutorialIntro"><p>Garde une photo du résultat et tes impressions dans ton journal. Tu pourras le compléter à ton rythme.</p><button className="detailPrimary" onClick={onJournal}><BookHeart />{journaled ? 'Voir dans mon journal' : 'Ajouter au journal'}<ArrowRight /></button><button className="detailSecondary" onClick={() => onOpenIdea(session.idea)}>Revoir l’inspiration<ArrowRight /></button><button className="detailSecondary" onClick={() => onNew(session.idea)}><RotateCcw />Refaire cette pose</button><button className="detailSecondary" onClick={onList}><ListChecks />Mes poses guidées</button></section></div>;
 
   return <div className="tutorialPage">{toolbar}<section className="tutorialProgress"><div><span>{session.completed.length} / {session.steps.length} étapes validées</span><button onClick={() => setPlanOpen(true)}>Voir les étapes<ListChecks /></button></div><progress max="100" value={progress} aria-label="Progression de la pose" /><small>{session.idea.title}</small></section>
     {session.status === 'paused' && <section className="tutorialPaused" role="status"><Pause /><div><b>Ta pose est en pause</b><p>Tout est conservé. Le minuteur reste en pause jusqu’à ce que tu le relances.</p></div><button onClick={() => onAction({ type: 'resume' })}><Play />Reprendre ma pose</button></section>}

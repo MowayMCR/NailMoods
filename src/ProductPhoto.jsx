@@ -30,7 +30,7 @@ export async function preparePhoto(file) {
   }
 }
 
-export default function ProductPhoto({ value, onChange, onBusy }) {
+export default function ProductPhoto({ value, onChange, onBusy, alt = 'Photo du produit', cameraLabel = 'Photographier le produit' }) {
   const gallery = useRef(null);
   const camera = useRef(null);
   const active = useRef(true);
@@ -60,9 +60,9 @@ export default function ProductPhoto({ value, onChange, onBusy }) {
 
   return <div className="productPhotoField">
     <div className="fieldHead"><b>Photo (facultatif)</b></div>
-    {value && <img className="photoPreview" src={value} alt="Photo du produit" />}
+    {value && <img className="photoPreview" src={value} alt={alt} />}
     <input ref={gallery} hidden type="file" accept="image/*" aria-label="Choisir une photo" onChange={choose} />
-    <input ref={camera} hidden type="file" accept="image/*" capture="environment" aria-label="Photographier le produit" onChange={choose} />
+    <input ref={camera} hidden type="file" accept="image/*" capture="environment" aria-label={cameraLabel} onChange={choose} />
     <div className="photoActions">
       <button type="button" disabled={busy} onClick={() => gallery.current.click()}><ImageIcon />{value ? 'Changer la photo' : 'Importer une photo'}</button>
       <button type="button" disabled={busy} onClick={() => camera.current.click()}><Camera />Prendre une photo</button>

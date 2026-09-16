@@ -56,7 +56,7 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 - Une fiche favorite garde les références et teintes enregistrées même après une modification de la collection. Un produit supprimé, épuisé ou modifié est signalé. Il ne devient pas disponible artificiellement.
 - La dernière inspiration retenue et douze fiches récentes permettent de rouvrir une fiche ou de revenir en arrière, y compris après rechargement. Les favoris ne sont pas limités aux douze fiches récentes. Les erreurs de stockage sont affichées ; un favori n’est confirmé qu’après enregistrement.
 - L’accueil donne accès à **Profil, Collection, Créer et Favoris**. Le profil validé en phase 1 a été réintégré depuis son historique, avec ses sélecteurs visuels, univers, thèmes, avatars et sa clé de stockage d’origine. Le bouton Profil de l’en-tête fonctionne aussi. Les clés `nm-profile`, `nm-collection-v2` et `nm-creation-v1` restent inchangées.
-- Le Journal reste accessible avec l’explication de son développement à venir. Les tutoriels sont disponibles en phase 5 ; les photos et notes du journal restent à réaliser.
+- Les tutoriels sont disponibles en phase 5 et les photos, produits utilisés et notes du journal en phase 6.
 
 ## Phase 5 — réaliser une pose guidée
 
@@ -68,6 +68,24 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 - La tuile de reprise reste visible dans les autres écrans. **Accueil → Mes poses guidées** donne accès à toutes les poses préparées, en pause ou terminées. Démarrer une autre pose met la précédente en pause ; refaire une pose crée un suivi distinct, sans supprimer la précédente.
 - Les sessions contiennent une copie de la composition et des étapes, sans dupliquer les photos. Les modifications de collection sont signalées, sans remplacer silencieusement les produits du tutoriel. Les échecs de sauvegarde laissent la progression précédente intacte et affichent un message.
 - Les anciennes poses sont adaptées au parcours simplifié sans changer leur composition. Les étapes déjà validées et les minuteurs sont conservés ; les anciennes étapes magnétiques par doigt sont regroupées par couleur et par main. Une pose dont seul le contrôle final restait à faire est terminée. La même clé de stockage conserve les sessions, désormais en version 2.
-- Profil, Collection, Créer, fiches, variantes et favoris restent accessibles, avec leurs clés de stockage d’origine. Les résultats des poses seront exploitables pour le futur Journal, mais aucun journal de photos ou de notes n’est encore annoncé comme disponible.
+- Profil, Collection, Créer, fiches, variantes et favoris restent accessibles, avec leurs clés de stockage d’origine. À la fin d’un tutoriel, **Ajouter au journal** ouvre le formulaire de la phase 6 ; une pose déjà enregistrée propose **Voir dans mon journal**.
+
+## Phase 6 — journal des poses
+
+- Accès par l’onglet **Journal**, la tuile de l’accueil ou la fin d’un tutoriel. **À raconter** retrouve aussi les poses terminées avant cette mise à jour. Aucune pose inachevée n’est ajoutée au journal.
+- **Ajouter une pose** permet de garder une pose réalisée sans tutoriel. Nom et date sont préremplis ; photo, références et retours restent facultatifs. Une pose peut être enregistrée immédiatement puis complétée plus tard.
+- Import ou prise d’une photo du résultat, préparation à 800 px maximum, remplacement et retrait. La photo personnelle et l’aperçu schématique de l’inspiration sont distingués. La préparation d’une image désactive l’enregistrement jusqu’à sa fin.
+- Depuis un tutoriel, les références sont préremplies. Elles restent ajustables dans la collection pour refléter les produits réellement utilisés. L’inspiration d’origine reste une copie distincte : changer les produits du journal ne la réécrit pas. Les références archivées restent lisibles après modification ou suppression dans la collection, sans copier les photos des produits.
+- Ressenti **J’adore / J’aime bien / À ajuster**, choix **À refaire**, notes libres. Les détails facultatifs repliés permettent de noter la facilité de réalisation et la tenue observée, à renseigner après avoir porté la pose. Ces retours sont enregistrés pour la phase 7 ; aucun apprentissage automatique n’est encore activé.
+- Historique classé par date de pose, recherche dans les noms, marques, dates et notes, filtre **À refaire**, modification et suppression avec confirmation. Une même session guidée ne crée pas de doublons ; refaire une inspiration lors d’une autre session crée un souvenir distinct.
+- Supprimer un souvenir ne supprime ni son tutoriel ni les produits. Sa suggestion est masquée pour ne pas le faire réapparaître automatiquement ; un ajout explicite depuis le tutoriel reste possible.
+- Stockage local dans `nm-journal-v1`, séparé du profil, de la collection, des inspirations et des tutoriels. La synchronisation entre appareils reste prévue pour la phase 11. Une erreur de stockage conserve les données précédentes et le formulaire en cours ; aucun succès n’est affiché avant l’enregistrement.
+
+## Suite validée du projet
+
+- Phases 1 à 5 validées par Marie ; phase 6 à tester.
+- Phase 6 bis : raccordement des liens et photos produits, caractéristiques et teintes mieux renseignées, scan selon les catalogues disponibles. Ce chantier est placé avant la personnalisation.
+- Phase 7 : intelligence personnelle ; phase 8 : accueil intelligent ; phase 9 : premier démarrage guidé ; phase 10 : application native ; phase 11 : compte et synchronisation ; phase 12 : version publique et stores.
+- Toutes les phases déjà réalisées restent accessibles pendant le développement des suivantes.
 
 Tests du moteur : `npm test`. Construction : `npm run build`.

@@ -7,7 +7,9 @@ import CreateView from './CreateView';
 import './style.css';
 import ProfileView from './ProfileView';
 import { defaultProfile } from './profileOptions';
-import HomeView, { JournalView } from './HomeView';
+import HomeView from './HomeView';
+import JournalView from './JournalView';
+import { JOURNAL_KEY, putJournalEntry, readJournal, removeJournalEntry } from './journal';
 import TutorialView, { TutorialBanner, TutorialsList } from './TutorialView';
 import { TUTORIAL_KEY, readTutorials, newTutorial, addTutorial, actOnTutorial } from './tutorial';
 import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite } from './inspirations';
@@ -24,7 +26,7 @@ function readStored(key, fallback) {
 
 const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, reference: '', materialStyle: '', notes: '', photo: '' };
 const tabRoutes = { home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris', tutorials: 'tutoriel' };
-const tabFromHash = () => window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || window.location.hash === '#favoris' ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
+const tabFromHash = () => window.location.hash.startsWith('#journal/') ? 'journal' : window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || window.location.hash === '#favoris' ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
 
 function App() {
   const [tab, setTab] = useState(tabFromHash);
@@ -36,6 +38,7 @@ function App() {
   const [library, setLibrary] = useState(() => readInspirations(localStorage));
   const [appError, setAppError] = useState('');
   const [tutorials, setTutorials] = useState(() => readTutorials(localStorage));
+  const [journal, setJournal] = useState(() => readJournal(localStorage));
   const tutorialSession = route.startsWith('#tutoriel/') ? tutorials.sessions.find(session => session.id === route.slice('#tutoriel/'.length)) : null;
   const activeTutorial = tutorials.sessions.find(session => session.id === tutorials.activeId);
   const [items, setItems] = useState(() => {
@@ -101,6 +104,32 @@ function App() {
     const next = actOnTutorial(tutorials, tutorialSession.id, action);
     return next === tutorials ? false : saveTutorials(next);
   }
+  function openJournal(path = '') {
+    const next = 'journal' + (path ? '/' + path : '');
+    setTab('journal'); setRoute('#' + next); window.location.hash = next;
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  function journalForSession(session) {
+    if (session.status !== 'completed') return;
+    const existing = journal.entries.find(entry => entry.sessionId === session.id);
+    openJournal(existing ? existing.id : 'pose/' + session.id);
+  }
+  function saveJournal(next) {
+    try { localStorage.setItem(JOURNAL_KEY, JSON.stringify(next)); setJournal(next); setAppError(''); return { ok: true }; }
+    catch {
+      const error = 'Le journal n’a pas pu être sauvegardé. Tes souvenirs déjà enregistrés sont conservés. Libère un peu de stockage sur cet appareil puis réessaie.';
+      setAppError(error); return { ok: false, error };
+    }
+  }
+  function saveJournalEntry(draft) {
+    try {
+      const result = putJournalEntry(journal, draft);
+      const saved = saveJournal(result.store);
+      return saved.ok ? { ok: true, id: result.entry.id } : saved;
+    } catch (error) { return { ok: false, error: error.message }; }
+  }
+  function deleteJournalEntry(id) { return saveJournal(removeJournalEntry(journal, id)); }
+  function dismissJournalPose(id) { return saveJournal({ ...journal, hiddenSessions: [...new Set([...journal.hiddenSessions, id])] }); }
   function openCollection(id) {
     navigate('collection');
     const product = items.find(item => item.id === id);
@@ -170,7 +199,7 @@ function App() {
     <main>
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {!route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
-      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
+      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>PHASE 2 · COLLECTION</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
@@ -218,7 +247,7 @@ function App() {
           <p>Choisis une humeur, un univers et ton temps. Retrouve des idées composées avec tes couleurs et ton matériel.</p>
           <button className="moreIdeas" onClick={() => navigate('create')}><Palette />Créer ma manucure</button>
         </section>
-      </> : tab === 'profile' ? <ProfileView profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView profile={profile} items={items} library={library} onNavigate={navigate} onOpen={openIdea} /> : <JournalView onFavorites={() => navigate('favorites')} />}
+      </> : tab === 'profile' ? <ProfileView profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView profile={profile} items={items} library={library} journal={journal} onNavigate={navigate} onOpen={openIdea} /> : <JournalView journal={journal} sessions={tutorials.sessions} items={items} route={route} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
     </main>
     <nav>{[['home', Home, 'Accueil'], ['create', Palette, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Journal'], ['profile', UserRound, 'Profil']].map(([id, Icon, label]) =>
       <button key={id} className={tab === id ? 'on' : ''} aria-current={tab === id ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}</span></button>
