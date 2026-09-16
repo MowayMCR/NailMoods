@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, X, Check, ArrowRight, RotateCcw, Package, BookmarkCheck } from 'lucide-react';
-import { createSuggestions, inventoryStamp, profileDefaults } from './creationEngine';
+import { createSuggestions, inventoryStamp, profileDefaults, normalizePolishCount } from './creationEngine';
 import NailPreview from './NailPreview';
 import './creation.css';
 
@@ -13,6 +13,8 @@ const modes = [
 const levels = ['Très simple', 'Un peu de détail', 'À l’aise'];
 const limits = [['noDrawing', 'Sans dessin', 'Pas de French, de lignes ou de pois dessinés.'], ['noStickers', 'Sans stickers', 'Seulement les couleurs et leurs finitions.'], ['noLamp', 'Sans lampe', 'Uniquement les vernis classiques.'], ['favorites', 'Vernis favoris uniquement', 'Les couleurs marquées d’un cœur.']];
 const durationLabel = value => value === 90 ? '90 min max' : value + ' min max';
+const polishCountLabel = value => value === 'auto' ? 'Automatique' : value + ' vernis';
+const polishCountHints = { auto: 'Des associations de 1 à 5 vernis, selon ta collection.', 1: 'Un seul vernis coloré.', 2: 'Duos, accents et détails.', 3: 'Un trio à répartir sur les ongles.', 4: 'Quatre vernis dans une même composition.', 5: 'Un vernis différent sur chaque ongle.' };
 
 function initialState(profile) {
   const fallback = { options: profileDefaults(profile), generated: false, seed: 0, inventory: '', selected: null };
@@ -24,6 +26,7 @@ function initialState(profile) {
     if (!Array.isArray(options.constraints)) options.constraints = [];
     if (![0, 1, 2].includes(options.level)) options.level = fallback.options.level;
     if (![15, 30, 45, 60, 90].includes(options.duration)) options.duration = fallback.options.duration;
+    options.polishCount = normalizePolishCount(options.polishCount);
     return { ...fallback, ...saved, options };
   } catch { return fallback; }
 }
@@ -78,6 +81,7 @@ export default function CreateView({ items, profile, onCollection }) {
     style: { title: 'Quel univers ?', icon: Palette, label: 'Univers', values: [...new Set(['Libre', ...(Array.isArray(profile.styles) ? profile.styles : []), 'Witchy', 'Minimal', 'Girly', 'Celestial', 'Coquette', 'Goth', 'Alternative', 'Romantique', 'Floral', 'Nature', 'Y2K'])] },
     occasion: { title: 'Pour quelle occasion ?', icon: CalendarDays, label: 'Occasion', values: ['Tous les jours', 'Travail', 'Soirée', 'Événement', 'Week-end'] },
     duration: { title: 'Combien de temps ?', icon: Clock3, label: 'Temps', values: [15, 30, 45, 60, 90], format: durationLabel },
+    polishCount: { title: 'Combien de vernis ?', icon: Palette, label: 'Nombre de vernis', values: ['auto', 1, 2, 3, 4, 5], format: polishCountLabel },
     level: { title: 'Quel niveau de détail ?', icon: Brush, label: 'Difficulté', values: [0, 1, 2], format: value => levels[value] },
   };
 
@@ -113,7 +117,7 @@ export default function CreateView({ items, profile, onCollection }) {
       <div className="creationTiles">{Object.entries(selections).map(([key, choice]) => <button key={key} onClick={() => setPicker(key)}>
         <choice.icon /><small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key]}</b><ChevronRight className="tileArrow" />
       </button>)}
-        <button onClick={() => setPicker('constraints')}><SlidersHorizontal /><small>Mes limites</small><b>{options.constraints.length ? options.constraints.length + ' choix' : 'Tout mon matériel'}</b><ChevronRight className="tileArrow" /></button>
+        <button className="creationLimitsTile" onClick={() => setPicker('constraints')}><SlidersHorizontal /><small>Mes limites</small><b>{options.constraints.length ? options.constraints.length + ' choix' : 'Tout mon matériel'}</b><ChevronRight className="tileArrow" /></button>
       </div>
       {options.constraints.length > 0 && <div className="creationLimits">{limits.filter(([key]) => options.constraints.includes(key)).map(([key, label]) => <span key={key}>{label}</span>)}</div>}
       <p className="creationHint">Les premiers choix viennent de ton profil. Tu peux les adapter à cette envie sans modifier tes habitudes.</p>
@@ -130,8 +134,8 @@ export default function CreateView({ items, profile, onCollection }) {
     {state.generated && !activeRun && <p className="creationNotice" role="status">Ta collection a changé. Relance les idées pour utiliser son contenu actuel.</p>}
     {report.results.length === 0 ? <section className="creationEmpty" role="status">
       <Palette /><h2>On ajuste un petit détail ?</h2>
-      <p>{report.availableColors ? 'Aucune idée ne tient dans le temps choisi. Essaie un peu plus de temps.' : report.inventoryColors ? 'Tes couleurs ne sont pas utilisables avec les limites ou le matériel actuellement renseignés. Consulte les produits non retenus ci-dessus.' : 'Ajoute au moins une couleur de vernis dans ta collection pour composer tes premières idées.'}</p>
-      <button onClick={report.availableColors ? () => setPicker('duration') : onCollection}>{report.availableColors ? 'Ajuster mon temps' : 'Ouvrir ma collection'}<ArrowRight /></button>
+      <p>{report.availableColors && report.countUnavailable ? 'Tu as choisi ' + report.requestedPolishCount + ' vernis. Avec ta collection, le type de pose et tes limites actuelles, ' + report.maxPolishCount + ' au maximum peuvent être associés. Ajuste ce nombre, tes limites ou ta collection.' : report.availableColors ? 'Aucune idée ne tient dans le temps choisi. Essaie un peu plus de temps.' : report.inventoryColors ? 'Tes couleurs ne sont pas utilisables avec les limites ou le matériel actuellement renseignés. Consulte les produits non retenus ci-dessus.' : 'Ajoute au moins une couleur de vernis dans ta collection pour composer tes premières idées.'}</p>
+      <button onClick={report.availableColors ? () => setPicker(report.countUnavailable ? 'polishCount' : 'duration') : onCollection}>{report.availableColors ? report.countUnavailable ? 'Ajuster le nombre de vernis' : 'Ajuster mon temps' : 'Ouvrir ma collection'}<ArrowRight /></button>
     </section> : <button className="creationGenerate" onClick={generate}><Sparkles />{activeRun ? 'Recomposer mes idées' : 'Trouver mes idées'}<ArrowRight /></button>}
     <p className="creationTimeNote">Temps indicatifs pour la couleur et la décoration, hors préparation, dépose et séchage.</p>
     {storageError && <p className="formError" role="alert">Tes choix restent disponibles ici, mais n’ont pas pu être sauvegardés sur cet appareil.</p>}
@@ -144,7 +148,7 @@ export default function CreateView({ items, profile, onCollection }) {
       <div className="ideaList">{report.results.map((idea, index) => <article className={'ideaCard ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id}>
         <div className="ideaTopline"><span>ENVIE {String(index + 1).padStart(2, '0')}</span><span><Clock3 />≈ {idea.minutes} min</span></div>
         <NailPreview idea={idea} />
-        <div className="ideaBody"><span className="ideaDifficulty">{levels[idea.rank]}</span><h3>{idea.title}</h3><p>{idea.description}</p>
+        <div className="ideaBody"><div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3>{idea.title}</h3><p>{idea.description}</p>
           <div className="ideaProducts">{idea.palette.map(item => <span key={item.id}><i style={{ background: item.color }} />{item.name}</span>)}</div>
           {idea.resources.length > 0 && <div className="ideaEquipment"><small>AVEC MON MATÉRIEL</small><p>{idea.resources.map(item => item.name).join(' · ')}</p></div>}
           <ul className="ideaReasons">{idea.reasons.map(reason => <li key={reason}><Check />{reason}</li>)}</ul>
@@ -155,7 +159,8 @@ export default function CreateView({ items, profile, onCollection }) {
     </section>}
 
     {picker && <PickerSheet title={picker === 'constraints' ? 'Tes limites du jour' : selections[picker].title} onClose={() => setPicker(null)}>
-      <div className="creationOptions">{picker === 'constraints' ? limits.map(([key, label, detail]) => <button key={key} aria-pressed={options.constraints.includes(key)} className={options.constraints.includes(key) ? 'on' : ''} onClick={() => change({ constraints: options.constraints.includes(key) ? options.constraints.filter(value => value !== key) : [...options.constraints, key] })}><span><b>{label}</b><small>{detail}</small></span>{options.constraints.includes(key) && <Check />}</button>) : selections[picker].values.map(value => <button key={value} className={options[picker] === value ? 'on' : ''} aria-pressed={options[picker] === value} onClick={() => { change({ [picker]: value }); setPicker(null); }}><span>{selections[picker].format ? selections[picker].format(value) : value}</span>{options[picker] === value && <Check />}</button>)}</div>
+      {picker === 'polishCount' && <p className="creationPickerHelp">Choisis un nombre exact de vernis colorés par proposition. Les stickers, bases et top coats ne sont pas comptés.</p>}
+      <div className="creationOptions">{picker === 'constraints' ? limits.map(([key, label, detail]) => <button key={key} aria-pressed={options.constraints.includes(key)} className={options.constraints.includes(key) ? 'on' : ''} onClick={() => change({ constraints: options.constraints.includes(key) ? options.constraints.filter(value => value !== key) : [...options.constraints, key] })}><span><b>{label}</b><small>{detail}</small></span>{options.constraints.includes(key) && <Check />}</button>) : selections[picker].values.map(value => <button key={value} className={options[picker] === value ? 'on' : ''} aria-pressed={options[picker] === value} onClick={() => { change({ [picker]: value }); setPicker(null); }}><span>{selections[picker].format ? selections[picker].format(value) : value}{picker === 'polishCount' && <small>{polishCountHints[value]}</small>}</span>{options[picker] === value && <Check />}</button>)}</div>
       {picker === 'constraints' && <button className="creationGenerate" onClick={() => setPicker(null)}><Check />Garder ces choix</button>}
     </PickerSheet>}
   </div>;

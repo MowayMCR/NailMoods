@@ -1,5 +1,6 @@
 // Suggestions use owned products only. No remote inference or image analysis.
 export const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+export const normalizePolishCount = value => ['number', 'string'].includes(typeof value) && [1, 2, 3, 4, 5].includes(Number(value)) ? Number(value) : 'auto';
 const unique = items => [...new Map(items.filter(Boolean).map(item => [String(item.id), item])).values()];
 const fieldText = item => normalize([item.name, item.reference, item.materialStyle].filter(Boolean).join(' '));
 const auxiliary = item => /\b(base\s*coat|top\s*coat|primer|cleaner|dissolvant|remover|huile)\b/.test(normalize(item.name).replace(/-/g, ' '));
@@ -32,7 +33,7 @@ export function profileDefaults(profile = {}) {
     style: Array.isArray(profile.styles) && profile.styles[0] || 'Libre',
     occasion: 'Tous les jours', duration,
     level: /experte|confirmee/.test(level) ? 2 : /intermediaire/.test(level) ? 1 : 0,
-    constraints: [],
+    constraints: [], polishCount: 'auto',
   };
 }
 
@@ -76,6 +77,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const constraints = new Set(Array.isArray(options.constraints) ? options.constraints : []);
   const duration = [15, 30, 45, 60, 90].includes(Number(options.duration)) ? Number(options.duration) : 45;
   const maxLevel = [0, 1, 2].includes(Number(options.level)) ? Number(options.level) : 0;
+  const requestedPolishCount = normalizePolishCount(options.polishCount);
   const tools = inventoryTools(items);
   const blocked = [];
   const effects = items.filter(item => item.type === 'Effet' && !auxiliary(item));
@@ -105,17 +107,22 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     return score;
   };
   const ordered = [...usable].sort((a, b) => primaryScore(b) - primaryScore(a));
+  const groups = [...new Set(ordered.map(item => item.type))].map(type => unique(ordered.filter(item => item.type === type)));
+  const maxPolishCount = Math.max(0, ...groups.map(group => group.length));
+  const countUnavailable = requestedPolishCount !== 'auto' && requestedPolishCount > maxPolishCount;
   const candidates = [];
   const seen = new Set();
-  function add(pattern, base, second = null, sticker = null, variant = 0) {
+  function add(pattern, base, second = null, sticker = null, variant = 0, multiPalette = null, arrangement = null) {
+    const palette = unique(multiPalette || [base, second]);
+    if (requestedPolishCount !== 'auto' && palette.length !== requestedPolishCount) return;
+    const decorated = pattern === 'sticker' || pattern === 'paletteSticker';
     if (constraints.has('noDrawing') && drawing.has(pattern)) return;
-    if (constraints.has('noStickers') && pattern === 'sticker') return;
+    if (constraints.has('noStickers') && decorated) return;
     const rank = drawing.has(pattern) ? 1 : 0;
     if (rank > maxLevel) return;
-    const extra = { solid: 0, accent: 5, duo: 5, sticker: 7, dots: 8, french: 15, line: 12 }[pattern];
+    const extra = multiPalette ? (palette.length - 1) * 5 + (decorated ? 7 : 0) : { solid: 0, accent: 5, duo: 5, sticker: 7, dots: 8, french: 15, line: 12 }[pattern];
     const minutes = (base.type === 'Vernis' ? 15 : base.type === 'Gel' ? 30 : 25) + extra;
     if (minutes > duration) return;
-    const palette = unique([base, second]);
     const resources = unique([
       ...(palette.some(needsLamp) ? [tools.lamp] : []),
       ...(palette.some(magnetic) ? [tools.magnet] : []),
@@ -126,26 +133,34 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     ]);
     const nails = Array.from({ length: 5 }, (_, index) => {
       const accented = pattern === 'accent' ? (variant === 1 ? [1, 3].includes(index) : index === 3) : pattern === 'duo' ? index % 2 === 1 : false;
+      const polish = multiPalette ? palette[arrangement[index]] : accented ? second : base;
       return {
-        productId: (accented ? second : base).id,
-        color: (accented ? second : base).color || '#b88699',
-        finish: (accented ? second : base).finish,
-        effect: (accented ? second : base).effect,
-        decoration: pattern === 'sticker' && (variant === 1 ? [1, 3].includes(index) : index === 3) ? stickerAppearance(sticker) : null,
+        productId: polish.id,
+        color: polish.color || '#b88699',
+        finish: polish.finish,
+        effect: polish.effect,
+        decoration: decorated && (variant === 1 ? [1, 3].includes(index) : index === 3) ? stickerAppearance(sticker) : null,
         drawing: drawing.has(pattern) && (pattern === 'french' || index === 3) ? pattern : null,
         accentColor: second?.color,
+        accentProductId: drawing.has(pattern) && (pattern === 'french' || index === 3) ? second?.id : null,
       };
     });
     // Visually identical recipes are not counted as separate ideas.
     const visual = JSON.stringify(nails.map(nail => [nail.productId, nail.drawing, nail.accentColor, nail.decoration])) + (sticker?.id || '');
     if (seen.has(visual)) return;
     seen.add(visual);
-    const id = [pattern, base.id, second?.id || '', sticker?.id || '', variant].join(':');
+    const id = multiPalette ? [pattern, ...palette.map(item => item.id), sticker?.id || '', variant].join(':') : [pattern, base.id, second?.id || '', sticker?.id || '', variant].join(':');
     const titles = {
       solid: 'L’essentiel ' + (base.family || '').toLocaleLowerCase('fr'),
       accent: variant === 1 ? 'Deux touches de contraste' : 'Un ongle qui change tout',
       duo: 'Le duo alterné', sticker: variant === 1 ? 'Deux accents décorés' : 'Le petit détail',
       dots: 'Quelques pois délicats', french: 'La French en couleurs', line: 'Une ligne légère',
+      palette: {
+        3: ['Trio en progression', 'Trio en miroir', 'Trio en rythme', 'Un trio à deux accents'],
+        4: ['Le quatuor en boucle', 'Quatre vernis en progression', 'Un quatuor à ta façon', 'Quatre vernis, autre sens'],
+        5: ['Un vernis par ongle', 'Cinq vernis en sens inverse', 'Cinq vernis en rythme', 'La palette en mouvement'],
+      }[palette.length]?.[variant],
+      paletteSticker: 'La palette décorée · ' + palette.length + ' vernis',
     };
     const descriptions = {
       solid: base.name + ' sur les cinq ongles.',
@@ -155,16 +170,18 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       dots: base.name + ', quelques pois en ' + second?.name + ' sur l’annulaire.',
       french: 'Une base ' + base.name + ' et des pointes ' + second?.name + '.',
       line: base.name + ', une ligne ' + second?.name + ' sur l’annulaire.',
+      palette: 'Du pouce à l’auriculaire : ' + nails.map(nail => palette.find(item => item.id === nail.productId).name).join(', ') + '.',
+      paletteSticker: palette.length + ' vernis répartis sur les cinq ongles, avec ' + sticker?.name + ' sur l’annulaire.',
     };
-    let score = primaryScore(base) + (second ? primaryScore(second) * 0.2 : 0);
+    let score = primaryScore(base) + (palette.length > 1 ? palette.slice(1).reduce((sum, item) => sum + primaryScore(item), 0) / (palette.length - 1) * 0.2 : 0);
     if (options.occasion === 'Travail' && ['solid', 'accent', 'line'].includes(pattern)) score += 12;
-    if (['Soirée', 'Événement'].includes(options.occasion) && ['sticker', 'duo', 'french'].includes(pattern)) score += 12;
+    if (['Soirée', 'Événement'].includes(options.occasion) && ['sticker', 'duo', 'french', 'palette', 'paletteSticker'].includes(pattern)) score += 12;
     if (['Douce', 'Au calme', 'Chic'].includes(options.mood) && ['solid', 'accent'].includes(pattern)) score += 6;
-    if (['Joyeuse', 'Audacieuse'].includes(options.mood) && ['duo', 'sticker', 'dots'].includes(pattern)) score += 8;
+    if (['Joyeuse', 'Audacieuse'].includes(options.mood) && ['duo', 'sticker', 'dots', 'palette', 'paletteSticker'].includes(pattern)) score += 8;
     const surprise = options.mode === 'surprise';
     const chaos = surprise && options.surprise === 'Chaos';
     const creative = surprise && options.surprise === 'Creative';
-    if (chaos && ['duo', 'dots', 'french'].includes(pattern)) score += 30;
+    if (chaos && ['duo', 'dots', 'french', 'palette', 'paletteSticker'].includes(pattern)) score += 30;
     if (creative && pattern !== 'solid') score += 15;
     if (surprise && options.surprise === 'Safe' && ['solid', 'accent', 'sticker'].includes(pattern)) score += 16;
     score += hashScore(id, seed) * (chaos ? 50 : creative ? 28 : surprise ? 18 : seed > 1 ? 20 : 3);
@@ -172,10 +189,10 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (base.fav && options.mode === 'usual') reasons.push('Une de tes couleurs favorites');
     if (preferred.includes(base.family)) reasons.push('Une teinte dans ton univers ' + options.style);
     if (options.mode === 'change' && !base.fav) reasons.push('Une couleur à redécouvrir');
-    if (pattern === 'sticker') reasons.push('Avec tes stickers ' + sticker.name);
+    if (decorated) reasons.push('Avec tes stickers ' + sticker.name);
     if (drawing.has(pattern)) reasons.push('Avec ' + (pattern === 'dots' ? tools.dotting.name : tools.fineBrush.name));
     if (!reasons.length) reasons.push('Avec les produits de ta collection');
-    candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, resources, nails, minutes, rank, score, reasons: reasons.slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte' });
+    candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score, reasons: reasons.slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte' });
   }
 
   for (const base of ordered) {
@@ -185,7 +202,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       add('sticker', base, null, sticker, 1);
     }
     // Limit combinations on very large inventories, while retaining every primary color.
-    const matching = ordered.filter(item => item.id !== base.id && item.type === base.type && item.color !== base.color).slice(0, 24);
+    const matching = ordered.filter(item => item.id !== base.id && item.type === base.type).slice(0, 24);
     for (const second of matching) {
       add('accent', base, second);
       add('duo', base, second);
@@ -193,15 +210,34 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       if (tools.fineBrush) { add('french', base, second); add('line', base, second); }
     }
   }
+  const arrangements = {
+    3: [[0, 0, 1, 2, 2], [0, 1, 2, 1, 0], [0, 1, 2, 0, 1], [0, 1, 0, 2, 0]],
+    4: [[0, 1, 2, 3, 0], [0, 1, 2, 3, 3], [0, 1, 0, 2, 3], [3, 2, 1, 0, 0]],
+    5: [[0, 1, 2, 3, 4], [4, 3, 2, 1, 0], [0, 2, 4, 1, 3], [0, 3, 1, 4, 2]],
+  };
+  for (const group of groups) for (const size of [3, 4, 5]) {
+    if (size > group.length || requestedPolishCount !== 'auto' && requestedPolishCount !== size) continue;
+    const paletteSets = new Set();
+    // Two bounded traversals vary the combinations without an exhaustive N-choose-5 search.
+    const sequences = [group, [...group.filter((_, index) => index % 2 === 0), ...group.filter((_, index) => index % 2 === 1)]];
+    for (const sequence of sequences) for (let start = 0; start < sequence.length; start++) {
+      const palette = Array.from({ length: size }, (_, index) => sequence[(start + index) % sequence.length]);
+      const paletteKey = JSON.stringify(palette.map(item => String(item.id)).sort());
+      if (paletteSets.has(paletteKey)) continue;
+      paletteSets.add(paletteKey);
+      arrangements[size].forEach((arrangement, variant) => add('palette', palette[0], null, null, variant, palette, arrangement));
+      for (const sticker of tools.stickers.slice(0, 20)) add('paletteSticker', palette[0], null, sticker, 0, palette, arrangements[size][0]);
+    }
+  }
   const ranked = candidates.sort((a, b) => b.score - a.score);
   const results = [];
   const remaining = [...ranked];
   while (results.length < 4 && remaining.length) {
     remaining.sort((a, b) => {
-      const adjusted = candidate => candidate.score - results.filter(result => result.pattern === candidate.pattern).length * 24 - results.filter(result => result.palette[0].id === candidate.palette[0].id).length * 10;
+      const adjusted = candidate => candidate.score - results.filter(result => result.pattern === candidate.pattern).length * 24 - results.filter(result => result.palette[0].id === candidate.palette[0].id).length * 10 - (requestedPolishCount === 'auto' ? results.filter(result => result.polishCount === candidate.polishCount).length * 8 : 0);
       return adjusted(b) - adjusted(a);
     });
     results.push(remaining.shift());
   }
-  return { results, total: candidates.length, availableColors: usable.length, inventoryColors: available.length, tools, blocked, effects };
+  return { results, total: candidates.length, availableColors: usable.length, inventoryColors: available.length, tools, blocked, effects, requestedPolishCount, maxPolishCount, countUnavailable };
 }

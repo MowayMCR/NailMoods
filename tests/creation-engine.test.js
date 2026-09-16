@@ -15,7 +15,7 @@ const profile = { shape: 'Ronde', length: 'Courte', level: 'Débutante +', durat
 
 test('profile defaults preserve saved shape, skill, style and duration without mutation', () => {
   const before = JSON.stringify(profile);
-  assert.deepEqual(profileDefaults(profile), { mode: 'usual', surprise: 'Safe', mood: 'Chic', style: 'Witchy', occasion: 'Tous les jours', duration: 45, level: 0, constraints: [] });
+  assert.deepEqual(profileDefaults(profile), { mode: 'usual', surprise: 'Safe', mood: 'Chic', style: 'Witchy', occasion: 'Tous les jours', duration: 45, level: 0, constraints: [], polishCount: 'auto' });
   assert.equal(profileDefaults({ duration: '1 h +' }).duration, 90);
   assert.equal(profileDefaults({ duration: '15 min max' }).duration, 15);
   assert.equal(JSON.stringify(profile), before);

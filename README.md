@@ -37,6 +37,8 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 
 - Trois envies : comme d'habitude, envie de changement, surprends-moi (Safe / Creative / Chaos).
 - Tuiles tactiles pour l'humeur, l'univers, l'occasion, le temps, la difficulté et les limites. Les premiers choix viennent du profil ; les ajustements ne modifient pas ce profil.
+- La tuile **Nombre de vernis** propose **Automatique** ou exactement **1, 2, 3, 4 ou 5 vernis colorés**. Le nombre est conservé et affiché sur chaque proposition. Stickers, bases et top coats ne sont pas comptés. Les compositions à trois, quatre et cinq références utilisent chaque vernis dans les cinq ongles de l'aperçu.
+- Si le nombre demandé ne peut pas être atteint avec les produits du même type de pose et les limites actuelles, l'écran indique le maximum disponible et propose d'ajuster le choix. Il ne réduit jamais silencieusement le nombre demandé. Des références partageant une teinte générique provisoire restent sélectionnables séparément.
 - Jusqu'à quatre propositions distinctes, avec cinq ongles schématiques, noms des produits et outils de l'inventaire, durée indicative et explication du choix. S'il n'y a pas assez de possibilités, le nombre réel est affiché.
 - Les propositions sont composées localement avec des règles et les caractéristiques saisies. Il n'y a pas de génération d'images ou d'analyse IA distante. Les schémas ne prédisent pas le rendu photographique ni les motifs exacts des stickers.
 - Semi-permanent et gel nécessitent une lampe déclarée ; cat-eye nécessite un aimant. Les dessins nécessitent les outils correspondants et un niveau suffisant. Les modes surprise ne contournent jamais les limites.
