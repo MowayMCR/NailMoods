@@ -45,7 +45,7 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 - Les effets à superposer dont la base et les accessoires ne sont pas identifiés restent signalés comme à préciser. Les bases/top coats ne sont pas utilisés comme vernis colorés. Les technologies de vernis différentes ne sont pas combinées dans une même proposition.
 - Les durées portent sur la couleur et la décoration, hors préparation, dépose et séchage. La présence dans l'inventaire ne remplace pas la vérification de compatibilité dans les notices des produits et de la lampe.
 - L'envie et l'idée retenue sont conservées dans `nm-creation-v1`. Modifier l'inventaire invalide les anciennes propositions et invite à relancer la création. Les données de collection et de profil sont conservées.
-- Les fiches détaillées sont disponibles en phase 4. Les tutoriels restent prévus pour la phase 5.
+- Les fiches détaillées sont disponibles en phase 4 et les tutoriels guidés en phase 5.
 
 ## Phase 4 — fiches d’inspiration, variantes et favoris
 
@@ -56,6 +56,17 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 - Une fiche favorite garde les références et teintes enregistrées même après une modification de la collection. Un produit supprimé, épuisé ou modifié est signalé. Il ne devient pas disponible artificiellement.
 - La dernière inspiration retenue et douze fiches récentes permettent de rouvrir une fiche ou de revenir en arrière, y compris après rechargement. Les favoris ne sont pas limités aux douze fiches récentes. Les erreurs de stockage sont affichées ; un favori n’est confirmé qu’après enregistrement.
 - L’accueil donne accès à **Profil, Collection, Créer et Favoris**. Le profil validé en phase 1 a été réintégré depuis son historique, avec ses sélecteurs visuels, univers, thèmes, avatars et sa clé de stockage d’origine. Le bouton Profil de l’en-tête fonctionne aussi. Les clés `nm-profile`, `nm-collection-v2` et `nm-creation-v1` restent inchangées.
-- Le Journal reste accessible avec l’explication de son développement à venir. Les étapes guidées et le journal des poses réalisées ne sont pas simulés.
+- Le Journal reste accessible avec l’explication de son développement à venir. Les tutoriels sont disponibles en phase 5 ; les photos et notes du journal restent à réaliser.
+
+## Phase 5 — réaliser une pose guidée
+
+- Depuis **Créer → Voir la fiche → Démarrer le tutoriel**, choisir la première main puis suivre la préparation, les couleurs, les dessins ou stickers de l’inspiration et la finition. Les cinq ongles sont repérés pour chaque main ; un effet magnétique est traité ongle par ongle.
+- Chaque étape reprend les références de l’inspiration enregistrée. Les couches, la préparation et les instructions de compatibilité restent celles du fabricant ; le guide ne les déduit pas de la teinte. Aucune base, couche de finition ou durée sous lampe n’est imposée automatiquement. Les systèmes varient, y compris les lampes d’une même marque ([FAQ Le Mini Macaron](https://leminimacaron.eu/pages/faqs)).
+- Les listes à cocher et le bouton **Valider et continuer** suivent l’avancement réel. Il est possible de consulter toutes les étapes, revenir sur un choix ou décocher une étape. Une étape future ne peut pas être validée avant celles qui la précèdent, et une pose n’est terminée qu’après validation des deux mains et du contrôle final.
+- Les minuteurs sont facultatifs et saisis par l’utilisatrice (1 seconde à 60 minutes). Ils sont associés à l’étape et peuvent être mis en pause, repris, remis à zéro ou relancés pour une nouvelle couche. La durée n’est jamais présélectionnée depuis le type de vernis. Un compte à rebours actif bloque la validation jusqu’à sa fin ou sa mise en pause ; son expiration ne valide aucune étape.
+- Le décompte utilise une échéance absolue, conservée dans `nm-tutorials-v1` : navigation, rechargement et mise en arrière-plan ne repartent pas de la durée initiale. Mettre la pose en pause fige le minuteur ; reprendre la pose ne relance pas automatiquement la lampe ou le minuteur. La fin est visuelle, sans son ni notification garantie écran verrouillé ; le temps écoulé est retrouvé au retour.
+- La tuile de reprise reste visible dans les autres écrans. **Accueil → Mes poses guidées** donne accès à toutes les poses préparées, en pause ou terminées. Démarrer une autre pose met la précédente en pause ; refaire une pose crée un suivi distinct, sans supprimer la précédente.
+- Les sessions contiennent une copie de la composition et des étapes, sans dupliquer les photos. Les modifications de collection sont signalées, sans remplacer silencieusement les produits du tutoriel. Les échecs de sauvegarde laissent la progression précédente intacte et affichent un message.
+- Profil, Collection, Créer, fiches, variantes et favoris restent accessibles, avec leurs clés de stockage d’origine. Les résultats des poses seront exploitables pour le futur Journal, mais aucun journal de photos ou de notes n’est encore annoncé comme disponible.
 
 Tests du moteur : `npm test`. Construction : `npm run build`.

@@ -8,6 +8,8 @@ import './style.css';
 import ProfileView from './ProfileView';
 import { defaultProfile } from './profileOptions';
 import HomeView, { JournalView } from './HomeView';
+import TutorialView, { TutorialBanner, TutorialsList } from './TutorialView';
+import { TUTORIAL_KEY, readTutorials, newTutorial, addTutorial, actOnTutorial } from './tutorial';
 import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite } from './inspirations';
 const colors=[['Prune','#703650'],['Cassis','#622947'],['Bordeaux','#852d40'],['Rouge','#c73e46'],['Rose','#db7897'],['Nude','#ddb9aa'],['Beige','#cbb89d'],['Brun','#805b4c'],['Orange','#d47c4b'],['Jaune','#dfc65e'],['Vert','#67865f'],['Bleu','#5479a6'],['Violet','#735b91'],['Noir','#29262a'],['Blanc','#f1efeb'],['Argent','#aeb1b5'],['Or','#c4a45e'],['Multi','#8c5b8f']];const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[{...defaults,id:1,name:'Prune foncée',brand:'Le Mini Macaron',family:'Prune',color:'#703650',depth:'Foncé',undertone:'Froid',finish:'Brillant',fav:true},{...defaults,id:2,name:'Latte',brand:'Le Mini Macaron',family:'Brun',color:'#805b4c',depth:'Moyen',undertone:'Chaud',finish:'Brillant'},{...defaults,id:3,name:'Galactic Sparkle',brand:'Le Mini Macaron',type:'Effet',family:'Multi',color:'#665083',finish:'Chrome',effect:'Multichrome',usage:'Sur une couleur de base'}];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
 
@@ -21,8 +23,8 @@ function readStored(key, fallback) {
 }
 
 const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, reference: '', materialStyle: '', notes: '', photo: '' };
-const tabRoutes = { home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris' };
-const tabFromHash = () => window.location.hash.startsWith('#inspiration/') || window.location.hash === '#favoris' ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
+const tabRoutes = { home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris', tutorials: 'tutoriel' };
+const tabFromHash = () => window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || window.location.hash === '#favoris' ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
 
 function App() {
   const [tab, setTab] = useState(tabFromHash);
@@ -33,6 +35,9 @@ function App() {
   });
   const [library, setLibrary] = useState(() => readInspirations(localStorage));
   const [appError, setAppError] = useState('');
+  const [tutorials, setTutorials] = useState(() => readTutorials(localStorage));
+  const tutorialSession = route.startsWith('#tutoriel/') ? tutorials.sessions.find(session => session.id === route.slice('#tutoriel/'.length)) : null;
+  const activeTutorial = tutorials.sessions.find(session => session.id === tutorials.activeId);
   const [items, setItems] = useState(() => {
     const stored = readStored('nm-collection-v2', starter);
     return Array.isArray(stored) ? stored : starter;
@@ -47,7 +52,7 @@ function App() {
   const material = edit?.type === 'Matériel';
 
   function navigate(next) {
-    setTab(next === 'favorites' ? 'create' : next);
+    setTab(['favorites', 'tutorials'].includes(next) ? 'create' : next);
     setRoute('#' + tabRoutes[next]);
     window.location.hash = tabRoutes[next];
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -75,6 +80,27 @@ function App() {
   }
   function favoriteIdea(idea) { return saveLibrary(toggleFavorite(library, snapshotIdea(idea))); }
   function selectIdea(idea, clear = false) { return saveLibrary({ ...rememberIdea(library, idea), selected: clear ? null : idea }); }
+  function saveTutorials(next) {
+    try { localStorage.setItem(TUTORIAL_KEY, JSON.stringify(next)); setTutorials(next); setAppError(''); return true; }
+    catch { setAppError('Cette modification de ta pose n’a pas pu être enregistrée. La progression précédente est conservée. Libère un peu de stockage puis réessaie.'); return false; }
+  }
+  function openTutorial(id) {
+    setTab('create'); setRoute('#tutoriel/' + id); window.location.hash = 'tutoriel/' + id;
+  }
+  function startTutorial(idea, newPose = false) {
+    const existing = !newPose && tutorials.sessions.find(session => session.idea.key === idea.key && session.status !== 'completed');
+    if (existing) {
+      if (existing.status === 'paused' && !saveTutorials(actOnTutorial(tutorials, existing.id, { type: 'resume' }))) return;
+      openTutorial(existing.id); return;
+    }
+    const session = newTutorial(idea, 'pose-' + crypto.randomUUID());
+    if (saveTutorials(addTutorial(tutorials, session))) openTutorial(session.id);
+  }
+  function tutorialAction(action) {
+    if (!tutorialSession) return false;
+    const next = actOnTutorial(tutorials, tutorialSession.id, action);
+    return next === tutorials ? false : saveTutorials(next);
+  }
   function openCollection(id) {
     navigate('collection');
     const product = items.find(item => item.id === id);
@@ -143,7 +169,8 @@ function App() {
     <header><Brand /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
     <main>
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
-      {tab === 'create' ? <CreateView items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} /> : tab === 'collection' ? <>
+      {!route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
+      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>PHASE 2 · COLLECTION</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>

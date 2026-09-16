@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserRound, Library, Palette, Heart, ArrowRight, ChevronRight, BookHeart } from 'lucide-react';
+import { UserRound, Library, Palette, Heart, ArrowRight, ChevronRight, BookHeart, ListChecks } from 'lucide-react';
 import './inspiration.css';
 
 export default function HomeView({ profile, items, library, onNavigate, onOpen }) {
@@ -8,6 +8,7 @@ export default function HomeView({ profile, items, library, onNavigate, onOpen }
       ['profile', UserRound, 'Mon profil', 'Mes habitudes, mon univers et mon apparence'],
       ['collection', Library, 'Ma collection', items.length + ' produits et accessoires'],
       ['create', Palette, 'Créer une inspiration', 'Mon envie du jour et mes idées'],
+      ['tutorials', ListChecks, 'Mes poses guidées', 'Mes tutoriels et ma progression'],
       ['favorites', Heart, 'Mes inspirations favorites', library.favorites.length + ' idée' + (library.favorites.length > 1 ? 's' : '') + ' conservée' + (library.favorites.length > 1 ? 's' : '')],
     ].map(([route, Icon, title, subtitle]) => <button key={route} onClick={() => onNavigate(route)}><Icon /><span><b>{title}</b><small>{subtitle}</small></span><ChevronRight /></button>)}</section>
     {library.selected && <section className="homeRetained"><small>MON IDÉE RETENUE</small><h2>{library.selected.title}</h2><button className="detailSecondary" onClick={() => onOpen(library.selected)}>Retrouver sa fiche<ArrowRight /></button></section>}

@@ -9,7 +9,7 @@ function Decor({ motif, color }) {
   return <rect x="26" y="47" width="12" height="14" rx="3" fill={color} transform="rotate(-15 32 54)" />;
 }
 
-export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels = [] }) {
+export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels = [], highlightedIndices }) {
   const id = useId().replace(/:/g, '');
   const shape = normalize(idea.shape);
   const path = shape.includes('stiletto') ? 'M12 83 32 7 52 83Q52 94 32 94T12 83Z'
@@ -19,7 +19,7 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
           : 'M12 82V38C12 8 52 8 52 38V82Q52 94 32 94T12 82Z';
   return <div className={'nailPreview ' + (/courte/.test(normalize(idea.length)) ? 'shortNails ' : '') + (onSelect ? 'interactiveNails' : '')} role={onSelect ? 'group' : 'img'} aria-label={onSelect ? 'Choisir un ongle' : 'Aperçu schématique : ' + idea.description}>
     {idea.nails.map((nail, index) => {
-      const nailSvg = <svg key={index} viewBox="0 0 64 104" aria-hidden="true">
+      const nailSvg = <svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={highlightedIndices ? { opacity: highlightedIndices.includes(index) ? 1 : 0.16 } : undefined}>
       <defs><clipPath id={id + index}><path d={path} /></clipPath></defs>
       <path d={path} fill={nail.color} stroke="#624d601a" />
       <g clipPath={'url(#' + id + index + ')'}>

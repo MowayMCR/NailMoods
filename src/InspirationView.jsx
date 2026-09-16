@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Heart, Check, Clock3, Palette, RotateCcw, ChevronRight, ExternalLink, Package, BookmarkCheck, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Check, Clock3, Palette, RotateCcw, ChevronRight, ExternalLink, Package, BookmarkCheck, Sparkles, Play } from 'lucide-react';
 import NailPreview from './NailPreview';
 import { equipmentInfo } from './equipment';
 import { createVariants, difficultyLabels, fingers, finishLabel, ideaAvailability, nailDetails, productStatus, resourceRole, safeProductUrl } from './inspirations';
@@ -18,7 +18,7 @@ function ProductRow({ item, items, role, onCollection }) {
   </li>;
 }
 
-export default function InspirationView({ idea, items, profile, favorite, selected, onFavorite, onSelect, onOpen, onBack, onFavorites, onCollection }) {
+export default function InspirationView({ idea, items, profile, favorite, selected, onFavorite, onSelect, onOpen, onBack, onFavorites, onCollection, onTutorial, tutorialExists }) {
   const [finger, setFinger] = useState(0);
   const [variantSeed, setVariantSeed] = useState(1);
   const [showVariants, setShowVariants] = useState(false);
@@ -36,6 +36,7 @@ export default function InspirationView({ idea, items, profile, favorite, select
   return <div className="inspirationPage">
     <div className="detailToolbar"><button onClick={onBack}><ArrowLeft />Mes idées</button><button aria-pressed={favorite} aria-label={favorite ? 'Retirer cette inspiration des favoris' : 'Ajouter cette inspiration aux favoris'} onClick={onFavorite}><Heart fill={favorite ? 'currentColor' : 'none'} />{favorite ? 'En favoris' : 'Favori'}</button></div>
     <section className="detailHero"><small>MON INSPIRATION</small><h1 ref={heading} tabIndex={-1}>{idea.title}</h1><p>{idea.description}</p><div className="detailBadges"><span><Clock3 />≈ {idea.minutes} min</span><span>{difficultyLabels[idea.rank]}</span><span>{idea.palette.length} vernis</span></div></section>
+    <div className="startTutorialAction"><button className="detailPrimary" onClick={onTutorial}><Play />{tutorialExists ? 'Reprendre le tutoriel' : 'Démarrer le tutoriel'}<ArrowRight /></button><small>Une étape à la fois, avec ta progression sauvegardée.</small></div>
     <section className="detailCanvas"><div className="detailSectionTitle"><h2>Ongle par ongle</h2><span>{idea.shape} · {idea.length}</span></div>
       <p className="detailMuted">Touche un ongle pour voir sa composition. La même répartition est prévue sur les deux mains.</p>
       <NailPreview idea={idea} onSelect={setFinger} selectedIndex={finger} labels={fingers} />

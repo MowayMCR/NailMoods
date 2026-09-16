@@ -34,7 +34,7 @@ function initialState(profile) {
   } catch { return fallback; }
 }
 
-export default function CreateView({ items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute }) {
+export default function CreateView({ items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, tutorials }) {
   const [state, setState] = useState(() => initialState(profile));
   const [picker, setPicker] = useState(null);
   const [storageError, setStorageError] = useState(false);
@@ -69,7 +69,7 @@ export default function CreateView({ items, profile, onCollection, route, librar
   const openedKey = route.startsWith('#inspiration/') ? route.slice('#inspiration/'.length) : null;
   const opened = openedKey && findIdea(library, openedKey);
   if (route === '#favoris') return <FavoritesView favorites={library.favorites} items={items} onOpen={onOpen} onFavorite={onFavorite} onBack={() => onRoute('create')} />;
-  if (opened) return <InspirationView key={opened.key} idea={opened} items={items} profile={profile} favorite={library.favorites.some(idea => idea.key === opened.key)} selected={library.selected?.key === opened.key} onFavorite={() => onFavorite(opened)} onSelect={() => { const clear = library.selected?.key === opened.key; if (onSelect(opened, clear)) setState(previous => ({ ...previous, selected: clear ? null : opened.id })); }} onOpen={onOpen} onBack={() => onRoute('create')} onFavorites={() => onRoute('favorites')} onCollection={onCollection} />;
+  if (opened) return <InspirationView key={opened.key} idea={opened} items={items} profile={profile} favorite={library.favorites.some(idea => idea.key === opened.key)} selected={library.selected?.key === opened.key} onFavorite={() => onFavorite(opened)} onSelect={() => { const clear = library.selected?.key === opened.key; if (onSelect(opened, clear)) setState(previous => ({ ...previous, selected: clear ? null : opened.id })); }} onOpen={onOpen} onBack={() => onRoute('create')} onFavorites={() => onRoute('favorites')} onCollection={onCollection} onTutorial={() => onTutorial(opened)} tutorialExists={tutorials.some(session => session.idea.key === opened.key && session.status !== 'completed')} />;
   if (openedKey) return <section className="creationEmpty"><h1>Cette fiche n’est plus disponible</h1><p>Retrouve tes favoris ou compose une nouvelle inspiration.</p><button onClick={() => onRoute('favorites')}>Mes favoris</button><button onClick={() => onRoute('create')}>Créer une inspiration</button></section>;
 
   return <div className="creationPage">
