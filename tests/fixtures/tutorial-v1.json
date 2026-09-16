@@ -1,0 +1,1668 @@
+{
+  "sessions": [
+    {
+      "id": "legacy-review",
+      "version": 1,
+      "idea": {
+        "id": "accent:legacy-color-0:legacy-color-1::0",
+        "pattern": "accent",
+        "title": "Un ongle qui change tout",
+        "description": "Prune, avec Rose sur l’annulaire.",
+        "palette": [
+          {
+            "id": "legacy-color-0",
+            "name": "Prune",
+            "type": "Semi-permanent",
+            "color": "#713750",
+            "family": "Rose",
+            "usage": "Couleur seule",
+            "finish": "Brillant"
+          },
+          {
+            "id": "legacy-color-1",
+            "name": "Rose",
+            "type": "Semi-permanent",
+            "color": "#d8b1b8",
+            "family": "Rose",
+            "usage": "Couleur seule",
+            "finish": "Brillant"
+          }
+        ],
+        "polishCount": 2,
+        "resources": [
+          {
+            "id": "legacy-lamp",
+            "name": "Lampe LED",
+            "type": "Matériel",
+            "equipmentCategory": "Lampe UV / LED"
+          }
+        ],
+        "nails": [
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-1",
+            "color": "#d8b1b8",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          }
+        ],
+        "minutes": 30,
+        "rank": 0,
+        "score": 6.66711247432977,
+        "reasons": [
+          "Avec les produits de ta collection"
+        ],
+        "shape": "Amande",
+        "length": "Courte",
+        "options": {},
+        "key": "idea-1wmggvi",
+        "savedAt": "2026-09-16T14:56:24.304Z"
+      },
+      "firstHand": "left",
+      "steps": [
+        {
+          "id": "products",
+          "kind": "products",
+          "title": "Rassemble tes produits",
+          "section": "Avant de commencer",
+          "body": "Prépare les références de cette inspiration. Coche chaque produit quand il est prêt près de toi.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-color-1",
+              "name": "Rose",
+              "type": "Semi-permanent",
+              "color": "#d8b1b8",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [],
+          "tasks": [
+            {
+              "id": "product-legacy-color-0",
+              "label": "Prune",
+              "productId": "legacy-color-0"
+            },
+            {
+              "id": "product-legacy-color-1",
+              "label": "Rose",
+              "productId": "legacy-color-1"
+            },
+            {
+              "id": "product-legacy-lamp",
+              "label": "Lampe LED",
+              "productId": "legacy-lamp"
+            }
+          ]
+        },
+        {
+          "id": "prepare",
+          "kind": "prepare",
+          "title": "Prépare ton support",
+          "section": "Avant de commencer",
+          "products": [],
+          "targets": [],
+          "body": "Réalise la préparation et, si nécessaire, la pose de tes capsules selon ton protocole. Applique une base seulement si tes produits la demandent. Le guide commence ensuite par la couleur.",
+          "tasks": [
+            {
+              "id": "ready",
+              "label": "Mes ongles sont prêts à recevoir la couleur"
+            }
+          ]
+        },
+        {
+          "id": "left-color-legacy-color-0",
+          "kind": "color",
+          "title": "Prune",
+          "body": "Applique Prune sur les ongles repérés. Répète les couches prévues par sa notice, en respectant le temps requis entre chaque couche.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "nail-0",
+              "label": "Pouce terminé",
+              "nailIndex": 0
+            },
+            {
+              "id": "nail-1",
+              "label": "Index terminé",
+              "nailIndex": 1
+            },
+            {
+              "id": "nail-2",
+              "label": "Majeur terminé",
+              "nailIndex": 2
+            },
+            {
+              "id": "nail-4",
+              "label": "Auriculaire terminé",
+              "nailIndex": 4
+            }
+          ],
+          "timer": "lamp",
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "left-color-legacy-color-1",
+          "kind": "color",
+          "title": "Rose",
+          "body": "Applique Rose sur les ongles repérés. Répète les couches prévues par sa notice, en respectant le temps requis entre chaque couche.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-1",
+              "name": "Rose",
+              "type": "Semi-permanent",
+              "color": "#d8b1b8",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            3
+          ],
+          "tasks": [
+            {
+              "id": "nail-3",
+              "label": "Annulaire terminé",
+              "nailIndex": 3
+            }
+          ],
+          "timer": "lamp",
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "left-finish",
+          "kind": "finish",
+          "title": "Termine cette main",
+          "body": "Effectue la finition prévue par ton système de produits, si elle est nécessaire. Vérifie le résultat et les temps requis avant de passer à la suite.",
+          "hint": "Aucun top coat n’est ajouté automatiquement : certains produits l’intègrent déjà.",
+          "products": [],
+          "targets": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "finished",
+              "label": "Main gauche terminée"
+            }
+          ],
+          "timer": null,
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "right-color-legacy-color-0",
+          "kind": "color",
+          "title": "Prune",
+          "body": "Applique Prune sur les ongles repérés. Répète les couches prévues par sa notice, en respectant le temps requis entre chaque couche.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "nail-0",
+              "label": "Pouce terminé",
+              "nailIndex": 0
+            },
+            {
+              "id": "nail-1",
+              "label": "Index terminé",
+              "nailIndex": 1
+            },
+            {
+              "id": "nail-2",
+              "label": "Majeur terminé",
+              "nailIndex": 2
+            },
+            {
+              "id": "nail-4",
+              "label": "Auriculaire terminé",
+              "nailIndex": 4
+            }
+          ],
+          "timer": "lamp",
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "right-color-legacy-color-1",
+          "kind": "color",
+          "title": "Rose",
+          "body": "Applique Rose sur les ongles repérés. Répète les couches prévues par sa notice, en respectant le temps requis entre chaque couche.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-1",
+              "name": "Rose",
+              "type": "Semi-permanent",
+              "color": "#d8b1b8",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            3
+          ],
+          "tasks": [
+            {
+              "id": "nail-3",
+              "label": "Annulaire terminé",
+              "nailIndex": 3
+            }
+          ],
+          "timer": "lamp",
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "right-finish",
+          "kind": "finish",
+          "title": "Termine cette main",
+          "body": "Effectue la finition prévue par ton système de produits, si elle est nécessaire. Vérifie le résultat et les temps requis avant de passer à la suite.",
+          "hint": "Aucun top coat n’est ajouté automatiquement : certains produits l’intègrent déjà.",
+          "products": [],
+          "targets": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "finished",
+              "label": "Main droite terminée"
+            }
+          ],
+          "timer": null,
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "review",
+          "kind": "review",
+          "title": "Ta pose est prête ?",
+          "section": "Le dernier regard",
+          "body": "Vérifie les deux mains et les finitions. Quand tout est terminé, enregistre la fin de ta pose.",
+          "products": [],
+          "targets": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "left",
+              "label": "Main gauche vérifiée"
+            },
+            {
+              "id": "right",
+              "label": "Main droite vérifiée"
+            }
+          ]
+        }
+      ],
+      "status": "active",
+      "current": 8,
+      "checks": {
+        "products": [
+          "product-legacy-color-0",
+          "product-legacy-color-1",
+          "product-legacy-lamp"
+        ],
+        "prepare": [
+          "ready"
+        ],
+        "left-color-legacy-color-0": [
+          "nail-0",
+          "nail-1",
+          "nail-2",
+          "nail-4"
+        ],
+        "left-color-legacy-color-1": [
+          "nail-3"
+        ],
+        "left-finish": [
+          "finished"
+        ],
+        "right-color-legacy-color-0": [
+          "nail-0",
+          "nail-1",
+          "nail-2",
+          "nail-4"
+        ],
+        "right-color-legacy-color-1": [
+          "nail-3"
+        ],
+        "right-finish": [
+          "finished"
+        ]
+      },
+      "completed": [
+        "products",
+        "prepare",
+        "left-color-legacy-color-0",
+        "left-color-legacy-color-1",
+        "left-finish",
+        "right-color-legacy-color-0",
+        "right-color-legacy-color-1",
+        "right-finish"
+      ],
+      "timer": {
+        "status": "idle",
+        "stepId": null,
+        "durationMs": 0,
+        "remainingMs": 0,
+        "endsAt": null
+      },
+      "durations": {},
+      "createdAt": 100000,
+      "startedAt": 101000,
+      "completedAt": null,
+      "updatedAt": 125000
+    },
+    {
+      "id": "legacy-completed",
+      "version": 1,
+      "idea": {
+        "id": "accent:legacy-color-0:legacy-color-1::0",
+        "pattern": "accent",
+        "title": "Un ongle qui change tout",
+        "description": "Prune, avec Rose sur l’annulaire.",
+        "palette": [
+          {
+            "id": "legacy-color-0",
+            "name": "Prune",
+            "type": "Semi-permanent",
+            "color": "#713750",
+            "family": "Rose",
+            "usage": "Couleur seule",
+            "finish": "Brillant"
+          },
+          {
+            "id": "legacy-color-1",
+            "name": "Rose",
+            "type": "Semi-permanent",
+            "color": "#d8b1b8",
+            "family": "Rose",
+            "usage": "Couleur seule",
+            "finish": "Brillant"
+          }
+        ],
+        "polishCount": 2,
+        "resources": [
+          {
+            "id": "legacy-lamp",
+            "name": "Lampe LED",
+            "type": "Matériel",
+            "equipmentCategory": "Lampe UV / LED"
+          }
+        ],
+        "nails": [
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-1",
+            "color": "#d8b1b8",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Brillant",
+            "decoration": null,
+            "drawing": null,
+            "accentColor": "#d8b1b8",
+            "accentProductId": null
+          }
+        ],
+        "minutes": 30,
+        "rank": 0,
+        "score": 6.66711247432977,
+        "reasons": [
+          "Avec les produits de ta collection"
+        ],
+        "shape": "Amande",
+        "length": "Courte",
+        "options": {},
+        "key": "idea-1wmggvi",
+        "savedAt": "2026-09-16T14:56:24.304Z"
+      },
+      "firstHand": "left",
+      "steps": [
+        {
+          "id": "products",
+          "kind": "products",
+          "title": "Rassemble tes produits",
+          "section": "Avant de commencer",
+          "body": "Prépare les références de cette inspiration. Coche chaque produit quand il est prêt près de toi.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-color-1",
+              "name": "Rose",
+              "type": "Semi-permanent",
+              "color": "#d8b1b8",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [],
+          "tasks": [
+            {
+              "id": "product-legacy-color-0",
+              "label": "Prune",
+              "productId": "legacy-color-0"
+            },
+            {
+              "id": "product-legacy-color-1",
+              "label": "Rose",
+              "productId": "legacy-color-1"
+            },
+            {
+              "id": "product-legacy-lamp",
+              "label": "Lampe LED",
+              "productId": "legacy-lamp"
+            }
+          ]
+        },
+        {
+          "id": "prepare",
+          "kind": "prepare",
+          "title": "Prépare ton support",
+          "section": "Avant de commencer",
+          "products": [],
+          "targets": [],
+          "body": "Réalise la préparation et, si nécessaire, la pose de tes capsules selon ton protocole. Applique une base seulement si tes produits la demandent. Le guide commence ensuite par la couleur.",
+          "tasks": [
+            {
+              "id": "ready",
+              "label": "Mes ongles sont prêts à recevoir la couleur"
+            }
+          ]
+        },
+        {
+          "id": "left-color-legacy-color-0",
+          "kind": "color",
+          "title": "Prune",
+          "body": "Applique Prune sur les ongles repérés. Répète les couches prévues par sa notice, en respectant le temps requis entre chaque couche.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "nail-0",
+              "label": "Pouce terminé",
+              "nailIndex": 0
+            },
+            {
+              "id": "nail-1",
+              "label": "Index terminé",
+              "nailIndex": 1
+            },
+            {
+              "id": "nail-2",
+              "label": "Majeur terminé",
+              "nailIndex": 2
+            },
+            {
+              "id": "nail-4",
+              "label": "Auriculaire terminé",
+              "nailIndex": 4
+            }
+          ],
+          "timer": "lamp",
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "left-color-legacy-color-1",
+          "kind": "color",
+          "title": "Rose",
+          "body": "Applique Rose sur les ongles repérés. Répète les couches prévues par sa notice, en respectant le temps requis entre chaque couche.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-1",
+              "name": "Rose",
+              "type": "Semi-permanent",
+              "color": "#d8b1b8",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            3
+          ],
+          "tasks": [
+            {
+              "id": "nail-3",
+              "label": "Annulaire terminé",
+              "nailIndex": 3
+            }
+          ],
+          "timer": "lamp",
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "left-finish",
+          "kind": "finish",
+          "title": "Termine cette main",
+          "body": "Effectue la finition prévue par ton système de produits, si elle est nécessaire. Vérifie le résultat et les temps requis avant de passer à la suite.",
+          "hint": "Aucun top coat n’est ajouté automatiquement : certains produits l’intègrent déjà.",
+          "products": [],
+          "targets": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "finished",
+              "label": "Main gauche terminée"
+            }
+          ],
+          "timer": null,
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "right-color-legacy-color-0",
+          "kind": "color",
+          "title": "Prune",
+          "body": "Applique Prune sur les ongles repérés. Répète les couches prévues par sa notice, en respectant le temps requis entre chaque couche.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "nail-0",
+              "label": "Pouce terminé",
+              "nailIndex": 0
+            },
+            {
+              "id": "nail-1",
+              "label": "Index terminé",
+              "nailIndex": 1
+            },
+            {
+              "id": "nail-2",
+              "label": "Majeur terminé",
+              "nailIndex": 2
+            },
+            {
+              "id": "nail-4",
+              "label": "Auriculaire terminé",
+              "nailIndex": 4
+            }
+          ],
+          "timer": "lamp",
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "right-color-legacy-color-1",
+          "kind": "color",
+          "title": "Rose",
+          "body": "Applique Rose sur les ongles repérés. Répète les couches prévues par sa notice, en respectant le temps requis entre chaque couche.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-1",
+              "name": "Rose",
+              "type": "Semi-permanent",
+              "color": "#d8b1b8",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Brillant"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            3
+          ],
+          "tasks": [
+            {
+              "id": "nail-3",
+              "label": "Annulaire terminé",
+              "nailIndex": 3
+            }
+          ],
+          "timer": "lamp",
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "right-finish",
+          "kind": "finish",
+          "title": "Termine cette main",
+          "body": "Effectue la finition prévue par ton système de produits, si elle est nécessaire. Vérifie le résultat et les temps requis avant de passer à la suite.",
+          "hint": "Aucun top coat n’est ajouté automatiquement : certains produits l’intègrent déjà.",
+          "products": [],
+          "targets": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "finished",
+              "label": "Main droite terminée"
+            }
+          ],
+          "timer": null,
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "review",
+          "kind": "review",
+          "title": "Ta pose est prête ?",
+          "section": "Le dernier regard",
+          "body": "Vérifie les deux mains et les finitions. Quand tout est terminé, enregistre la fin de ta pose.",
+          "products": [],
+          "targets": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "left",
+              "label": "Main gauche vérifiée"
+            },
+            {
+              "id": "right",
+              "label": "Main droite vérifiée"
+            }
+          ]
+        }
+      ],
+      "status": "completed",
+      "current": 8,
+      "checks": {
+        "products": [
+          "product-legacy-color-0",
+          "product-legacy-color-1",
+          "product-legacy-lamp"
+        ],
+        "prepare": [
+          "ready"
+        ],
+        "left-color-legacy-color-0": [
+          "nail-0",
+          "nail-1",
+          "nail-2",
+          "nail-4"
+        ],
+        "left-color-legacy-color-1": [
+          "nail-3"
+        ],
+        "left-finish": [
+          "finished"
+        ],
+        "right-color-legacy-color-0": [
+          "nail-0",
+          "nail-1",
+          "nail-2",
+          "nail-4"
+        ],
+        "right-color-legacy-color-1": [
+          "nail-3"
+        ],
+        "right-finish": [
+          "finished"
+        ],
+        "review": [
+          "left",
+          "right"
+        ]
+      },
+      "completed": [
+        "products",
+        "prepare",
+        "left-color-legacy-color-0",
+        "left-color-legacy-color-1",
+        "left-finish",
+        "right-color-legacy-color-0",
+        "right-color-legacy-color-1",
+        "right-finish",
+        "review"
+      ],
+      "timer": {
+        "status": "idle",
+        "stepId": null,
+        "durationMs": 0,
+        "remainingMs": 0,
+        "endsAt": null
+      },
+      "durations": {},
+      "createdAt": 100000,
+      "startedAt": 101000,
+      "completedAt": 128000,
+      "updatedAt": 128000
+    },
+    {
+      "id": "legacy-magnetic",
+      "version": 1,
+      "idea": {
+        "id": "solid:legacy-color-0:::0",
+        "pattern": "solid",
+        "title": "L’essentiel rose",
+        "description": "Prune sur les cinq ongles.",
+        "palette": [
+          {
+            "id": "legacy-color-0",
+            "name": "Prune",
+            "type": "Semi-permanent",
+            "color": "#713750",
+            "family": "Rose",
+            "usage": "Couleur seule",
+            "finish": "Cat-eye"
+          }
+        ],
+        "polishCount": 1,
+        "resources": [
+          {
+            "id": "legacy-lamp",
+            "name": "Lampe LED",
+            "type": "Matériel",
+            "equipmentCategory": "Lampe UV / LED"
+          },
+          {
+            "id": "legacy-magnet",
+            "name": "Aimant",
+            "type": "Matériel",
+            "equipmentCategory": "Aimant cat-eye"
+          }
+        ],
+        "nails": [
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Cat-eye",
+            "decoration": null,
+            "drawing": null,
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Cat-eye",
+            "decoration": null,
+            "drawing": null,
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Cat-eye",
+            "decoration": null,
+            "drawing": null,
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Cat-eye",
+            "decoration": null,
+            "drawing": null,
+            "accentProductId": null
+          },
+          {
+            "productId": "legacy-color-0",
+            "color": "#713750",
+            "finish": "Cat-eye",
+            "decoration": null,
+            "drawing": null,
+            "accentProductId": null
+          }
+        ],
+        "minutes": 25,
+        "rank": 0,
+        "score": 8.344980656169355,
+        "reasons": [
+          "Avec les produits de ta collection"
+        ],
+        "shape": "Amande",
+        "length": "Courte",
+        "options": {},
+        "key": "idea-1i7ox74",
+        "savedAt": "2026-09-16T14:56:24.307Z"
+      },
+      "firstHand": "left",
+      "steps": [
+        {
+          "id": "products",
+          "kind": "products",
+          "title": "Rassemble tes produits",
+          "section": "Avant de commencer",
+          "body": "Prépare les références de cette inspiration. Coche chaque produit quand il est prêt près de toi.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            }
+          ],
+          "targets": [],
+          "tasks": [
+            {
+              "id": "product-legacy-color-0",
+              "label": "Prune",
+              "productId": "legacy-color-0"
+            },
+            {
+              "id": "product-legacy-lamp",
+              "label": "Lampe LED",
+              "productId": "legacy-lamp"
+            },
+            {
+              "id": "product-legacy-magnet",
+              "label": "Aimant",
+              "productId": "legacy-magnet"
+            }
+          ]
+        },
+        {
+          "id": "prepare",
+          "kind": "prepare",
+          "title": "Prépare ton support",
+          "section": "Avant de commencer",
+          "products": [],
+          "targets": [],
+          "body": "Réalise la préparation et, si nécessaire, la pose de tes capsules selon ton protocole. Applique une base seulement si tes produits la demandent. Le guide commence ensuite par la couleur.",
+          "tasks": [
+            {
+              "id": "ready",
+              "label": "Mes ongles sont prêts à recevoir la couleur"
+            }
+          ]
+        },
+        {
+          "id": "left-color-legacy-color-0-0",
+          "kind": "magnetic",
+          "title": "Prune · pouce",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            0
+          ],
+          "tasks": [
+            {
+              "id": "nail-0",
+              "label": "Pouce terminé",
+              "nailIndex": 0
+            }
+          ],
+          "timer": "lamp",
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "left-color-legacy-color-0-1",
+          "kind": "magnetic",
+          "title": "Prune · index",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            1
+          ],
+          "tasks": [
+            {
+              "id": "nail-1",
+              "label": "Index terminé",
+              "nailIndex": 1
+            }
+          ],
+          "timer": "lamp",
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "left-color-legacy-color-0-2",
+          "kind": "magnetic",
+          "title": "Prune · majeur",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            2
+          ],
+          "tasks": [
+            {
+              "id": "nail-2",
+              "label": "Majeur terminé",
+              "nailIndex": 2
+            }
+          ],
+          "timer": "lamp",
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "left-color-legacy-color-0-3",
+          "kind": "magnetic",
+          "title": "Prune · annulaire",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            3
+          ],
+          "tasks": [
+            {
+              "id": "nail-3",
+              "label": "Annulaire terminé",
+              "nailIndex": 3
+            }
+          ],
+          "timer": "lamp",
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "left-color-legacy-color-0-4",
+          "kind": "magnetic",
+          "title": "Prune · auriculaire",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            4
+          ],
+          "tasks": [
+            {
+              "id": "nail-4",
+              "label": "Auriculaire terminé",
+              "nailIndex": 4
+            }
+          ],
+          "timer": "lamp",
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "left-finish",
+          "kind": "finish",
+          "title": "Termine cette main",
+          "body": "Effectue la finition prévue par ton système de produits, si elle est nécessaire. Vérifie le résultat et les temps requis avant de passer à la suite.",
+          "hint": "Aucun top coat n’est ajouté automatiquement : certains produits l’intègrent déjà.",
+          "products": [],
+          "targets": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "finished",
+              "label": "Main gauche terminée"
+            }
+          ],
+          "timer": null,
+          "hand": "left",
+          "section": "Main gauche"
+        },
+        {
+          "id": "right-color-legacy-color-0-0",
+          "kind": "magnetic",
+          "title": "Prune · pouce",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            0
+          ],
+          "tasks": [
+            {
+              "id": "nail-0",
+              "label": "Pouce terminé",
+              "nailIndex": 0
+            }
+          ],
+          "timer": "lamp",
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "right-color-legacy-color-0-1",
+          "kind": "magnetic",
+          "title": "Prune · index",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            1
+          ],
+          "tasks": [
+            {
+              "id": "nail-1",
+              "label": "Index terminé",
+              "nailIndex": 1
+            }
+          ],
+          "timer": "lamp",
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "right-color-legacy-color-0-2",
+          "kind": "magnetic",
+          "title": "Prune · majeur",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            2
+          ],
+          "tasks": [
+            {
+              "id": "nail-2",
+              "label": "Majeur terminé",
+              "nailIndex": 2
+            }
+          ],
+          "timer": "lamp",
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "right-color-legacy-color-0-3",
+          "kind": "magnetic",
+          "title": "Prune · annulaire",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            3
+          ],
+          "tasks": [
+            {
+              "id": "nail-3",
+              "label": "Annulaire terminé",
+              "nailIndex": 3
+            }
+          ],
+          "timer": "lamp",
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "right-color-legacy-color-0-4",
+          "kind": "magnetic",
+          "title": "Prune · auriculaire",
+          "body": "Sur cet ongle, applique la couleur, forme l’effet avec Aimant, puis fixe-le selon la notice avant de passer à l’ongle suivant.",
+          "hint": "Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.",
+          "products": [
+            {
+              "id": "legacy-color-0",
+              "name": "Prune",
+              "type": "Semi-permanent",
+              "color": "#713750",
+              "family": "Rose",
+              "usage": "Couleur seule",
+              "finish": "Cat-eye"
+            },
+            {
+              "id": "legacy-magnet",
+              "name": "Aimant",
+              "type": "Matériel",
+              "equipmentCategory": "Aimant cat-eye"
+            },
+            {
+              "id": "legacy-lamp",
+              "name": "Lampe LED",
+              "type": "Matériel",
+              "equipmentCategory": "Lampe UV / LED"
+            }
+          ],
+          "targets": [
+            4
+          ],
+          "tasks": [
+            {
+              "id": "nail-4",
+              "label": "Auriculaire terminé",
+              "nailIndex": 4
+            }
+          ],
+          "timer": "lamp",
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "right-finish",
+          "kind": "finish",
+          "title": "Termine cette main",
+          "body": "Effectue la finition prévue par ton système de produits, si elle est nécessaire. Vérifie le résultat et les temps requis avant de passer à la suite.",
+          "hint": "Aucun top coat n’est ajouté automatiquement : certains produits l’intègrent déjà.",
+          "products": [],
+          "targets": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "finished",
+              "label": "Main droite terminée"
+            }
+          ],
+          "timer": null,
+          "hand": "right",
+          "section": "Main droite"
+        },
+        {
+          "id": "review",
+          "kind": "review",
+          "title": "Ta pose est prête ?",
+          "section": "Le dernier regard",
+          "body": "Vérifie les deux mains et les finitions. Quand tout est terminé, enregistre la fin de ta pose.",
+          "products": [],
+          "targets": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "tasks": [
+            {
+              "id": "left",
+              "label": "Main gauche vérifiée"
+            },
+            {
+              "id": "right",
+              "label": "Main droite vérifiée"
+            }
+          ]
+        }
+      ],
+      "status": "paused",
+      "current": 4,
+      "checks": {
+        "products": [
+          "product-legacy-color-0",
+          "product-legacy-lamp",
+          "product-legacy-magnet"
+        ],
+        "prepare": [
+          "ready"
+        ],
+        "left-color-legacy-color-0-0": [
+          "nail-0"
+        ],
+        "left-color-legacy-color-0-1": [
+          "nail-1"
+        ]
+      },
+      "completed": [
+        "products",
+        "prepare",
+        "left-color-legacy-color-0-0",
+        "left-color-legacy-color-0-1"
+      ],
+      "timer": {
+        "status": "paused",
+        "stepId": "left-color-legacy-color-0-2",
+        "durationMs": 30000,
+        "remainingMs": 23000,
+        "endsAt": null
+      },
+      "durations": {
+        "left-color-legacy-color-0-2": 30
+      },
+      "createdAt": 128000,
+      "startedAt": 129000,
+      "completedAt": null,
+      "updatedAt": 147000
+    }
+  ],
+  "activeId": "legacy-magnetic"
+}

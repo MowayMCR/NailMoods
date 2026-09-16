@@ -1,5 +1,5 @@
 import { normalize } from './creationEngine.js';
-import { fingers, snapshotIdea, validIdea } from './inspirations.js';
+import { snapshotIdea, validIdea } from './inspirations.js';
 
 export const TUTORIAL_KEY = 'nm-tutorials-v1';
 export const handLabels = { left: 'Main gauche', right: 'Main droite' };
@@ -7,38 +7,35 @@ const sameId = (a, b) => String(a) === String(b);
 const lampProduct = item => ['Semi-permanent', 'Gel'].includes(item.type);
 const magnetic = item => /cat.?eye|magnetique|avec aimant/.test(normalize([item.finish, item.effect, item.usage].join(' ')));
 const uniqueProducts = items => [...new Map(items.filter(Boolean).map(item => [String(item.id), item])).values()];
-const nailTasks = indices => indices.map(index => ({ id: 'nail-' + index, label: fingers[index] + ' terminé', nailIndex: index }));
 export const emptyTimer = () => ({ status: 'idle', stepId: null, durationMs: 0, remainingMs: 0, endsAt: null });
+const magneticInstructions = magnet => 'Travaille un ongle à la fois : applique la couleur, forme l’effet avec ' + magnet.name + ', puis fixe-le selon la notice avant de passer au suivant.';
 
 export function buildTutorial(idea, firstHand = 'left') {
   const products = uniqueProducts([...idea.palette, ...idea.resources]);
   const steps = [{
     id: 'products', kind: 'products', title: 'Rassemble tes produits', section: 'Avant de commencer',
-    body: 'Prépare les références de cette inspiration. Coche chaque produit quand il est prêt près de toi.',
-    products, targets: [], tasks: products.map(item => ({ id: 'product-' + item.id, label: item.name, productId: item.id })),
+    body: 'Prépare les références de cette inspiration près de toi. Quand tout est prêt, passe à la suite en une seule touche.',
+    products, targets: [],
   }, {
     id: 'prepare', kind: 'prepare', title: 'Prépare ton support', section: 'Avant de commencer', products: [], targets: [],
     body: 'Réalise la préparation et, si nécessaire, la pose de tes capsules selon ton protocole. Applique une base seulement si tes produits la demandent. Le guide commence ensuite par la couleur.',
-    tasks: [{ id: 'ready', label: 'Mes ongles sont prêts à recevoir la couleur' }],
   }];
   for (const hand of firstHand === 'right' ? ['right', 'left'] : ['left', 'right']) {
     const add = step => steps.push({ ...step, id: hand + '-' + step.id, hand, section: handLabels[hand] });
     for (const product of idea.palette) {
       const targets = idea.nails.flatMap((nail, index) => sameId(nail.productId, product.id) ? [index] : []);
       if (!targets.length) continue;
-      // A magnetic effect is shaped and set on one nail before moving to the next.
-      for (const group of magnetic(product) ? targets.map(index => [index]) : [targets]) {
-        const magnet = magnetic(product) && idea.resources.find(item => item.equipmentCategory === 'Aimant cat-eye');
-        add({
-          id: 'color-' + product.id + (magnet ? '-' + group[0] : ''), kind: magnet ? 'magnetic' : 'color',
-          title: product.name + (magnet ? ' · ' + fingers[group[0]].toLowerCase() : ''),
-          body: magnet ? 'Sur cet ongle, applique la couleur, forme l’effet avec ' + magnet.name + ', puis fixe-le selon la notice avant de passer à l’ongle suivant.'
+      // Keep nail-by-nail application advice, with one validation for the color.
+      const magnet = magnetic(product) && idea.resources.find(item => item.equipmentCategory === 'Aimant cat-eye');
+      add({
+          id: 'color-' + product.id, kind: magnet ? 'magnetic' : 'color',
+          title: product.name,
+          body: magnet ? magneticInstructions(magnet)
             : 'Applique ' + product.name + ' sur les ongles repérés. Répète les couches prévues par sa notice, en respectant le temps requis entre chaque couche.',
           hint: lampProduct(product) ? 'Pour chaque couche, utilise la lampe compatible et le temps indiqués par la marque. Évite tout contact du produit avec la peau.' : 'Laisse sécher chaque couche selon les indications du produit avant de poursuivre.',
           products: uniqueProducts([product, magnet, lampProduct(product) && idea.resources.find(item => item.equipmentCategory === 'Lampe UV / LED')]),
-          targets: group, tasks: nailTasks(group), timer: lampProduct(product) ? 'lamp' : 'dry',
+          targets, timer: lampProduct(product) ? 'lamp' : 'dry',
         });
-      }
     }
     for (const pattern of ['french', 'line', 'dots']) {
       const targets = idea.nails.flatMap((nail, index) => nail.drawing === pattern ? [index] : []);
@@ -46,10 +43,10 @@ export function buildTutorial(idea, firstHand = 'left') {
       const accent = uniqueProducts(targets.map(index => idea.palette.find(item => sameId(item.id, idea.nails[index].accentProductId))));
       const tool = idea.resources.find(item => item.equipmentCategory === (pattern === 'dots' ? 'Dotting tool' : 'Pinceau'));
       const magnet = accent.some(magnetic) && idea.resources.find(item => item.equipmentCategory === 'Aimant cat-eye');
-      for (const group of magnet ? targets.map(index => [index]) : [targets]) add({ id: pattern + (magnet ? '-' + group[0] : ''), kind: 'drawing', title: { french: 'Dessine les pointes', line: 'Ajoute la ligne', dots: 'Ajoute les petits pois' }[pattern],
+      add({ id: pattern, kind: 'drawing', title: { french: 'Dessine les pointes', line: 'Ajoute la ligne', dots: 'Ajoute les petits pois' }[pattern],
         body: { french: 'Trace les pointes de la French sur les ongles repérés, avec la couleur de détail de l’aperçu.', line: 'Trace la ligne sur les ongles repérés avec la couleur de détail de l’aperçu.', dots: 'Dépose les pois sur les ongles repérés avec ton dotting tool et la couleur de détail.' }[pattern],
-        hint: magnet ? 'Sur cet ongle, forme l’effet avec ' + magnet.name + ' puis fixe-le selon la notice avant de passer au suivant.' : 'Respecte l’application et le séchage ou la polymérisation de cette couleur avant la suite.',
-        products: uniqueProducts([...accent, tool, magnet]), targets: group, tasks: nailTasks(group), timer: accent.some(lampProduct) ? 'lamp' : 'dry',
+        hint: magnet ? 'Travaille un ongle à la fois : forme l’effet avec ' + magnet.name + ' puis fixe-le selon la notice avant de passer au suivant.' : 'Respecte l’application et le séchage ou la polymérisation de cette couleur avant la suite.',
+        products: uniqueProducts([...accent, tool, magnet]), targets, timer: accent.some(lampProduct) ? 'lamp' : 'dry',
       });
     }
     const stickerTargets = idea.nails.flatMap((nail, index) => nail.decoration ? [index] : []);
@@ -58,28 +55,24 @@ export function buildTutorial(idea, firstHand = 'left') {
       add({ id: 'stickers', kind: 'sticker', title: 'Place tes décorations',
         body: 'Place ' + stickers.map(item => item.name).join(', ') + ' sur les ongles repérés, à l’emplacement suggéré. Adapte la taille et le motif à ta planche réelle.',
         hint: 'Suis les indications de tes stickers pour la surface de pose et leur fixation.',
-        products: stickers, targets: stickerTargets, tasks: nailTasks(stickerTargets),
+        products: stickers, targets: stickerTargets,
       });
     }
     const finish = idea.resources.filter(item => /top\s*coat/.test(normalize(item.name).replace(/-/g, ' ')));
     add({ id: 'finish', kind: 'finish', title: 'Termine cette main',
       body: finish.length ? 'Réalise la finition avec ' + finish.map(item => item.name).join(', ') + ' en suivant sa notice et celle des décorations.' : 'Effectue la finition prévue par ton système de produits, si elle est nécessaire. Vérifie le résultat et les temps requis avant de passer à la suite.',
       hint: 'Aucun top coat n’est ajouté automatiquement : certains produits l’intègrent déjà.',
-      products: finish, targets: [0, 1, 2, 3, 4], tasks: [{ id: 'finished', label: handLabels[hand] + ' terminée' }],
+      products: finish, targets: [0, 1, 2, 3, 4],
       timer: finish.length ? finish.some(lampProduct) ? 'lamp' : 'dry' : null,
     });
   }
-  steps.push({ id: 'review', kind: 'review', title: 'Ta pose est prête ?', section: 'Le dernier regard',
-    body: 'Vérifie les deux mains et les finitions. Quand tout est terminé, enregistre la fin de ta pose.', products: [], targets: [0, 1, 2, 3, 4],
-    tasks: [{ id: 'left', label: 'Main gauche vérifiée' }, { id: 'right', label: 'Main droite vérifiée' }],
-  });
   return steps;
 }
 
 export function newTutorial(idea, id, now = Date.now()) {
   const saved = snapshotIdea(idea);
-  return { id, version: 1, idea: saved, firstHand: 'left', steps: buildTutorial(saved), status: 'ready',
-    current: 0, checks: {}, completed: [], timer: emptyTimer(), durations: {}, createdAt: now, startedAt: null, completedAt: null, updatedAt: now };
+  return { id, version: 2, idea: saved, firstHand: 'left', steps: buildTutorial(saved), status: 'ready',
+    current: 0, completed: [], timer: emptyTimer(), durations: {}, createdAt: now, startedAt: null, completedAt: null, updatedAt: now };
 }
 
 export function timerRemaining(timer, now = Date.now()) {
@@ -90,10 +83,15 @@ export function timerFinished(timer, now = Date.now()) { return timer.status !==
 export function formatCountdown(ms) { const seconds = Math.ceil(Math.max(0, ms) / 1000); return Math.floor(seconds / 60).toString().padStart(2, '0') + ':' + (seconds % 60).toString().padStart(2, '0'); }
 export function firstIncomplete(session) { const next = session.steps.findIndex(step => !session.completed.includes(step.id)); return next < 0 ? session.steps.length - 1 : next; }
 export function canComplete(session, now = Date.now()) {
-  const step = session.steps[session.current];
   return session.status === 'active' && session.current <= firstIncomplete(session)
-    && step.tasks.every(task => (session.checks[step.id] || []).includes(task.id))
     && !(session.timer.status === 'running' && timerRemaining(session.timer, now) > 0);
+}
+
+export function completionLabel(session) {
+  const step = session.steps[session.current];
+  if (session.completed.includes(step.id)) return 'Continuer la pose';
+  if (session.current === session.steps.length - 1) return 'Terminer ma pose';
+  return { products: 'Produits prêts', prepare: 'Préparation terminée', color: 'Couleur terminée', magnetic: 'Couleur terminée', drawing: 'Dessin terminé', sticker: 'Décorations terminées', finish: handLabels[step.hand] + ' terminée' }[step.kind] || 'Étape terminée';
 }
 
 // All changes are explicit. Timer expiry never completes an application step.
@@ -117,13 +115,6 @@ export function updateTutorial(session, action, now = Date.now()) {
       return session.status === 'paused' ? { ...next, status: 'active' } : session;
     case 'go':
       return Number.isInteger(action.index) && action.index >= 0 && action.index < session.steps.length ? { ...next, current: action.index } : session;
-    case 'check': {
-      if (session.status !== 'active' || session.current > firstIncomplete(session) || !step.tasks.some(task => task.id === action.id)) return session;
-      const checked = session.checks[step.id] || [];
-      const remove = checked.includes(action.id);
-      return { ...next, checks: { ...session.checks, [step.id]: remove ? checked.filter(id => id !== action.id) : [...checked, action.id] },
-        completed: remove ? session.completed.filter(id => id !== step.id) : session.completed };
-    }
     case 'complete': {
       if (!canComplete(session, now)) return session;
       const completed = [...new Set([...session.completed, step.id])];
@@ -153,14 +144,56 @@ export function updateTutorial(session, action, now = Date.now()) {
 }
 
 export function validTutorial(session) {
-  return Boolean(session && typeof session.id === 'string' && session.version === 1 && validIdea(session.idea)
+  return Boolean(session && typeof session.id === 'string' && [1, 2].includes(session.version) && validIdea(session.idea)
     && ['ready', 'active', 'paused', 'completed'].includes(session.status)
     && Array.isArray(session.steps) && session.steps.length > 0 && session.steps.length < 100
     && session.steps.every(step => step && typeof step.id === 'string' && typeof step.title === 'string' && typeof step.body === 'string'
       && Array.isArray(step.targets) && step.targets.every(index => Number.isInteger(index) && index >= 0 && index < 5)
       && Array.isArray(step.products) && step.products.every(product => product && product.id != null && typeof product.name === 'string')
-      && Array.isArray(step.tasks) && step.tasks.length > 0 && step.tasks.every(task => task && typeof task.id === 'string' && typeof task.label === 'string'))
+      && (step.kind !== 'magnetic' || step.products.length > 0)
+      && (session.version === 2 || Array.isArray(step.tasks) && step.tasks.length > 0 && step.tasks.every(task => task && typeof task.id === 'string' && typeof task.label === 'string')))
     && new Set(session.steps.map(step => step.id)).size === session.steps.length);
+}
+
+// Migrate the saved steps themselves, keeping the original products and recipe.
+function simplifyLegacyTutorial(session) {
+  if (session.version !== 1) return session;
+  const groupId = step => step.kind === 'magnetic' ? step.hand + '-color-' + step.products[0].id
+    : step.kind === 'drawing' ? step.id.replace(/-[0-4]$/, '') : step.id;
+  const groups = new Map();
+  for (const original of session.steps.filter(step => step.kind !== 'review')) {
+    const id = groupId(original);
+    const { tasks, ...step } = original;
+    const group = groups.get(id);
+    if (group) {
+      group.step.targets = [...new Set([...group.step.targets, ...step.targets])].sort();
+      group.step.products = uniqueProducts([...group.step.products, ...step.products]);
+      group.originalIds.push(original.id);
+    } else {
+      const simplified = { ...step, id };
+      if (step.kind === 'products') simplified.body = 'Prépare les références de cette inspiration près de toi. Quand tout est prêt, passe à la suite en une seule touche.';
+      if (step.kind === 'magnetic') {
+        simplified.title = step.products[0].name;
+        const magnet = step.products.find(product => product.equipmentCategory === 'Aimant cat-eye');
+        if (magnet) simplified.body = magneticInstructions(magnet);
+      }
+      if (step.kind === 'drawing' && step.hint) simplified.hint = step.hint.replace('Sur cet ongle,', 'Travaille un ongle à la fois :');
+      groups.set(id, { step: simplified, originalIds: [original.id] });
+    }
+  }
+  const steps = [...groups.values()].map(group => group.step);
+  const completed = [...groups.values()].filter(group => group.originalIds.every(id => session.completed.includes(id))).map(group => group.step.id);
+  const currentId = groupId(session.steps[session.current]);
+  const timerStep = session.steps.find(step => step.id === session.timer.stepId);
+  const durations = {};
+  for (const step of session.steps) if (groups.has(groupId(step)) && session.durations[step.id]) durations[groupId(step)] = session.durations[step.id];
+  const timer = timerStep && groups.has(groupId(timerStep)) ? { ...session.timer, stepId: groupId(timerStep) } : emptyTimer();
+  if (timer.stepId && timer.durationMs > 0) durations[timer.stepId] = timer.durationMs / 1000;
+  const { checks, ...previous } = session;
+  const finished = completed.length === steps.length;
+  const migrated = { ...previous, version: 2, steps, completed, durations, timer, status: finished ? 'completed' : session.status,
+    completedAt: finished ? session.completedAt || session.updatedAt || session.createdAt : session.completedAt };
+  return { ...migrated, current: steps.some(step => step.id === currentId) ? steps.findIndex(step => step.id === currentId) : firstIncomplete(migrated) };
 }
 
 export function readTutorials(storage) {
@@ -169,18 +202,18 @@ export function readTutorials(storage) {
     const saved = JSON.parse(storage.getItem(TUTORIAL_KEY) || 'null');
     if (!Array.isArray(saved?.sessions)) return empty;
     const sessions = saved.sessions.filter(validTutorial).map(session => {
-      const checks = Object.fromEntries(session.steps.map(step => [step.id, Array.isArray(session.checks?.[step.id]) ? step.tasks.filter(task => session.checks[step.id].includes(task.id)).map(task => task.id) : []]));
-      const completed = session.steps.filter(step => Array.isArray(session.completed) && session.completed.includes(step.id) && step.tasks.every(task => checks[step.id].includes(task.id))).map(step => step.id);
+      const completed = session.steps.filter(step => Array.isArray(session.completed) && session.completed.includes(step.id)
+        && (session.version === 2 || Array.isArray(session.checks?.[step.id]) && step.tasks.every(task => session.checks[step.id].includes(task.id)))).map(step => step.id);
       const timer = session.timer;
       const validTimer = timer && ['idle', 'running', 'paused', 'done'].includes(timer.status)
         && (timer.status === 'idle' || session.steps.some(step => step.id === timer.stepId && step.timer))
         && Number.isFinite(timer.durationMs) && timer.durationMs >= 0 && timer.durationMs <= 3600000
         && Number.isFinite(timer.remainingMs) && timer.remainingMs >= 0 && timer.remainingMs <= timer.durationMs
         && (timer.status !== 'running' || Number.isFinite(timer.endsAt));
-      return { ...session, checks, completed, timer: validTimer ? timer : emptyTimer(), durations: session.durations && typeof session.durations === 'object' ? session.durations : {},
+      return simplifyLegacyTutorial({ ...session, completed, timer: validTimer ? timer : emptyTimer(), durations: session.durations && typeof session.durations === 'object' ? session.durations : {},
         current: Number.isInteger(session.current) ? Math.max(0, Math.min(session.steps.length - 1, session.current)) : 0,
-        status: session.status === 'completed' && completed.length !== session.steps.length ? 'paused' : session.status };
-    });
+        status: session.status === 'completed' && completed.length !== session.steps.length ? 'paused' : session.status });
+    }).filter(validTutorial);
     return { sessions, activeId: sessions.some(session => session.id === saved.activeId) ? saved.activeId : sessions.find(session => session.status !== 'completed')?.id || null };
   } catch { return empty; }
 }

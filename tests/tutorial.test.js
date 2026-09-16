@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { createSuggestions } from '../src/creationEngine.js';
 import { snapshotIdea } from '../src/inspirations.js';
-import { actOnTutorial, addTutorial, buildTutorial, canComplete, firstIncomplete, formatCountdown, newTutorial, readTutorials, timerFinished, timerRemaining, updateTutorial } from '../src/tutorial.js';
+import { actOnTutorial, addTutorial, buildTutorial, canComplete, completionLabel, firstIncomplete, formatCountdown, newTutorial, readTutorials, timerFinished, timerRemaining, updateTutorial } from '../src/tutorial.js';
 
 const colors = ['#713750', '#d8b1b8', '#d5bdad', '#7b609d', '#485ca0'].map((color, i) => ({ id: 'p' + i, name: 'Couleur ' + i, type: 'Semi-permanent', color, family: 'Rose', usage: 'Couleur seule', finish: 'Brillant' }));
 const lamp = { id: 'lamp', name: 'Lampe UV / LED', type: 'Matériel', equipmentCategory: 'Lampe UV / LED' };
@@ -13,10 +14,11 @@ const items = [...colors, lamp, stickers, brush];
 const profile = { shape: 'Amande', length: 'Courte', duration: '1 h +', level: 'Intermédiaire' };
 const idea = (count = 3, inventory = items) => snapshotIdea(createSuggestions(inventory, profile, { polishCount: count, duration: 90, level: 1 }).results[0], { polishCount: count, duration: 90, level: 1 });
 const apply = (session, action, now = 1000) => updateTutorial(session, action, now);
-const checkAll = session => session.steps[session.current].tasks.reduce((next, task) => (next.checks[next.steps[next.current].id] || []).includes(task.id) ? next : apply(next, { type: 'check', id: task.id }), session);
+const legacy = JSON.parse(readFileSync(new URL('./fixtures/tutorial-v1.json', import.meta.url), 'utf8'));
+const restore = value => readTutorials({ getItem: () => JSON.stringify(value) });
 function atColor() {
   let session = apply(newTutorial(idea(), 'pose', 1000), { type: 'start' });
-  for (let i = 0; i < 2; i++) session = apply(checkAll(session), { type: 'complete' });
+  for (let i = 0; i < 2; i++) session = apply(session, { type: 'complete' });
   return session;
 }
 
@@ -51,12 +53,13 @@ test('right-first changes hand order only; color, drawing and sticker targets re
   }
 });
 
-test('magnetic colors are treated nail by nail with the recorded magnet', () => {
+test('magnetic colors retain nail-by-nail guidance with one validation per color and hand', () => {
   const magnetic = { ...colors[0], finish: 'Cat-eye' };
   const saved = idea(1, [magnetic, lamp, magnet]);
   const steps = buildTutorial(saved).filter(step => step.kind === 'magnetic');
-  assert.equal(steps.length, 10);
-  assert.ok(steps.every(step => step.targets.length === 1 && step.products.some(product => product.id === magnet.id)));
+  assert.equal(steps.length, 2);
+  assert.ok(steps.every(step => step.targets.length === 5 && step.products.some(product => product.id === magnet.id)));
+  assert.ok(steps.every(step => step.body.includes('un ongle à la fois')));
 });
 
 test('classic polish has drying timers; no lamp, top coat or cure duration is invented', () => {
@@ -69,32 +72,35 @@ test('classic polish has drying timers; no lamp, top coat or cure duration is in
   assert.deepEqual(session.durations, {});
 });
 
-test('a magnetic French accent retains its magnet and is fixed one nail at a time', () => {
+test('a magnetic French keeps all nail targets and the magnet without five separate confirmations', () => {
   const magnetic = { ...colors[1], finish: 'Cat-eye' };
   const saved = createSuggestions([colors[0], magnetic, lamp, magnet, brush], profile, { polishCount: 2, duration: 90, level: 1 }, 1, 24).results.find(recipe => recipe.pattern === 'french' && recipe.nails[0].accentProductId === magnetic.id);
   assert.ok(saved);
   const steps = buildTutorial(saved).filter(step => step.kind === 'drawing');
-  assert.equal(steps.length, 10);
-  assert.ok(steps.every(step => step.targets.length === 1 && step.products.some(product => product.id === magnet.id)));
+  assert.equal(steps.length, 2);
+  assert.ok(steps.every(step => step.targets.length === 5 && step.products.some(product => product.id === magnet.id)));
+  assert.ok(steps.every(step => step.hint.includes('un ongle à la fois')));
 });
 
-test('steps cannot complete before their checklist, nor can future steps be silently skipped', () => {
+test('one action completes each step without checkboxes; future steps still cannot be skipped', () => {
   let session = newTutorial(idea(), 'pose');
   assert.equal(apply(session, { type: 'complete' }), session);
   session = apply(session, { type: 'start' });
+  assert.equal(canComplete(session), true);
+  assert.equal(completionLabel(session), 'Produits prêts');
+  session = apply(session, { type: 'go', index: 4 });
   assert.equal(canComplete(session), false);
   assert.equal(apply(session, { type: 'complete' }), session);
-  session = apply(session, { type: 'go', index: 4 });
-  assert.equal(apply(session, { type: 'check', id: session.steps[4].tasks[0].id }), session);
-  assert.equal(apply(session, { type: 'complete' }), session);
   session = apply(session, { type: 'go', index: 0 });
-  session = apply(checkAll(session), { type: 'complete' });
+  session = apply(session, { type: 'complete' });
   assert.equal(session.completed.length, 1);
   assert.equal(session.current, 1);
   session = apply(session, { type: 'go', index: 0 });
-  session = apply(session, { type: 'check', id: session.steps[0].tasks[0].id });
-  assert.equal(session.completed.length, 0);
-  assert.equal(firstIncomplete(session), 0);
+  assert.equal(completionLabel(session), 'Continuer la pose');
+  session = apply(session, { type: 'complete' });
+  assert.equal(session.completed.length, 1);
+  assert.equal(firstIncomplete(session), 1);
+  assert.equal(completionLabel(atColor()), 'Couleur terminée');
 });
 
 test('a timer tracks wall-clock time across reload/background and expiry never completes an application step', () => {
@@ -107,10 +113,8 @@ test('a timer tracks wall-clock time across reload/background and expiry never c
   assert.equal(timerRemaining(restored.timer, 43000), 0);
   assert.equal(timerFinished(restored.timer, 43000), true);
   assert.equal(restored.completed.length, 2);
-  assert.equal(canComplete(restored, 43000), false, 'checklist still required');
-  const checked = checkAll(restored);
-  assert.equal(canComplete(checked, 41000), false, 'cannot validate while timer is running');
-  assert.equal(canComplete(checked, 43000), true);
+  assert.equal(canComplete(restored, 41000), false, 'cannot validate while timer is running');
+  assert.equal(canComplete(restored, 43000), true, 'one explicit completion action is enough after expiry');
   assert.equal(formatCountdown(22001), '00:23');
   assert.equal(formatCountdown(0), '00:00');
 });
@@ -164,10 +168,15 @@ test('multiple poses retain their independent progress and only one can be activ
   assert.equal(store.sessions.find(session => session.id === first.id).completed.length, 2);
 });
 
-test('completion requires every step and both hands; repeating creates a separate pose', () => {
+test('the last hand finishes the pose directly, without a final review; repeating creates a separate pose', () => {
   let session = apply(newTutorial(idea(5), 'finished', 1000), { type: 'start' }, 1000);
   const snapshot = JSON.stringify(session.idea);
-  for (let i = 0; i < session.steps.length; i++) session = apply(checkAll(session), { type: 'complete' }, 2000 + i * 1000);
+  assert.ok(session.steps.every(step => step.kind !== 'review'));
+  for (let i = 0; i < session.steps.length - 1; i++) session = apply(session, { type: 'complete' }, 2000 + i * 1000);
+  assert.equal(session.status, 'active');
+  assert.equal(session.steps[session.current].kind, 'finish');
+  assert.equal(completionLabel(session), 'Terminer ma pose');
+  session = apply(session, { type: 'complete' }, 50000);
   assert.equal(session.status, 'completed');
   assert.equal(session.completed.length, session.steps.length);
   assert.ok(session.completedAt > 1000);
@@ -178,13 +187,60 @@ test('completion requires every step and both hands; repeating creates a separat
   assert.equal(store.sessions[0].completed.length, 0);
 });
 
+test('a saved 8-of-9 pose is finished after removing the redundant review; completed history is preserved', () => {
+  const migrated = restore(legacy);
+  assert.equal(migrated.sessions.length, legacy.sessions.length);
+  const finished = migrated.sessions.find(session => session.id === 'legacy-review');
+  assert.equal(finished.version, 2);
+  assert.equal(finished.status, 'completed');
+  assert.equal(finished.steps.length, 8);
+  assert.equal(finished.completed.length, 8);
+  assert.ok(finished.steps.every(step => step.kind !== 'review'));
+  const before = legacy.sessions.find(session => session.id === 'legacy-completed');
+  const after = migrated.sessions.find(session => session.id === before.id);
+  assert.equal(after.status, 'completed');
+  assert.equal(after.completedAt, before.completedAt);
+  for (const session of migrated.sessions) assert.deepEqual(session.idea, legacy.sessions.find(old => old.id === session.id).idea);
+  assert.deepEqual(restore(migrated), migrated, 'migration and subsequent reloads are stable');
+});
+
+test('a partly completed magnetic pose resumes on the grouped color with its paused timer intact', () => {
+  const before = legacy.sessions.find(session => session.id === 'legacy-magnetic');
+  const after = restore(legacy).sessions.find(session => session.id === before.id);
+  assert.equal(after.status, 'paused');
+  assert.deepEqual(after.completed, ['products', 'prepare']);
+  assert.equal(after.current, 2);
+  const step = after.steps[after.current];
+  assert.equal(step.kind, 'magnetic');
+  assert.deepEqual(step.targets, [0, 1, 2, 3, 4]);
+  assert.equal(after.timer.status, 'paused');
+  assert.equal(after.timer.stepId, step.id);
+  assert.equal(after.timer.remainingMs, before.timer.remainingMs);
+  assert.equal(after.durations[step.id], 30);
+  const resumed = apply(after, { type: 'resume' });
+  const next = apply(resumed, { type: 'complete' });
+  assert.equal(next.steps[next.current].kind, 'finish');
+  assert.equal(next.steps[next.current].hand, 'left');
+});
+
+test('legacy progress cannot finish a color when one of its original nails was still incomplete', () => {
+  const before = structuredClone(legacy);
+  const session = before.sessions.find(value => value.id === 'legacy-review');
+  session.checks[session.steps[2].id] = [];
+  const after = restore(before).sessions.find(value => value.id === session.id);
+  assert.equal(after.status, 'active');
+  assert.equal(after.current, 2);
+  assert.ok(!after.completed.includes(after.steps[2].id));
+  assert.equal(apply(after, { type: 'complete' }).status, 'completed');
+});
+
 test('malformed storage is recovered without losing the other valid poses or claiming completion', () => {
   for (const text of ['{', 'null', '42', '{"sessions":null}']) assert.deepEqual(readTutorials({ getItem: () => text }), { sessions: [], activeId: null });
   const session = atColor();
   const store = readTutorials({ getItem: () => JSON.stringify({ sessions: [null, { id: 'broken' }, { ...session, status: 'completed', timer: { status: 'running', endsAt: 'bad' }, current: 900, completed: ['products', 'invented'], checks: { products: ['not-a-task'] } }], activeId: 'gone' }) });
   assert.equal(store.sessions.length, 1);
   assert.equal(store.sessions[0].status, 'paused');
-  assert.equal(store.sessions[0].completed.length, 0);
+  assert.deepEqual(store.sessions[0].completed, ['products']);
   assert.equal(store.sessions[0].timer.status, 'idle');
   assert.equal(store.sessions[0].current, session.steps.length - 1);
 });

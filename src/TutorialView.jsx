@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronRight, Clock3, ListChecks, Pause, Play, RotateCcw, Sparkles, Timer } from 'lucide-react';
 import NailPreview from './NailPreview';
 import Sheet from './Sheet';
-import { ideaAvailability, productStatus } from './inspirations';
-import { canComplete, firstIncomplete, formatCountdown, handLabels, timerFinished, timerRemaining } from './tutorial';
+import { fingers, ideaAvailability } from './inspirations';
+import { canComplete, completionLabel, firstIncomplete, formatCountdown, handLabels, timerFinished, timerRemaining } from './tutorial';
 import './tutorial.css';
 
 const statusLabels = { ready: 'À commencer', active: 'En cours', paused: 'En pause', completed: 'Terminée' };
@@ -64,7 +64,6 @@ export default function TutorialView({ session, items, onAction, onOpenIdea, onC
   const earliest = firstIncomplete(session);
   const locked = session.current > earliest;
   const active = session.status === 'active';
-  const checked = session.checks[step.id] || [];
   const outdated = ideaAvailability(session.idea, items).filter(row => row.state !== 'available');
   const progress = Math.round(session.completed.length / session.steps.length * 100);
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); heading.current?.focus({ preventScroll: true }); }, [session.id, session.current, session.status]);
@@ -72,7 +71,7 @@ export default function TutorialView({ session, items, onAction, onOpenIdea, onC
   const collectionNotice = outdated.length > 0 && <div className="detailNotice" role="status"><b>Vérifie ta collection</b><p>{outdated.map(row => row.item.name).join(', ')} : fiche modifiée ou produit absent. Le tutoriel conserve la composition d’origine.</p><button className="detailSecondary" onClick={() => onCollection()}>Voir ma collection<ArrowRight /></button></div>;
 
   if (session.status === 'ready') return <div className="tutorialPage">{toolbar}<section className="tutorialHero"><small>TA POSE, PAS À PAS</small><h1 ref={heading} tabIndex={-1}>On prend le temps<br /><em>de créer ?</em></h1><p>{session.idea.title}</p><NailPreview idea={session.idea} /><div className="tutorialFacts"><span>{session.idea.palette.length} vernis</span><span>Deux mains</span><span>{session.steps.length} étapes</span></div></section>
-    <section className="tutorialIntro"><h2>Par quelle main commencer ?</h2><div className="handChoices">{Object.entries(handLabels).map(([id, label]) => <button key={id} aria-pressed={session.firstHand === id} onClick={() => onAction({ type: 'hand', hand: id })}>{label}{session.firstHand === id && <Check />}</button>)}</div><p>Le guide suit tes couleurs et tes décors. La préparation, le nombre de couches et les temps d’application restent ceux des notices de tes produits.</p><div className="tutorialSaveHint"><CheckCircle2 /><span>Les étapes cochées sont conservées sur cet appareil. Tu peux faire une pause et reprendre plus tard.</span></div></section>{collectionNotice}
+    <section className="tutorialIntro"><h2>Par quelle main commencer ?</h2><div className="handChoices">{Object.entries(handLabels).map(([id, label]) => <button key={id} aria-pressed={session.firstHand === id} onClick={() => onAction({ type: 'hand', hand: id })}>{label}{session.firstHand === id && <Check />}</button>)}</div><p>Le guide suit tes couleurs et tes décors. Une seule touche par couleur ou étape suffit pour continuer. Le minuteur est facultatif.</p><p>La préparation, le nombre de couches et les temps d’application restent ceux des notices de tes produits.</p><div className="tutorialSaveHint"><CheckCircle2 /><span>Ta progression est conservée sur cet appareil. Tu peux faire une pause et reprendre plus tard.</span></div></section>{collectionNotice}
     <div className="tutorialStart"><button className="detailPrimary" onClick={() => onAction({ type: 'start' })}><Play />Commencer ma pose<ArrowRight /></button><small>≈ {session.idea.minutes} min pour la couleur et la décoration, hors préparation, dépose et séchage.</small></div>
   </div>;
 
@@ -83,17 +82,13 @@ export default function TutorialView({ session, items, onAction, onOpenIdea, onC
     <section className="tutorialStep"><div className="tutorialStepHeading"><small>{step.section} · ÉTAPE {session.current + 1}</small><h1 ref={heading} tabIndex={-1}>{step.title}</h1>{session.completed.includes(step.id) && <span className="stepAlreadyDone"><Check />Étape validée</span>}</div>
       {step.targets.length > 0 && <div className="tutorialNails"><NailPreview idea={session.idea} highlightedIndices={step.targets} /><small>{step.hand ? handLabels[step.hand] + ' · ' : ''}Repère de la pose finale, du pouce à l’auriculaire</small></div>}
       <p className="stepBody">{step.body}</p>{step.hint && <p className="stepHint">{step.hint}</p>}
-      {step.products.length > 0 && step.kind !== 'products' && <div className="stepProducts">{step.products.map(item => <button key={item.id} onClick={() => onCollection(item.id)}>{item.type !== 'Matériel' && <i style={{ background: item.color }} />}<span>{item.name}</span><ChevronRight /></button>)}</div>}
+      {step.products.length > 0 && <div className="stepProducts">{step.products.map(item => <button key={item.id} onClick={() => onCollection(item.id)}>{item.type !== 'Matériel' && <i style={{ background: item.color }} />}<span>{item.name}</span><ChevronRight /></button>)}</div>}
       {locked && <p className="stepHint" role="status">Tu peux lire cette étape. Reviens à l’étape en cours pour continuer la pose.</p>}
-      <div className="tutorialTasks" role="group" aria-label="À faire pour cette étape">{step.tasks.map(task => {
-        const product = task.productId != null && step.products.find(item => String(item.id) === String(task.productId));
-        const status = product && productStatus(product, items);
-        return <label key={task.id} className={checked.includes(task.id) ? 'done' : ''}><input type="checkbox" disabled={!active || locked} checked={checked.includes(task.id)} onChange={() => onAction({ type: 'check', id: task.id })} /><span><b>{task.label}</b>{status && status.state !== 'available' && <small>{status.label}</small>}</span>{checked.includes(task.id) && <Check />}</label>;
-      })}</div>
-      {step.timer && <StepTimer key={step.id} session={session} step={step} onAction={onAction} now={now} locked={locked} />}
+      {step.targets.length > 0 && <p className="tutorialTargets"><b>Ongles concernés</b>{step.targets.map(index => fingers[index]).join(' · ')}</p>}
+      {step.timer && <details key={step.id} className="tutorialTimerOptions" open={session.timer.stepId === step.id && session.timer.status !== 'idle'}><summary><Clock3 /><span>Minuteur facultatif</span><ChevronRight /></summary><StepTimer session={session} step={step} onAction={onAction} now={now} locked={locked} /></details>}
     </section>
     {collectionNotice}
-    <div className="tutorialStepActions">{locked ? <button className="detailPrimary" onClick={() => onAction({ type: 'go', index: earliest })}><ArrowLeft />Revenir à l’étape en cours</button> : <><button className="detailPrimary" disabled={!canComplete(session, now)} onClick={() => onAction({ type: 'complete' })}><Check />{step.kind === 'review' ? 'Terminer ma pose' : session.completed.includes(step.id) ? 'Continuer la pose' : 'Valider et continuer'}<ArrowRight /></button>{active && !canComplete(session, now) && <p>{session.timer.status === 'running' && timerRemaining(session.timer, now) > 0 ? 'Le minuteur tourne encore. Attends la fin ou mets-le en pause avant de valider.' : 'Coche les éléments réalisés avant de continuer.'}</p>}</>}
+    <div className="tutorialStepActions">{locked ? <button className="detailPrimary" onClick={() => onAction({ type: 'go', index: earliest })}><ArrowLeft />Revenir à l’étape en cours</button> : <><button className="detailPrimary" disabled={!canComplete(session, now)} onClick={() => onAction({ type: 'complete' })}><Check />{completionLabel(session)}<ArrowRight /></button>{active && !canComplete(session, now) && <p>Le minuteur tourne encore. Attends la fin ou mets-le en pause avant de valider.</p>}</>}
       <div>{session.current > 0 && <button onClick={() => onAction({ type: 'go', index: session.current - 1 })}><ArrowLeft />Étape précédente</button>}{active && <button onClick={() => onAction({ type: 'pause' })}><Pause />Mettre la pose en pause</button>}</div>
     </div>
     {planOpen && <Sheet title="Le fil de ta pose" eyebrow="À TON RYTHME" onClose={() => setPlanOpen(false)} className="tutorialPlan"><div>{session.steps.map((value, index) => <button key={value.id} aria-current={index === session.current ? 'step' : undefined} onClick={() => { onAction({ type: 'go', index }); setPlanOpen(false); }}><i>{session.completed.includes(value.id) ? <Check /> : index + 1}</i><span><small>{value.section}</small><b>{value.title}</b></span><ChevronRight /></button>)}</div></Sheet>}
