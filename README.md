@@ -122,11 +122,24 @@ Références techniques : [Shopify Product API](https://shopify.dev/docs/api/aja
 - Un instantané compact des signaux est conservé avec chaque génération dans `nm-creation-v1` : un cœur, un retour ou une pause de la personnalisation ne déplace pas les idées déjà affichées, y compris après rechargement. **Recomposer mes idées** applique les nouveaux signaux. Les anciennes générations restent lisibles avec leur classement précédent jusqu’à cette action. Les copies des favoris, tutoriels et souvenirs ne sont pas réécrites.
 - Aucun journal complet n’est requis pour commencer : un favori ou un retour associé à des produits suffit. Sans historique exploitable, le classement initial continue de fonctionner.
 
+## Phase 8 — accueil intelligent
+
+- L’accueil s’adapte à la situation : pose en cours en premier, puis idée retenue encore à réaliser, puis création d’une nouvelle pose. Une pose déjà terminée n’est plus présentée comme une idée en attente. Si plusieurs suivis existent pour la même inspiration, la reprise ouvre la session précise affichée.
+- La progression et l’étape actuelle apparaissent sur l’accueil. Un minuteur en cours conserve son échéance et son décompte ; son expiration ne valide pas d’étape. Reprendre une pose en pause ne relance pas son minuteur. L’échec d’une sauvegarde de reprise laisse la pose en pause et affiche un message.
+- **Une inspiration pour toi** compose un aperçu à partir de la collection actuelle, du profil, des derniers choix de **Créer** et de la personnalisation lorsqu’elle est active. Le nombre de vernis, la planche de décorations, le temps et les limites restent respectés. Les ongles et pastilles reprennent les teintes précises, et la photo de la décoration s’affiche lorsqu’elle existe.
+- Le même jour et à données identiques, la première suggestion reste stable. Le bouton **Proposer une autre inspiration** permet de varier lorsqu’il existe une alternative. Les compositions déjà retenues ou en cours ne sont pas dupliquées dans cet aperçu. **Découvrir cette idée** ouvre sa fiche avec les mêmes choix pour les variantes et le tutoriel.
+- Ouvrir l’accueil ou renouveler son aperçu ne modifie pas la génération, l’idée choisie ou les réglages déjà enregistrés dans **Créer**. Le lecteur de ces réglages est partagé, y compris la reprise des anciennes limites **Sans stickers**. Aucun nouvel espace de stockage n’est nécessaire pour l’accueil.
+- Une collection vide, un accessoire manquant, une décoration indisponible, un nombre de vernis impossible ou un temps trop court donnent une explication et un accès au bon parcours. Une ancienne idée retenue conserve sa copie ; les références modifiées ou manquantes sont signalées avant d’ouvrir sa fiche.
+- Une pose terminée non encore racontée propose **Ajouter au journal**, sans obligation de photo ou de ressenti. Les poses déjà enregistrées ou masquées ne sont pas proposées à nouveau. À défaut, l’accueil retrouve le dernier souvenir par date de pose et sa photo personnelle, si elle existe.
+- Avec un historique et la personnalisation activée, **Une couleur à explorer** retrouve une référence de la collection qui ne figure pas encore dans les poses enregistrées. Le panneau **Des idées qui me ressemblent** reste accessible depuis l’accueil ; mettre en pause n’efface pas l’aperçu en cours. Son actualisation explicite applique les nouveaux réglages.
+- **Tout mon NailMoods** garde les accès à Collection, Créer, Mes poses, Journal, Favoris et Profil. Les compteurs de poses dédupliquent les tutoriels et leurs souvenirs associés.
+
 ## Suite validée du projet
 
 - Phases 1 à 6 et 6 bis validées par Marie. La représentation schématique est conservée avec la priorité aux teintes précises ; couverture des boutiques et limites décrites ci-dessus.
-- Phase 7 développée, prête à tester et à valider par Marie.
-- Phase 8 : accueil intelligent ; phase 9 : premier démarrage guidé ; phase 10 : application native ; phase 11 : compte et synchronisation ; phase 12 : version publique et stores.
+- Phase 7 développée et publiée ; poursuite du projet demandée par Marie.
+- Phase 8 développée, prête à tester et à valider par Marie.
+- Phase 9 : premier démarrage guidé ; phase 10 : application native ; phase 11 : compte et synchronisation ; phase 12 : version publique et stores.
 - Toutes les phases déjà réalisées restent accessibles pendant le développement des suivantes.
 
 Tests du moteur : `npm test`. Construction : `npm run build`.

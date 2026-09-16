@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker } from 'lucide-react';
-import { createSuggestions, inventoryStamp, profileDefaults, normalizePolishCount } from './creationEngine';
+import { createSuggestions, inventoryStamp } from './creationEngine';
 import NailPreview from './NailPreview';
 import './creation.css';
 import Sheet from './Sheet';
@@ -9,9 +9,8 @@ import { findIdea, snapshotIdea } from './inspirations';
 import { decorationChoice, isDecoration } from './decorations';
 import DecorationPicker, { DecorationPhoto } from './DecorationPicker';
 import { PersonalizationSummary } from './PersonalizationView';
-import { validPersonalSnapshot } from './personalization';
+import { CREATION_KEY as KEY, readCreationState } from './creationState';
 
-const KEY = 'nm-creation-v1';
 const modes = [
   { id: 'usual', title: 'Comme d’habitude', subtitle: 'Mes favoris, mon univers', icon: Heart },
   { id: 'change', title: 'Envie de changement', subtitle: 'Redécouvrir ma collection', icon: Shuffle },
@@ -23,28 +22,8 @@ const durationLabel = value => value === 90 ? '90 min max' : value + ' min max';
 const polishCountLabel = value => value === 'auto' ? 'Automatique' : value + ' vernis';
 const polishCountHints = { auto: 'Des associations de 1 à 5 vernis, selon ta collection.', 1: 'Un seul vernis coloré.', 2: 'Duos, accents et détails.', 3: 'Un trio à répartir sur les ongles.', 4: 'Quatre vernis dans une même composition.', 5: 'Un vernis différent sur chaque ongle.' };
 
-function initialState(profile) {
-  const fallback = { options: profileDefaults(profile), generated: false, seed: 0, inventory: '', selected: null, learning: null, learningStamp: 'legacy' };
-  try {
-    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
-    if (!saved || typeof saved.options !== 'object' || !saved.options) return fallback;
-    const options = { ...fallback.options, ...saved.options };
-    if (!modes.some(mode => mode.id === options.mode)) options.mode = 'usual';
-    if (!Array.isArray(options.constraints)) options.constraints = [];
-    if (options.constraints.includes('noStickers')) {
-      options.decorations = 'without';
-      options.constraints = options.constraints.filter(value => value !== 'noStickers');
-    }
-    if (![0, 1, 2].includes(options.level)) options.level = fallback.options.level;
-    if (![15, 30, 45, 60, 90].includes(options.duration)) options.duration = fallback.options.duration;
-    options.polishCount = normalizePolishCount(options.polishCount);
-    const learning = validPersonalSnapshot(saved.learning) ? saved.learning : null;
-    return { ...fallback, ...saved, options, learning, learningStamp: (learning || saved.learning === null) && typeof saved.learningStamp === 'string' ? saved.learningStamp : 'legacy' };
-  } catch { return fallback; }
-}
-
 export default function CreateView({ items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
-  const [state, setState] = useState(() => initialState(profile));
+  const [state, setState] = useState(() => readCreationState(localStorage, profile));
   const [picker, setPicker] = useState(null);
   const [storageError, setStorageError] = useState(false);
   const resultAnchor = useRef(null);
