@@ -9,7 +9,7 @@ function Decor({ motif, color }) {
   return <rect x="26" y="47" width="12" height="14" rx="3" fill={color} transform="rotate(-15 32 54)" />;
 }
 
-export default function NailPreview({ idea }) {
+export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels = [] }) {
   const id = useId().replace(/:/g, '');
   const shape = normalize(idea.shape);
   const path = shape.includes('stiletto') ? 'M12 83 32 7 52 83Q52 94 32 94T12 83Z'
@@ -17,8 +17,9 @@ export default function NailPreview({ idea }) {
       : shape.includes('amande') ? 'M12 82V59C12 38 22 16 32 7C42 16 52 38 52 59V82Q52 94 32 94T12 82Z'
         : shape.includes('carre') ? 'M12 82V22Q12 15 19 15H45Q52 15 52 22V82Q52 94 32 94T12 82Z'
           : 'M12 82V38C12 8 52 8 52 38V82Q52 94 32 94T12 82Z';
-  return <div className={'nailPreview ' + (/courte/.test(normalize(idea.length)) ? 'shortNails' : '')} role="img" aria-label={'Aperçu schématique : ' + idea.description}>
-    {idea.nails.map((nail, index) => <svg key={index} viewBox="0 0 64 104" aria-hidden="true">
+  return <div className={'nailPreview ' + (/courte/.test(normalize(idea.length)) ? 'shortNails ' : '') + (onSelect ? 'interactiveNails' : '')} role={onSelect ? 'group' : 'img'} aria-label={onSelect ? 'Choisir un ongle' : 'Aperçu schématique : ' + idea.description}>
+    {idea.nails.map((nail, index) => {
+      const nailSvg = <svg key={index} viewBox="0 0 64 104" aria-hidden="true">
       <defs><clipPath id={id + index}><path d={path} /></clipPath></defs>
       <path d={path} fill={nail.color} stroke="#624d601a" />
       <g clipPath={'url(#' + id + index + ')'}>
@@ -30,6 +31,8 @@ export default function NailPreview({ idea }) {
         {nail.drawing === 'dots' && <g fill={nail.accentColor}>{[[28, 34], [37, 46], [28, 60], [37, 74]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="3" />)}</g>}
         {nail.decoration && <Decor {...nail.decoration} />}
       </g>
-    </svg>)}
+    </svg>;
+      return onSelect ? <button key={index} aria-label={'Voir ' + labels[index]} aria-pressed={index === selectedIndex} onClick={() => onSelect(index)}>{nailSvg}<span>{labels[index]}</span></button> : nailSvg;
+    })}
   </div>;
 }

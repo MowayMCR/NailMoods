@@ -5,6 +5,10 @@ import { equipmentInfo, EquipmentVisual, EquipmentCategory, EquipmentFields } fr
 import ProductPhoto from './ProductPhoto';
 import CreateView from './CreateView';
 import './style.css';
+import ProfileView from './ProfileView';
+import { defaultProfile } from './profileOptions';
+import HomeView, { JournalView } from './HomeView';
+import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite } from './inspirations';
 const colors=[['Prune','#703650'],['Cassis','#622947'],['Bordeaux','#852d40'],['Rouge','#c73e46'],['Rose','#db7897'],['Nude','#ddb9aa'],['Beige','#cbb89d'],['Brun','#805b4c'],['Orange','#d47c4b'],['Jaune','#dfc65e'],['Vert','#67865f'],['Bleu','#5479a6'],['Violet','#735b91'],['Noir','#29262a'],['Blanc','#f1efeb'],['Argent','#aeb1b5'],['Or','#c4a45e'],['Multi','#8c5b8f']];const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[{...defaults,id:1,name:'Prune foncée',brand:'Le Mini Macaron',family:'Prune',color:'#703650',depth:'Foncé',undertone:'Froid',finish:'Brillant',fav:true},{...defaults,id:2,name:'Latte',brand:'Le Mini Macaron',family:'Brun',color:'#805b4c',depth:'Moyen',undertone:'Chaud',finish:'Brillant'},{...defaults,id:3,name:'Galactic Sparkle',brand:'Le Mini Macaron',type:'Effet',family:'Multi',color:'#665083',finish:'Chrome',effect:'Multichrome',usage:'Sur une couleur de base'}];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
 
 function Brand() {
@@ -17,12 +21,18 @@ function readStored(key, fallback) {
 }
 
 const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, reference: '', materialStyle: '', notes: '', photo: '' };
-const tabRoutes = { home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil' };
-const tabFromHash = () => Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'collection';
+const tabRoutes = { home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris' };
+const tabFromHash = () => window.location.hash.startsWith('#inspiration/') || window.location.hash === '#favoris' ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
 
 function App() {
   const [tab, setTab] = useState(tabFromHash);
-  const [profile] = useState(() => readStored('nm-profile', {}));
+  const [route, setRoute] = useState(() => window.location.hash);
+  const [profile, setProfile] = useState(() => {
+    const stored = readStored('nm-profile', {});
+    return { ...defaultProfile, ...stored, styles: Array.isArray(stored?.styles) ? stored.styles : defaultProfile.styles };
+  });
+  const [library, setLibrary] = useState(() => readInspirations(localStorage));
+  const [appError, setAppError] = useState('');
   const [items, setItems] = useState(() => {
     const stored = readStored('nm-collection-v2', starter);
     return Array.isArray(stored) ? stored : starter;
@@ -37,15 +47,39 @@ function App() {
   const material = edit?.type === 'Matériel';
 
   function navigate(next) {
-    setTab(next);
+    setTab(next === 'favorites' ? 'create' : next);
+    setRoute('#' + tabRoutes[next]);
     window.location.hash = tabRoutes[next];
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
   useEffect(() => {
-    const followRoute = () => setTab(tabFromHash());
+    const followRoute = () => { setTab(tabFromHash()); setRoute(window.location.hash); window.scrollTo({ top: 0, behavior: 'instant' }); };
     window.addEventListener('hashchange', followRoute);
     return () => window.removeEventListener('hashchange', followRoute);
   }, []);
+
+  function changeProfile(next) {
+    try { localStorage.setItem('nm-profile', JSON.stringify(next)); setProfile(next); setAppError(''); return true; }
+    catch { setAppError('Ton profil n’a pas pu être sauvegardé. Libère un peu de stockage sur cet appareil puis réessaie.'); return false; }
+  }
+  function saveLibrary(next, allowMemory = false) {
+    try { localStorage.setItem(INSPIRATIONS_KEY, JSON.stringify(next)); setLibrary(next); setAppError(''); return true; }
+    catch { if (allowMemory) setLibrary(next); setAppError('Cette inspiration reste visible, mais la sauvegarde n’a pas abouti sur cet appareil. Les favoris déjà enregistrés sont conservés. Libère un peu de stockage puis réessaie.'); return false; }
+  }
+  function openIdea(idea, options) {
+    const saved = snapshotIdea(idea, options || idea.options);
+    saveLibrary(rememberIdea(library, saved), true);
+    setTab('create');
+    setRoute('#inspiration/' + saved.key);
+    window.location.hash = 'inspiration/' + saved.key;
+  }
+  function favoriteIdea(idea) { return saveLibrary(toggleFavorite(library, snapshotIdea(idea))); }
+  function selectIdea(idea, clear = false) { return saveLibrary({ ...rememberIdea(library, idea), selected: clear ? null : idea }); }
+  function openCollection(id) {
+    navigate('collection');
+    const product = items.find(item => item.id === id);
+    if (product) { setSaveError(''); setEdit({ ...defaults, ...materialDefaults, ...product }); }
+  }
 
   useEffect(() => {
     if (!edit && !importer) return;
@@ -106,9 +140,10 @@ function App() {
   const colorCount = new Set(items.filter(item => item.type !== 'Matériel' && item.family).map(item => item.family)).size;
 
   return <div className="app phase2" style={{ '--a': th[0], '--b': th[1], '--soft': th[2], '--paper': th[3] }}>
-    <header><Brand /><button className="round" aria-label="Profil"><UserRound /></button></header>
+    <header><Brand /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
     <main>
-      {tab === 'create' ? <CreateView items={items} profile={profile} onCollection={() => navigate('collection')} /> : tab === 'collection' ? <>
+      {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
+      {tab === 'create' ? <CreateView items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>PHASE 2 · COLLECTION</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
@@ -156,7 +191,7 @@ function App() {
           <p>Choisis une humeur, un univers et ton temps. Retrouve des idées composées avec tes couleurs et ton matériel.</p>
           <button className="moreIdeas" onClick={() => navigate('create')}><Palette />Créer ma manucure</button>
         </section>
-      </> : <section className="coming"><h1>Phase suivante</h1><p>Cette partie n’est pas encore ouverte dans la version de test.</p><button onClick={() => navigate('create')}>Retour à Créer</button></section>}
+      </> : tab === 'profile' ? <ProfileView profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView profile={profile} items={items} library={library} onNavigate={navigate} onOpen={openIdea} /> : <JournalView onFavorites={() => navigate('favorites')} />}
     </main>
     <nav>{[['home', Home, 'Accueil'], ['create', Palette, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Journal'], ['profile', UserRound, 'Profil']].map(([id, Icon, label]) =>
       <button key={id} className={tab === id ? 'on' : ''} aria-current={tab === id ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}</span></button>

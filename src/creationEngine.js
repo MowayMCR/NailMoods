@@ -3,7 +3,7 @@ export const normalize = value => String(value ?? '').normalize('NFD').replace(/
 export const normalizePolishCount = value => ['number', 'string'].includes(typeof value) && [1, 2, 3, 4, 5].includes(Number(value)) ? Number(value) : 'auto';
 const unique = items => [...new Map(items.filter(Boolean).map(item => [String(item.id), item])).values()];
 const fieldText = item => normalize([item.name, item.reference, item.materialStyle].filter(Boolean).join(' '));
-const auxiliary = item => /\b(base\s*coat|top\s*coat|primer|cleaner|dissolvant|remover|huile)\b/.test(normalize(item.name).replace(/-/g, ' '));
+export const auxiliary = item => /\b(base\s*coat|top\s*coat|primer|cleaner|dissolvant|remover|huile)\b/.test(normalize(item.name).replace(/-/g, ' '));
 const needsLamp = item => ['Semi-permanent', 'Gel'].includes(item.type);
 const magnetic = item => /cat.?eye|magnetique|avec aimant/.test(normalize([item.finish, item.effect, item.usage].join(' ')));
 const drawing = new Set(['french', 'dots', 'line']);
@@ -72,7 +72,7 @@ const hashScore = (text, seed) => {
   return (hash >>> 0) / 4294967296;
 };
 
-export function createSuggestions(items = [], profile = {}, supplied = {}, seed = 1) {
+export function createSuggestions(items = [], profile = {}, supplied = {}, seed = 1, limit = 4) {
   const options = { ...profileDefaults(profile), ...supplied };
   const constraints = new Set(Array.isArray(options.constraints) ? options.constraints : []);
   const duration = [15, 30, 45, 60, 90].includes(Number(options.duration)) ? Number(options.duration) : 45;
@@ -232,7 +232,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const ranked = candidates.sort((a, b) => b.score - a.score);
   const results = [];
   const remaining = [...ranked];
-  while (results.length < 4 && remaining.length) {
+  while (results.length < Math.max(1, Math.min(24, Number(limit) || 4)) && remaining.length) {
     remaining.sort((a, b) => {
       const adjusted = candidate => candidate.score - results.filter(result => result.pattern === candidate.pattern).length * 24 - results.filter(result => result.palette[0].id === candidate.palette[0].id).length * 10 - (requestedPolishCount === 'auto' ? results.filter(result => result.polishCount === candidate.polishCount).length * 8 : 0);
       return adjusted(b) - adjusted(a);

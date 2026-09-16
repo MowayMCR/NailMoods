@@ -45,6 +45,17 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 - Les effets à superposer dont la base et les accessoires ne sont pas identifiés restent signalés comme à préciser. Les bases/top coats ne sont pas utilisés comme vernis colorés. Les technologies de vernis différentes ne sont pas combinées dans une même proposition.
 - Les durées portent sur la couleur et la décoration, hors préparation, dépose et séchage. La présence dans l'inventaire ne remplace pas la vérification de compatibilité dans les notices des produits et de la lampe.
 - L'envie et l'idée retenue sont conservées dans `nm-creation-v1`. Modifier l'inventaire invalide les anciennes propositions et invite à relancer la création. Les données de collection et de profil sont conservées.
-- Les fiches détaillées et les tutoriels restent prévus pour les phases 4 et 5.
+- Les fiches détaillées sont disponibles en phase 4. Les tutoriels restent prévus pour la phase 5.
+
+## Phase 4 — fiches d’inspiration, variantes et favoris
+
+- **Voir la fiche** ouvre chaque proposition : cinq ongles tactiles du pouce à l’auriculaire, détails des couleurs / French / lignes / pois / stickers, références, marque, finition, matériel, durée indicative et difficulté. La répartition s’applique aux deux mains.
+- Les photos déjà ajoutées à la collection apparaissent avec les références. Les liens HTTP(S) enregistrés ouvrent la boutique ; **Voir ma fiche** retrouve directement le produit dans la collection.
+- Les variantes conservent le nombre exact de vernis, le temps maximal, le niveau et les limites de l’idée initiale. Elles utilisent l’inventaire actuel, privilégient la même palette et restent distinctes. S’il n’existe aucune variante, le message l’indique.
+- Les cœurs conservent des copies des compositions dans `nm-inspirations-v1`, indépendamment des futures générations. Les photos ne sont pas dupliquées. Les favoris se retrouvent dans **Créer → Mes inspirations favorites** ou depuis l’accueil, avec leur propre route `#favoris`.
+- Une fiche favorite garde les références et teintes enregistrées même après une modification de la collection. Un produit supprimé, épuisé ou modifié est signalé. Il ne devient pas disponible artificiellement.
+- La dernière inspiration retenue et douze fiches récentes permettent de rouvrir une fiche ou de revenir en arrière, y compris après rechargement. Les favoris ne sont pas limités aux douze fiches récentes. Les erreurs de stockage sont affichées ; un favori n’est confirmé qu’après enregistrement.
+- L’accueil donne accès à **Profil, Collection, Créer et Favoris**. Le profil validé en phase 1 a été réintégré depuis son historique, avec ses sélecteurs visuels, univers, thèmes, avatars et sa clé de stockage d’origine. Le bouton Profil de l’en-tête fonctionne aussi. Les clés `nm-profile`, `nm-collection-v2` et `nm-creation-v1` restent inchangées.
+- Le Journal reste accessible avec l’explication de son développement à venir. Les étapes guidées et le journal des poses réalisées ne sont pas simulés.
 
 Tests du moteur : `npm test`. Construction : `npm run build`.

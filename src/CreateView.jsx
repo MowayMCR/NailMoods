@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, X, Check, ArrowRight, RotateCcw, Package, BookmarkCheck } from 'lucide-react';
+import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck } from 'lucide-react';
 import { createSuggestions, inventoryStamp, profileDefaults, normalizePolishCount } from './creationEngine';
 import NailPreview from './NailPreview';
 import './creation.css';
+import Sheet from './Sheet';
+import InspirationView, { FavoritesView } from './InspirationView';
+import { findIdea, snapshotIdea } from './inspirations';
 
 const KEY = 'nm-creation-v1';
 const modes = [
@@ -31,37 +34,7 @@ function initialState(profile) {
   } catch { return fallback; }
 }
 
-function PickerSheet({ title, children, onClose }) {
-  const panel = useRef(null);
-  useEffect(() => {
-    const previousFocus = document.activeElement;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    panel.current.querySelector('button')?.focus();
-    function onKey(event) {
-      if (event.key === 'Escape') onClose();
-      if (event.key !== 'Tab') return;
-      const buttons = [...panel.current.querySelectorAll('button:not(:disabled)')];
-      const first = buttons[0], last = buttons.at(-1);
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
-    }
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener('keydown', onKey);
-      previousFocus?.focus();
-    };
-  }, []);
-  return <div className="overlay" onClick={onClose}>
-    <section className="productSheet creationSheet" ref={panel} role="dialog" aria-modal="true" aria-labelledby="creation-picker-title" onClick={event => event.stopPropagation()}>
-      <div className="grab" /><div className="sheetTitle"><div><small>MON ENVIE DU JOUR</small><h2 id="creation-picker-title">{title}</h2></div><button aria-label="Fermer" onClick={onClose}><X /></button></div>
-      {children}
-    </section>
-  </div>;
-}
-
-export default function CreateView({ items, profile, onCollection }) {
+export default function CreateView({ items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute }) {
   const [state, setState] = useState(() => initialState(profile));
   const [picker, setPicker] = useState(null);
   const [storageError, setStorageError] = useState(false);
@@ -93,6 +66,12 @@ export default function CreateView({ items, profile, onCollection }) {
     requestAnimationFrame(() => resultAnchor.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
+  const openedKey = route.startsWith('#inspiration/') ? route.slice('#inspiration/'.length) : null;
+  const opened = openedKey && findIdea(library, openedKey);
+  if (route === '#favoris') return <FavoritesView favorites={library.favorites} items={items} onOpen={onOpen} onFavorite={onFavorite} onBack={() => onRoute('create')} />;
+  if (opened) return <InspirationView key={opened.key} idea={opened} items={items} profile={profile} favorite={library.favorites.some(idea => idea.key === opened.key)} selected={library.selected?.key === opened.key} onFavorite={() => onFavorite(opened)} onSelect={() => { const clear = library.selected?.key === opened.key; if (onSelect(opened, clear)) setState(previous => ({ ...previous, selected: clear ? null : opened.id })); }} onOpen={onOpen} onBack={() => onRoute('create')} onFavorites={() => onRoute('favorites')} onCollection={onCollection} />;
+  if (openedKey) return <section className="creationEmpty"><h1>Cette fiche n’est plus disponible</h1><p>Retrouve tes favoris ou compose une nouvelle inspiration.</p><button onClick={() => onRoute('favorites')}>Mes favoris</button><button onClick={() => onRoute('create')}>Créer une inspiration</button></section>;
+
   return <div className="creationPage">
     <section className="creationHero">
       <span className="creationEyebrow"><Sparkles /> L’ENVIE DU JOUR</span>
@@ -101,6 +80,7 @@ export default function CreateView({ items, profile, onCollection }) {
       <div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
     </section>
 
+    <button className="creationSaved" onClick={() => onRoute('favorites')}><span><Heart />Mes inspirations favorites</span><small>{library.favorites.length} idée{library.favorites.length > 1 ? 's' : ''}</small><ChevronRight /></button>
     <section className="creationSection">
       <div className="creationSectionTitle"><span>01</span><h2>De quoi as-tu envie ?</h2></div>
       <div className="creationModes">{modes.map(({ id, title, subtitle, icon: Icon }) => <button key={id} className={options.mode === id ? 'selected' : ''} aria-pressed={options.mode === id} onClick={() => change({ mode: id })}>
@@ -144,7 +124,7 @@ export default function CreateView({ items, profile, onCollection }) {
       <div className="creationSectionTitle"><span>03</span><div><small>COMPOSÉES AVEC CE QUE TU POSSÈDES</small><h2 id="ideas-title">{report.results.length} idée{report.results.length > 1 ? 's' : ''} pour toi</h2></div></div>
       {report.results.length < 4 && <p className="creationNotice">Ta collection et tes choix permettent {report.results.length} proposition{report.results.length > 1 ? 's' : ''} distincte{report.results.length > 1 ? 's' : ''} pour le moment. Aucun produit supplémentaire n’a été ajouté aux idées.</p>}
       <p className="creationHint">Aperçus schématiques : les teintes et les motifs sont indicatifs. Vérifie la compatibilité des produits et de la lampe sur leurs notices.</p>
-      {chosen && <div className="chosenIdea" role="status"><BookmarkCheck /><span><b>Ton idée retenue</b><small>{chosen.title} · {chosen.palette.map(item => item.name).join(' + ')}</small></span></div>}
+      {chosen && <button className="chosenIdea" onClick={() => onOpen(chosen, options)}><BookmarkCheck /><span><b>Ton idée retenue</b><small>{chosen.title} · {chosen.palette.map(item => item.name).join(' + ')}</small></span><ChevronRight /></button>}
       <div className="ideaList">{report.results.map((idea, index) => <article className={'ideaCard ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id}>
         <div className="ideaTopline"><span>ENVIE {String(index + 1).padStart(2, '0')}</span><span><Clock3 />≈ {idea.minutes} min</span></div>
         <NailPreview idea={idea} />
@@ -152,16 +132,17 @@ export default function CreateView({ items, profile, onCollection }) {
           <div className="ideaProducts">{idea.palette.map(item => <span key={item.id}><i style={{ background: item.color }} />{item.name}</span>)}</div>
           {idea.resources.length > 0 && <div className="ideaEquipment"><small>AVEC MON MATÉRIEL</small><p>{idea.resources.map(item => item.name).join(' · ')}</p></div>}
           <ul className="ideaReasons">{idea.reasons.map(reason => <li key={reason}><Check />{reason}</li>)}</ul>
-          <button className="chooseIdea" aria-pressed={chosen?.id === idea.id} onClick={() => setState(previous => ({ ...previous, selected: previous.selected === idea.id ? null : idea.id }))}>{chosen?.id === idea.id ? <Check /> : <Heart />}{chosen?.id === idea.id ? 'Idée retenue' : 'Je choisis cette idée'}</button>
+          <button className="chooseIdea" aria-pressed={chosen?.id === idea.id} onClick={() => { const saved = snapshotIdea(idea, options); const clear = chosen?.id === idea.id; if (onSelect(saved, clear)) setState(previous => ({ ...previous, selected: clear ? null : idea.id })); }}>{chosen?.id === idea.id ? <Check /> : <BookmarkCheck />}{chosen?.id === idea.id ? 'Idée retenue' : 'Je choisis cette idée'}</button>
+          <div className="ideaCardActions"><button className="detailPrimary" onClick={() => onOpen(idea, options)}>Voir la fiche<ArrowRight /></button><button className="ideaHeart" aria-label={(library.favorites.some(saved => saved.key === snapshotIdea(idea, options).key) ? 'Retirer des favoris : ' : 'Ajouter aux favoris : ') + idea.title} aria-pressed={library.favorites.some(saved => saved.key === snapshotIdea(idea, options).key)} onClick={() => onFavorite(snapshotIdea(idea, options))}><Heart fill={library.favorites.some(saved => saved.key === snapshotIdea(idea, options).key) ? 'currentColor' : 'none'} /></button></div>
         </div>
       </article>)}</div>
       {report.total > report.results.length && <button className="moreIdeas" onClick={generate}><RotateCcw />Proposer d’autres associations</button>}
     </section>}
 
-    {picker && <PickerSheet title={picker === 'constraints' ? 'Tes limites du jour' : selections[picker].title} onClose={() => setPicker(null)}>
+    {picker && <Sheet className="creationSheet" eyebrow="MON ENVIE DU JOUR" title={picker === 'constraints' ? 'Tes limites du jour' : selections[picker].title} onClose={() => setPicker(null)}>
       {picker === 'polishCount' && <p className="creationPickerHelp">Choisis un nombre exact de vernis colorés par proposition. Les stickers, bases et top coats ne sont pas comptés.</p>}
       <div className="creationOptions">{picker === 'constraints' ? limits.map(([key, label, detail]) => <button key={key} aria-pressed={options.constraints.includes(key)} className={options.constraints.includes(key) ? 'on' : ''} onClick={() => change({ constraints: options.constraints.includes(key) ? options.constraints.filter(value => value !== key) : [...options.constraints, key] })}><span><b>{label}</b><small>{detail}</small></span>{options.constraints.includes(key) && <Check />}</button>) : selections[picker].values.map(value => <button key={value} className={options[picker] === value ? 'on' : ''} aria-pressed={options[picker] === value} onClick={() => { change({ [picker]: value }); setPicker(null); }}><span>{selections[picker].format ? selections[picker].format(value) : value}{picker === 'polishCount' && <small>{polishCountHints[value]}</small>}</span>{options[picker] === value && <Check />}</button>)}</div>
       {picker === 'constraints' && <button className="creationGenerate" onClick={() => setPicker(null)}><Check />Garder ces choix</button>}
-    </PickerSheet>}
+    </Sheet>}
   </div>;
 }
