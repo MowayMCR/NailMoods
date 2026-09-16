@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Home, Palette, Library, BookHeart, UserRound, ChevronRight, X, Check, Search, Plus, Camera, Trash2, Heart, Link, ScanLine, Image, PenLine, WandSparkles, Package } from 'lucide-react';
 import { equipmentInfo, EquipmentVisual, EquipmentCategory, EquipmentFields } from './equipment';
 import ProductPhoto from './ProductPhoto';
+import CreateView from './CreateView';
 import './style.css';
 const colors=[['Prune','#703650'],['Cassis','#622947'],['Bordeaux','#852d40'],['Rouge','#c73e46'],['Rose','#db7897'],['Nude','#ddb9aa'],['Beige','#cbb89d'],['Brun','#805b4c'],['Orange','#d47c4b'],['Jaune','#dfc65e'],['Vert','#67865f'],['Bleu','#5479a6'],['Violet','#735b91'],['Noir','#29262a'],['Blanc','#f1efeb'],['Argent','#aeb1b5'],['Or','#c4a45e'],['Multi','#8c5b8f']];const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[{...defaults,id:1,name:'Prune foncée',brand:'Le Mini Macaron',family:'Prune',color:'#703650',depth:'Foncé',undertone:'Froid',finish:'Brillant',fav:true},{...defaults,id:2,name:'Latte',brand:'Le Mini Macaron',family:'Brun',color:'#805b4c',depth:'Moyen',undertone:'Chaud',finish:'Brillant'},{...defaults,id:3,name:'Galactic Sparkle',brand:'Le Mini Macaron',type:'Effet',family:'Multi',color:'#665083',finish:'Chrome',effect:'Multichrome',usage:'Sur une couleur de base'}];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
 
@@ -16,9 +17,11 @@ function readStored(key, fallback) {
 }
 
 const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, reference: '', materialStyle: '', notes: '', photo: '' };
+const tabRoutes = { home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil' };
+const tabFromHash = () => Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'collection';
 
 function App() {
-  const [tab, setTab] = useState('collection');
+  const [tab, setTab] = useState(tabFromHash);
   const [profile] = useState(() => readStored('nm-profile', {}));
   const [items, setItems] = useState(() => {
     const stored = readStored('nm-collection-v2', starter);
@@ -32,6 +35,17 @@ function App() {
   const [photoBusy, setPhotoBusy] = useState(false);
   const th = themes[profile.theme] || themes.nailmoods;
   const material = edit?.type === 'Matériel';
+
+  function navigate(next) {
+    setTab(next);
+    window.location.hash = tabRoutes[next];
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  useEffect(() => {
+    const followRoute = () => setTab(tabFromHash());
+    window.addEventListener('hashchange', followRoute);
+    return () => window.removeEventListener('hashchange', followRoute);
+  }, []);
 
   useEffect(() => {
     if (!edit && !importer) return;
@@ -94,7 +108,7 @@ function App() {
   return <div className="app phase2" style={{ '--a': th[0], '--b': th[1], '--soft': th[2], '--paper': th[3] }}>
     <header><Brand /><button className="round" aria-label="Profil"><UserRound /></button></header>
     <main>
-      {tab === 'collection' ? <>
+      {tab === 'create' ? <CreateView items={items} profile={profile} onCollection={() => navigate('collection')} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>PHASE 2 · COLLECTION</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
@@ -138,13 +152,14 @@ function App() {
           {!search && <button onClick={() => filter === 'Matériel' ? start('manual', 'Matériel') : setImporter(true)}><Plus />{filter === 'Matériel' ? 'Ajouter du matériel' : 'Ajouter un produit'}</button>}
         </section>}
         <section className="phase3Preview">
-          <small>PRÉPARATION PHASE 3</small><h2>NailMoods comprend comment utiliser chaque produit</h2>
-          <p>Un effet comme Galactic Sparkle est désormais identifié comme multichrome à appliquer sur une couleur de base, et non comme un simple vernis multicolore.</p>
+          <small>MES ENVIES</small><h2>Et si on créait avec tout ça ?</h2>
+          <p>Choisis une humeur, un univers et ton temps. Retrouve des idées composées avec tes couleurs et ton matériel.</p>
+          <button className="moreIdeas" onClick={() => navigate('create')}><Palette />Créer ma manucure</button>
         </section>
-      </> : <section className="coming"><h1>Phase suivante</h1><p>Elle reste verrouillée pendant la recette Collection.</p><button onClick={() => setTab('collection')}>Retour</button></section>}
+      </> : <section className="coming"><h1>Phase suivante</h1><p>Cette partie n’est pas encore ouverte dans la version de test.</p><button onClick={() => navigate('create')}>Retour à Créer</button></section>}
     </main>
     <nav>{[['home', Home, 'Accueil'], ['create', Palette, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Journal'], ['profile', UserRound, 'Profil']].map(([id, Icon, label]) =>
-      <button key={id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}><Icon /><span>{label}</span></button>
+      <button key={id} className={tab === id ? 'on' : ''} aria-current={tab === id ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}</span></button>
     )}</nav>
 
     {importer && <div className="overlay" onClick={() => setImporter(false)}>
