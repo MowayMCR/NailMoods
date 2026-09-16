@@ -18,17 +18,19 @@ function ProductRow({ item, items, role, onCollection }) {
   </li>;
 }
 
-export default function InspirationView({ idea, items, profile, favorite, selected, onFavorite, onSelect, onOpen, onBack, onFavorites, onCollection, onTutorial, tutorialExists, onDone, completed }) {
+export default function InspirationView({ idea, items, profile, favorite, selected, onFavorite, onSelect, onOpen, onBack, onFavorites, onCollection, onTutorial, tutorialExists, onDone, completed, learning }) {
   const [finger, setFinger] = useState(0);
   const [variantSeed, setVariantSeed] = useState(1);
   const [showVariants, setShowVariants] = useState(false);
+  const [variantLearning, setVariantLearning] = useState(null);
   const heading = useRef(null);
   const variantsAnchor = useRef(null);
   const availability = ideaAvailability(idea, items);
   const outdated = availability.filter(item => item.state !== 'available');
-  const variants = useMemo(() => showVariants ? createVariants(idea, items, profile, variantSeed) : [], [idea, items, profile, variantSeed, showVariants]);
+  const variants = useMemo(() => showVariants ? createVariants(idea, items, profile, variantSeed, variantLearning) : [], [idea, items, profile, variantSeed, showVariants, variantLearning]);
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); heading.current?.focus({ preventScroll: true }); }, [idea.key]);
   function generateVariants() {
+    setVariantLearning(learning);
     setShowVariants(true);
     if (showVariants) setVariantSeed(seed => seed + 1);
     requestAnimationFrame(() => variantsAnchor.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));

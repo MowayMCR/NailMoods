@@ -76,7 +76,7 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 - **Ajouter une pose** permet de garder une pose réalisée sans tutoriel. Nom et date sont préremplis ; photo, références et retours restent facultatifs. Une pose peut être enregistrée immédiatement puis complétée plus tard.
 - Import ou prise d’une photo du résultat, préparation à 800 px maximum, remplacement et retrait. La photo personnelle et l’aperçu schématique de l’inspiration sont distingués. La préparation d’une image désactive l’enregistrement jusqu’à sa fin.
 - Depuis un tutoriel, les références sont préremplies. Elles restent ajustables dans la collection pour refléter les produits réellement utilisés. L’inspiration d’origine reste une copie distincte : changer les produits du journal ne la réécrit pas. Les références archivées restent lisibles après modification ou suppression dans la collection, sans copier les photos des produits.
-- Ressenti **J’adore / J’aime bien / À ajuster**, choix **À refaire**, notes libres. Les détails facultatifs repliés permettent de noter la facilité de réalisation et la tenue observée, à renseigner après avoir porté la pose. Ces retours sont enregistrés pour la phase 7 ; aucun apprentissage automatique n’est encore activé.
+- Ressenti **J’adore / J’aime bien / À ajuster**, choix **À refaire**, notes libres. Les détails facultatifs repliés permettent de noter la facilité de réalisation et la tenue observée, à renseigner après avoir porté la pose. Les retours structurés peuvent guider les suggestions depuis la phase 7, décrite ci-dessous.
 - Historique classé par date de pose, recherche dans les noms, marques, dates et notes, filtre **À refaire**, modification et suppression avec confirmation. Une même session guidée ne crée pas de doublons ; refaire une inspiration lors d’une autre session crée un souvenir distinct.
 - Supprimer un souvenir ne supprime ni son tutoriel ni les produits. Sa suggestion est masquée pour ne pas le faire réapparaître automatiquement ; un ajout explicite depuis le tutoriel reste possible.
 - Stockage local dans `nm-journal-v1`, séparé du profil, de la collection, des inspirations et des tutoriels. La synchronisation entre appareils reste prévue pour la phase 11. Une erreur de stockage conserve les données précédentes et le formulaire en cours ; aucun succès n’est affiché avant l’enregistrement.
@@ -89,6 +89,8 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 - Les catégories **Stickers / décalcomanies** et **Strass / décorations** sont utilisables avec 1 à 5 vernis, y compris les duos et les envies **Sans dessin**. Une référence épuisée ou supprimée ne peut pas être remplacée silencieusement.
 - La carte de l’idée affiche la photo de la décoration si elle existe. Les feuilles, lignes, étoiles, lunes, fleurs, cœurs et strass restent des motifs schématiques déduits des caractéristiques saisies, sans détourage automatique de la planche.
 - La référence choisie est conservée dans la fiche, le tutoriel, les variantes et le journal. L’ancien choix **Sans stickers** est repris par **Sans décorations**.
+
+### Liens, photos et teintes
 
 - **Collection → Ajouter → Coller une URL**, ou ouvrir une ancienne fiche et toucher **Récupérer depuis le lien**. Les fiches Shopify publiques lisibles (dont Le Mini Macaron Europe, vérifié) fournissent nom, marque, photos, références et variantes. Les autres pages sont utilisables lorsqu’elles autorisent la lecture directe et contiennent un seul produit dans leurs données structurées. Une boutique qui bloque la lecture affiche un message et laisse la fiche utilisable. Il n’y a ni proxy tiers ni clé secrète dans le navigateur.
 - Les informations sont proposées dans **À vérifier** : on choisit la variante exacte, la photo et les champs à reprendre, puis **Utiliser ces informations** et **Enregistrer**. Un identifiant de variante absent du catalogue impose un nouveau choix. Les fiches existantes, photos personnelles et teintes précises ne sont pas remplacées automatiquement.
@@ -108,11 +110,23 @@ Références techniques : [Shopify Product API](https://shopify.dev/docs/api/aja
 - Le tutoriel est indiqué comme passé ; ses étapes ne sont pas artificiellement cochées. Si cette pose était déjà commencée, ses étapes réellement validées sont conservées et son minuteur est arrêté. Les autres poses ne changent pas.
 - **Ajouter au journal** reste facultatif. Une seconde pression retrouve la même pose sans doublon ; **Refaire cette pose** commence une nouvelle réalisation. L’état survit au rechargement. Une sauvegarde échouée ne marque rien comme fait.
 
+## Phase 7 — intelligence personnelle
+
+- **Créer → Des idées qui me ressemblent**, également disponible dans **Profil**, ouvre **Ce qui guide mes idées** : inspirations favorites, poses réalisées et retours du journal, références appréciées, vernis encore absents des poses enregistrées et techniques signalées comme difficiles.
+- Le classement utilise des règles locales : les inspirations favorites et les retours **J’adore / J’aime bien / À refaire** renforcent les références et compositions concernées. Terminer une pose indique une utilisation, sans supposer qu’elle a plu. **À ajuster** réduit le poids de la composition essayée sans pénaliser tous ses vernis.
+- **Comme d’habitude** privilégie les goûts et références familières ; **Envie de changement** favorise les vernis peu utilisés et évite de trop répéter les dernières compositions ; **Surprends-moi** conserve sa variété. La difficulté ressentie ajuste doucement le classement, sans modifier les niveaux accessibles. Les cartes et fiches expliquent les signaux utilisés lorsqu’ils s’appliquent.
+- Le nombre de vernis, les décorations choisies, le temps, le niveau, les limites et la disponibilité du matériel restent prioritaires. Les ongles et pastilles conservent la teinte précise de chaque référence ; aucune couleur moyenne n’est déduite des goûts. Les variantes utilisent aussi les retours au moment où elles sont demandées.
+- Une session terminée et son entrée dans le journal comptent comme une seule pose. Les produits réellement renseignés dans le journal remplacent ceux de l’inspiration pour les signaux d’utilisation. S’ils ont changé, aucune technique ni composition d’origine n’est supposée avoir été réalisée. Les poses manuelles peuvent contribuer avec leurs références et retours explicites.
+- Le modèle est recalculé à partir des données présentes : corriger ou retirer un retour/favori retire son influence. Supprimer un souvenir conserve l’utilisation neutre d’un éventuel tutoriel terminé. Les notes libres, photos et durées de tenue ne sont pas interprétées ; aucun service distant ne reçoit ces données.
+- **Adapter mes prochaines idées à mes retours** permet de mettre en pause ou réactiver la personnalisation. Le réglage est conservé dans `nm-personalization-v1`. Le profil et les choix du jour restent actifs ; journal et favoris ne sont pas effacés. En cas d’échec de sauvegarde, l’ancien réglage reste en place et le message apparaît dans le panneau.
+- Un instantané compact des signaux est conservé avec chaque génération dans `nm-creation-v1` : un cœur, un retour ou une pause de la personnalisation ne déplace pas les idées déjà affichées, y compris après rechargement. **Recomposer mes idées** applique les nouveaux signaux. Les anciennes générations restent lisibles avec leur classement précédent jusqu’à cette action. Les copies des favoris, tutoriels et souvenirs ne sont pas réécrites.
+- Aucun journal complet n’est requis pour commencer : un favori ou un retour associé à des produits suffit. Sans historique exploitable, le classement initial continue de fonctionner.
+
 ## Suite validée du projet
 
-- Phases 1 à 5 validées par Marie ; phase 6 à tester.
-- Phase 6 bis : import et teintes développés, à tester ; couverture des boutiques et limites décrites ci-dessus.
-- Phase 7 : intelligence personnelle ; phase 8 : accueil intelligent ; phase 9 : premier démarrage guidé ; phase 10 : application native ; phase 11 : compte et synchronisation ; phase 12 : version publique et stores.
+- Phases 1 à 6 et 6 bis validées par Marie. La représentation schématique est conservée avec la priorité aux teintes précises ; couverture des boutiques et limites décrites ci-dessus.
+- Phase 7 développée, prête à tester et à valider par Marie.
+- Phase 8 : accueil intelligent ; phase 9 : premier démarrage guidé ; phase 10 : application native ; phase 11 : compte et synchronisation ; phase 12 : version publique et stores.
 - Toutes les phases déjà réalisées restent accessibles pendant le développement des suivantes.
 
 Tests du moteur : `npm test`. Construction : `npm run build`.

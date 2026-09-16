@@ -98,13 +98,13 @@ export function safeProductUrl(value) {
   catch { return null; }
 }
 
-export function createVariants(idea, items, profile, seed = 1) {
+export function createVariants(idea, items, profile, seed = 1, learning = null) {
   const options = { ...profileDefaults(profile), ...idea.options, polishCount: idea.palette.length };
   const shapeProfile = { ...profile, shape: idea.shape, length: idea.length };
   const paletteIds = new Set(idea.palette.map(item => String(item.id)));
   const samePaletteItems = items.filter(item => paletteIds.has(String(item.id)) || item.type === 'Matériel' || auxiliary(item));
-  const close = createSuggestions(samePaletteItems, shapeProfile, options, seed, 12).results;
-  const other = createSuggestions(items, shapeProfile, options, seed, 12).results;
+  const close = createSuggestions(samePaletteItems, shapeProfile, options, seed, 12, learning).results;
+  const other = createSuggestions(items, shapeProfile, options, seed, 12, learning).results;
   const seen = new Set([compositionKey(idea)]);
   return [...close, ...other].filter(candidate => {
     const key = compositionKey(candidate);

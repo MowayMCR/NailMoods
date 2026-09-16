@@ -1,5 +1,6 @@
 import { productColor } from './colorAnalysis.js';
 import { decorationChoice, isDecoration } from './decorations.js';
+import { personalAdjustment, validPersonalSnapshot } from './personalization.js';
 
 // Suggestions use owned products only. Resolve the shade once for nails and product swatches alike.
 export const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -75,8 +76,9 @@ const hashScore = (text, seed) => {
   return (hash >>> 0) / 4294967296;
 };
 
-export function createSuggestions(items = [], profile = {}, supplied = {}, seed = 1, limit = 4) {
+export function createSuggestions(items = [], profile = {}, supplied = {}, seed = 1, limit = 4, learning = null) {
   items = items.map(item => item.type === 'Matériel' ? item : { ...item, color: productColor(item) });
+  const personalModel = validPersonalSnapshot(learning) ? learning : null;
   const options = { ...profileDefaults(profile), ...supplied };
   const constraints = new Set(Array.isArray(options.constraints) ? options.constraints : []);
   const duration = [15, 30, 45, 60, 90].includes(Number(options.duration)) ? Number(options.duration) : 45;
@@ -202,7 +204,8 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (decorated) reasons.push('Avec ta décoration ' + sticker.name);
     if (drawing.has(pattern)) reasons.push('Avec ' + (pattern === 'dots' ? tools.dotting.name : tools.fineBrush.name));
     if (!reasons.length) reasons.push('Avec les produits de ta collection');
-    candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score, reasons: reasons.slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte' });
+    const personal = personalAdjustment({ pattern, palette, resources, nails }, options, personalModel);
+    candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score: score + personal.score, reasons: [...new Set([...personal.reasons, ...reasons])].slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte' });
   }
 
   for (const base of ordered) {
