@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, ScanLine, Camera, Image as ImageIcon, Check, X } from 'lucide-react';
 import { fetchProduct, lookupBarcode, shopifyCandidate, miniMacaronCatalog, textMatches, inferTraits, normalizeText } from './productImport';
 import { readPhotoText, readBarcodePhoto } from './recognition';
-import { colorFamilies } from './colorAnalysis';
+import { colorFamilyChange } from './colorAnalysis';
 import './product-import.css';
 
 const fieldNames = { name: 'Nom', brand: 'Marque', type: 'Nature', equipmentCategory: 'Matériel', reference: 'Référence', barcode: 'Code-barres', family: 'Famille de couleur', finish: 'Finition', effect: 'Effet', usage: 'Utilisation', photo: 'Photo de la boutique' };
@@ -53,8 +53,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy }) {
   }
 
   function useCandidate(fields, source) {
-    const generic = fields.family && !['photo', 'manual'].includes(item.colorSource) ? colorFamilies.find(([name]) => name === fields.family)?.[1] : null;
-    onChange({ ...fields, ...(generic ? { color: generic, colorSource: 'palette' } : {}), ...(source.source ? { url: source.source } : {}), importInfo: { method: source.method, source: source.source || '', at: new Date().toISOString() } });
+    onChange({ ...fields, ...(fields.family ? colorFamilyChange(item, fields.family) : {}), ...(source.source ? { url: source.source } : {}), importInfo: { method: source.method, source: source.source || '', at: new Date().toISOString() } });
     setCandidate(null); setMessage('Informations reprises. Vérifie la fiche puis enregistre-la.');
   }
   function useLine(line) {

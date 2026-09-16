@@ -5,7 +5,7 @@ import { equipmentInfo, EquipmentVisual, EquipmentCategory, EquipmentFields } fr
 import ProductPhoto from './ProductPhoto';
 import ProductImport from './ProductImport';
 import PhotoColor from './PhotoColor';
-import { colorFamilies } from './colorAnalysis';
+import { colorFamilies, colorFamilyChange, productColor } from './colorAnalysis';
 import CreateView from './CreateView';
 import './style.css';
 import ProfileView from './ProfileView';
@@ -55,6 +55,7 @@ function App() {
   const [saveError, setSaveError] = useState('');
   const [photoBusy, setPhotoBusy] = useState(false);
   const [importBusy, setImportBusy] = useState(false);
+  const [shadeValid, setShadeValid] = useState(true);
   const th = themes[profile.theme] || themes.nailmoods;
   const material = edit?.type === 'Matériel';
 
@@ -183,6 +184,10 @@ function App() {
 
   function save() {
     if (!edit.name.trim() || photoBusy || importBusy) return;
+    if (!material && !shadeValid) {
+      setSaveError('Complète le code de ta teinte, par exemple #703650, avant d’enregistrer.');
+      return;
+    }
     const quantity = Number(edit.quantity ?? 1);
     if (material && (!Number.isInteger(quantity) || quantity < 1 || quantity > 9999)) {
       setSaveError('Indique une quantité entière entre 1 et 9999.');
@@ -233,7 +238,7 @@ function App() {
           }}>
             {item.photo ? <div className="productPhoto"><img src={item.photo} alt={item.name} loading="lazy" /></div> :
               item.type === 'Matériel' ? <EquipmentVisual item={item} /> :
-                <div className="bottle" aria-hidden="true"><i style={{ background: item.color }} /><span style={{ background: item.color }} /></div>}
+                <div className="bottle" aria-hidden="true"><i style={{ background: productColor(item) }} /><span style={{ background: productColor(item) }} /></div>}
             <div className="productInfo">
               <small>{item.type === 'Matériel' ? equipmentInfo(item).name : item.family + ' · ' + item.depth}</small>
               <b>{item.name}</b>
@@ -298,13 +303,13 @@ function App() {
         {material && <EquipmentFields item={edit} onChange={change} />}
         <ProductPhoto value={edit.photo} onChange={photo => change({ photo })} onBusy={setPhotoBusy} maxSize={1200} />
         {!material && <>
-          <PhotoColor item={edit} onChange={change} />
+          <PhotoColor item={edit} onChange={change} onValidityChange={setShadeValid} />
           <label>Finition<select value={edit.finish} onChange={event => change({ finish: event.target.value })}>
             {['Brillant', 'Crème', 'Jelly', 'Pailleté', 'Nacré', 'Métallique', 'Chrome', 'Cat-eye', 'Mat', 'Autre'].map(value => <option key={value}>{value}</option>)}
           </select></label>
           <div className="fieldHead"><b>Famille de couleur</b><small>modifiable</small></div>
           <div className="colorChips">{colors.map(([name, color]) =>
-            <button key={name} className={edit.family === name ? 'on' : ''} aria-pressed={edit.family === name} onClick={() => change({ family: name, ...(['photo', 'manual'].includes(edit.colorSource) ? {} : { color, colorSource: 'palette' }) })}><i style={{ background: color }} /><span>{name}</span>{edit.family === name && <Check />}</button>
+            <button key={name} className={edit.family === name ? 'on' : ''} aria-pressed={edit.family === name} onClick={() => change(colorFamilyChange(edit, name))}><i style={{ background: color }} /><span>{name}</span>{edit.family === name && <Check />}</button>
           )}</div>
           <div className="form2">
             <label>Profondeur<select value={edit.depth} onChange={event => change({ depth: event.target.value })}>{['Clair', 'Moyen', 'Foncé'].map(value => <option key={value}>{value}</option>)}</select></label>

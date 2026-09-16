@@ -1,4 +1,5 @@
 import { auxiliary, createSuggestions, normalize, profileDefaults } from './creationEngine.js';
+import { productColor } from './colorAnalysis.js';
 
 export const INSPIRATIONS_KEY = 'nm-inspirations-v1';
 export const fingers = ['Pouce', 'Index', 'Majeur', 'Annulaire', 'Auriculaire'];
@@ -64,8 +65,9 @@ export function toggleFavorite(library, idea) {
 export function productStatus(saved, items) {
   const current = items.find(item => sameId(item.id, saved.id));
   if (!current || Number(current.quantity ?? 1) <= 0) return { state: 'missing', label: 'Absent de ta collection', current };
-  const fields = ['name', 'brand', 'type', 'color', 'finish', 'effect', 'usage', 'equipmentCategory', 'materialStyle', 'reference'];
-  if (fields.some(field => (current[field] || '') !== (saved[field] || ''))) return { state: 'changed', label: 'Fiche modifiée depuis cette inspiration', current };
+  const fields = ['name', 'brand', 'type', 'finish', 'effect', 'usage', 'equipmentCategory', 'materialStyle', 'reference'];
+  const changedColor = current.type !== 'Matériel' && productColor(current) !== productColor(saved);
+  if (changedColor || fields.some(field => (current[field] || '') !== (saved[field] || ''))) return { state: 'changed', label: 'Fiche modifiée depuis cette inspiration', current };
   return { state: 'available', label: 'Dans ta collection', current };
 }
 

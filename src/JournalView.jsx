@@ -4,6 +4,7 @@ import NailPreview from './NailPreview';
 import ProductPhoto from './ProductPhoto';
 import Sheet from './Sheet';
 import { normalize } from './creationEngine';
+import { productColor } from './colorAnalysis';
 import { easeLabels, feelingLabels, filterJournal, journalDate, journalProducts, journalValidation, localDate, newJournalEntry, pendingJournalPoses } from './journal';
 import './journal.css';
 
@@ -25,7 +26,7 @@ function ProductPicker({ products, items, onApply, onClose }) {
     <div className="journalProductChoices">{filtered.map(item => {
       const chosen = selected.some(value => String(value.id) === String(item.id));
       return <button key={item.id} aria-pressed={chosen} onClick={() => setSelected(current => chosen ? current.filter(value => String(value.id) !== String(item.id)) : [...current, ...journalProducts([item])])}>
-        {item.type === 'Matériel' ? <Package /> : <i style={{ background: item.color || 'var(--soft)' }} />}<span><b>{item.name}</b><small>{[item.brand, item.equipmentCategory || item.type].filter(Boolean).join(' · ')}</small></span>{chosen ? <Check /> : <Plus />}
+        {item.type === 'Matériel' ? <Package /> : <i style={{ background: productColor(item) }} />}<span><b>{item.name}</b><small>{[item.brand, item.equipmentCategory || item.type].filter(Boolean).join(' · ')}</small></span>{chosen ? <Check /> : <Plus />}
       </button>;
     })}</div>
     {!filtered.length && <p className="journalMuted">{query ? 'Aucun produit avec cette recherche.' : 'Ta collection est encore vide. Tu peux enregistrer ta pose et ajouter les produits plus tard.'}</p>}

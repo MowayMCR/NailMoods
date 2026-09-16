@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronRight, X, Check, Palette, UserRound, Camera, Sparkles, Search, ArrowRight } from 'lucide-react';
 import { profileThemes, avatars, universeGroups, choices } from './profileOptions';
 import Sheet from './Sheet';
+import { productColor } from './colorAnalysis';
 import './profile.css';
 
 export default function ProfileView({ profile, items, onChange, onCollection }) {
@@ -28,7 +29,7 @@ export default function ProfileView({ profile, items, onChange, onCollection }) 
       <div className="favoriteStyles">{profile.styles.map(style => <button key={style} aria-label={'Retirer ' + style} onClick={() => toggleStyle(style)}>{style}<X /></button>)}</div><button className="outline" onClick={() => setUniverses(true)}>+ Ajouter des univers</button>
     </section>
     <section className="card"><h2>Mes techniques</h2><div className="techList">{[['stickers', 'Stickers & décos'], ['french', 'French & lignes'], ['freehand', 'Dessin à main levée'], ['effects', 'Effets / poudres / chrome']].map(([key, label]) => <button key={key} onClick={() => setPicker(key)}><span>{label}</span><b>{profile[key]}</b><ChevronRight /></button>)}</div></section>
-    <section className="card"><h2>Ma collection</h2><div className="signature">{items.filter(item => item.type !== 'Matériel').slice(0, 5).map(item => <div key={item.id}><i style={{ background: item.color }} /><span>{item.name}</span></div>)}</div><button className="outline" onClick={onCollection}>Voir mes {items.length} produits et accessoires <ArrowRight size={13} /></button></section>
+    <section className="card"><h2>Ma collection</h2><div className="signature">{items.filter(item => item.type !== 'Matériel').slice(0, 5).map(item => <div key={item.id}><i style={{ background: productColor(item) }} /><span>{item.name}</span></div>)}</div><button className="outline" onClick={onCollection}>Voir mes {items.length} produits et accessoires <ArrowRight size={13} /></button></section>
 
     {picker && <Sheet title={choices[picker].title} onClose={() => setPicker(null)} className="profileSheet">
       {choices[picker].visual ? <div className="visualOptions">{choices[picker].values.map(([value, description, shape]) => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><div className="finger"><div className="nailDemo"><i className={shape} /></div></div><b>{value}</b><span>{description}</span>{profile[picker] === value && <em><Check /></em>}</button>)}</div> : <div className="optionList">{choices[picker].values.map(value => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><span>{value}</span>{profile[picker] === value && <Check />}</button>)}</div>}

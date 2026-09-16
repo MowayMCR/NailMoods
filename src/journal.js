@@ -1,5 +1,6 @@
 import { snapshotIdea, validIdea } from './inspirations.js';
 import { normalize } from './creationEngine.js';
+import { preciseShade, productColor } from './colorAnalysis.js';
 
 export const JOURNAL_KEY = 'nm-journal-v1';
 export const feelingLabels = { love: 'J’adore', like: 'J’aime bien', adjust: 'À ajuster' };
@@ -26,7 +27,9 @@ export function journalProducts(products = []) {
   const saved = new Map();
   for (const product of Array.isArray(products) ? products : []) {
     if (!product || !['string', 'number'].includes(typeof product.id) || typeof product.name !== 'string' || !product.name.trim()) continue;
-    saved.set(String(product.id), Object.fromEntries(productFields.filter(field => ['string', 'number'].includes(typeof product[field])).map(field => [field, product[field]])));
+    const snapshot = Object.fromEntries(productFields.filter(field => ['string', 'number'].includes(typeof product[field])).map(field => [field, product[field]]));
+    if (product.type !== 'Matériel' && preciseShade(product)) snapshot.color = productColor(product);
+    saved.set(String(product.id), snapshot);
   }
   return [...saved.values()];
 }

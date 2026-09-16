@@ -1,4 +1,6 @@
-// Suggestions use owned products only. No remote inference or image analysis.
+import { productColor } from './colorAnalysis.js';
+
+// Suggestions use owned products only. Resolve the shade once for nails and product swatches alike.
 export const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 export const normalizePolishCount = value => ['number', 'string'].includes(typeof value) && [1, 2, 3, 4, 5].includes(Number(value)) ? Number(value) : 'auto';
 const unique = items => [...new Map(items.filter(Boolean).map(item => [String(item.id), item])).values()];
@@ -73,6 +75,7 @@ const hashScore = (text, seed) => {
 };
 
 export function createSuggestions(items = [], profile = {}, supplied = {}, seed = 1, limit = 4) {
+  items = items.map(item => item.type === 'Matériel' ? item : { ...item, color: productColor(item) });
   const options = { ...profileDefaults(profile), ...supplied };
   const constraints = new Set(Array.isArray(options.constraints) ? options.constraints : []);
   const duration = [15, 30, 45, 60, 90].includes(Number(options.duration)) ? Number(options.duration) : 45;

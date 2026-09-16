@@ -1,5 +1,18 @@
 export const colorFamilies = [['Prune','#703650'],['Cassis','#622947'],['Bordeaux','#852d40'],['Rouge','#c73e46'],['Rose','#db7897'],['Nude','#ddb9aa'],['Beige','#cbb89d'],['Brun','#805b4c'],['Orange','#d47c4b'],['Jaune','#dfc65e'],['Vert','#67865f'],['Bleu','#5479a6'],['Violet','#735b91'],['Noir','#29262a'],['Blanc','#f1efeb'],['Argent','#aeb1b5'],['Or','#c4a45e'],['Multi','#8c5b8f']];
-export const validHex = value => /^#[0-9a-f]{6}$/i.test(value || '');
+export const validHex = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
+export function preciseShade(item = {}) {
+  if (validHex(item.shade)) return item.shade.toLowerCase();
+  // Older collections stored a sampled/custom shade directly in color.
+  if (!Object.hasOwn(item, 'shade') && ['photo', 'manual'].includes(item.colorSource) && validHex(item.color)) return item.color.toLowerCase();
+  return '';
+}
+export function productColor(item = {}) {
+  return preciseShade(item) || (validHex(item.color) ? item.color.toLowerCase() : '') || colorFamilies.find(([name]) => name === item.family)?.[1] || '#b88699';
+}
+export function colorFamilyChange(item, family) {
+  const shade = preciseShade(item), color = colorFamilies.find(([name]) => name === family)?.[1];
+  return { family, ...(color ? { color } : {}), shade, colorSource: shade ? item.colorSource === 'photo' ? 'photo' : 'manual' : 'palette' };
+}
 const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
 const hex = values => '#' + values.map(value => Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, '0')).join('');
 // Perceptual distance in OKLab; family is a suggestion, the sampled hex is kept.

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Pipette, Check } from 'lucide-react';
-import { describeColor, photoPalette, sampleColor, validHex } from './colorAnalysis';
+import { colorFamilies, describeColor, photoPalette, preciseShade, productColor, sampleColor, validHex } from './colorAnalysis';
 import { imageCanvas } from './recognition';
 
-function Sampler({ source, onUse }) {
+function Sampler({ source, onSelect, onDone }) {
   const canvas = useRef(null), pixels = useRef(null);
   const [palette, setPalette] = useState([]), [point, setPoint] = useState(null), [color, setColor] = useState(''), [error, setError] = useState(''), [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -21,10 +21,13 @@ function Sampler({ source, onUse }) {
     })();
     return () => controller.abort();
   }, [source]);
+  function choose(color, position = null) {
+    setColor(color); setPoint(position); onSelect(color);
+  }
   function pick(x, y) {
     if (!pixels.current) return;
     const position = { x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)) };
-    try { setColor(sampleColor(pixels.current, position.x * (pixels.current.width - 1), position.y * (pixels.current.height - 1))); setPoint(position); }
+    try { choose(sampleColor(pixels.current, position.x * (pixels.current.width - 1), position.y * (pixels.current.height - 1)), position); }
     catch (err) { setError(err.message); }
   }
   function keyboard(event) {
@@ -40,28 +43,41 @@ function Sampler({ source, onUse }) {
       <canvas ref={canvas} role="button" tabIndex="0" aria-label="Prélever une couleur dans la photo" onKeyDown={keyboard} onClick={event => { const rect = event.currentTarget.getBoundingClientRect(); pick((event.clientX - rect.left) / rect.width, (event.clientY - rect.top) / rect.height); }} />
       {point && <span className="sampleTarget" style={{ left: `${point.x * 100}%`, top: `${point.y * 100}%` }} />}
     </div>
-    {palette.length > 0 && <div className="photoPalette" aria-label="Teintes extraites de la photo">{palette.map(value => <button key={value} type="button" aria-label={`Choisir la teinte ${value}`} aria-pressed={color === value} style={{ background: value }} onClick={() => { setColor(value); setPoint(null); }}>{color === value && <Check />}</button>)}</div>}
-    {color && <div className="sampleResult"><span className="exactSwatch" style={{ background: color }} /><div><b>{color.toUpperCase()}</b><small>Famille proposée : {describeColor(color).family}</small></div><button type="button" onClick={() => onUse(color)}><Check />Garder cette teinte</button></div>}
+    {palette.length > 0 && <div className="photoPalette" aria-label="Teintes extraites de la photo">{palette.map(value => <button key={value} type="button" aria-label={`Choisir la teinte ${value}`} aria-pressed={color === value} style={{ background: value }} onClick={() => choose(value)}>{color === value && <Check />}</button>)}</div>}
+    {color && <div className="sampleResult"><span className="exactSwatch" style={{ background: color }} /><div><b>{color.toUpperCase()}</b><small>Famille proposée : {describeColor(color).family}</small></div><button type="button" onClick={onDone}><Check />Terminer le prélèvement</button></div>}
     <p className="fieldHelp">La lumière, les reflets et l’écran influencent la couleur. La finition et les effets restent à vérifier.</p>
   </div>;
 }
 
-export default function PhotoColor({ item, onChange }) {
-  const [open, setOpen] = useState(false), [draft, setDraft] = useState(item.color), [saved, setSaved] = useState(false);
-  useEffect(() => { setDraft(item.color); }, [item.color]);
+export default function PhotoColor({ item, onChange, onValidityChange }) {
+  const effectiveColor = productColor(item);
+  const [open, setOpen] = useState(false), [draft, setDraft] = useState(effectiveColor), [saved, setSaved] = useState(false);
+  useEffect(() => { setDraft(effectiveColor); }, [effectiveColor]);
+  useEffect(() => { onValidityChange(validHex(draft)); }, [draft, onValidityChange]);
   useEffect(() => { setOpen(false); setSaved(false); }, [item.photo]);
   function useColor(color, source) {
-    onChange({ ...describeColor(color), colorSource: source, colorUpdatedAt: new Date().toISOString() });
-    setSaved(true); setOpen(false);
+    const { color: shade, family, depth } = describeColor(color);
+    onChange({ shade, family, depth, color: colorFamilies.find(([name]) => name === family)[1], colorSource: source, colorUpdatedAt: new Date().toISOString() });
+    setDraft(shade); setSaved(true);
   }
-  const measured = ['photo', 'manual'].includes(item.colorSource);
+  function editColor(value) {
+    setDraft(value); setSaved(false);
+    if (validHex(value)) useColor(value, 'manual');
+  }
+  function useFamilyColor() {
+    const color = colorFamilies.find(([name]) => name === item.family)?.[1] || '#db7897';
+    onChange({ shade: '', color, colorSource: 'palette', colorUpdatedAt: new Date().toISOString() });
+    setDraft(color); setSaved(false); setOpen(false);
+  }
+  const measured = Boolean(preciseShade(item));
   return <section className="preciseColor">
-    <div className="fieldHead"><b>Ma teinte</b><small>{item.colorSource === 'photo' ? 'Prélevée dans une photo' : measured ? 'Personnalisée' : 'Teinte de la famille'}</small></div>
-    <div className="hexColor"><input type="color" aria-label="Choisir ma teinte" value={validHex(draft) ? draft : '#db7897'} onChange={event => { setDraft(event.target.value); setSaved(false); }} /><label>Code couleur<input aria-label="Code couleur" value={draft || ''} maxLength="7" spellCheck="false" onChange={event => { setDraft(event.target.value); setSaved(false); }} /></label><button type="button" disabled={!validHex(draft)} onClick={() => useColor(draft, 'manual')}>Appliquer</button></div>
-    {!validHex(draft) && <p className="fieldHelp">Utilise un code comme #703650.</p>}
+    <div className="fieldHead"><b>Ma teinte</b><small>{measured ? item.colorSource === 'photo' ? 'Prélevée dans une photo' : 'Personnalisée' : 'Teinte de la famille'}</small></div>
+    <div className="hexColor"><input type="color" aria-label="Choisir ma teinte" value={validHex(draft) ? draft : effectiveColor} onChange={event => editColor(event.target.value)} /><label>Code couleur<input aria-label="Code couleur" aria-invalid={!validHex(draft)} aria-describedby={!validHex(draft) ? 'shade-error' : undefined} value={draft || ''} maxLength="7" spellCheck="false" onChange={event => editColor(event.target.value)} /></label></div>
+    {!validHex(draft) && <p id="shade-error" className="fieldHelp">Complète ce code, par exemple #703650, avant d’enregistrer.</p>}
     {item.photo && <button type="button" className="importSecondary" aria-expanded={open} onClick={() => { setOpen(value => !value); setSaved(false); }}><Pipette />{open ? 'Fermer le prélèvement' : 'Prélever une teinte dans la photo'}</button>}
-    {open && item.photo && <Sampler key={item.photo} source={item.photo} onUse={color => useColor(color, 'photo')} />}
+    {open && item.photo && <Sampler key={item.photo} source={item.photo} onSelect={color => useColor(color, 'photo')} onDone={() => setOpen(false)} />}
     {saved && <p className="importSuccess" role="status"><Check />Teinte retenue pour tes prochains aperçus. Enregistre la fiche pour la conserver.</p>}
-    <p className="fieldHelp">{measured ? 'Cette teinte précise est utilisée dans tes nouvelles idées. Modifier sa famille ci-dessous ne la remplace pas.' : 'La couleur actuelle est indicative. Prélève une teinte dans une photo ou ajuste-la ici pour tes prochains aperçus.'}</p>
+    <p className="fieldHelp">{measured ? 'Tes nouvelles idées utilisent cette teinte en priorité. La famille ci-dessous sert à classer ton vernis.' : 'Sans teinte précise, tes idées utilisent la couleur de la famille. Prélève une teinte dans une photo ou ajuste-la ici.'}</p>
+    {measured && <button type="button" className="importSecondary" onClick={useFamilyColor}>Utiliser la couleur de la famille</button>}
   </section>;
 }
