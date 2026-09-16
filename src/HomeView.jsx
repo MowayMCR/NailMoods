@@ -45,7 +45,7 @@ export default function HomeView({ profile, items, library, journal, tutorials, 
   const modeLabel = { usual: 'Comme d’habitude', change: 'Envie de changement', surprise: 'Surprends-moi' }[options.mode];
   const regenerate = () => setRun(previous => ({ seed: previous.seed + 1, learning: liveLearning, stamp: liveStamp, exclude: personalRecipeKey(inspiration) }));
   const create = () => onNavigate('create');
-  const nextTitle = home.priority === 'resume' ? resume.idea.title : home.priority === 'retained' ? retained.title : readiness ? readiness.title : 'Et si on créait ta prochaine pose ?';
+  const nextTitle = home.priority === 'resume' ? resume.idea.title : home.priority === 'retained' ? retained.title : readiness ? readiness.title : 'On crée ta prochaine pose ?';
 
   return <div className="homePage smartHome">
     <section className="homeGreeting"><small>TON NAILMOODS, À TON RYTHME</small><h1>{profile.name ? 'Bonjour, ' + profile.name + '.' : 'Bienvenue dans ton univers.'}</h1><p>{resume ? 'Ta pose t’attend, là où tu l’as laissée.' : retained ? 'Ton envie est déjà là. À toi de choisir ton moment.' : 'Tes couleurs, tes envies, un moment pour toi.'}</p>
