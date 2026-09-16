@@ -5,6 +5,9 @@ function Decor({ motif, color }) {
   if (motif === 'star') return <path d="m32 42 3 8 9 1-7 6 2 9-7-5-8 5 3-9-7-6 9-1Z" fill={color} />;
   if (motif === 'moon') return <path d="M38 44c-15-5-24 17-7 21 5 1 10-2 12-6-14 4-20-12-5-15Z" fill={color} />;
   if (motif === 'heart') return <path d="M32 64C8 48 25 38 32 48c8-10 24 0 0 16Z" fill={color} />;
+  if (motif === 'leaf') return <g><path d="M22 67C13 47 24 35 44 34C47 54 36 65 22 67Z" fill={color} /><path d="m22 67 18-28m-13 22-4-11m9 4 10-4" fill="none" stroke="#63432c" strokeWidth="1.4" opacity=".7" /></g>;
+  if (motif === 'stripe') return <g stroke={color} strokeWidth="2.2"><path d="m8 52 48-15M8 58l48-15" /></g>;
+  if (motif === 'gem') return <g fill={color} stroke="#fff" strokeWidth=".7"><path d="m32 38 8 12-8 12-8-12Z" /><path d="m32 42 4 8-4 8-4-8Z" fill="#fff" opacity=".4" /></g>;
   if (motif === 'flower') return <g fill={color}>{[0, 72, 144, 216, 288].map(angle => <ellipse key={angle} cx="32" cy="46" rx="4" ry="7" transform={'rotate(' + angle + ' 32 54)'} />)}<circle cx="32" cy="54" r="3" fill="#fff8e8" /></g>;
   return <rect x="26" y="47" width="12" height="14" rx="3" fill={color} transform="rotate(-15 32 54)" />;
 }

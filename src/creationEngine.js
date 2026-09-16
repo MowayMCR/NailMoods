@@ -1,4 +1,5 @@
 import { productColor } from './colorAnalysis.js';
+import { decorationChoice, isDecoration } from './decorations.js';
 
 // Suggestions use owned products only. Resolve the shade once for nails and product swatches alike.
 export const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -56,15 +57,15 @@ export function inventoryTools(items) {
     magnet: category('Aimant cat-eye')[0],
     fineBrush: category('Pinceau').find(item => /\b(fin|fine|liner|detail|details)\b/.test(fieldText(item))),
     dotting: category('Dotting tool')[0],
-    stickers: category('Stickers / décalcomanies'),
+    stickers: equipment.filter(isDecoration),
   };
 }
 
 export function stickerAppearance(item) {
   const value = fieldText(item);
   return {
-    motif: /etoil|star/.test(value) ? 'star' : /lune|moon/.test(value) ? 'moon' : /fleur|floral|flower/.test(value) ? 'flower' : /coeur|heart/.test(value) ? 'heart' : 'generic',
-    color: /argent|silver/.test(value) ? '#b9bfcf' : /dore|\bor\b|gold/.test(value) ? '#d0aa58' : /blanc|white/.test(value) ? '#fff8ef' : /noir|black/.test(value) ? '#28212e' : '#d9c7b2',
+    motif: /etoil|star/.test(value) ? 'star' : /lune|moon/.test(value) ? 'moon' : /feuille|leaf|leaves|feuillage/.test(value) ? 'leaf' : /ligne|bande|stripe/.test(value) ? 'stripe' : /fleur|floral|flower/.test(value) ? 'flower' : /coeur|heart/.test(value) ? 'heart' : /strass|gem|rhinestone/.test(value) ? 'gem' : 'generic',
+    color: /argent|silver/.test(value) ? '#b9bfcf' : /dore|\bor\b|gold/.test(value) ? '#d0aa58' : /automn|autumn|cuivr|copper/.test(value) ? '#be7849' : /blanc|white/.test(value) ? '#fff8ef' : /noir|black/.test(value) ? '#28212e' : '#d9c7b2',
   };
 }
 
@@ -82,6 +83,11 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const maxLevel = [0, 1, 2].includes(Number(options.level)) ? Number(options.level) : 0;
   const requestedPolishCount = normalizePolishCount(options.polishCount);
   const tools = inventoryTools(items);
+  const decoration = decorationChoice(options);
+  const requestedDecorations = decoration.mode === 'with' && decoration.id ? tools.stickers.filter(item => String(item.id) === decoration.id) : tools.stickers;
+  // An explicit choice remains selectable even beyond the bounded automatic sample.
+  const usableDecorations = decoration.mode === 'without' ? [] : requestedDecorations.slice(0, 20);
+  const decorationUnavailable = decoration.mode === 'with' && !usableDecorations.length;
   const blocked = [];
   const effects = items.filter(item => item.type === 'Effet' && !auxiliary(item));
   const topCoats = items.filter(item => auxiliary(item) && /top\s*coat/.test(normalize(item.name).replace(/-/g, ' ')));
@@ -119,6 +125,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     const palette = unique(multiPalette || [base, second]);
     if (requestedPolishCount !== 'auto' && palette.length !== requestedPolishCount) return;
     const decorated = pattern === 'sticker' || pattern === 'paletteSticker';
+    if (decoration.mode === 'with' && !decorated || decoration.mode === 'without' && decorated) return;
     if (constraints.has('noDrawing') && drawing.has(pattern)) return;
     if (constraints.has('noStickers') && decorated) return;
     const rank = drawing.has(pattern) ? 1 : 0;
@@ -163,7 +170,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
         4: ['Le quatuor en boucle', 'Quatre vernis en progression', 'Un quatuor à ta façon', 'Quatre vernis, autre sens'],
         5: ['Un vernis par ongle', 'Cinq vernis en sens inverse', 'Cinq vernis en rythme', 'La palette en mouvement'],
       }[palette.length]?.[variant],
-      paletteSticker: 'La palette décorée · ' + palette.length + ' vernis',
+      paletteSticker: palette.length === 2 ? variant === 1 ? 'Le duo à deux détails' : 'Le duo décoré' : 'La palette décorée · ' + palette.length + ' vernis',
     };
     const descriptions = {
       solid: base.name + ' sur les cinq ongles.',
@@ -174,7 +181,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       french: 'Une base ' + base.name + ' et des pointes ' + second?.name + '.',
       line: base.name + ', une ligne ' + second?.name + ' sur l’annulaire.',
       palette: 'Du pouce à l’auriculaire : ' + nails.map(nail => palette.find(item => item.id === nail.productId).name).join(', ') + '.',
-      paletteSticker: palette.length + ' vernis répartis sur les cinq ongles, avec ' + sticker?.name + ' sur l’annulaire.',
+      paletteSticker: palette.length + ' vernis répartis sur les cinq ongles, avec ' + sticker?.name + (variant === 1 ? ' sur l’index et l’annulaire.' : ' sur l’annulaire.'),
     };
     let score = primaryScore(base) + (palette.length > 1 ? palette.slice(1).reduce((sum, item) => sum + primaryScore(item), 0) / (palette.length - 1) * 0.2 : 0);
     if (options.occasion === 'Travail' && ['solid', 'accent', 'line'].includes(pattern)) score += 12;
@@ -192,7 +199,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (base.fav && options.mode === 'usual') reasons.push('Une de tes couleurs favorites');
     if (preferred.includes(base.family)) reasons.push('Une teinte dans ton univers ' + options.style);
     if (options.mode === 'change' && !base.fav) reasons.push('Une couleur à redécouvrir');
-    if (decorated) reasons.push('Avec tes stickers ' + sticker.name);
+    if (decorated) reasons.push('Avec ta décoration ' + sticker.name);
     if (drawing.has(pattern)) reasons.push('Avec ' + (pattern === 'dots' ? tools.dotting.name : tools.fineBrush.name));
     if (!reasons.length) reasons.push('Avec les produits de ta collection');
     candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score, reasons: reasons.slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte' });
@@ -200,7 +207,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
 
   for (const base of ordered) {
     add('solid', base);
-    for (const sticker of tools.stickers.slice(0, 20)) {
+    for (const sticker of usableDecorations) {
       add('sticker', base, null, sticker);
       add('sticker', base, null, sticker, 1);
     }
@@ -209,6 +216,10 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     for (const second of matching) {
       add('accent', base, second);
       add('duo', base, second);
+      for (const sticker of usableDecorations) {
+        add('paletteSticker', base, null, sticker, 0, [base, second], [0, 1, 0, 1, 0]);
+        add('paletteSticker', base, null, sticker, 1, [base, second], [0, 0, 0, 1, 0]);
+      }
       if (tools.dotting) add('dots', base, second);
       if (tools.fineBrush) { add('french', base, second); add('line', base, second); }
     }
@@ -229,7 +240,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       if (paletteSets.has(paletteKey)) continue;
       paletteSets.add(paletteKey);
       arrangements[size].forEach((arrangement, variant) => add('palette', palette[0], null, null, variant, palette, arrangement));
-      for (const sticker of tools.stickers.slice(0, 20)) add('paletteSticker', palette[0], null, sticker, 0, palette, arrangements[size][0]);
+      for (const sticker of usableDecorations) add('paletteSticker', palette[0], null, sticker, 0, palette, arrangements[size][0]);
     }
   }
   const ranked = candidates.sort((a, b) => b.score - a.score);
@@ -242,5 +253,5 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     });
     results.push(remaining.shift());
   }
-  return { results, total: candidates.length, availableColors: usable.length, inventoryColors: available.length, tools, blocked, effects, requestedPolishCount, maxPolishCount, countUnavailable };
+  return { results, total: candidates.length, availableColors: usable.length, inventoryColors: available.length, tools, blocked, effects, requestedPolishCount, maxPolishCount, countUnavailable, decorationUnavailable };
 }

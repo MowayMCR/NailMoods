@@ -83,6 +83,13 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 
 ## Phase 6 bis — liens, photos et teintes
 
+### Stickers et décorations dans les idées
+
+- **Créer → Décorations** propose **Automatique**, **Avec mes décorations** ou **Sans décorations**. Toucher une planche de la collection impose cette référence dans chaque proposition, dans les limites du temps et du nombre de vernis choisis.
+- Les catégories **Stickers / décalcomanies** et **Strass / décorations** sont utilisables avec 1 à 5 vernis, y compris les duos et les envies **Sans dessin**. Une référence épuisée ou supprimée ne peut pas être remplacée silencieusement.
+- La carte de l’idée affiche la photo de la décoration si elle existe. Les feuilles, lignes, étoiles, lunes, fleurs, cœurs et strass restent des motifs schématiques déduits des caractéristiques saisies, sans détourage automatique de la planche.
+- La référence choisie est conservée dans la fiche, le tutoriel, les variantes et le journal. L’ancien choix **Sans stickers** est repris par **Sans décorations**.
+
 - **Collection → Ajouter → Coller une URL**, ou ouvrir une ancienne fiche et toucher **Récupérer depuis le lien**. Les fiches Shopify publiques lisibles (dont Le Mini Macaron Europe, vérifié) fournissent nom, marque, photos, références et variantes. Les autres pages sont utilisables lorsqu’elles autorisent la lecture directe et contiennent un seul produit dans leurs données structurées. Une boutique qui bloque la lecture affiche un message et laisse la fiche utilisable. Il n’y a ni proxy tiers ni clé secrète dans le navigateur.
 - Les informations sont proposées dans **À vérifier** : on choisit la variante exacte, la photo et les champs à reprendre, puis **Utiliser ces informations** et **Enregistrer**. Un identifiant de variante absent du catalogue impose un nouveau choix. Les fiches existantes, photos personnelles et teintes précises ne sont pas remplacées automatiquement.
 - Nature, finition et effet sont suggérés uniquement à partir du nom, de la catégorie et des étiquettes explicites de la boutique. La description peut mentionner d’autres produits : elle ne sert pas à déduire ces caractéristiques. Les kits mixtes restent à préciser. Aucun temps de catalysation ou compatibilité n’est déduit.

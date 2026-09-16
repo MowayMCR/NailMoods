@@ -1,5 +1,6 @@
 import { normalize } from './creationEngine.js';
 import { snapshotIdea, validIdea } from './inspirations.js';
+import { isDecoration } from './decorations.js';
 
 export const TUTORIAL_KEY = 'nm-tutorials-v1';
 export const handLabels = { left: 'Main gauche', right: 'Main droite' };
@@ -51,10 +52,10 @@ export function buildTutorial(idea, firstHand = 'left') {
     }
     const stickerTargets = idea.nails.flatMap((nail, index) => nail.decoration ? [index] : []);
     if (stickerTargets.length) {
-      const stickers = idea.resources.filter(item => item.equipmentCategory === 'Stickers / décalcomanies');
+      const stickers = idea.resources.filter(isDecoration);
       add({ id: 'stickers', kind: 'sticker', title: 'Place tes décorations',
         body: 'Place ' + stickers.map(item => item.name).join(', ') + ' sur les ongles repérés, à l’emplacement suggéré. Adapte la taille et le motif à ta planche réelle.',
-        hint: 'Suis les indications de tes stickers pour la surface de pose et leur fixation.',
+        hint: 'Suis les indications de tes décorations pour la surface de pose et leur fixation.',
         products: stickers, targets: stickerTargets,
       });
     }

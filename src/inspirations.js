@@ -1,5 +1,6 @@
 import { auxiliary, createSuggestions, normalize, profileDefaults } from './creationEngine.js';
 import { productColor } from './colorAnalysis.js';
+import { isDecoration } from './decorations.js';
 
 export const INSPIRATIONS_KEY = 'nm-inspirations-v1';
 export const fingers = ['Pouce', 'Index', 'Majeur', 'Annulaire', 'Auriculaire'];
@@ -79,7 +80,7 @@ export function nailDetails(idea, index) {
   const nail = idea.nails[index];
   const base = idea.palette.find(item => sameId(item.id, nail.productId));
   const accent = idea.palette.find(item => sameId(item.id, nail.accentProductId));
-  const sticker = nail.decoration && idea.resources.find(item => item.equipmentCategory === 'Stickers / décalcomanies');
+  const sticker = nail.decoration && idea.resources.find(isDecoration);
   const details = [{ label: 'Couleur', item: base }];
   if (nail.drawing && accent) details.push({ label: { french: 'Pointes de la French', line: 'Ligne', dots: 'Pois' }[nail.drawing], item: accent });
   if (sticker) details.push({ label: 'Décoration', item: sticker });
@@ -88,7 +89,7 @@ export function nailDetails(idea, index) {
 
 export function resourceRole(item) {
   if (auxiliary(item)) return 'Finition demandée par le produit';
-  if (item.equipmentCategory === 'Stickers / décalcomanies') return 'Décoration';
+  if (isDecoration(item)) return 'Décoration';
   return item.equipmentCategory || 'Matériel';
 }
 
