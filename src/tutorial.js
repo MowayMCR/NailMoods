@@ -100,6 +100,9 @@ export function updateTutorial(session, action, now = Date.now()) {
   const step = session.steps[session.current];
   let next = { ...session, updatedAt: now };
   switch (action.type) {
+    case 'finishWithoutGuide':
+      if (session.status === 'completed') return session;
+      return { ...next, status: 'completed', completionMode: 'unguided', completedAt: now, timer: emptyTimer() };
     case 'hand':
       if (session.status !== 'ready' || !['left', 'right'].includes(action.hand)) return session;
       return { ...next, firstHand: action.hand, steps: buildTutorial(session.idea, action.hand) };
@@ -212,7 +215,7 @@ export function readTutorials(storage) {
         && (timer.status !== 'running' || Number.isFinite(timer.endsAt));
       return simplifyLegacyTutorial({ ...session, completed, timer: validTimer ? timer : emptyTimer(), durations: session.durations && typeof session.durations === 'object' ? session.durations : {},
         current: Number.isInteger(session.current) ? Math.max(0, Math.min(session.steps.length - 1, session.current)) : 0,
-        status: session.status === 'completed' && completed.length !== session.steps.length ? 'paused' : session.status });
+        status: session.status === 'completed' && completed.length !== session.steps.length && !(session.completionMode === 'unguided' && Number.isFinite(session.completedAt)) ? 'paused' : session.status });
     }).filter(validTutorial);
     return { sessions, activeId: sessions.some(session => session.id === saved.activeId) ? saved.activeId : sessions.find(session => session.status !== 'completed')?.id || null };
   } catch { return empty; }
@@ -220,6 +223,18 @@ export function readTutorials(storage) {
 
 export function addTutorial(store, session, now = Date.now()) {
   return { sessions: [session, ...store.sessions.map(previous => previous.status === 'active' ? updateTutorial(previous, { type: 'pause' }, now) : previous)], activeId: session.id };
+}
+
+// Marking a real pose as done does not claim its guide steps were followed.
+// Repeated clicks reopen that completion; an explicitly restarted pose is new.
+export function markIdeaDone(store, idea, id, now = Date.now()) {
+  const saved = snapshotIdea(idea);
+  const pending = store.sessions.find(session => session.idea.key === saved.key && session.status !== 'completed');
+  const finished = store.sessions.find(session => session.idea.key === saved.key && session.status === 'completed');
+  if (!pending && finished) return { store, session: finished };
+  const session = updateTutorial(pending || newTutorial(saved, id, now), { type: 'finishWithoutGuide' }, now);
+  const sessions = pending ? store.sessions.map(value => value.id === session.id ? session : value) : [session, ...store.sessions];
+  return { session, store: { ...store, sessions, activeId: store.activeId === session.id ? sessions.find(value => value.status !== 'completed')?.id || null : store.activeId } };
 }
 
 export function actOnTutorial(store, id, action, now = Date.now()) {

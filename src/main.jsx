@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { Home, Palette, Library, BookHeart, UserRound, ChevronRight, X, Check, Search, Plus, Camera, Trash2, Heart, Link, ScanLine, Image, PenLine, WandSparkles, Package } from 'lucide-react';
 import { equipmentInfo, EquipmentVisual, EquipmentCategory, EquipmentFields } from './equipment';
 import ProductPhoto from './ProductPhoto';
+import ProductImport from './ProductImport';
+import PhotoColor from './PhotoColor';
+import { colorFamilies } from './colorAnalysis';
 import CreateView from './CreateView';
 import './style.css';
 import ProfileView from './ProfileView';
@@ -11,9 +14,9 @@ import HomeView from './HomeView';
 import JournalView from './JournalView';
 import { JOURNAL_KEY, putJournalEntry, readJournal, removeJournalEntry } from './journal';
 import TutorialView, { TutorialBanner, TutorialsList } from './TutorialView';
-import { TUTORIAL_KEY, readTutorials, newTutorial, addTutorial, actOnTutorial } from './tutorial';
+import { TUTORIAL_KEY, readTutorials, newTutorial, addTutorial, actOnTutorial, markIdeaDone } from './tutorial';
 import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite } from './inspirations';
-const colors=[['Prune','#703650'],['Cassis','#622947'],['Bordeaux','#852d40'],['Rouge','#c73e46'],['Rose','#db7897'],['Nude','#ddb9aa'],['Beige','#cbb89d'],['Brun','#805b4c'],['Orange','#d47c4b'],['Jaune','#dfc65e'],['Vert','#67865f'],['Bleu','#5479a6'],['Violet','#735b91'],['Noir','#29262a'],['Blanc','#f1efeb'],['Argent','#aeb1b5'],['Or','#c4a45e'],['Multi','#8c5b8f']];const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[{...defaults,id:1,name:'Prune foncée',brand:'Le Mini Macaron',family:'Prune',color:'#703650',depth:'Foncé',undertone:'Froid',finish:'Brillant',fav:true},{...defaults,id:2,name:'Latte',brand:'Le Mini Macaron',family:'Brun',color:'#805b4c',depth:'Moyen',undertone:'Chaud',finish:'Brillant'},{...defaults,id:3,name:'Galactic Sparkle',brand:'Le Mini Macaron',type:'Effet',family:'Multi',color:'#665083',finish:'Chrome',effect:'Multichrome',usage:'Sur une couleur de base'}];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
+const colors=colorFamilies;const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[{...defaults,id:1,name:'Prune foncée',brand:'Le Mini Macaron',family:'Prune',color:'#703650',depth:'Foncé',undertone:'Froid',finish:'Brillant',fav:true},{...defaults,id:2,name:'Latte',brand:'Le Mini Macaron',family:'Brun',color:'#805b4c',depth:'Moyen',undertone:'Chaud',finish:'Brillant'},{...defaults,id:3,name:'Galactic Sparkle',brand:'Le Mini Macaron',type:'Effet',family:'Multi',color:'#665083',finish:'Chrome',effect:'Multichrome',usage:'Sur une couleur de base'}];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
 
 function Brand() {
   return <div className="brandFinal"><img src="/NailMoods/nailmoods-logo.svg" alt="" /><div><b>Nail<span>Moods</span></b><small>CRÉE TON STYLE, À TON RYTHME</small></div></div>;
@@ -51,6 +54,7 @@ function App() {
   const [importer, setImporter] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [photoBusy, setPhotoBusy] = useState(false);
+  const [importBusy, setImportBusy] = useState(false);
   const th = themes[profile.theme] || themes.nailmoods;
   const material = edit?.type === 'Matériel';
 
@@ -98,6 +102,10 @@ function App() {
     }
     const session = newTutorial(idea, 'pose-' + crypto.randomUUID());
     if (saveTutorials(addTutorial(tutorials, session))) openTutorial(session.id);
+  }
+  function finishIdea(idea) {
+    const result = markIdeaDone(tutorials, idea, 'pose-' + crypto.randomUUID());
+    if (result.store === tutorials || saveTutorials(result.store)) openTutorial(result.session.id);
   }
   function tutorialAction(action) {
     if (!tutorialSession) return false;
@@ -174,7 +182,7 @@ function App() {
   }
 
   function save() {
-    if (!edit.name.trim() || photoBusy) return;
+    if (!edit.name.trim() || photoBusy || importBusy) return;
     const quantity = Number(edit.quantity ?? 1);
     if (material && (!Number.isInteger(quantity) || quantity < 1 || quantity > 9999)) {
       setSaveError('Indique une quantité entière entre 1 et 9999.');
@@ -199,7 +207,7 @@ function App() {
     <main>
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {!route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
-      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
+      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>PHASE 2 · COLLECTION</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
@@ -264,14 +272,14 @@ function App() {
           {[
             [Camera, 'Prendre une photo', 'Photographie le produit', 'camera'],
             [Image, 'Importer une photo', 'Capture ou image de ta galerie', 'image'],
-            [Link, 'Coller une URL', 'Garde le lien de la fiche produit', 'url'],
+            [Link, 'Coller une URL', 'Retrouve les photos et les informations', 'url'],
             [PenLine, 'Saisie manuelle', 'Ajoute seulement ce que tu connais', 'manual'],
           ].map(([Icon, title, subtitle, source]) => <button key={source} onClick={() => start(source)}>
             <span className="importIcon"><Icon /></span><span className="importCopy"><b>{title}</b><small>{subtitle}</small></span><ChevronRight className="importArrow" />
           </button>)}
-          <button disabled><span className="importIcon"><ScanLine /></span><span className="importCopy"><b>Scanner le produit</b><small>Lecture du code-barres à venir</small></span></button>
+          <button onClick={() => start('barcode')}><span className="importIcon"><ScanLine /></span><span className="importCopy"><b>Scanner le produit</b><small>Photo du code-barres ou saisie des chiffres</small></span><ChevronRight className="importArrow" /></button>
         </div>
-        <div className="smartHint"><WandSparkles /><span><b>Ta collection, à ton rythme</b><small>Ajoute une photo et renseigne ce que tu connais. L’analyse automatique des images et des liens reste à venir.</small></span></div>
+        <div className="smartHint"><WandSparkles /><span><b>Ta collection, à ton rythme</b><small>Lien, photo ou code-barres : vérifie les informations retrouvées avant de les garder. Tout reste modifiable.</small></span></div>
       </section>
     </div>}
 
@@ -279,23 +287,24 @@ function App() {
       <section className="productSheet" role="dialog" aria-modal="true" aria-labelledby="product-title" onClick={event => event.stopPropagation()}>
         <div className="grab" />
         <div className="sheetTitle"><div><small>{edit.id ? 'MODIFIER' : 'AJOUTER'}</small><h2 id="product-title">{material ? 'Fiche matériel' : 'Fiche produit'}</h2></div><button aria-label="Fermer" onClick={() => setEdit(null)}><X /></button></div>
+        <ProductImport item={edit} onChange={change} onBusy={setImportBusy} photoBusy={photoBusy} />
         <label>Nature<select value={edit.type} onChange={event => change({ type: event.target.value })}>
           {['Semi-permanent', 'Vernis', 'Gel', 'Effet', 'Matériel'].map(value => <option key={value}>{value}</option>)}
         </select></label>
         {material && <EquipmentCategory item={edit} onChange={change} />}
         <label>{material ? 'Nom du matériel' : 'Nom'}<input value={edit.name} onChange={event => change({ name: event.target.value })} placeholder={material ? equipmentInfo(edit).example : 'Nom du produit'} required /></label>
         <label>Marque (facultatif)<input value={edit.brand} onChange={event => change({ brand: event.target.value })} /></label>
+        {!material && <label>Référence (facultatif)<input value={edit.reference || ''} onChange={event => change({ reference: event.target.value })} /></label>}
         {material && <EquipmentFields item={edit} onChange={change} />}
-        <label>Lien du produit (facultatif)<input type="url" value={edit.url} onChange={event => change({ url: event.target.value })} placeholder="https://…" /></label>
-        {(edit.source === 'url' || edit.url) && <p className="fieldHelp">Le lien est enregistré avec ta fiche. La photo et les informations du site ne sont pas encore récupérées automatiquement.</p>}
-        <ProductPhoto value={edit.photo} onChange={photo => change({ photo })} onBusy={setPhotoBusy} />
+        <ProductPhoto value={edit.photo} onChange={photo => change({ photo })} onBusy={setPhotoBusy} maxSize={1200} />
         {!material && <>
+          <PhotoColor item={edit} onChange={change} />
           <label>Finition<select value={edit.finish} onChange={event => change({ finish: event.target.value })}>
             {['Brillant', 'Crème', 'Jelly', 'Pailleté', 'Nacré', 'Métallique', 'Chrome', 'Cat-eye', 'Mat', 'Autre'].map(value => <option key={value}>{value}</option>)}
           </select></label>
-          <div className="fieldHead"><b>Couleur principale</b><small>modifiable</small></div>
+          <div className="fieldHead"><b>Famille de couleur</b><small>modifiable</small></div>
           <div className="colorChips">{colors.map(([name, color]) =>
-            <button key={name} className={edit.family === name ? 'on' : ''} aria-pressed={edit.family === name} onClick={() => change({ family: name, color })}><i style={{ background: color }} /><span>{name}</span>{edit.family === name && <Check />}</button>
+            <button key={name} className={edit.family === name ? 'on' : ''} aria-pressed={edit.family === name} onClick={() => change({ family: name, ...(['photo', 'manual'].includes(edit.colorSource) ? {} : { color, colorSource: 'palette' }) })}><i style={{ background: color }} /><span>{name}</span>{edit.family === name && <Check />}</button>
           )}</div>
           <div className="form2">
             <label>Profondeur<select value={edit.depth} onChange={event => change({ depth: event.target.value })}>{['Clair', 'Moyen', 'Foncé'].map(value => <option key={value}>{value}</option>)}</select></label>
@@ -309,7 +318,7 @@ function App() {
         <button className={'favoriteToggle ' + (edit.fav ? 'on' : '')} onClick={() => change({ fav: !edit.fav })}><Heart fill={edit.fav ? 'currentColor' : 'none'} /> {edit.fav ? 'Dans mes favoris' : 'Ajouter aux favoris'}</button>
         <div className="sheetActions">
           {saveError && <p className="formError" role="alert">{saveError}</p>}
-          <button className="saveProduct" disabled={!edit.name.trim() || photoBusy} onClick={save}><Check />{photoBusy ? 'Préparation de la photo…' : 'Enregistrer'}</button>
+          <button className="saveProduct" disabled={!edit.name.trim() || photoBusy || importBusy} onClick={save}><Check />{photoBusy ? 'Préparation de la photo…' : importBusy ? 'Recherche en cours…' : 'Enregistrer'}</button>
           {!edit.name.trim() && <p className="fieldHelp">Renseigne un nom pour enregistrer.</p>}
         </div>
         {edit.id && <button className="deleteProduct" onClick={() => persist(items.filter(item => item.id !== edit.id))}><Trash2 /> Supprimer</button>}

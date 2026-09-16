@@ -27,8 +27,8 @@ Les données de cette V0.1 sont conservées localement dans le navigateur (`loca
 - Le filtre **Matériel** donne accès à un ajout direct. Le menu général **Ajouter** propose aussi **Matériel & accessoires**.
 - Une fiche matériel contient sa catégorie, son nom, sa marque, sa référence, sa quantité et ses notes. Les stickers, décorations et capsules peuvent préciser une couleur ou un motif.
 - Les cartes matériel utilisent une icône dédiée ou la photo ajoutée. Elles ne contribuent pas au compteur des couleurs de vernis.
-- Une photo peut être importée ou prise avec le téléphone, puis remplacée ou retirée. Elle est réduite à 800 px maximum et conservée avec la fiche sur l'appareil. Un échec de stockage laisse la fiche ouverte et préserve la collection enregistrée.
-- Les liens de produits sont conservés. La récupération automatique des photos et des caractéristiques des boutiques, l'analyse visuelle et la lecture des codes-barres ne sont pas encore implémentées.
+- Une photo peut être importée ou prise avec le téléphone, puis remplacée ou retirée. Elle est réduite à 1 200 px maximum dans la collection (800 px dans le journal) et conservée avec la fiche sur l'appareil. Un échec de stockage laisse la fiche ouverte et préserve la collection enregistrée.
+- Les liens et photos peuvent maintenant compléter les fiches : voir la phase 6 bis ci-dessous.
 - La clé `nm-collection-v2` est conservée pour retrouver les produits existants ; le profil `nm-profile` n'est pas modifié.
 
 ## Phase 3 — créer une manucure
@@ -81,10 +81,30 @@ Accès direct : `https://mowaymcr.github.io/NailMoods/#creer`, ou onglet **Crée
 - Supprimer un souvenir ne supprime ni son tutoriel ni les produits. Sa suggestion est masquée pour ne pas le faire réapparaître automatiquement ; un ajout explicite depuis le tutoriel reste possible.
 - Stockage local dans `nm-journal-v1`, séparé du profil, de la collection, des inspirations et des tutoriels. La synchronisation entre appareils reste prévue pour la phase 11. Une erreur de stockage conserve les données précédentes et le formulaire en cours ; aucun succès n’est affiché avant l’enregistrement.
 
+## Phase 6 bis — liens, photos et teintes
+
+- **Collection → Ajouter → Coller une URL**, ou ouvrir une ancienne fiche et toucher **Récupérer depuis le lien**. Les fiches Shopify publiques lisibles (dont Le Mini Macaron Europe, vérifié) fournissent nom, marque, photos, références et variantes. Les autres pages sont utilisables lorsqu’elles autorisent la lecture directe et contiennent un seul produit dans leurs données structurées. Une boutique qui bloque la lecture affiche un message et laisse la fiche utilisable. Il n’y a ni proxy tiers ni clé secrète dans le navigateur.
+- Les informations sont proposées dans **À vérifier** : on choisit la variante exacte, la photo et les champs à reprendre, puis **Utiliser ces informations** et **Enregistrer**. Un identifiant de variante absent du catalogue impose un nouveau choix. Les fiches existantes, photos personnelles et teintes précises ne sont pas remplacées automatiquement.
+- Nature, finition et effet sont suggérés uniquement à partir du nom, de la catégorie et des étiquettes explicites de la boutique. La description peut mentionner d’autres produits : elle ne sert pas à déduire ces caractéristiques. Les kits mixtes restent à préciser. Aucun temps de catalysation ou compatibilité n’est déduit.
+- **Lire l’étiquette ou la capture** effectue une lecture de texte en français et anglais sur l’appareil avec Tesseract.js. Le résultat est corrigeable ; une ligne peut devenir le nom après vérification. **Chercher chez Le Mini Macaron** propose les références dont le nom distinctif complet figure dans le texte. Une correspondance n’est jamais confirmée toute seule. Il s’agit de lecture de texte, pas d’une reconnaissance visuelle universelle du flacon.
+- **Ma teinte → Prélever une teinte dans la photo** permet de toucher la zone du vernis ou de choisir parmi des teintes extraites des pixels. Le code hexadécimal exact est conservé ; famille et profondeur sont proposées séparément. Le code reste ajustable manuellement. Les reflets, le fond et l’éclairage peuvent fausser le prélèvement : on vérifie la zone, la finition et les effets. Une photo distante non analysable peut être remplacée par une capture locale.
+- Les prochaines créations utilisent ce code couleur. Modifier ensuite la famille ne remplace pas une teinte prélevée ou personnalisée. Les anciennes inspirations favorites, poses et souvenirs conservent leur composition enregistrée. Un changement de collection invite à générer de nouvelles idées.
+- **Scanner le produit** lit une photo de code-barres EAN/UPC/ITF, prise avec le téléphone ou importée. Les chiffres peuvent aussi être saisis. La recherche couvre le catalogue public **Le Mini Macaron Europe** : contrôle de clé, recherche de référence, puis vérification du code dans la variante réelle. Une référence absente reste ajoutable avec son nom, sa photo ou son lien. Ce n’est pas une base mondiale de codes-barres.
+- Les moteurs de lecture sont chargés seulement à la demande et servis avec l’application. Les photos personnelles ne sont pas envoyées à un service de reconnaissance. Les boutiques/CDN reçoivent les demandes de fiches et d’images publiques, sans cookies ni identifiants de la boutique. Les photos importées restent dans le stockage local ; les photos de boutique sont des liens et nécessitent une connexion pour être affichées.
+- Annuler, modifier le lien ou fermer la fiche invalide la recherche en cours. Une réponse tardive ne modifie pas une autre fiche. Les limites de taille, délais et erreurs de stockage sont gérés sans perdre les produits existants.
+
+Références techniques : [Shopify Product API](https://shopify.dev/docs/api/ajax/reference/product), [Tesseract.js](https://github.com/naptha/tesseract.js), [ZXing Browser](https://github.com/zxing-js/browser). Les accès inter-sites dépendent des autorisations de chaque boutique ; le support n’est pas garanti pour toutes les URL.
+
+### Pose réalisée sans suivre le tutoriel
+
+- La fiche d’inspiration propose **Marquer comme faite**, sous **Démarrer le tutoriel**. La pose apparaît terminée dans **Mes poses**, et un badge **Déjà réalisée** figure sur les idées et favoris correspondants.
+- Le tutoriel est indiqué comme passé ; ses étapes ne sont pas artificiellement cochées. Si cette pose était déjà commencée, ses étapes réellement validées sont conservées et son minuteur est arrêté. Les autres poses ne changent pas.
+- **Ajouter au journal** reste facultatif. Une seconde pression retrouve la même pose sans doublon ; **Refaire cette pose** commence une nouvelle réalisation. L’état survit au rechargement. Une sauvegarde échouée ne marque rien comme fait.
+
 ## Suite validée du projet
 
 - Phases 1 à 5 validées par Marie ; phase 6 à tester.
-- Phase 6 bis : raccordement des liens et photos produits, caractéristiques et teintes mieux renseignées, scan selon les catalogues disponibles. Ce chantier est placé avant la personnalisation.
+- Phase 6 bis : import et teintes développés, à tester ; couverture des boutiques et limites décrites ci-dessus.
 - Phase 7 : intelligence personnelle ; phase 8 : accueil intelligent ; phase 9 : premier démarrage guidé ; phase 10 : application native ; phase 11 : compte et synchronisation ; phase 12 : version publique et stores.
 - Toutes les phases déjà réalisées restent accessibles pendant le développement des suivantes.
 

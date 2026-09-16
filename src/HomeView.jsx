@@ -8,7 +8,7 @@ export default function HomeView({ profile, items, library, journal, onNavigate,
       ['profile', UserRound, 'Mon profil', 'Mes habitudes, mon univers et mon apparence'],
       ['collection', Library, 'Ma collection', items.length + ' produits et accessoires'],
       ['create', Palette, 'Créer une inspiration', 'Mon envie du jour et mes idées'],
-      ['tutorials', ListChecks, 'Mes poses guidées', 'Mes tutoriels et ma progression'],
+      ['tutorials', ListChecks, 'Mes poses', 'Mes tutoriels et ma progression'],
       ['journal', BookHeart, 'Mon journal', journal.entries.length ? journal.entries.length + ' pose' + (journal.entries.length > 1 ? 's' : '') + ' à retrouver' : 'Mes photos, mes produits et mes notes'],
       ['favorites', Heart, 'Mes inspirations favorites', library.favorites.length + ' idée' + (library.favorites.length > 1 ? 's' : '') + ' conservée' + (library.favorites.length > 1 ? 's' : '')],
     ].map(([route, Icon, title, subtitle]) => <button key={route} onClick={() => onNavigate(route)}><Icon /><span><b>{title}</b><small>{subtitle}</small></span><ChevronRight /></button>)}</section>

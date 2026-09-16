@@ -34,7 +34,7 @@ function initialState(profile) {
   } catch { return fallback; }
 }
 
-export default function CreateView({ items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, tutorials }) {
+export default function CreateView({ items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials }) {
   const [state, setState] = useState(() => initialState(profile));
   const [picker, setPicker] = useState(null);
   const [storageError, setStorageError] = useState(false);
@@ -66,10 +66,11 @@ export default function CreateView({ items, profile, onCollection, route, librar
     requestAnimationFrame(() => resultAnchor.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
+  const completedKeys = new Set(tutorials.filter(session => session.status === 'completed').map(session => session.idea.key));
   const openedKey = route.startsWith('#inspiration/') ? route.slice('#inspiration/'.length) : null;
   const opened = openedKey && findIdea(library, openedKey);
-  if (route === '#favoris') return <FavoritesView favorites={library.favorites} items={items} onOpen={onOpen} onFavorite={onFavorite} onBack={() => onRoute('create')} />;
-  if (opened) return <InspirationView key={opened.key} idea={opened} items={items} profile={profile} favorite={library.favorites.some(idea => idea.key === opened.key)} selected={library.selected?.key === opened.key} onFavorite={() => onFavorite(opened)} onSelect={() => { const clear = library.selected?.key === opened.key; if (onSelect(opened, clear)) setState(previous => ({ ...previous, selected: clear ? null : opened.id })); }} onOpen={onOpen} onBack={() => onRoute('create')} onFavorites={() => onRoute('favorites')} onCollection={onCollection} onTutorial={() => onTutorial(opened)} tutorialExists={tutorials.some(session => session.idea.key === opened.key && session.status !== 'completed')} />;
+  if (route === '#favoris') return <FavoritesView completedKeys={completedKeys} favorites={library.favorites} items={items} onOpen={onOpen} onFavorite={onFavorite} onBack={() => onRoute('create')} />;
+  if (opened) return <InspirationView key={opened.key} idea={opened} items={items} profile={profile} favorite={library.favorites.some(idea => idea.key === opened.key)} selected={library.selected?.key === opened.key} onFavorite={() => onFavorite(opened)} onSelect={() => { const clear = library.selected?.key === opened.key; if (onSelect(opened, clear)) setState(previous => ({ ...previous, selected: clear ? null : opened.id })); }} onOpen={onOpen} onBack={() => onRoute('create')} onFavorites={() => onRoute('favorites')} onCollection={onCollection} onTutorial={() => onTutorial(opened)} onDone={() => onDone(opened)} completed={completedKeys.has(opened.key)} tutorialExists={tutorials.some(session => session.idea.key === opened.key && session.status !== 'completed')} />;
   if (openedKey) return <section className="creationEmpty"><h1>Cette fiche n’est plus disponible</h1><p>Retrouve tes favoris ou compose une nouvelle inspiration.</p><button onClick={() => onRoute('favorites')}>Mes favoris</button><button onClick={() => onRoute('create')}>Créer une inspiration</button></section>;
 
   return <div className="creationPage">
@@ -128,7 +129,7 @@ export default function CreateView({ items, profile, onCollection, route, librar
       <div className="ideaList">{report.results.map((idea, index) => <article className={'ideaCard ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id}>
         <div className="ideaTopline"><span>ENVIE {String(index + 1).padStart(2, '0')}</span><span><Clock3 />≈ {idea.minutes} min</span></div>
         <NailPreview idea={idea} />
-        <div className="ideaBody"><div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3>{idea.title}</h3><p>{idea.description}</p>
+        <div className="ideaBody">{completedKeys.has(snapshotIdea(idea, options).key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3>{idea.title}</h3><p>{idea.description}</p>
           <div className="ideaProducts">{idea.palette.map(item => <span key={item.id}><i style={{ background: item.color }} />{item.name}</span>)}</div>
           {idea.resources.length > 0 && <div className="ideaEquipment"><small>AVEC MON MATÉRIEL</small><p>{idea.resources.map(item => item.name).join(' · ')}</p></div>}
           <ul className="ideaReasons">{idea.reasons.map(reason => <li key={reason}><Check />{reason}</li>)}</ul>

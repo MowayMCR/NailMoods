@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Camera, Image as ImageIcon, Trash2 } from 'lucide-react';
 
-export async function preparePhoto(file) {
+export async function preparePhoto(file, maxSize = 800) {
   if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') {
     throw new Error('Choisis une photo JPG, PNG ou WebP.');
   }
@@ -13,7 +13,7 @@ export async function preparePhoto(file) {
     const image = new window.Image();
     image.src = url;
     await image.decode();
-    const scale = Math.min(1, 800 / Math.max(image.naturalWidth, image.naturalHeight));
+    const scale = Math.min(1, maxSize / Math.max(image.naturalWidth, image.naturalHeight));
     const canvas = document.createElement('canvas');
     canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
     canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
@@ -30,12 +30,14 @@ export async function preparePhoto(file) {
   }
 }
 
-export default function ProductPhoto({ value, onChange, onBusy, alt = 'Photo du produit', cameraLabel = 'Photographier le produit' }) {
+export default function ProductPhoto({ value, onChange, onBusy, alt = 'Photo du produit', cameraLabel = 'Photographier le produit', maxSize = 800 }) {
   const gallery = useRef(null);
   const camera = useRef(null);
   const active = useRef(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [loadError, setLoadError] = useState(false);
+  useEffect(() => setLoadError(false), [value]);
   useEffect(() => {
     active.current = true;
     return () => { active.current = false; onBusy(false); };
@@ -49,7 +51,7 @@ export default function ProductPhoto({ value, onChange, onBusy, alt = 'Photo du 
     setBusy(true);
     onBusy(true);
     try {
-      const photo = await preparePhoto(file);
+      const photo = await preparePhoto(file, maxSize);
       if (active.current) onChange(photo);
     } catch (err) {
       if (active.current) setError(err.message);
@@ -60,7 +62,8 @@ export default function ProductPhoto({ value, onChange, onBusy, alt = 'Photo du 
 
   return <div className="productPhotoField">
     <div className="fieldHead"><b>Photo (facultatif)</b></div>
-    {value && <img className="photoPreview" src={value} alt={alt} />}
+    {value && !loadError && <img className="photoPreview" src={value} alt={alt} referrerPolicy="no-referrer" onError={() => setLoadError(true)} />}
+    {value && loadError && <p className="photoLoadError">La photo n’est pas disponible. Tu peux la remplacer avec une image de ta galerie.</p>}
     <input ref={gallery} hidden type="file" accept="image/*" aria-label="Choisir une photo" onChange={choose} />
     <input ref={camera} hidden type="file" accept="image/*" capture="environment" aria-label={cameraLabel} onChange={choose} />
     <div className="photoActions">
