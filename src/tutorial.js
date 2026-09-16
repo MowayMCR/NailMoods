@@ -83,7 +83,8 @@ export function newTutorial(idea, id, now = Date.now()) {
 }
 
 export function timerRemaining(timer, now = Date.now()) {
-  return Math.max(0, timer.status === 'running' ? timer.endsAt - now : timer.remainingMs || 0);
+  // The first render after start/resume can precede the display clock refresh.
+  return Math.max(0, timer.status === 'running' ? Math.min(timer.remainingMs, timer.endsAt - now) : timer.remainingMs || 0);
 }
 export function timerFinished(timer, now = Date.now()) { return timer.status !== 'idle' && timer.durationMs > 0 && timerRemaining(timer, now) === 0; }
 export function formatCountdown(ms) { const seconds = Math.ceil(Math.max(0, ms) / 1000); return Math.floor(seconds / 60).toString().padStart(2, '0') + ':' + (seconds % 60).toString().padStart(2, '0'); }

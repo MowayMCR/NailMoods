@@ -115,6 +115,15 @@ test('a timer tracks wall-clock time across reload/background and expiry never c
   assert.equal(formatCountdown(0), '00:00');
 });
 
+test('a stale display clock cannot briefly inflate the countdown on start or resume', () => {
+  let session = apply(atColor(), { type: 'timerStart', seconds: 60 }, 200000);
+  assert.equal(formatCountdown(timerRemaining(session.timer, 1000)), '01:00');
+  session = apply(session, { type: 'timerPause' }, 212000);
+  session = apply(session, { type: 'timerResume' }, 400000);
+  assert.equal(formatCountdown(timerRemaining(session.timer, 212000)), '00:48');
+  assert.equal(formatCountdown(timerRemaining(session.timer, 410000)), '00:38');
+});
+
 test('pausing the pose freezes the timer and resuming the pose does not restart it automatically', () => {
   let session = apply(atColor(), { type: 'timerStart', seconds: 60 }, 10000);
   session = apply(session, { type: 'pause' }, 25000);
