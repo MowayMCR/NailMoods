@@ -79,6 +79,8 @@
 .nailPreview svg:nth-child(4){transform:translateY(-4px)}
 .nailPreview svg:last-child{width:15%;transform:rotate(8deg);margin-left:2px}
 .nailPreview.shortNails svg{max-height:94px}
+.nailPreview.compactNails{min-height:0;width:100%;max-width:228px;gap:2px;padding:10px 9px 7px;margin:10px 0;border-radius:12px}
+.nailPreview.compactNails>svg{height:64px;max-height:64px;max-width:40px;filter:none}
 .ideaBody{padding:13px 18px 18px}
 .ideaDifficulty{font-size:9px;color:var(--a);background:var(--soft);padding:4px 7px;border-radius:7px}
 .ideaBadges{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.ideaPolishCount{font-size:9px;color:var(--muted);border:1px solid var(--line);padding:3px 7px;border-radius:7px}
