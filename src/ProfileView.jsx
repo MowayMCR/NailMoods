@@ -7,7 +7,7 @@ import { productColor } from './colorAnalysis';
 import { PersonalizationSummary } from './PersonalizationView';
 import './profile.css';
 
-export default function ProfileView({ onCreate, onEquipment, onFavorites, profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
+export default function ProfileView({ extras, onCreate, onEquipment, onFavorites, profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
   const [picker, setPicker] = useState(null);
   const [panel, setPanel] = useState(null);
   const [universes, setUniverses] = useState(false);
@@ -30,6 +30,7 @@ export default function ProfileView({ onCreate, onEquipment, onFavorites, profil
     <PersonalizationSummary model={personalModel} settings={personalSettings} onOpen={onPersonalization} />
     <section className="card"><h2>Ma collection</h2><div className="signature">{items.filter(item => item.type !== 'Matériel').slice(0, 5).map(item => <div key={item.id}><i style={{ background: productColor(item) }} /><span>{item.name}</span></div>)}</div><button className="outline" onClick={onCollection}>Voir mes {items.length} produits et accessoires <ArrowRight size={13} /></button></section>
 
+    {extras}
     {picker && <Sheet title={choices[picker].title} onClose={() => setPicker(null)} className="profileSheet">
       {choices[picker].visual ? <div className="visualOptions">{choices[picker].values.map(([value, description, shape]) => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><div className="finger"><div className="nailDemo"><i className={shape} /></div></div><b>{value}</b><span>{description}</span>{profile[picker] === value && <em><Check /></em>}</button>)}</div> : <div className="optionList">{choices[picker].values.map(value => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><span>{value}</span>{profile[picker] === value && <Check />}</button>)}</div>}
     </Sheet>}

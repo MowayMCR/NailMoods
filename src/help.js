@@ -1,3 +1,4 @@
+import { TECHNOLOGIES, readGuestConsent, permissions } from './privacy/policy.js';
 import { browserStorage } from './storage.js';
 
 export const guides = {
@@ -23,6 +24,7 @@ export function markHelpSeen(screen, storage = browserStorage) {
   try { storage.setItem(seenKey(screen), 'true'); } catch { /* Help must never block. */ }
 }
 export function trackHelp(event, { screen, source, slide, step }, storage = browserStorage) {
+  if (!TECHNOLOGIES.analytics || storage.accountScoped || !permissions({consent:readGuestConsent(storage)}).analytics) return;
   const entry = { event, screen, source, slide, step, timestamp: new Date().toISOString() };
   try {
     const saved = JSON.parse(storage.getItem('nm-help-events-v1') || '[]');

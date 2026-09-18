@@ -12,5 +12,5 @@ export const betaQuestions=[
 ];
 export function feedbackReport(draft,screen,date=new Date().toISOString()) {
   const severity=severityOptions.find(([key])=>key===draft.severity)?.[1]||'Non renseigné';
-  return ['Retour NailMoods · Phase 11','Date : '+date,'Écran : '+screen,'Catégorie : '+(draft.category||'Non renseignée'),'Impact : '+severity,'Étapes et résultat observé :',draft.details||'Non renseigné','Résultat attendu :',draft.expected||'Non renseigné',...(draft.surveyEnabled?['','Bilan de première utilisation',...betaQuestions.map(([key,label])=>label+' : '+(draft.survey?.[key]?.trim()||'Non renseigné'))]:[])].join('\n');
+  return ['Retour NailMoods','Version : 12B-preparation.1','Date : '+date,'Écran : '+screen,'Catégorie : '+(draft.category||'Non renseignée'),'Impact : '+severity,'Étapes et résultat observé :',draft.details||'Non renseigné','Résultat attendu :',draft.expected||'Non renseigné',...(draft.surveyEnabled?['','Bilan de première utilisation',...betaQuestions.map(([key,label])=>label+' : '+(draft.survey?.[key]?.trim()||'Non renseigné'))]:[])].join('\n');
 }

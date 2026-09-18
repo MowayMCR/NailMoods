@@ -8,6 +8,10 @@ import { personalWorkspace, repository } from './repository';
 import { createAccountStore, readGuest, guestCount } from './store';
 import './account.css';
 import { recordCloudEvent } from './diagnostics';
+import IdentityPanel from '../identity/IdentityPanel';
+import PrivacyPanel, { LegalLinks } from '../privacy/PrivacyPanel';
+import { readGuestConsent } from '../privacy/policy';
+import { clearAccountCache } from '../privacy/service';
 
 let client=null,configurationError=false;
 try{client=getCloudClient();}catch{configurationError=true;}
@@ -25,6 +29,7 @@ export default function AccountRoot({App}){
   const [status,setStatus]=useState({kind:'saved',pending:0}),[retry,setRetry]=useState(0),[revision,setRevision]=useState(0);
   const [open,setOpen]=useState(false),[mode,setMode]=useState('login'),[email,setEmail]=useState(''),[password,setPassword]=useState('');
   const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState(''),[guestOverride,setGuestOverride]=useState(false),[confirmRemote,setConfirmRemote]=useState(false);
+  const [termsAccepted,setTermsAccepted]=useState(false);
   const active=useRef(null), mounted=useRef(true);
   const userId=session?.user?.id || null;
   useEffect(()=>{
@@ -74,12 +79,12 @@ export default function AccountRoot({App}){
     const online=()=>void loaded.store.flush();window.addEventListener('online',online);
     return ()=>window.removeEventListener('online',online);
   },[loaded]);
-  function changeMode(next){setMode(next);setMessage('');setAuthError('');setPassword('');}
+  function changeMode(next){setTermsAccepted(false);setMode(next);setMessage('');setAuthError('');setPassword('');}
   async function submit(event){
     event.preventDefault();setBusy(true);setMessage('');setAuthError('');
     try{
       if(mode==='signup'){
-        const data=await service.signUp(email,password);setPassword('');
+        const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {});setPassword('');
         if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);}
         else setMessage('Si cette adresse peut être inscrite, un email de confirmation va arriver. Ouvre le lien dans ce navigateur, puis connecte-toi.');
       }else if(mode==='recovery'){
@@ -103,6 +108,11 @@ export default function AccountRoot({App}){
     const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='nailmoods-copie-locale.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
   async function useRemote(){setBusy(true);setAuthError('');try{await loaded.store.load({useRemote:true});setConfirmRemote(false);setRevision(v=>v+1);setMessage('La version en ligne est chargée. La copie précédente reste conservée sur cet appareil.');}catch{setAuthError('Impossible de recharger. Ta copie locale reste conservée.');}finally{setBusy(false);}}
+  async function accountDeleted(id){
+    active.current?.close();active.current=null;setLoaded(null);
+    clearAccountCache(window.localStorage,id);
+    try{await service.signOut();}finally{setSession(null);setGuestOverride(false);setOpen(false);window.location.reload();}
+  }
   let count=0,guestInvalid=false;try{count=guestCount(readGuest(browserStorage));}catch{guestInvalid=true;}
   const ready=loaded?.userId===userId && !guestOverride;
   const guest=!userId || guestOverride;
@@ -114,7 +124,7 @@ export default function AccountRoot({App}){
     {ready && status.kind==='error' && <div className="accountNotice" role="alert"><p>{status.message}</p><button onClick={()=>loaded.store.pending?void loaded.store.flush():setRetry(v=>v+1)}>Réessayer</button><button onClick={()=>{setMode('account');setOpen(true);}}>Mon compte</button></div>}
   </aside>;
   return <>
-    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
+    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} profileExtras={<><IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/><PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
     {configurationError && <p role="alert">Le compte est temporairement indisponible. Le mode invité reste accessible.</p>}
     {open && service && <Sheet title={mode==='signup'?'Créer mon compte':mode==='recovery'?'Retrouver mon compte':mode==='password'?'Nouveau mot de passe':userId?'Mon compte':'Se connecter'} onClose={()=>{if(!busy){setOpen(false);setPassword('');}}} className="accountSheet">
       {mode==='account' && userId ? <>
@@ -134,7 +144,9 @@ export default function AccountRoot({App}){
         <p>Retrouve ta collection, tes inspirations et ton journal sur tes appareils. Tu peux aussi continuer sans compte.</p>
         {mode!=='password' && <label>Email<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>}
         {mode!=='recovery' && <label>Mot de passe<input type="password" autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?1:8} required value={password} onChange={e=>setPassword(e.target.value)} disabled={busy}/></label>}
-        <button className="accountPrimary" disabled={busy}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
+        <LegalLinks/>
+        {mode==='signup' && <label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>J’accepte les Conditions d’utilisation</label>}
+        <button className="accountPrimary" disabled={busy || (mode==='signup' && !termsAccepted)}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
         {mode==='login' && <><button type="button" disabled={busy} onClick={()=>changeMode('signup')}>Créer mon compte</button><button type="button" disabled={busy} onClick={()=>changeMode('recovery')}>Mot de passe oublié</button></>}
         {(mode==='signup' || mode==='recovery') && <button type="button" disabled={busy} onClick={()=>changeMode('login')}>J’ai déjà un compte</button>}
         <button type="button" disabled={busy} onClick={()=>{setOpen(false);setPassword('');}}>Continuer à explorer</button>
