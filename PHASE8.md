@@ -16,3 +16,7 @@ Viewport 320–430 px, paysage, clavier, swipe, focus, navigation sans accompagn
 
 ## Préparé uniquement
 L’architecture catalogue/Pro/Institut/Marques reste celle documentée à la phase 7 ; aucun portail, compte fictif ni nouvelle collecte distante. Pas de dark mode ni d’animation d’attente ajoutés.
+
+## Contrôle public après publication
+Commit applicatif ec056f3524ebe20485abd3197674a981263d7577 ; workflow 35347038537 terminé avec succès.
+Vérifiés dans le navigateur externe : profil compact et logo officiel ; invitation Profil au premier passage ; étapes puis Terminer ; invitation absente après rechargement ; réouverture via (?) et fermeture ; raccourci Matériel avec filtre correspondant et aide indépendante ; passage de cette aide ; vue compacte sélectionnable ; accès à Créer ; reprise du profil avec univers Libre ; quatre propositions réelles avec les trois teintes QA et la lampe ; aide Génération intégrée et refermable ; souvenir Journal toujours présent avec son aperçu et ses produits. Contrôle visuel sur colonne 430 px dans viewport desktop, pas sur téléphone réel.
