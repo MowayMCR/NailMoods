@@ -27,3 +27,7 @@ Sur téléphone : header/logo, fiche et clavier, filtres combinés, collection l
 
 ## Prochaine étape
 Retours mobile puis organisation avancée des grandes collections. La suppression d’une inspiration complète (au-delà du retrait des favoris), les signaux explicites ignorée/variante et l’atelier autonome restent des évolutions distinctes ; cette passe ne les présente pas comme terminés.
+
+## Déploiement et vérification publique
+Commit applicatif 051ac5c04b5b3b1777d5d44baac427ef22d54aaf ; workflow GitHub Pages 35345164720 terminé avec succès.
+Sur le lien public, contrôle en navigateur : logo officiel visible, filtre Prune donnant uniquement Cassis, renommage d’une inspiration puis rechargement conservant nom/3 produits/répartition, enregistrement SKU/collection de marque/notes puis rechargement conservant les champs. Test sur les données QA existantes du navigateur externe, sans données de la créatrice ; ce n’est pas une nouvelle session vierge. Capture observée dans la colonne 430 px, viewport desktop : aucune certification tactile mobile.
