@@ -52,7 +52,7 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
       if(!mounted.current || request!==cameraRequest.current)return;
       setCameraPending(false);
       if(err.name==='NotAllowedError' || err.name==='PermissionDeniedError') {track('camera_permission_refused');setError('L’accès à la caméra n’a pas été accordé. Tu peux choisir une photo ou une couleur.');}
-      else setError(err.message || 'Caméra indisponible. Choisis une photo ou une couleur.');
+      else setError(err.name==='NotFoundError' ? 'Aucune caméra disponible sur cet appareil. Choisis une photo ou une couleur.' : err.name==='NotReadableError' ? 'La caméra est déjà utilisée ou indisponible. Ferme l’autre application, ou choisis une photo.' : 'La caméra ne peut pas être ouverte ici. Choisis une photo ou une couleur.');
     }
   }
   function resetCapture(resetProducts=false) {
@@ -134,7 +134,7 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
       {camera ? <><video ref={video} autoPlay playsInline muted className="scanCamera" aria-label="Aperçu de la caméra"/><button className="scanPrimary" disabled={busy} onClick={capture}><Camera/>Photographier ce vernis</button><button className="scanSecondary" onClick={stopCamera}>Fermer la caméra</button></> : <><button className="scanPrimary" onClick={openCamera} disabled={busy || cameraPending}><Camera/>{cameraPending?'Autorisation caméra en attente…':'Activer la caméra'}</button>{cameraPending && <button className="scanSecondary" onClick={stopCamera}>Continuer sans caméra</button>}</>}
       <button className="scanSecondary" disabled={busy} onClick={()=>{stopCamera();fileInput.current.click();}}><ImagePlus/>Choisir une photo</button>
       <input ref={fileInput} type="file" accept="image/*" hidden aria-label="Photo du vernis" onChange={event=>{const file=event.target.files?.[0];event.target.value='';analyze(file);}}/>
-      <button className="scanText" disabled={busy} onClick={()=>{stopCamera();setDraft({color:'',name:'',brand:'',reference:'',type:'Vernis'});setCorrect(true);setStage('confirm');}}>Choisir une couleur sans photo</button>
+      <button className="scanText" disabled={busy} onClick={()=>{stopCamera();setError('');setDraft({color:'',name:'',brand:'',reference:'',type:'Vernis'});setCorrect(true);setStage('confirm');}}>Choisir une couleur sans photo</button>
       {busy && <p role="status">Préparation de ta photo…</p>}{products.length>0 && <button className="scanText" disabled={busy} onClick={()=>{stopCamera();setStage('effects');}}>Continuer avec ma première couleur</button>}
       <small>Sans collection ni profil complet. Les photos restent sur cet appareil.</small>
     </div>}
