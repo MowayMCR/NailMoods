@@ -57,7 +57,7 @@ export default function PhotoColor({ item, onChange, onValidityChange }) {
   useEffect(() => { setOpen(false); setSaved(false); }, [item.photo]);
   function useColor(color, source) {
     const { color: shade, family, depth } = describeColor(color);
-    onChange({ shade, family, depth, color: colorFamilies.find(([name]) => name === family)[1], colorSource: source, colorUpdatedAt: new Date().toISOString() });
+    onChange({ shade, ...(source === 'manual' ? { confirmedColor: shade } : {}), family, depth, color: colorFamilies.find(([name]) => name === family)[1], colorSource: source, colorUpdatedAt: new Date().toISOString() });
     setDraft(shade); setSaved(true);
   }
   function editColor(value) {
@@ -66,18 +66,19 @@ export default function PhotoColor({ item, onChange, onValidityChange }) {
   }
   function useFamilyColor() {
     const color = colorFamilies.find(([name]) => name === item.family)?.[1] || '#db7897';
-    onChange({ shade: '', color, colorSource: 'palette', colorUpdatedAt: new Date().toISOString() });
+    onChange({ shade: '', confirmedColor: '', color, colorSource: 'palette', colorUpdatedAt: new Date().toISOString() });
     setDraft(color); setSaved(false); setOpen(false);
   }
   const measured = Boolean(preciseShade(item));
   return <section className="preciseColor">
-    <div className="fieldHead"><b>Ma teinte</b><small>{measured ? item.colorSource === 'photo' ? 'Prélevée dans une photo' : 'Personnalisée' : 'Teinte de la famille'}</small></div>
+    <div className="fieldHead"><b>Ma teinte</b><small>{item.catalogColorValidated ? 'Teinte catalogue validée' : measured ? item.colorSource === 'photo' ? 'Prélevée dans une photo' : 'Personnalisée' : 'Teinte de la famille'}</small></div>
     <div className="hexColor"><input type="color" aria-label="Choisir ma teinte" value={validHex(draft) ? draft : effectiveColor} onChange={event => editColor(event.target.value)} /><label>Code couleur<input aria-label="Code couleur" aria-invalid={!validHex(draft)} aria-describedby={!validHex(draft) ? 'shade-error' : undefined} value={draft || ''} maxLength="7" spellCheck="false" onChange={event => editColor(event.target.value)} /></label></div>
     {!validHex(draft) && <p id="shade-error" className="fieldHelp">Complète ce code, par exemple #703650, avant d’enregistrer.</p>}
     {item.photo && <button type="button" className="importSecondary" aria-expanded={open} onClick={() => { setOpen(value => !value); setSaved(false); }}><Pipette />{open ? 'Fermer le prélèvement' : 'Prélever une teinte dans la photo'}</button>}
     {open && item.photo && <Sampler key={item.photo} source={item.photo} onSelect={color => useColor(color, 'photo')} onDone={() => setOpen(false)} />}
+    {item.catalogColorValidated && <p className="fieldHelp">La couleur validée du catalogue reste prioritaire dans les inspirations.</p>}
     {saved && <p className="importSuccess" role="status"><Check />Teinte retenue pour tes prochains aperçus. Enregistre la fiche pour la conserver.</p>}
     <p className="fieldHelp">{measured ? 'Tes nouvelles idées utilisent cette teinte en priorité. La famille ci-dessous sert à classer ton vernis.' : 'Sans teinte précise, tes idées utilisent la couleur de la famille. Prélève une teinte dans une photo ou ajuste-la ici.'}</p>
-    {measured && <button type="button" className="importSecondary" onClick={useFamilyColor}>Utiliser la couleur de la famille</button>}
+    {measured && !item.catalogColorValidated && <button type="button" className="importSecondary" onClick={useFamilyColor}>Utiliser la couleur de la famille</button>}
   </section>;
 }

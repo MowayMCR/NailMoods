@@ -30,7 +30,7 @@ export async function preparePhoto(file, maxSize = 800) {
   }
 }
 
-export default function ProductPhoto({ value, onChange, onBusy, alt = 'Photo du produit', cameraLabel = 'Photographier le produit', maxSize = 800 }) {
+export default function ProductPhoto({ cameraInputRef, value, onChange, onBusy, alt = 'Photo du produit', cameraLabel = 'Photographier le produit', maxSize = 800 }) {
   const gallery = useRef(null);
   const camera = useRef(null);
   const active = useRef(true);
@@ -65,10 +65,10 @@ export default function ProductPhoto({ value, onChange, onBusy, alt = 'Photo du 
     {value && !loadError && <img className="photoPreview" src={value} alt={alt} referrerPolicy="no-referrer" onError={() => setLoadError(true)} />}
     {value && loadError && <p className="photoLoadError">La photo n’est pas disponible. Tu peux la remplacer avec une image de ta galerie.</p>}
     <input ref={gallery} hidden type="file" accept="image/*" aria-label="Choisir une photo" onChange={choose} />
-    <input ref={camera} hidden type="file" accept="image/*" capture="environment" aria-label={cameraLabel} onChange={choose} />
+    <input ref={cameraInputRef || camera} hidden type="file" accept="image/*" capture="environment" aria-label={cameraLabel} onChange={choose} />
     <div className="photoActions">
       <button type="button" disabled={busy} onClick={() => gallery.current.click()}><ImageIcon />{value ? 'Changer la photo' : 'Importer une photo'}</button>
-      <button type="button" disabled={busy} onClick={() => camera.current.click()}><Camera />Prendre une photo</button>
+      <button type="button" disabled={busy} onClick={() => (cameraInputRef || camera).current.click()}><Camera />Prendre une photo</button>
     </div>
     {value && <button type="button" className="removePhoto" disabled={busy} onClick={() => onChange('')}><Trash2 />Retirer la photo</button>}
     {busy && <p className="fieldHelp" role="status">Préparation de la photo…</p>}

@@ -1,6 +1,8 @@
 export const colorFamilies = [['Prune','#703650'],['Cassis','#622947'],['Bordeaux','#852d40'],['Rouge','#c73e46'],['Rose','#db7897'],['Nude','#ddb9aa'],['Beige','#cbb89d'],['Brun','#805b4c'],['Orange','#d47c4b'],['Jaune','#dfc65e'],['Vert','#67865f'],['Bleu','#5479a6'],['Violet','#735b91'],['Noir','#29262a'],['Blanc','#f1efeb'],['Argent','#aeb1b5'],['Or','#c4a45e'],['Multi','#8c5b8f']];
 export const validHex = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
 export function preciseShade(item = {}) {
+  if (item.catalogColorValidated === true && validHex(item.catalogColor)) return item.catalogColor.toLowerCase();
+  if (validHex(item.confirmedColor)) return item.confirmedColor.toLowerCase();
   if (validHex(item.shade)) return item.shade.toLowerCase();
   // Older collections stored a sampled/custom shade directly in color.
   if (!Object.hasOwn(item, 'shade') && ['photo', 'manual'].includes(item.colorSource) && validHex(item.color)) return item.color.toLowerCase();

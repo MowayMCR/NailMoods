@@ -26,7 +26,7 @@ export function journalDate(value) {
 export function journalProducts(products = []) {
   const saved = new Map();
   for (const product of Array.isArray(products) ? products : []) {
-    if (!product || !['string', 'number'].includes(typeof product.id) || typeof product.name !== 'string' || !product.name.trim()) continue;
+    if (!product || product.conceptual || !['string', 'number'].includes(typeof product.id) || typeof product.name !== 'string' || !product.name.trim()) continue;
     const snapshot = Object.fromEntries(productFields.filter(field => ['string', 'number'].includes(typeof product[field])).map(field => [field, product[field]]));
     if (product.type !== 'Matériel' && preciseShade(product)) snapshot.color = productColor(product);
     saved.set(String(product.id), snapshot);

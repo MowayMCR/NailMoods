@@ -77,6 +77,7 @@ const hashScore = (text, seed) => {
 };
 
 export function createSuggestions(items = [], profile = {}, supplied = {}, seed = 1, limit = 4, learning = null) {
+  supplied = { ...supplied, requiredColorIds: Array.isArray(supplied.requiredColorIds) ? [...new Set(supplied.requiredColorIds.filter(id => ['string', 'number'].includes(typeof id)).map(String))].slice(0, 5) : [] };
   items = items.map(item => item.type === 'Matériel' ? item : { ...item, color: productColor(item) });
   const personalModel = validPersonalSnapshot(learning) ? learning : null;
   const options = { ...profileDefaults(profile), ...supplied };
@@ -117,14 +118,16 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if ((profile.technique === item.type) || (profile.technique === 'Vernis classique' && item.type === 'Vernis')) score += 5;
     return score;
   };
-  const ordered = [...usable].sort((a, b) => primaryScore(b) - primaryScore(a));
+  const ordered = [...usable].sort((a, b) => (options.requiredColorIds || []).map(String).includes(String(b.id)) - (options.requiredColorIds || []).map(String).includes(String(a.id)) || primaryScore(b) - primaryScore(a));
   const groups = [...new Set(ordered.map(item => item.type))].map(type => unique(ordered.filter(item => item.type === type)));
   const maxPolishCount = Math.max(0, ...groups.map(group => group.length));
   const countUnavailable = requestedPolishCount !== 'auto' && requestedPolishCount > maxPolishCount;
+  const requiredIds = new Set((options.requiredColorIds || []).map(String));
   const candidates = [];
   const seen = new Set();
   function add(pattern, base, second = null, sticker = null, variant = 0, multiPalette = null, arrangement = null) {
     const palette = unique(multiPalette || [base, second]);
+    if ([...requiredIds].some(id => !palette.some(item => String(item.id) === id))) return;
     if (requestedPolishCount !== 'auto' && palette.length !== requestedPolishCount) return;
     const decorated = pattern === 'sticker' || pattern === 'paletteSticker';
     if (decoration.mode === 'with' && !decorated || decoration.mode === 'without' && decorated) return;
@@ -238,7 +241,9 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     // Two bounded traversals vary the combinations without an exhaustive N-choose-5 search.
     const sequences = [group, [...group.filter((_, index) => index % 2 === 0), ...group.filter((_, index) => index % 2 === 1)]];
     for (const sequence of sequences) for (let start = 0; start < sequence.length; start++) {
-      const palette = Array.from({ length: size }, (_, index) => sequence[(start + index) % sequence.length]);
+      const required = group.filter(item => (options.requiredColorIds || []).map(String).includes(String(item.id)));
+      const rest = Array.from({ length: sequence.length }, (_, index) => sequence[(start + index) % sequence.length]).filter(item => !required.some(r => r.id === item.id));
+      const palette = [...required, ...rest].slice(0, size);
       const paletteKey = JSON.stringify(palette.map(item => String(item.id)).sort());
       if (paletteSets.has(paletteKey)) continue;
       paletteSets.add(paletteKey);

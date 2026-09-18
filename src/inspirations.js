@@ -1,4 +1,4 @@
-import { generateInspirations } from './freeInspiration.js';
+import { generateInspirations, stylePalette } from './freeInspiration.js';
 import { auxiliary, createSuggestions, normalize, profileDefaults } from './creationEngine.js';
 import { productColor } from './colorAnalysis.js';
 import { isDecoration } from './decorations.js';
@@ -22,6 +22,7 @@ export function compositionKey(idea) {
 export function snapshotIdea(idea, options = idea.options || {}) {
   const saved = clone({ ...idea, palette: idea.palette.map(compactProduct), resources: idea.resources.map(compactProduct), options });
   saved.key = 'idea-' + hash(JSON.stringify([compositionKey(saved), saved.palette, saved.resources]));
+  saved.createdAt = idea.createdAt || idea.savedAt || new Date().toISOString();
   saved.savedAt = idea.savedAt || new Date().toISOString();
   return saved;
 }
@@ -101,12 +102,13 @@ export function safeProductUrl(value) {
 }
 
 export function createVariants(idea, items, profile, seed = 1, learning = null) {
-  const options = { ...profileDefaults(profile), ...idea.options, polishCount: idea.palette.length };
+  const options = { ...profileDefaults(profile), ...idea.options, polishCount: idea.palette.length, ...(idea.intent === 'inspire' ? { inspirationPalette: idea.options?.inspirationPalette || idea.palette.filter(p => p.conceptual) } : {}) };
   const shapeProfile = { ...profile, shape: idea.shape, length: idea.length };
   const paletteIds = new Set(idea.palette.map(item => String(item.id)));
   const samePaletteItems = items.filter(item => paletteIds.has(String(item.id)) || item.type === 'Matériel' || auxiliary(item));
   const close = samePaletteItems.some(item => ['Vernis', 'Semi-permanent', 'Gel'].includes(item.type)) || idea.intent === 'inspire' ? generateInspirations(samePaletteItems, shapeProfile, options, seed, 12, learning).results : [];
-  const other = generateInspirations(items, shapeProfile, options, seed, 12, learning).results;
+  const otherOptions = idea.intent === 'inspire' ? { ...options, inspirationPalette: [...new Map([...(options.inspirationPalette || []), ...stylePalette].map(p => [p.id, p])).values()], polishCount: idea.palette.length === 1 ? 2 : options.polishCount } : options;
+  const other = generateInspirations(items, shapeProfile, otherOptions, seed, 12, learning).results;
   const seen = new Set([compositionKey(idea)]);
   return [...close, ...other].filter(candidate => {
     const key = compositionKey(candidate);
@@ -114,7 +116,7 @@ export function createVariants(idea, items, profile, seed = 1, learning = null) 
     seen.add(key);
     return true;
   }).slice(0, 3).map(candidate => ({
-    ...snapshotIdea(candidate, options),
+    ...snapshotIdea(candidate, candidate.options),
     variantLabel: candidate.intent === 'inspire' ? 'Variante de style · couleurs à adapter' : candidate.palette.every(item => paletteIds.has(String(item.id))) ? 'Avec les mêmes vernis' : 'Avec d’autres vernis de ta collection',
   }));
 }
@@ -129,4 +131,13 @@ export function renameInspiration(library, key, title) {
   if (!value) return library;
   const rename = idea => idea?.key === key ? { ...idea, title: value } : idea;
   return { ...library, favorites: library.favorites.map(rename), recent: library.recent.map(rename), selected: rename(library.selected) };
+}
+
+// Idempotent save uses the existing favorite library, never a parallel collection.
+export function saveInspiration(library, idea) {
+  const saved = snapshotIdea(idea);
+  return rememberIdea({ ...library, favorites: library.favorites.some(item => item.key === saved.key) ? library.favorites : [saved, ...library.favorites] }, saved);
+}
+export function ownedIdeaProducts(idea, items) {
+  return [...idea.palette, ...idea.resources].filter(product => !product.conceptual && items.some(item => sameId(item.id, product.id) && Number(item.quantity ?? 1) > 0));
 }

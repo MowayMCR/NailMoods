@@ -1,9 +1,11 @@
+import { isDecoration } from './decorations';
+import { auxiliary } from './creationEngine';
 import { profileDefaults } from './creationEngine';
 import CollectionFilters from './CollectionFilters';
 import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf } from './collection';
 import ContextHelp from './ContextHelp';
 import { browserStorage } from './storage';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Home, Palette, Library, BookHeart, UserRound, ChevronRight, X, Check, Search, Plus, Camera, Trash2, Heart, Link, ScanLine, Image, PenLine, WandSparkles, Package } from 'lucide-react';
 import { equipmentInfo, EquipmentVisual, EquipmentCategory, EquipmentFields } from './equipment';
@@ -20,7 +22,7 @@ import JournalView from './JournalView';
 import { JOURNAL_KEY, putJournalEntry, readJournal, removeJournalEntry } from './journal';
 import TutorialView, { TutorialBanner, TutorialsList } from './TutorialView';
 import { TUTORIAL_KEY, readTutorials, newTutorial, addTutorial, actOnTutorial, markIdeaDone } from './tutorial';
-import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite, renameInspiration } from './inspirations';
+import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite, saveInspiration, renameInspiration } from './inspirations';
 import PersonalizationPanel from './PersonalizationView';
 import './design-system.css';
 import { PERSONALIZATION_KEY, readPersonalization, buildPersonalModel } from './personalization';
@@ -68,6 +70,7 @@ function App() {
   const [visibleCount, setVisibleCount] = useState(40);
   useEffect(() => setVisibleCount(40), [search, filter, collectionFilters]);
   const [edit, setEdit] = useState(null);
+  const productName = useRef(null), productCamera = useRef(null), productColorArea = useRef(null);
   const [importer, setImporter] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [photoBusy, setPhotoBusy] = useState(false);
@@ -109,6 +112,7 @@ function App() {
     window.location.hash = 'inspiration/' + saved.key;
   }
   function renameIdea(key, title) { return saveLibrary(renameInspiration(library, key, title)); }
+  function saveIdea(idea) { return saveLibrary(saveInspiration(library, idea)); }
   function favoriteIdea(idea) { return saveLibrary(toggleFavorite(library, snapshotIdea(idea))); }
   function selectIdea(idea, clear = false) { return saveLibrary({ ...rememberIdea(library, idea), selected: clear ? null : idea }); }
   function saveTutorials(next) {
@@ -218,7 +222,7 @@ function App() {
     }
   }
 
-  function save() {
+  function save(forCreation = false) {
     if (!edit.name.trim() || photoBusy || importBusy) return;
     if (!material && !shadeValid) {
       setSaveError('Complète le code de ta teinte, par exemple #703650, avant d’enregistrer.');
@@ -232,6 +236,10 @@ function App() {
     const product = { ...edit, provenance: provenanceOf(edit), id: edit.id ?? crypto.randomUUID(), name: edit.name.trim(), brand: edit.brand.trim(), url: edit.url.trim() };
     if (material) product.quantity = quantity;
     const saved = persist(edit.id ? items.map(item => item.id === edit.id ? product : item) : [...items, product]);
+    if (saved && forCreation) {
+      setCreationEntry(isDecoration(product) ? { decorations: 'with', decorationId: String(product.id), constraints: [], duration: 90, requiredColorIds: [], intent: items.some(i => ['Vernis', 'Semi-permanent', 'Gel'].includes(i.type)) ? 'collection' : 'inspire' } : { intent: 'collection', requiredColorIds: [String(product.id)], polishCount: 'auto', constraints: [], decorations: 'auto', decorationId: '' });
+      navigate('create');
+    }
     if (saved && !edit.id) { setCollectionFilters({ ...emptyFilters }); setSearch(''); setFilter(material ? 'Matériel' : 'Tous'); }
   }
 
@@ -245,7 +253,7 @@ function App() {
       <div id="context-help-slot" />
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
-      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
+      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onSaveIdea={saveIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>MES PRODUITS</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
@@ -296,7 +304,7 @@ function App() {
 
           <button className="moreIdeas" onClick={() => navigate('create')}><Palette />Générer une idée</button>
         </section>
-      </> : tab === 'profile' ? <ProfileView onCreate={() => { setCreationEntry(profileDefaults(profile)); navigate('create'); }} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView onCreate={() => { setCreationEntry({ intent: 'inspire' }); navigate('create'); }} profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView journal={journal} sessions={tutorials.sessions} items={items} route={route} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
+      </> : tab === 'profile' ? <ProfileView onCreate={() => { setCreationEntry(profileDefaults(profile)); navigate('create'); }} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView onCreate={() => { setCreationEntry({ intent: 'inspire' }); navigate('create'); }} profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView library={library} profile={profile} journal={journal} sessions={tutorials.sessions} items={items} route={route} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
     </main>
     <nav>{[['home', Home, 'Accueil'], ['create', Palette, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Journal'], ['profile', UserRound, 'Profil']].map(([id, Icon, label]) =>
       <button key={id} className={tab === id ? 'on' : ''} aria-current={tab === id ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}</span></button>
@@ -313,6 +321,7 @@ function App() {
             <span className="importIcon"><Package /></span><span className="importCopy"><b>Matériel & accessoires</b><small>Lampe, stickers, pinceaux, limes…</small></span><ChevronRight className="importArrow" />
           </button>
           {[
+            [Search, 'Rechercher dans NailMoods', '1 801 références · confirmation avant ajout', 'catalog'],
             [Camera, 'Prendre une photo', 'Photographie le produit', 'camera'],
             [Image, 'Importer une photo', 'Capture ou image de ta galerie', 'image'],
             [Link, 'Coller une URL', 'Retrouve les photos et les informations', 'url'],
@@ -330,20 +339,21 @@ function App() {
       <section className="productSheet" role="dialog" aria-modal="true" aria-labelledby="product-title" onClick={event => event.stopPropagation()}>
         <div className="grab" />
         <div className="sheetTitle"><div><small>{edit.id ? 'MODIFIER' : 'AJOUTER'}</small><h2 id="product-title">{material ? 'Fiche matériel' : 'Fiche produit'}</h2></div><button aria-label="Fermer" onClick={() => setEdit(null)}><X /></button></div>
-        <ProductImport item={edit} onChange={change} onBusy={setImportBusy} photoBusy={photoBusy} />
+        {edit.id && (isDecoration(edit) || !auxiliary(edit) && ['Vernis', 'Semi-permanent', 'Gel'].includes(edit.type)) && <><button className="detailPrimary" disabled={photoBusy || importBusy} onClick={() => save(true)}><Palette />{isDecoration(edit) ? 'Créer avec ce sticker' : 'Créer avec cette teinte'}</button><p className="fieldHelp">Enregistre tes modifications et ouvre Créer avec ce produit.</p></>}
+        <ProductImport onManual={() => productName.current?.focus()} onPhoto={() => productCamera.current?.click()} onColor={() => { productColorArea.current?.scrollIntoView({ block: 'center' }); productColorArea.current?.querySelector('input')?.focus(); }} item={edit} onChange={change} onBusy={setImportBusy} photoBusy={photoBusy} />
         <label>Nature<select value={edit.type} onChange={event => change({ type: event.target.value })}>
           {['Semi-permanent', 'Vernis', 'Gel', 'Effet', 'Matériel'].map(value => <option key={value}>{value}</option>)}
         </select></label>
         {material && <EquipmentCategory item={edit} onChange={change} />}
-        <label>{material ? 'Nom du matériel' : 'Nom'}<input value={edit.name} onChange={event => change({ name: event.target.value })} placeholder={material ? equipmentInfo(edit).example : 'Nom du produit'} required /></label>
+        <label>{material ? 'Nom du matériel' : 'Nom'}<input ref={productName} value={edit.name} onChange={event => change({ name: event.target.value })} placeholder={material ? equipmentInfo(edit).example : 'Nom du produit'} required /></label>
         <label>Marque (facultatif)<input value={edit.brand} onChange={event => change({ brand: event.target.value })} /></label>
         {!material && <label>Référence (facultatif)<input value={edit.reference || ''} onChange={event => change({ reference: event.target.value })} /></label>}
         {!material && <><div className="form2"><label>Collection de marque<input value={edit.collection || ''} onChange={event => change({ collection: event.target.value })} /></label><label>SKU<input value={edit.sku || ''} onChange={event => change({ sku: event.target.value })} /></label></div><label>Notes personnelles<textarea rows="2" value={edit.notes || ''} onChange={event => change({ notes: event.target.value })} /></label></>}
         {duplicates.length > 0 && <div className="duplicateNotice" role="status"><b>Peut-être déjà dans ta collection</b>{duplicates.slice(0, 3).map(({item, reason}) => <p key={item.id}>{item.name} · {reason}</p>)}<small>Tu peux conserver les deux fiches. Rien ne sera fusionné.</small></div>}
         {material && <EquipmentFields item={edit} onChange={change} />}
-        <ProductPhoto value={edit.photo} onChange={photo => change({ photo })} onBusy={setPhotoBusy} maxSize={1200} />
+        <ProductPhoto cameraInputRef={productCamera} value={edit.photo} onChange={photo => change({ photo })} onBusy={setPhotoBusy} maxSize={1200} />
         {!material && <>
-          <PhotoColor item={edit} onChange={change} onValidityChange={setShadeValid} />
+          <div ref={productColorArea}><PhotoColor item={edit} onChange={change} onValidityChange={setShadeValid} /></div>
           <label>Finition<select value={edit.finish} onChange={event => change({ finish: event.target.value })}>
             {['Brillant', 'Crème', 'Jelly', 'Pailleté', 'Nacré', 'Métallique', 'Chrome', 'Cat-eye', 'Mat', 'Autre'].map(value => <option key={value}>{value}</option>)}
           </select></label>
@@ -363,7 +373,7 @@ function App() {
         <button className={'favoriteToggle ' + (edit.fav ? 'on' : '')} onClick={() => change({ fav: !edit.fav })}><Heart fill={edit.fav ? 'currentColor' : 'none'} /> {edit.fav ? 'Dans mes favoris' : 'Ajouter aux favoris'}</button>
         <div className="sheetActions">
           {saveError && <p className="formError" role="alert">{saveError}</p>}
-          <button className="saveProduct" disabled={!edit.name.trim() || photoBusy || importBusy} onClick={save}><Check />{photoBusy ? 'Préparation de la photo…' : importBusy ? 'Recherche en cours…' : 'Enregistrer'}</button>
+          <button className="saveProduct" disabled={!edit.name.trim() || photoBusy || importBusy} onClick={() => save()}><Check />{photoBusy ? 'Préparation de la photo…' : importBusy ? 'Recherche en cours…' : 'Enregistrer'}</button>
           {!edit.name.trim() && <p className="fieldHelp">Renseigne un nom pour enregistrer.</p>}
         </div>
         {edit.id && <button className="deleteProduct" onClick={() => persist(items.filter(item => item.id !== edit.id))}><Trash2 /> Supprimer</button>}

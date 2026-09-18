@@ -19,7 +19,7 @@ export function collectionResults(items, query = '', type = 'Tous', filters = em
 // Only a future trusted catalogue ingestion may attest verification, never the personal editor.
 export function provenanceOf(item) {
   const provenance = item.provenance;
-  const kinds = ['nailmoods', 'verified_creator', 'validated_community', 'personal'];
+  const kinds = ['nailmoods', 'verified_creator', 'validated_community', 'discovered', 'personal'];
   return provenance && kinds.includes(provenance.kind) ? { ...provenance } : { kind: 'personal', verified: false, importMethod: item.source || 'manual' };
 }
 export function duplicateCandidates(product, items) {

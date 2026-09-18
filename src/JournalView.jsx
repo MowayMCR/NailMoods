@@ -1,3 +1,4 @@
+import JournalVariants from './JournalVariants';
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, BookHeart, Camera, Check, ChevronRight, Heart, Package, PenLine, Plus, Search, Trash2, X } from 'lucide-react';
 import NailPreview from './NailPreview';
@@ -81,7 +82,8 @@ function JournalEditor({ entry, session, items, onSave, onNavigate }) {
   </div>;
 }
 
-function JournalDetail({ entry, items, onNavigate, onSave, onDelete, onIdea, onCollection }) {
+function JournalDetail({ entry, profile, items, onNavigate, onSave, onDelete, onIdea, onCollection }) {
+  const [variantsOpen, setVariantsOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState('');
   const heading = useRef(null);
@@ -89,7 +91,7 @@ function JournalDetail({ entry, items, onNavigate, onSave, onDelete, onIdea, onC
   return <div className="journalPage journalDetailPage">
     <div className="journalToolbar"><button onClick={() => onNavigate('')}><ArrowLeft />Mon journal</button><button onClick={() => onNavigate(entry.id + '/modifier')}><PenLine />Modifier</button></div>
     <section className="journalHeading"><small>{journalDate(entry.date)}</small><h1 ref={heading} tabIndex={-1}>{entry.title}</h1></section>
-    <JournalVisual entry={entry} />
+    <JournalVisual entry={entry} /><div className="journalToolbar"><button onClick={() => setVariantsOpen(true)}>Créer une variante<ArrowRight /></button></div>
     <section className="journalDetailBody">
       {error && <p className="formError" role="alert">{error}</p>}
       <div className="journalBadges">{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.ease && <span>Réalisation : {easeLabels[entry.ease].toLocaleLowerCase('fr')}</span>}{entry.wearDays !== '' && <span>Tenue observée : {entry.wearDays} jour{entry.wearDays > 1 ? 's' : ''}</span>}</div>
@@ -105,11 +107,12 @@ function JournalDetail({ entry, items, onNavigate, onSave, onDelete, onIdea, onC
       <button className="journalSecondary" onClick={() => onNavigate(entry.id + '/modifier')}><PenLine />Modifier cette pose</button>
       <button className="journalDelete" onClick={() => { setError(''); setConfirmDelete(true); }}><Trash2 />Supprimer du journal</button>
     </section>
+    {variantsOpen && <JournalVariants entry={entry} profile={profile} items={items} onClose={() => setVariantsOpen(false)} onOpen={onIdea} />}
     {confirmDelete && <Sheet title="Supprimer ce souvenir ?" eyebrow="MON JOURNAL" onClose={() => setConfirmDelete(false)} className="journalDeleteDialog"><p>La photo et les notes de « {entry.title} » seront retirées du journal. Ta collection et ton tutoriel sont conservés.</p>{error && <p className="formError" role="alert">{error}</p>}<button className="journalPrimary" onClick={() => { const result = onDelete(entry.id); if (result.ok) onNavigate(''); else setError(result.error); }}>Supprimer ce souvenir</button><button className="journalSecondary" onClick={() => setConfirmDelete(false)}>Garder cette pose</button></Sheet>}
   </div>;
 }
 
-export default function JournalView({ journal, sessions, items, route, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate }) {
+export default function JournalView({ library, profile, journal, sessions, items, route, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate }) {
   const [query, setQuery] = useState('');
   const [repeatOnly, setRepeatOnly] = useState(false);
   const pending = pendingJournalPoses(journal, sessions);
@@ -119,13 +122,13 @@ export default function JournalView({ journal, sessions, items, route, onNavigat
   if (path.startsWith('pose/')) {
     const id = path.slice(5), session = sessions.find(value => value.id === id && value.status === 'completed');
     const existing = journal.entries.find(entry => entry.sessionId === id);
-    if (existing) return <JournalDetail key={existing.id} entry={existing} items={items} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
+    if (existing) return <JournalDetail profile={profile} key={existing.id} entry={existing} items={items} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
     if (session) return <JournalEditor key={id} session={session} items={items} onSave={onSave} onNavigate={onNavigate} />;
   } else if (path) {
     const editing = path.endsWith('/modifier');
     const id = editing ? path.slice(0, -9) : path;
     const entry = journal.entries.find(value => value.id === id);
-    if (entry) return editing ? <JournalEditor key={id + '/edit'} entry={entry} items={items} onSave={onSave} onNavigate={onNavigate} /> : <JournalDetail key={id} entry={entry} items={items} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
+    if (entry) return editing ? <JournalEditor key={id + '/edit'} entry={entry} items={items} onSave={onSave} onNavigate={onNavigate} /> : <JournalDetail profile={profile} key={id} entry={entry} items={items} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
   }
   if (path) return <div className="journalPage"><section className="journalEmpty"><BookHeart /><h1>Cette pose n’est pas disponible</h1><button className="journalPrimary" onClick={() => onNavigate('')}>Retrouver mon journal</button></section></div>;
   return <div className="journalPage">
@@ -135,6 +138,7 @@ export default function JournalView({ journal, sessions, items, route, onNavigat
     {filtered.length ? <div className="journalList">{filtered.map(entry => <article key={entry.id}><button className="journalEntryCard" onClick={() => onNavigate(entry.id)}><JournalVisual entry={entry} compact /><div className="journalEntryCopy"><small>{journalDate(entry.date)}</small><h2>{entry.title}</h2><p>{entry.products.slice(0, 3).map(item => item.name).join(' · ') || 'Un souvenir de ta pose'}</p><div>{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.repeat && <span><Heart fill="currentColor" />À refaire</span>}<ChevronRight /></div></div></button></article>)}</div>
       : journal.entries.length ? <section className="journalEmpty"><Search /><h2>Aucune pose trouvée</h2><p>{repeatOnly ? 'Les poses marquées « à refaire » apparaîtront ici.' : 'Essaie un autre nom, produit ou mot de tes notes.'}</p><button className="journalSecondary" onClick={() => { setQuery(''); setRepeatOnly(false); }}>Voir toutes mes poses</button></section>
         : <section className="journalEmpty"><BookHeart /><h2>Tes prochaines poses apparaîtront ici</h2><p>Ajoute une pose déjà réalisée, avec ou sans photo. Tes inspirations favorites restent dans Créer.</p><button className="journalSecondary" onClick={onCreate}>Créer ma première inspiration<ArrowRight /></button></section>}
+    {library?.favorites.length > 0 && <section className="journalPending"><h2>Mes envies sauvegardées</h2><p>Tes favoris, à réaliser quand tu veux. Ils ne sont pas comptés comme des poses réalisées.</p>{library.favorites.slice(0, 6).map(idea => <article key={idea.key}><div><NailPreview idea={idea} compact /><h3>{idea.title}</h3><button onClick={() => onIdea(idea)}>Retrouver cette inspiration<ArrowRight /></button></div></article>)}</section>}
     <p className="journalLocal">Ton journal est conservé dans ce navigateur, sur cet appareil.</p>
   </div>;
 }

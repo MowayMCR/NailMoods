@@ -1,4 +1,4 @@
-import { createSuggestions, inventoryTools, profileDefaults, normalize } from './creationEngine.js';
+import { createSuggestions, inventoryTools, profileDefaults, normalize, auxiliary } from './creationEngine.js';
 
 // Style swatches are concepts, never catalogue references or additions to the inventory.
 export const stylePalette = [
@@ -7,17 +7,21 @@ export const stylePalette = [
 ].map(([family, color], i) => ({ id: 'style-color-' + i, name: family + ' · couleur d’inspiration', family, color, type: 'Vernis', finish: family === 'Or' ? 'Métallique' : 'Brillant', usage: 'Couleur seule', conceptual: true }));
 
 export function generateInspirations(items = [], profile = {}, supplied = {}, seed = 1, limit = 4, learning = null) {
-  const ownedColors = items.filter(item => ['Vernis', 'Semi-permanent', 'Gel'].includes(item.type) && Number(item.quantity ?? 1) > 0);
+  supplied = { ...supplied, requiredColorIds: Array.isArray(supplied.requiredColorIds) ? [...new Set(supplied.requiredColorIds.filter(id => ['string', 'number'].includes(typeof id)).map(String))].slice(0, 5) : [] };
+  const ownedColors = items.filter(item => ['Vernis', 'Semi-permanent', 'Gel'].includes(item.type) && Number(item.quantity ?? 1) > 0 && !auxiliary(item));
   const requestedIntent = supplied.intent === 'collection' ? 'collection' : supplied.intent === 'inspire' ? 'inspire' : ownedColors.length ? 'collection' : 'inspire';
   const intent = requestedIntent === 'collection' && ownedColors.length ? 'collection' : 'inspire';
-  const source = intent === 'collection' ? items : [...stylePalette, ...items.filter(item => item.type === 'Matériel')];
-  let options = { ...profileDefaults(profile), ...supplied, allowMissingEquipment: true };
+  const memoryPalette = Array.isArray(supplied.inspirationPalette) ? supplied.inspirationPalette.filter(p => p?.conceptual && p.id != null && p.name).slice(0, 5).map(p => ({ ...p, conceptual: true })) : [];
+  const source = intent === 'collection' ? items : [...(memoryPalette.length ? memoryPalette : stylePalette), ...items.filter(item => item.type === 'Matériel')];
+  const requiredColorIds = (supplied.requiredColorIds || []).map(String).filter(id => source.some(item => String(item.id) === id && ['Vernis', 'Semi-permanent', 'Gel'].includes(item.type) && Number(item.quantity ?? 1) > 0));
+  const selectedSticker = inventoryTools(items).stickers.find(item => String(item.id) === String(supplied.decorationId));
+  let options = { ...profileDefaults(profile), ...supplied, requiredColorIds, allowMissingEquipment: true };
   if (intent === 'inspire') options = { ...options, constraints: (options.constraints || []).filter(x => x !== 'favorites') };
   let report = createSuggestions(source, profile, options, seed, limit, intent === 'collection' ? learning : null);
   let adjusted = false;
   if (!report.results.length) {
     adjusted = true;
-    options = { ...options, constraints: [], decorations: 'without', decorationId: null, polishCount: 'auto', duration: 90 };
+    options = { ...options, constraints: [], decorations: selectedSticker ? 'with' : 'without', decorationId: selectedSticker?.id || null, polishCount: 'auto', duration: 90 };
     report = createSuggestions(source, profile, options, seed, limit, intent === 'collection' ? learning : null);
   }
   // Products with an unspecified application/base can still inspire by their shade,
@@ -39,7 +43,7 @@ export function generateInspirations(items = [], profile = {}, supplied = {}, se
     if (['french', 'line'].includes(idea.pattern)) add('Pinceau fin recommandé', tools.fineBrush);
     if (idea.pattern === 'dots') add('Dotting tool recommandé', tools.dotting);
     if (palette.some(p => p.usage !== 'Couleur seule' && p.usage !== 'Avec aimant')) add('Base / finition et protocole à vérifier sur la notice', false, true);
-    return { ...idea, palette, intent, requirements, options: { ...supplied, intent }, reasons: intent === 'inspire' ? ['Une proposition de style à adapter avec tes produits', ...idea.reasons.filter(r => !/collection|matériel|favorite/.test(r))].slice(0,2) : idea.reasons };
+    return { ...idea, palette, intent, requirements, options: { ...options, intent }, reasons: intent === 'inspire' ? ['Une proposition de style à adapter avec tes produits', ...idea.reasons.filter(r => !/collection|matériel|favorite/.test(r))].slice(0,2) : idea.reasons };
   });
   return { ...report, results, intent, requestedIntent, adjusted, tools: inventoryTools(items), inventoryColors: ownedColors.length };
 }
