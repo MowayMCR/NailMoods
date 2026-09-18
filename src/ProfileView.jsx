@@ -6,7 +6,7 @@ import { productColor } from './colorAnalysis';
 import { PersonalizationSummary } from './PersonalizationView';
 import './profile.css';
 
-export default function ProfileView({ profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
+export default function ProfileView({ onCreate, onEquipment, onFavorites, profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
   const [picker, setPicker] = useState(null);
   const [panel, setPanel] = useState(null);
   const [universes, setUniverses] = useState(false);
@@ -18,7 +18,7 @@ export default function ProfileView({ profile, items, onChange, onCollection, pe
   const tile = (key, label) => <button key={key} className="settingTile" onClick={() => setPicker(key)}><small>{label}</small><b>{profile[key]}</b><ChevronRight /></button>;
   return <div className="profilePage">
     <section className="profileHero">{avatar(true)}<div><small>MON UNIVERS</small><h1>{profile.name || 'Mon profil'}</h1><p>Ton profil guide tes inspirations.</p></div></section>
-    <section className="phase"><span>MON PROFIL</span><b>Personnalise ton NailMoods</b></section>
+    <section className="profileShortcuts" aria-label="Mon NailMoods"><button onClick={onCollection}><Palette /><span>Ma collection<small>Mes couleurs et produits</small></span><ChevronRight /></button><button onClick={onEquipment}><Sparkles /><span>Mon matériel<small>Mes outils et stickers</small></span><ChevronRight /></button><button onClick={onFavorites}><Palette /><span>Mes inspirations<small>Mes idées sauvegardées</small></span><ChevronRight /></button><button onClick={onCreate}><Sparkles /><span>Créer une idée<small>Avec mon profil et mes couleurs</small></span><ArrowRight /></button></section>
     <PersonalizationSummary model={personalModel} settings={personalSettings} onOpen={onPersonalization} />
     <section className="card"><h2>À propos de moi</h2><label className="nameField">Prénom<input value={profile.name} onChange={event => onChange({ ...profile, name: event.target.value })} /></label>
       <div className="profileGrid">{tile('shape', 'FORME')}{tile('length', 'LONGUEUR')}{tile('level', 'NIVEAU')}{tile('duration', 'TEMPS')}<div className="wide">{tile('technique', 'TYPE DE POSE')}</div></div>

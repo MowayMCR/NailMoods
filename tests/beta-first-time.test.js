@@ -39,3 +39,22 @@ test('blocked storage getter does not crash startup; writes cannot falsely succe
   try { assert.equal(browserStorage.getItem('nm-profile'), null); assert.throws(() => browserStorage.setItem('x','y')); }
   finally { globalThis.window = previous; }
 });
+
+test('phase 8: new profile has no creator styles and can generate with one classic polish', async () => {
+  const { defaultProfile } = await import('../src/profileOptions.js');
+  assert.equal(defaultProfile.name, '');
+  assert.deepEqual(defaultProfile.styles, []);
+  const state = readCreationState(memory(), defaultProfile);
+  const report = createSuggestions([{id:'first',name:'Mon vernis',type:'Vernis',color:'#813c60',finish:'Brillant',usage:'Couleur seule'}],defaultProfile,state.options);
+  assert.ok(report.results.length > 0);
+  assert.ok(report.results[0].nails.every(n => n.color === '#813c60'));
+});
+test('phase 8: material help is independent, replayable and short', () => {
+  const storage = memory();
+  assert.equal(helpSeen('equipment',storage),false);
+  markHelpSeen('equipment',storage);
+  assert.equal(helpSeen('equipment',storage),true);
+  assert.ok(guides.equipment.slides.length <= 3);
+  trackHelp('help_opened',{screen:'equipment',source:'button',slide:1,step:'overview'},storage);
+  assert.equal(JSON.parse(storage.getItem('nm-help-events-v1'))[0].source,'button');
+});

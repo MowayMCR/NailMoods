@@ -1,7 +1,7 @@
 import { browserStorage } from './storage';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker } from 'lucide-react';
-import { createSuggestions, inventoryStamp } from './creationEngine';
+import { createSuggestions, inventoryStamp, profileDefaults } from './creationEngine';
 import NailPreview from './NailPreview';
 import './creation.css';
 import Sheet from './Sheet';
@@ -76,7 +76,7 @@ export default function CreateView({ onRename, onEquipment, items, profile, onCo
       <span className="creationEyebrow"><Sparkles /> L’ENVIE DU JOUR</span>
       <h1>Et si on créait<br /><em>ta prochaine pose ?</em></h1>
       <p>Une envie, tes couleurs, ton petit détail.</p>
-      <div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
+      <button className="profileApply" onClick={() => change(profileDefaults(profile))}>Utiliser les préférences de mon profil</button><div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
     </section>
 
     <button className="creationSaved" onClick={() => onRoute('favorites')}><span><Heart />Mes inspirations favorites</span><small>{library.favorites.length} idée{library.favorites.length > 1 ? 's' : ''}</small><ChevronRight /></button>
