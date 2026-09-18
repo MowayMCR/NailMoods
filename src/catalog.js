@@ -41,6 +41,9 @@ export function matchCatalog(products, query, { brand = '', collection = '', ocr
 export function catalogCandidate(match) {
   const p=match.product;
   const fields=Object.fromEntries(['brand','collection','name','reference','type','url','family','finish','usage'].filter(k=>p[k]).map(k=>[k,p[k]]));
+  const finishes = { creme: 'Crème', jelly: 'Jelly', paillete: 'Pailleté', metallique: 'Métallique', brillant: 'Brillant', 'cat eye': 'Cat-eye', mat: 'Mat' };
+  fields.finish = finishes[catalogText(p.finish)] || 'Autre';
+  if (p.finish && !finishes[catalogText(p.finish)]) fields.finishDetail = p.finish;
   if(p.colorValidated === true && validHex(p.catalogColor)) fields.catalogColor=p.catalogColor;
   return {fields,images:[],variants:[],method:'catalog',source:p.url || '',catalogId:p.catalogId,catalogVersion:'V1-2026-09-17',score:match.score,confidence:match.confidence,reason:match.reason};
 }

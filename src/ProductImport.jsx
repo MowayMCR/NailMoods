@@ -6,7 +6,7 @@ import { readPhotoText, readBarcodePhoto } from './recognition';
 import { colorFamilyChange } from './colorAnalysis';
 import './product-import.css';
 
-const fieldNames = { collection: 'Gamme', catalogColor: 'Teinte catalogue validée', name: 'Nom', brand: 'Marque', type: 'Nature', equipmentCategory: 'Matériel', reference: 'Référence', barcode: 'Code-barres', family: 'Famille de couleur', finish: 'Finition', effect: 'Effet', usage: 'Utilisation', photo: 'Photo de la boutique' };
+const fieldNames = { collection: 'Gamme', finishDetail: 'Détail de finition', catalogColor: 'Teinte catalogue validée', name: 'Nom', brand: 'Marque', type: 'Nature', equipmentCategory: 'Matériel', reference: 'Référence', barcode: 'Code-barres', family: 'Famille de couleur', finish: 'Finition', effect: 'Effet', usage: 'Utilisation', photo: 'Photo de la boutique' };
 
 function Review({ candidate, existing, onUse, onDismiss }) {
   const [current, setCurrent] = useState(candidate);

@@ -122,7 +122,7 @@ export function createVariants(idea, items, profile, seed = 1, learning = null) 
 }
 
 export function finishLabel(item) {
-  return [item.finish, item.effect && normalize(item.effect) !== 'aucun' && item.effect].filter(Boolean).join(' · ');
+  return [item.finishDetail || item.finish, item.effect && normalize(item.effect) !== 'aucun' && item.effect].filter(Boolean).join(' · ');
 }
 
 // A personal title must not change composition identity, favorites or pose links.

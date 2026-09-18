@@ -1,3 +1,4 @@
+import { productColor } from './colorAnalysis';
 import IdeaProducts from './IdeaProducts';
 import ColorSelection from './ColorSelection';
 import { generateInspirations } from './freeInspiration';
@@ -111,7 +112,7 @@ export default function CreateView({ onSaveIdea, entryOptions, onEntryConsumed, 
 
     </section>
 
-    <section className="creationSection"><button className="detailSecondary" onClick={() => setPicker('colors')}>Choisir mes teintes{selectedColors.length ? ' · ' + selectedColors.length : ''}</button>{selectedColors.length > 0 && <div className="ideaProducts">{selectedColors.map(item => <span key={item.id}><i style={{ background: item.shade || item.color }} />{item.name}</span>)}</div>}{requiredIds.length > selectedColors.length && <p className="creationHint">Une teinte sélectionnée a été retirée. Les idées utilisent les couleurs encore disponibles.</p>}</section>
+    <section className="creationSection"><button className="detailSecondary" onClick={() => setPicker('colors')}>Choisir mes teintes{selectedColors.length ? ' · ' + selectedColors.length : ''}</button>{selectedColors.length > 0 && <div className="ideaProducts">{selectedColors.map(item => <span key={item.id}><i style={{ background: productColor(item) }} />{item.name}</span>)}</div>}{requiredIds.length > selectedColors.length && <p className="creationHint">Une teinte sélectionnée a été retirée. Les idées utilisent les couleurs encore disponibles.</p>}</section>
     <section className="creationInventory">
       <Package /><div><b>{options.intent === 'collection' ? 'À partir de ta collection' : 'Ta personnalisation, quand tu veux'}</b><p>{report.inventoryColors} couleur{report.inventoryColors > 1 ? 's' : ''} · {report.tools.equipment.length} matériel{report.tools.equipment.length > 1 ? 's' : ''} & accessoires</p></div><button onClick={onCollection} aria-label="Ouvrir ma collection"><ChevronRight /></button>
     </section>

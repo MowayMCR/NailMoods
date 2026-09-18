@@ -53,3 +53,5 @@ nav{height:calc(78px + env(safe-area-inset-bottom));padding-bottom:env(safe-area
 .filterRow{flex-wrap:wrap;overflow:visible;gap:7px}.filterRow button{white-space:normal}
 /* Phase 9: controls reuse the existing visual language. */
 .poseProducts{margin:12px 0;color:var(--b);font-size:12px}.poseProducts ul{list-style:none;padding:0;margin:6px 0}.poseProducts button{display:flex;align-items:center;gap:8px;text-align:left;min-height:44px;width:100%;border:0;border-bottom:1px solid #D39CA725;background:transparent;color:inherit;padding:7px 0}.poseProducts i,.selectedSwatch{width:20px;height:20px;flex:0 0 20px;border:1px solid #00000018;border-radius:50%}.poseProducts span{overflow-wrap:anywhere}.colorSelectionSearch{width:100%;min-height:44px;border:1px solid #D39CA740;border-radius:12px;padding:10px;font-size:16px}.creationOptions button:disabled{opacity:.5}.ideaBody>.detailSecondary{margin:10px 0}.journalPending h2{font-family:Georgia,serif;font-weight:400}
+
+.catalogMatches small{display:block;font-size:12px;line-height:1.5;margin-top:4px}.catalogMatches button{overflow-wrap:anywhere;min-height:44px}

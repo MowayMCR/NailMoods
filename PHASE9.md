@@ -27,5 +27,9 @@
 ## Vérifications
 - 136 tests automatisés réussis, incluant sélection dans une collection de 105 produits, deux teintes imposées, sticker malgré des choix incompatibles, collection vide, sauvegarde/relecture, journal, variantes, matching ambigu, faux numéros et priorité couleur.
 - Build de production et contrôle Git réussis.
-- Tests du parcours public : à compléter après déploiement.
+- Parcours publics vérifiés : fiche Cassis → Créer (teinte présente dans les quatre idées) ; sauvegarde → rechargement → favoris visibles dans le journal ; ancienne pose → trois variantes → ouverture d’une variante.
+- Catalogue public : CANNI 9058 retrouvé, confirmation, ajout avec la teinte de test #553366 ; cette valeur est présente dans chaque composition générée depuis la fiche.
+- Sticker floral de test ajouté, puis Créer avec ce sticker : présent dans les quatre résultats.
+- Référence absente : message et quatre sorties disponibles ; saisie manuelle fonctionnelle, ajout d’une teinte #229977 puis création avec cette teinte dans les quatre résultats.
+- Inspection de la fenêtre des variantes : largeur 400 px, aucun débordement horizontal. Les données du navigateur de contrôle sont des données de test ; pas de compte administrateur utilisé.
 - Téléphone physique / viewport 320–390 px et session publique entièrement vierge : restent à valider ; ne pas confondre avec les scénarios de données vides couverts automatiquement.
