@@ -72,3 +72,5 @@
 @media(max-width:360px){.smartHome .homeGreeting h1{font-size:31px}.app .sheetTitle h2{font-size:23px}.homeShortcuts>button{padding:14px 11px}.homeShortcuts>button>b{font-size:14px}.profilePage .universePicker .chips button{font-size:12px;padding:9px 10px}.creationPage .creationHero h1{font-size:28px}}
 
 .ideaTopline>span:first-child{display:inline-flex;align-items:center;gap:6px}.ideaTopline .moodGlyph{width:17px;height:17px}
+.creationTiles>button>b{font-family:inherit}
+.journalHero .journalPrimary{background:var(--b);color:#fff;border-color:var(--b)}
