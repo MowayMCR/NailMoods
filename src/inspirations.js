@@ -120,3 +120,11 @@ export function createVariants(idea, items, profile, seed = 1, learning = null) 
 export function finishLabel(item) {
   return [item.finish, item.effect && normalize(item.effect) !== 'aucun' && item.effect].filter(Boolean).join(' · ');
 }
+
+// A personal title must not change composition identity, favorites or pose links.
+export function renameInspiration(library, key, title) {
+  const value = String(title || '').trim().slice(0, 80);
+  if (!value) return library;
+  const rename = idea => idea?.key === key ? { ...idea, title: value } : idea;
+  return { ...library, favorites: library.favorites.map(rename), recent: library.recent.map(rename), selected: rename(library.selected) };
+}

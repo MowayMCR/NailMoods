@@ -1,3 +1,5 @@
+import CollectionFilters from './CollectionFilters';
+import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf } from './collection';
 import ContextHelp from './ContextHelp';
 import { browserStorage } from './storage';
 import React, { useState, useEffect, useMemo } from 'react';
@@ -17,13 +19,14 @@ import JournalView from './JournalView';
 import { JOURNAL_KEY, putJournalEntry, readJournal, removeJournalEntry } from './journal';
 import TutorialView, { TutorialBanner, TutorialsList } from './TutorialView';
 import { TUTORIAL_KEY, readTutorials, newTutorial, addTutorial, actOnTutorial, markIdeaDone } from './tutorial';
-import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite } from './inspirations';
+import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite, renameInspiration } from './inspirations';
 import PersonalizationPanel from './PersonalizationView';
+import './design-system.css';
 import { PERSONALIZATION_KEY, readPersonalization, buildPersonalModel } from './personalization';
 const colors=colorFamilies;const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
 
 function Brand() {
-  return <div className="brandFinal"><img src="/NailMoods/nailmoods-logo.svg" alt="" /><div><b>Nail<span>Moods</span></b><small>CRÉE TON STYLE, À TON RYTHME</small></div></div>;
+  return <div className="brandFinal officialBrand"><img className="brandWordmark" src={import.meta.env.BASE_URL + 'nailmoods-official.png'} alt="NailMoods — Explore. Crée. Ressens." /><img className="brandSymbol" src={import.meta.env.BASE_URL + 'nailmoods-symbol.png'} alt="NailMoods" /></div>;
 }
 
 function readStored(key, fallback) {
@@ -58,6 +61,9 @@ function App() {
   const [search, setSearch] = useState('');
   const personalModel = useMemo(() => buildPersonalModel({ items, favorites: library.favorites, sessions: tutorials.sessions, entries: journal.entries }), [items, library.favorites, tutorials.sessions, journal.entries]);
   const [filter, setFilter] = useState('Tous');
+  const [collectionFilters, setCollectionFilters] = useState({ ...emptyFilters });
+  const [visibleCount, setVisibleCount] = useState(40);
+  useEffect(() => setVisibleCount(40), [search, filter, collectionFilters]);
   const [edit, setEdit] = useState(null);
   const [importer, setImporter] = useState(false);
   const [saveError, setSaveError] = useState('');
@@ -98,6 +104,7 @@ function App() {
     setRoute('#inspiration/' + saved.key);
     window.location.hash = 'inspiration/' + saved.key;
   }
+  function renameIdea(key, title) { return saveLibrary(renameInspiration(library, key, title)); }
   function favoriteIdea(idea) { return saveLibrary(toggleFavorite(library, snapshotIdea(idea))); }
   function selectIdea(idea, clear = false) { return saveLibrary({ ...rememberIdea(library, idea), selected: clear ? null : idea }); }
   function saveTutorials(next) {
@@ -218,18 +225,14 @@ function App() {
       setSaveError('Indique une quantité entière entre 1 et 9999.');
       return;
     }
-    const product = { ...edit, id: edit.id ?? crypto.randomUUID(), name: edit.name.trim(), brand: edit.brand.trim(), url: edit.url.trim() };
+    const product = { ...edit, provenance: provenanceOf(edit), id: edit.id ?? crypto.randomUUID(), name: edit.name.trim(), brand: edit.brand.trim(), url: edit.url.trim() };
     if (material) product.quantity = quantity;
     const saved = persist(edit.id ? items.map(item => item.id === edit.id ? product : item) : [...items, product]);
-    if (saved && !edit.id) { setSearch(''); setFilter(material ? 'Matériel' : 'Tous'); }
+    if (saved && !edit.id) { setCollectionFilters({ ...emptyFilters }); setSearch(''); setFilter(material ? 'Matériel' : 'Tous'); }
   }
 
-  const query = search.toLocaleLowerCase('fr').trim();
-  const filtered = items.filter(item =>
-    (filter === 'Tous' || item.type === filter) &&
-    [item.name, item.brand, item.type, item.equipmentCategory, item.reference, item.materialStyle, item.notes, item.family, item.finish, item.depth]
-      .filter(Boolean).join(' ').toLocaleLowerCase('fr').includes(query)
-  );
+  const filtered = collectionResults(items, search, filter, collectionFilters);
+  const duplicates = edit ? duplicateCandidates(edit, items) : [];
   const colorCount = new Set(items.filter(item => item.type !== 'Matériel' && item.family).map(item => item.family)).size;
 
   return <div className="app phase2" style={{ '--a': th[0], '--b': th[1], '--soft': th[2], '--paper': th[3] }}>
@@ -237,7 +240,7 @@ function App() {
     <main>
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
-      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
+      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>MES PRODUITS</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
@@ -256,8 +259,9 @@ function App() {
             <button key={value} className={filter === value ? 'on' : ''} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value}</button>
           )}
         </div>
+        <CollectionFilters items={items.filter(item => filter === 'Tous' || item.type === filter)} filters={collectionFilters} onChange={setCollectionFilters} count={filtered.length} />
         <section className="collectionGrid">
-          {filtered.map(item => <button key={item.id} className="productCard" onClick={() => {
+          {filtered.slice(0, visibleCount).map(item => <button key={item.id} className="productCard" onClick={() => {
             setSaveError('');
             setEdit({ ...defaults, ...materialDefaults, ...item });
           }}>
@@ -267,17 +271,18 @@ function App() {
             <div className="productInfo">
               <small>{item.type === 'Matériel' ? equipmentInfo(item).name : item.family + ' · ' + item.depth}</small>
               <b>{item.name}</b>
-              <span>{item.type === 'Matériel'
+              <span>{item.brand}</span><span>{item.type === 'Matériel'
                 ? [item.materialStyle, 'Qté : ' + (item.quantity ?? 1)].filter(Boolean).join(' · ')
                 : [item.finish, item.effect !== 'Aucun' && item.effect].filter(Boolean).join(' · ')}</span>
             </div>
             {item.fav && <Heart className="fav" fill="currentColor" aria-label="Favori" />}
           </button>)}
         </section>
+        {filtered.length > visibleCount && <button className="collectionMore" onClick={() => setVisibleCount(value => value + 40)}>Afficher la suite ({filtered.length - visibleCount})</button>}
         {filtered.length === 0 && <section className="emptyCollection">
           <Package aria-hidden="true" />
-          <h2>{search ? 'Aucun résultat' : filter === 'Matériel' ? 'Ta boîte à matériel' : 'Aucun produit pour le moment'}</h2>
-          <p>{search ? 'Essaie un autre nom, une marque ou un type de matériel.' : filter === 'Matériel' ? 'Lampes, stickers, pinceaux, limes… Rassemble ici ce que tu possèdes.' : 'Ajoute ton premier produit dans cette catégorie.'}</p>
+          <h2>{items.length ? 'Aucun résultat' : filter === 'Matériel' ? 'Ta boîte à matériel' : 'Aucun produit pour le moment'}</h2>
+          <p>{items.length ? 'Essaie un autre nom ou efface les filtres.' : filter === 'Matériel' ? 'Lampes, stickers, pinceaux, limes… Rassemble ici ce que tu possèdes.' : 'Ajoute ton premier produit dans cette catégorie.'}</p>
           {!search && <button onClick={() => filter === 'Matériel' ? start('manual', 'Matériel') : setImporter(true)}><Plus />{filter === 'Matériel' ? 'Ajouter du matériel' : 'Ajouter un produit'}</button>}
         </section>}
         <section className="phase3Preview">
@@ -327,6 +332,8 @@ function App() {
         <label>{material ? 'Nom du matériel' : 'Nom'}<input value={edit.name} onChange={event => change({ name: event.target.value })} placeholder={material ? equipmentInfo(edit).example : 'Nom du produit'} required /></label>
         <label>Marque (facultatif)<input value={edit.brand} onChange={event => change({ brand: event.target.value })} /></label>
         {!material && <label>Référence (facultatif)<input value={edit.reference || ''} onChange={event => change({ reference: event.target.value })} /></label>}
+        {!material && <><div className="form2"><label>Collection de marque<input value={edit.collection || ''} onChange={event => change({ collection: event.target.value })} /></label><label>SKU<input value={edit.sku || ''} onChange={event => change({ sku: event.target.value })} /></label></div><label>Notes personnelles<textarea rows="2" value={edit.notes || ''} onChange={event => change({ notes: event.target.value })} /></label></>}
+        {duplicates.length > 0 && <div className="duplicateNotice" role="status"><b>Peut-être déjà dans ta collection</b>{duplicates.slice(0, 3).map(({item, reason}) => <p key={item.id}>{item.name} · {reason}</p>)}<small>Tu peux conserver les deux fiches. Rien ne sera fusionné.</small></div>}
         {material && <EquipmentFields item={edit} onChange={change} />}
         <ProductPhoto value={edit.photo} onChange={photo => change({ photo })} onBusy={setPhotoBusy} maxSize={1200} />
         {!material && <>

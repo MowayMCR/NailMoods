@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lightbulb, Sticker, Brush, Minus, Sparkles, Magnet, Stamp, Scissors, Package, PenLine } from 'lucide-react';
+import { Lightbulb, Sticker, Brush, Minus, Sparkles, Magnet, Stamp, Scissors, Package, PenLine, Palette } from 'lucide-react';
 
 export const equipmentTypes = [
   { name: 'Lampe UV / LED', icon: Lightbulb, example: 'Ma lampe LED' },
@@ -13,8 +13,19 @@ export const equipmentTypes = [
   { name: 'Capsules / chablons', icon: Package, example: 'Capsules amande', decorative: true },
   { name: 'Outil de préparation', icon: Scissors, example: 'Repousse-cuticules' },
   { name: 'Ponceuse / embouts', icon: PenLine, example: 'Embout de ponceuse' },
+  { name: 'Éponge', icon: Package, example: 'Éponge à dégradé' },
+  { name: 'Spatule', icon: Minus, example: 'Spatule acrygel' },
+  { name: 'Pinces', icon: Scissors, example: 'Pince à chablon' },
+  { name: 'Palette', icon: Palette, example: 'Palette de mélange' },
   { name: 'Autre matériel', icon: Package, example: 'Tapis de manucure' },
 ];
+
+export const equipmentGroups = {
+  'Essentiel': ['Lampe UV / LED', 'Lime / polissoir', 'Outil de préparation'],
+  'Nail art': ['Stickers / décalcomanies', 'Pinceau', 'Dotting tool', 'Éponge', 'Stamping', 'Aimant cat-eye', 'Strass / décorations'],
+  'Construction / Pro': ['Capsules / chablons', 'Spatule', 'Pinces', 'Ponceuse / embouts'],
+  'Autres': ['Palette', 'Autre matériel'],
+};
 
 export function equipmentInfo(item) {
   return equipmentTypes.find(type => type.name === item.equipmentCategory) || equipmentTypes.at(-1);
@@ -27,7 +38,7 @@ export function EquipmentVisual({ item }) {
 
 export function EquipmentCategory({ item, onChange }) {
   return <label>Type de matériel<select value={item.equipmentCategory || 'Autre matériel'} onChange={event => onChange({ equipmentCategory: event.target.value })}>
-    {equipmentTypes.map(type => <option key={type.name}>{type.name}</option>)}
+    {Object.entries(equipmentGroups).map(([group, names]) => <optgroup key={group} label={group}>{names.map(name => <option key={name}>{name}</option>)}</optgroup>)}
   </select></label>;
 }
 
