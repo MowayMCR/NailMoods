@@ -1,5 +1,5 @@
 .contextHelp{margin-left:auto;display:flex;align-items:center}
-.helpOffer{position:fixed;z-index:30;right:16px;top:80px;display:flex;max-width:min(340px,calc(100vw - 32px));border:1px solid var(--a);border-radius:18px;background:var(--paper,#fff);box-shadow:0 6px 20px #40203314}
+.helpOffer{position:fixed;z-index:30;right:max(16px,calc((100vw - 430px)/2 + 16px));top:80px;display:flex;max-width:min(340px,calc(100vw - 32px));border:1px solid var(--a);border-radius:18px;background:var(--paper,#fff);box-shadow:0 6px 20px #40203314}
 .helpOffer button{border:0;background:none;color:var(--b);padding:12px;font-size:.875rem;min-height:44px;text-align:left}
 .helpOffer button:last-child{flex-shrink:0;align-self:center;display:grid;place-items:center}
 .helpOffer svg{width:20px;height:20px}
@@ -17,3 +17,5 @@
 .helpActions button{min-height:44px;padding:10px 14px;border-radius:14px;border:1px solid var(--a);background:none;color:var(--b);font-size:.875rem}
 .helpActions .helpNext{margin-left:auto;background:var(--b);color:white}
 @media(max-height:500px){.helpSlide{min-height:0;padding:8px}.helpSlide>svg{width:28px;height:28px;margin-bottom:4px}.helpSheet{max-height:95dvh}}
+
+header:has(.helpSheet){z-index:60}

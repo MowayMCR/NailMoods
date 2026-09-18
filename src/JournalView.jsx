@@ -26,7 +26,7 @@ function ProductPicker({ products, items, onApply, onClose }) {
     <div className="journalProductChoices">{filtered.map(item => {
       const chosen = selected.some(value => String(value.id) === String(item.id));
       return <button key={item.id} aria-pressed={chosen} onClick={() => setSelected(current => chosen ? current.filter(value => String(value.id) !== String(item.id)) : [...current, ...journalProducts([item])])}>
-        {item.type === 'Matériel' ? <Package /> : <i style={{ background: productColor(item) }} />}<span><b>{item.name}</b><small>{[item.brand, item.equipmentCategory || item.type].filter(Boolean).join(' · ')}</small></span>{chosen ? <Check /> : <Plus />}
+        {item.type === 'Matériel' ? <Package /> : <i style={{ background: productColor(item) }} />}<span><b>{item.name}</b><small>{[item.brand, item.type === 'Matériel' ? item.equipmentCategory || item.type : item.type].filter(Boolean).join(' · ')}</small></span>{chosen ? <Check /> : <Plus />}
       </button>;
     })}</div>
     {!filtered.length && <p className="journalMuted">{query ? 'Aucun produit avec cette recherche.' : 'Ta collection est encore vide. Tu peux enregistrer ta pose et ajouter les produits plus tard.'}</p>}
@@ -98,7 +98,7 @@ function JournalDetail({ entry, items, onNavigate, onSave, onDelete, onIdea, onC
       <section className="journalUsed"><div className="journalSectionTitle"><h2>Produits utilisés</h2><span>{entry.products.length}</span></div>
         {entry.products.length ? <ul>{entry.products.map(item => {
           const current = items.find(value => String(value.id) === String(item.id));
-          return <li key={item.id}>{item.type === 'Matériel' ? <Package /> : <i style={{ background: item.color || 'var(--soft)' }} />}<div><b>{item.name}</b><span>{[item.brand, item.equipmentCategory || item.type].filter(Boolean).join(' · ')}</span>{!current && <small>Référence conservée dans ton journal</small>}</div>{current && <button aria-label={'Ouvrir la fiche actuelle de ' + item.name} onClick={() => onCollection(current.id)}><ChevronRight /></button>}</li>;
+          return <li key={item.id}>{item.type === 'Matériel' ? <Package /> : <i style={{ background: item.color || 'var(--soft)' }} />}<div><b>{item.name}</b><span>{[item.brand, item.type === 'Matériel' ? item.equipmentCategory || item.type : item.type].filter(Boolean).join(' · ')}</span>{!current && <small>Référence conservée dans ton journal</small>}</div>{current && <button aria-label={'Ouvrir la fiche actuelle de ' + item.name} onClick={() => onCollection(current.id)}><ChevronRight /></button>}</li>;
         })}</ul> : <p className="journalMuted">Aucun produit renseigné pour cette pose.</p>}
       </section>
       {entry.idea && <section className="journalSource"><h2>L’inspiration d’origine</h2><p>{entry.idea.title}</p><button className="journalSecondary" onClick={() => onIdea(entry.idea)}>Retrouver l’inspiration<ArrowRight /></button></section>}
