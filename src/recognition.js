@@ -1,3 +1,4 @@
+import { barcodeObservation } from './productIdentity.js';
 export async function imageCanvas(source, signal, maxSize = 1400) {
   const image = new window.Image();
   image.crossOrigin = 'anonymous';
@@ -50,16 +51,37 @@ export async function readPhotoText(source, signal, onProgress) {
   } finally { finished = true; clearTimeout(timeout); signal.removeEventListener('abort', abort); if (worker) await worker.terminate(); }
 }
 
-export async function readBarcodePhoto(file, signal) {
+export async function readBarcodeSource(source, signal) {
+  const canvas = await imageCanvas(source, signal, 2400);
+  const [{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }] = await Promise.all([import('@zxing/browser'), import('@zxing/library')]);
+  if (signal.aborted) throw new DOMException('Annulé', 'AbortError');
+  const hints = new Map([[DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E, BarcodeFormat.ITF, BarcodeFormat.CODE_128, BarcodeFormat.CODE_39]], [DecodeHintType.TRY_HARDER, true]]);
+  const reader = new BrowserMultiFormatReader(hints);
+  for (const rotation of [false,true]) {
+    if(signal.aborted) throw new DOMException('Annulé','AbortError');
+    let image=canvas;
+    if(rotation){image=document.createElement('canvas');image.width=canvas.height;image.height=canvas.width;const ctx=image.getContext('2d');ctx.translate(image.width,0);ctx.rotate(Math.PI/2);ctx.drawImage(canvas,0,0);}
+    try {
+      const result=reader.decodeFromCanvas(image);
+      return barcodeObservation(result.getText(),BarcodeFormat[result.getBarcodeFormat()] || 'UNKNOWN','scanner');
+    } catch { /* Try the second orientation; no confidence is fabricated. */ }
+  }
+  const error=new Error('Code-barres non lu. Cadre le code entier, bien à plat, ou photographie l’étiquette dessous / au dos.');error.code='BARCODE_UNREAD';throw error;
+}
+export async function readBarcodeDetails(file, signal) {
   if (!file.type.startsWith('image/') || file.size > 20 * 1024 * 1024) throw new Error('Choisis une photo de moins de 20 Mo.');
-  const source = URL.createObjectURL(file);
-  try {
-    const canvas = await imageCanvas(source, signal, 2000);
-    const [{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }] = await Promise.all([import('@zxing/browser'), import('@zxing/library')]);
-    if (signal.aborted) throw new DOMException('Annulé', 'AbortError');
-    const hints = new Map([[DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.ITF]], [DecodeHintType.TRY_HARDER, true]]);
-    const reader = new BrowserMultiFormatReader(hints);
-    try { return reader.decodeFromCanvas(canvas).getText(); }
-    catch { throw new Error('Code-barres illisible. Reprends-le de près, bien à plat, ou saisis les chiffres.'); }
-  } finally { URL.revokeObjectURL(source); }
+  const source=URL.createObjectURL(file);
+  try {return await readBarcodeSource(source,signal);} finally {URL.revokeObjectURL(source);}
+}
+// Preserve the existing string API for any other consumers.
+export async function readBarcodePhoto(file, signal) { return (await readBarcodeDetails(file,signal)).rawBarcode; }
+
+// Independent reads: a missing catalogue or failed OCR never discards a decoded code.
+export async function readProductPhoto(source, signal, onProgress = () => {}, onBarcode = () => {}) {
+  const [barcode,ocr]=await Promise.allSettled([
+    readBarcodeSource(source,signal).then(value=>{if(!signal.aborted)onBarcode(value);return value;}),
+    readPhotoText(source,signal,onProgress),
+  ]);
+  if(signal.aborted)throw new DOMException('Annulé','AbortError');
+  return {rawText:ocr.status==='fulfilled'?ocr.value:'',ocrViews:ocr.status==='fulfilled'?[{text:ocr.value}]:[],barcodes:barcode.status==='fulfilled'?[barcode.value]:[],barcodeAttempted:true,barcodeError:barcode.status==='rejected'?barcode.reason?.code || 'BARCODE_UNAVAILABLE':'',ocrError:ocr.status==='rejected'?'OCR_UNAVAILABLE':''};
 }

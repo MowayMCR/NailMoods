@@ -1,5 +1,6 @@
 // Local catalogue is read-only. Personal collection edits never write back to it.
 import { validHex } from './colorAnalysis.js';
+import { canonicalBrand, canonicalBarcode, productBarcodes, parseProductText, shortCode } from './productIdentity.js';
 export const catalogText = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 const tokens = value => catalogText(value).split(' ').filter(Boolean);
 const contains = (haystack, needle) => Boolean(needle && (' '+haystack+' ').includes(' '+needle+' '));
@@ -8,42 +9,55 @@ const editDistance = (a,b) => {
   for(let i=1;i<=a.length;i++) { const current=[i]; for(let j=1;j<=b.length;j++) current[j]=Math.min(current[j-1]+1,previous[j]+1,previous[j-1]+(a[i-1]===b[j-1]?0:1)); previous=current; }
   return previous[b.length];
 };
-export function matchCatalog(products, query, { brand = '', collection = '', ocr = false } = {}) {
-  const q=catalogText(query), b=catalogText(brand), c=catalogText(collection);
-  if(q.length<2) return [];
-  const knownBrands=[...new Set(products.map(p=>catalogText(p.brand)))];
-  const explicitBrand=b || knownBrands.filter(name=>contains(q,name)).sort((a,b)=>b.length-a.length)[0];
-  const numberTokens=tokens(q).filter(t=>/^\d+$/.test(t));
+export function matchCatalog(products, query, { brand = '', collection = '', ocr = false, rawBarcode = '', barcodes = [], shadeCodes = [] } = {}) {
+  const q=catalogText(query);
+  if(/^#[a-f0-9]{6}$/i.test(String(query).trim()))return [];
+  const parsed=parseProductText(query,products,{brand,collection});
+  const b=canonicalBrand(parsed.brand), c=catalogText(parsed.collection);
+  const codes=[...new Set([...shadeCodes,...parsed.shadeCodes].map(shortCode))];
+  const barcodeKeys=[rawBarcode,...barcodes.map(v=>typeof v==='string'?v:v.rawBarcode),...parsed.barcodes.map(v=>v.rawBarcode),q.replace(/ /g,'')].map(canonicalBarcode).filter(Boolean);
   const ranked=products.flatMap(product=>{
-    const pb=catalogText(product.brand), pc=catalogText(product.collection), name=catalogText(product.name), ref=catalogText(product.reference);
-    if(explicitBrand && pb!==explicitBrand) return [];
-    if(c && pc!==c) return [];
-    const skuExact=contains(q,catalogText(product.sku));
-    const referenceExact=contains(q,ref) || skuExact;
-    // A wrong number must never fuzzy-match an adjacent shade reference.
-    if(numberTokens.length && ref && !referenceExact && !numberTokens.some(t=>tokens(name).includes(t))) return [];
+    const pb=canonicalBrand(product.brand),pc=catalogText(product.collection),name=catalogText(product.name),ref=catalogText(product.reference);
+    const barcodeExact=productBarcodes(product).some(code=>barcodeKeys.includes(code));
+    const brandConflict=Boolean(b && b!==pb), collectionConflict=Boolean(c && c!==pc);
+    if(!barcodeExact && (brandConflict || collectionConflict))return [];
+    const skus=[product.sku,...(Array.isArray(product.skuAliases)?product.skuAliases:[])].map(catalogText).filter(Boolean);
+    const scannedReferences=barcodes.filter(v=>v && typeof v==='object' && ['CODE_128','CODE_39'].includes(v.barcodeFormat)).map(v=>catalogText(v.rawBarcode));
+    const skuExact=skus.some(sku=>contains(q,sku) || parsed.references.some(r=>catalogText(r)===sku) || scannedReferences.includes(sku));
+    const refNumeric=/^\d{1,4}$/.test(ref);
+    const referenceExact=Boolean(ref && (refNumeric ? codes.includes(shortCode(ref)) : contains(q,ref) || scannedReferences.includes(ref))) || skuExact;
+    const shades=[product.shadeCode,...(Array.isArray(product.shadeCodeAliases)?product.shadeCodeAliases:[]),...(refNumeric?[ref]:[])].filter(Boolean).map(shortCode);
+    const shadeExact=shades.some(code=>codes.includes(code));
     const nameExact=contains(q,name);
-    let score=0,reason='';
-    if(referenceExact){score=explicitBrand?98:90;reason=(skuExact?'SKU exact':'Référence exacte')+(explicitBrand?' et marque':'');}
-    else if(nameExact){score=explicitBrand?94:84;reason='Nom de teinte exact'+(explicitBrand?' et marque':'');}
+    if(codes.length && shades.length && !shadeExact && !referenceExact && !barcodeExact)return [];
+    let score=0,priority=0,reason='';
+    if(barcodeExact){score=99;priority=7;reason='EAN / GTIN exact';}
+    else if(referenceExact){score=b?98:refNumeric&&!skuExact?72:90;priority=6;reason=(skuExact?'SKU exact':'Référence exacte')+(b?' et marque':'');}
+    else if(shadeExact){score=b&&c?94:b?90:72;priority=5;reason='Numéro de teinte'+(b?' et marque':'')+(c?' et gamme':'');}
+    else if(nameExact){score=b?94:84;priority=3;reason='Nom de teinte exact'+(b?' et marque':'');}
     else {
+      const nameWords=tokens(name).filter(w=>w.length>2);
       const useful=tokens(q).filter(t=>t.length>2 && !tokens(pb+' '+pc).includes(t));
-      const nameWords=tokens(name);
-      const matches=useful.filter(word=>nameWords.some(part=>part===word || word.length>=5 && part.length>=5 && editDistance(word,part)<=1)).length;
-      if(useful.length && matches===useful.length){score=explicitBrand?76:62;reason='Nom proche · à vérifier';}
+      const matches=nameWords.filter(word=>useful.some(part=>part===word || word.length>=5 && part.length>=5 && editDistance(word,part)<=1)).length;
+      const supported=ocr ? b && matches>=Math.min(2,nameWords.length) && matches>0 : useful.length && useful.every(word=>nameWords.some(part=>part===word || word.length>=5 && part.length>=5 && editDistance(word,part)<=1));
+      if(supported){score=b?76:62;priority=1;reason='Nom proche · à vérifier';}
     }
-    if(!score) return [];
-    if(ocr){score=Math.min(score,88);reason+=' · texte lu sur photo';}
+    if(!score)return [];
+    const scannedBarcode=barcodeExact && [rawBarcode,...barcodes.filter(v=>v.barcodeSource!=='ocr').map(v=>typeof v==='string'?v:v.rawBarcode)].map(canonicalBarcode).some(code=>code && productBarcodes(product).includes(code));
+    if(ocr && !scannedBarcode){score=Math.min(score,88);reason+=' · texte lu sur photo';}
+    if(brandConflict || collectionConflict){score=Math.min(score,65);reason+=' · conflit avec la marque ou la gamme lue';}
     const cap=ocr?88:100;
-    const evidence={brand:explicitBrand?Math.min(100,cap):null,collection:(c===pc&&c || contains(q,pc))?Math.min(100,cap):null,reference:referenceExact?Math.min(100,cap):null,name:nameExact?Math.min(100,cap):reason.startsWith('Nom proche')?Math.min(70,cap):null,color:null};
-    return [{product,score,reason,evidence}];
-  }).sort((a,b)=>b.score-a.score || a.product.name.localeCompare(b.product.name,'fr',{numeric:true}));
-  const ambiguous=ranked.length>1 && ranked[0].score===ranked[1].score;
-  return ranked.slice(0,3).map(row=>({...row,score:ambiguous?Math.min(row.score,82):row.score,confidence:!ambiguous&&row.score>=90?'élevée':'moyenne'}));
+    return [{product,score,priority,reason,evidence:{brand:b&&!brandConflict?cap:null,collection:c&&!collectionConflict?cap:null,reference:referenceExact?cap:null,name:nameExact?cap:priority===1?70:null,color:null,barcode:barcodeExact?scannedBarcode?100:cap:null,shadeCode:shadeExact?cap:null}}];
+  }).sort((a,b)=>b.priority-a.priority || b.score-a.score || String(a.product.name).localeCompare(String(b.product.name),'fr',{numeric:true}));
+  return ranked.slice(0,3).map(row=>{
+    const ambiguous=ranked.some(other=>other!==row && other.priority===row.priority && other.score===row.score);
+    const score=ambiguous?Math.min(row.score,82):row.score;
+    return {...row,score,confidence:score>=90?'élevée':'moyenne',reason:row.reason+(ambiguous?' · plusieurs références possibles':'')};
+  });
 }
 export function catalogCandidate(match) {
   const p=match.product;
-  const fields=Object.fromEntries(['brand','collection','name','reference','type','url','family','finish','usage','sku'].filter(k=>p[k]).map(k=>[k,p[k]]));
+  const fields=Object.fromEntries(['brand','collection','name','reference','type','url','family','finish','usage','sku','ean13','gtin','shadeCode'].filter(k=>p[k]).map(k=>[k,p[k]]));
   const finishes = { creme: 'Crème', jelly: 'Jelly', paillete: 'Pailleté', metallique: 'Métallique', brillant: 'Brillant', 'cat eye': 'Cat-eye', mat: 'Mat' };
   fields.finish = finishes[catalogText(p.finish)] || 'Autre';
   if (p.finish && !finishes[catalogText(p.finish)]) fields.finishDetail = p.finish;

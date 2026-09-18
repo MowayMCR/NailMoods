@@ -2,9 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Camera, ImagePlus, ArrowLeft, ArrowRight, Check, Sparkles, RotateCcw, Pipette, X } from 'lucide-react';
 import { preparePhoto } from './ProductPhoto';
 import { Sampler } from './PhotoColor';
-import { imageCanvas, readPhotoText } from './recognition';
+import { imageCanvas, readProductPhoto } from './recognition';
 import { photoPalette, generationFamily, validHex } from './colorAnalysis';
-import { loadCatalog, matchCatalog, catalogCandidate, catalogueProvenance, catalogText } from './catalog';
+import { loadCatalog, catalogCandidate, catalogueProvenance } from './catalog';
+import RecognitionStatus from './RecognitionStatus';
+import { recognizeEvidence, recognitionPatch, pendingBarcodeReport } from './recognitionReport';
+import { mergeRecognitionEvidence } from './productIdentity';
 import { browserStorage } from './storage';
 import { snapshotIdea } from './inspirations';
 import NailPreview from './NailPreview';
@@ -21,6 +24,8 @@ export function ScanBottles() {
 // No plan is inferred from localStorage, the profile or a query parameter.
 export default function ScanGenerate({ profile = {}, items = [], onBack, capabilities = {}, onAddProducts, onSaveJournal }) {
   const [stage,setStage] = useState('capture'), [products,setProducts] = useState([]), [draft,setDraft] = useState(null);
+  const [recognition,setRecognition] = useState(null);
+  const secondView = useRef(null);
   const [effects,setEffects] = useState([]), [ideas,setIdeas] = useState([]), [detail,setDetail] = useState(null);
   const [error,setError] = useState(''), [busy,setBusy] = useState(false), [reading,setReading] = useState(false), [readStatus,setReadStatus] = useState('');
   const [candidates,setCandidates] = useState([]), [query,setQuery] = useState(''), [lookupStatus,setLookupStatus] = useState('');
@@ -36,7 +41,7 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
     if (stage !== 'confirm' || query.trim().length<2) { setLookupStatus(''); return; }
     const controller=new AbortController();
     const timer=setTimeout(async()=>{
-      try { setLookupStatus('Recherche dans le catalogue…'); const catalogue=await loadCatalog(controller.signal); if(controller.signal.aborted)return; const matches=matchCatalog(catalogue,query); setCandidates(matches); setLookupStatus(matches.length?'Choisis la référence à confirmer.':'Je ne trouve pas encore cette référence. Ta couleur suffit pour continuer.'); }
+      try { setLookupStatus('Recherche dans le catalogue…'); const catalogue=await loadCatalog(controller.signal); if(controller.signal.aborted)return; const report=recognizeEvidence(catalogue,{rawText:query,barcodes:recognition?.barcodes || [],ocrViews:recognition?.ocrViews || [],barcodeAttempted:recognition?.barcodeAttempted},{hasColor:validHex(draft?.color),ocr:false}); setCandidates(report.matches);setRecognition(report);setDraft(d=>({...d,...recognitionPatch(report)}));setLookupStatus(report.matches.length?'Choisis la référence à confirmer.':'Je ne trouve pas encore cette référence. Ta couleur suffit pour continuer.'); }
       catch { if(!controller.signal.aborted)setLookupStatus('Catalogue indisponible. Ta couleur suffit pour continuer.'); }
     },250);
     return ()=>{clearTimeout(timer);controller.abort();};
@@ -56,29 +61,36 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
     }
   }
   function resetCapture(resetProducts=false) {
-    task.current?.abort();stopCamera();setDraft(null);setQuery('');setCandidates([]);setReading(false);setReadStatus('');setBusy(false);setCorrect(false);setSampling(false);setError('');setStage('capture');
+    task.current?.abort();stopCamera();setDraft(null);setRecognition(null);setQuery('');setCandidates([]);setReading(false);setReadStatus('');setBusy(false);setCorrect(false);setSampling(false);setError('');setStage('capture');
     if(resetProducts){setProducts([]);setIdeas([]);setDetail(null);setAdded(false);setSaved([]);}
   }
-  async function analyze(file) {
+  async function analyze(file, isSecond = false) {
     if(!file)return;
     task.current?.abort();const controller=new AbortController();task.current=controller;
     stopCamera();setBusy(true);setError('');
+    const previous=isSecond?recognition || {barcodes:draft?.rawBarcode?[{rawBarcode:draft.rawBarcode,barcodeFormat:draft.barcodeFormat,barcodeSource:draft.barcodeSource,barcodeConfidence:draft.barcodeConfidence}]:[]}:{};
     try {
-      const photo=await preparePhoto(file,1200);if(controller.signal.aborted)return;
-      const canvas=await imageCanvas(photo,controller.signal,700);if(controller.signal.aborted)return;
-      const palette=photoPalette(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height));
-      setDraft({photo,color:palette[0] || '',name:'',brand:'',reference:'',finish:'',type:'Vernis'});setCorrect(!palette.length);setStage('confirm');setBusy(false);
-      if(!products.length)track('first_product_scanned');
-      setReading(true);setReadStatus('Lecture de l’étiquette… Tu peux déjà confirmer la couleur.');
-      try {
-        const [catalogue,text]=await Promise.all([loadCatalog(controller.signal),readPhotoText(photo,controller.signal,progress=>{if(!controller.signal.aborted)setReadStatus('Lecture de l’étiquette : '+progress+' % · confirmation déjà possible.');})]);
-        if(controller.signal.aborted)return;
-        const matches=matchCatalog(catalogue,text,{ocr:true});setCandidates(matches);
-        if (!matches.length) { const normalized=' '+catalogText(text)+' '; const brand=[...new Set(catalogue.map(p=>p.brand).filter(Boolean))].sort((a,b)=>b.length-a.length).find(b=>normalized.includes(' '+catalogText(b)+' ')); if(brand)setDraft(d=>({...d,brand})); }
-        setReadStatus(matches.length?'Références possibles : à confirmer ci-dessous.':'Je ne connais pas encore cette référence. Confirme la couleur estimée pour continuer.');
-      } catch { if(!controller.signal.aborted){setReadStatus('L’étiquette n’a pas pu être identifiée. Confirme la couleur pour continuer.');setReading(false);controller.abort();} }
-      finally { if(!controller.signal.aborted)setReading(false); }
+      const photo=await preparePhoto(file,1800);if(controller.signal.aborted)return;
+      let color=draft?.color || '';
+      if(!isSecond){
+        const canvas=await imageCanvas(photo,controller.signal,700);if(controller.signal.aborted)return;
+        const palette=photoPalette(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height));color=palette[0] || '';
+        setDraft({photo,color,name:'',brand:'',reference:'',finish:'',type:'Vernis'});setCorrect(!palette.length);setRecognition(null);
+        if(!products.length)track('first_product_scanned');
+      }
+      setStage('confirm');setBusy(false);setReading(true);setCandidates([]);
+      setReadStatus(isSecond?'Lecture du dessous / dos… Ta première couleur est conservée.':'Lecture du code et de l’étiquette… Tu peux déjà confirmer la couleur.');
+      const catalogueTask=loadCatalog(controller.signal).then(products=>({products,available:true}),()=>({products:[],available:false}));
+      const evidence=await readProductPhoto(photo,controller.signal,progress=>{if(!controller.signal.aborted)setReadStatus('Lecture de l’étiquette : '+progress+' % · confirmation déjà possible.');},observation=>{
+        if(!controller.signal.aborted){const pending=pendingBarcodeReport(previous,observation);setRecognition(pending);setDraft(d=>({...d,...recognitionPatch(pending)}));}
+      });
+      const catalogue=await catalogueTask;if(controller.signal.aborted)return;
+      const merged=mergeRecognitionEvidence(previous,evidence);
+      const report=recognizeEvidence(catalogue.products,merged,{brand:isSecond?draft?.brand:'',hasColor:validHex(color),catalogAvailable:catalogue.available});
+      setRecognition(report);setCandidates(report.matches);setReadStatus('');
+      setDraft(d=>({...d,...recognitionPatch(report),...(!d.brand && report.parsed.brand?{brand:report.parsed.brand}:{})}));
     } catch(err) {if(!controller.signal.aborted){setError(err.message);setBusy(false);}}
+    finally {if(!controller.signal.aborted)setReading(false);}
   }
   async function capture() {
     if(!video.current?.videoWidth){setError('La caméra se prépare. Réessaie dans un instant.');return;}
@@ -139,12 +151,16 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
       <small>Sans collection ni profil complet. Les photos restent sur cet appareil.</small>
     </div>}
     {stage==='confirm' && draft && <div className="scanPanel">
+      <input ref={secondView} hidden type="file" accept="image/*" capture="environment" aria-label="Photographier le dessous ou le dos" onChange={event=>{const file=event.target.files?.[0];event.target.value='';analyze(file,true);}}/>
       <h2>{draft.provenance?'Produit à confirmer':draft.photo?'Couleur estimée':'Ta couleur'}</h2>
       <div className="scanDetected">{draft.photo && <img src={draft.photo} alt="Ton vernis photographié"/>}<i style={{background:draft.color || 'transparent'}}/><div><strong>{draft.name || (validHex(draft.color)?generationFamily({color:draft.color}):'Choisis une couleur')}</strong><span>{[draft.brand,draft.reference].filter(Boolean).join(' · ')}</span><small>{draft.color}</small></div></div>
       <p className="scanHint">La lumière et les reflets influencent la teinte. Vérifie-la avant de continuer.</p>
       {readStatus && <p role="status" className="scanHint">{readStatus}</p>}
-      {candidates.length>0 && <div className="scanCandidates" aria-label="Références possibles">{candidates.map(match=><button key={match.product.catalogId} aria-pressed={draft.provenance?.catalogId===match.product.catalogId} onClick={()=>chooseCandidate(match)}><b>{match.product.brand} · {match.product.reference || match.product.name}</b><small>{match.product.name} · {match.reason}</small></button>)}</div>}
-      <button className="scanPrimary" disabled={!validHex(draft.color)} onClick={confirm}><Check/>C’est bien ça</button>
+      {!recognition && draft.photo && <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);secondView.current.click();}}>Photographier dessous / dos</button>}
+      <RecognitionStatus report={recognition} busy={busy} onSecondView={()=>{task.current?.abort();setReading(false);secondView.current.click();}}/>
+      {candidates.length>0 && <div className="scanCandidates" aria-label="Références possibles">{candidates.map(match=><button key={match.product.catalogId} aria-pressed={draft.provenance?.catalogId===match.product.catalogId} onClick={()=>chooseCandidate(match)}><b>{match.product.brand} · {match.product.reference || match.product.name}</b><small>{match.product.collection ? match.product.collection+' · ' : ''}{match.product.name} · {match.reason}</small><small>Correspondance {match.confidence} · indice {match.score}/100</small></button>)}</div>}
+      <button className="scanPrimary" disabled={!validHex(draft.color)} onClick={confirm}><Check/>{draft.provenance?'C’est bien celui-ci':recognition && !recognition.matches.length?'Utiliser cette couleur':'C’est bien ça'}</button>
+      {recognition && !recognition.matches.length && <a className="scanText" href={'https://www.google.com/search?q='+encodeURIComponent([recognition.parsed?.brand,...(recognition.parsed?.shadeCodes || []),draft.rawBarcode,'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Rechercher la référence</a>}
       {reading && <small>La lecture de l’étiquette est facultative : tu peux continuer maintenant.</small>}
       <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);setCorrect(v=>!v);}}><Pipette/>{correct?'Fermer la correction':'Corriger'}</button>
       {correct && <div className="scanCorrection">
