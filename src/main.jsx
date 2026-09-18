@@ -1,3 +1,5 @@
+import ContextHelp from './ContextHelp';
+import { browserStorage } from './storage';
 import React, { useState, useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Home, Palette, Library, BookHeart, UserRound, ChevronRight, X, Check, Search, Plus, Camera, Trash2, Heart, Link, ScanLine, Image, PenLine, WandSparkles, Package } from 'lucide-react';
@@ -18,14 +20,14 @@ import { TUTORIAL_KEY, readTutorials, newTutorial, addTutorial, actOnTutorial, m
 import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite } from './inspirations';
 import PersonalizationPanel from './PersonalizationView';
 import { PERSONALIZATION_KEY, readPersonalization, buildPersonalModel } from './personalization';
-const colors=colorFamilies;const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[{...defaults,id:1,name:'Prune foncée',brand:'Le Mini Macaron',family:'Prune',color:'#703650',depth:'Foncé',undertone:'Froid',finish:'Brillant',fav:true},{...defaults,id:2,name:'Latte',brand:'Le Mini Macaron',family:'Brun',color:'#805b4c',depth:'Moyen',undertone:'Chaud',finish:'Brillant'},{...defaults,id:3,name:'Galactic Sparkle',brand:'Le Mini Macaron',type:'Effet',family:'Multi',color:'#665083',finish:'Chrome',effect:'Multichrome',usage:'Sur une couleur de base'}];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
+const colors=colorFamilies;const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
 
 function Brand() {
   return <div className="brandFinal"><img src="/NailMoods/nailmoods-logo.svg" alt="" /><div><b>Nail<span>Moods</span></b><small>CRÉE TON STYLE, À TON RYTHME</small></div></div>;
 }
 
 function readStored(key, fallback) {
-  try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; }
+  try { return JSON.parse(browserStorage.getItem(key) || 'null') ?? fallback; }
   catch { return fallback; }
 }
 
@@ -40,11 +42,11 @@ function App() {
     const stored = readStored('nm-profile', {});
     return { ...defaultProfile, ...stored, styles: Array.isArray(stored?.styles) ? stored.styles : defaultProfile.styles };
   });
-  const [library, setLibrary] = useState(() => readInspirations(localStorage));
+  const [library, setLibrary] = useState(() => readInspirations(browserStorage));
   const [appError, setAppError] = useState('');
-  const [tutorials, setTutorials] = useState(() => readTutorials(localStorage));
-  const [journal, setJournal] = useState(() => readJournal(localStorage));
-  const [personalSettings, setPersonalSettings] = useState(() => readPersonalization(localStorage));
+  const [tutorials, setTutorials] = useState(() => readTutorials(browserStorage));
+  const [journal, setJournal] = useState(() => readJournal(browserStorage));
+  const [personalSettings, setPersonalSettings] = useState(() => readPersonalization(browserStorage));
   const [personalOpen, setPersonalOpen] = useState(false);
   const [personalError, setPersonalError] = useState('');
   const tutorialSession = route.startsWith('#tutoriel/') ? tutorials.sessions.find(session => session.id === route.slice('#tutoriel/'.length)) : null;
@@ -78,15 +80,15 @@ function App() {
   }, []);
 
   function changeProfile(next) {
-    try { localStorage.setItem('nm-profile', JSON.stringify(next)); setProfile(next); setAppError(''); return true; }
+    try { browserStorage.setItem('nm-profile', JSON.stringify(next)); setProfile(next); setAppError(''); return true; }
     catch { setAppError('Ton profil n’a pas pu être sauvegardé. Libère un peu de stockage sur cet appareil puis réessaie.'); return false; }
   }
   function changePersonalization(next) {
-    try { localStorage.setItem(PERSONALIZATION_KEY, JSON.stringify(next)); setPersonalSettings(next); setPersonalError(''); }
+    try { browserStorage.setItem(PERSONALIZATION_KEY, JSON.stringify(next)); setPersonalSettings(next); setPersonalError(''); }
     catch { setPersonalError('Ce réglage n’a pas pu être enregistré. Le choix précédent est conservé. Libère un peu de stockage sur cet appareil puis réessaie.'); }
   }
   function saveLibrary(next, allowMemory = false) {
-    try { localStorage.setItem(INSPIRATIONS_KEY, JSON.stringify(next)); setLibrary(next); setAppError(''); return true; }
+    try { browserStorage.setItem(INSPIRATIONS_KEY, JSON.stringify(next)); setLibrary(next); setAppError(''); return true; }
     catch { if (allowMemory) setLibrary(next); setAppError('Cette inspiration reste visible, mais la sauvegarde n’a pas abouti sur cet appareil. Les favoris déjà enregistrés sont conservés. Libère un peu de stockage puis réessaie.'); return false; }
   }
   function openIdea(idea, options) {
@@ -99,7 +101,7 @@ function App() {
   function favoriteIdea(idea) { return saveLibrary(toggleFavorite(library, snapshotIdea(idea))); }
   function selectIdea(idea, clear = false) { return saveLibrary({ ...rememberIdea(library, idea), selected: clear ? null : idea }); }
   function saveTutorials(next) {
-    try { localStorage.setItem(TUTORIAL_KEY, JSON.stringify(next)); setTutorials(next); setAppError(''); return true; }
+    try { browserStorage.setItem(TUTORIAL_KEY, JSON.stringify(next)); setTutorials(next); setAppError(''); return true; }
     catch { setAppError('Cette modification de ta pose n’a pas pu être enregistrée. La progression précédente est conservée. Libère un peu de stockage puis réessaie.'); return false; }
   }
   function openTutorial(id) {
@@ -140,7 +142,7 @@ function App() {
     openJournal(existing ? existing.id : 'pose/' + session.id);
   }
   function saveJournal(next) {
-    try { localStorage.setItem(JOURNAL_KEY, JSON.stringify(next)); setJournal(next); setAppError(''); return { ok: true }; }
+    try { browserStorage.setItem(JOURNAL_KEY, JSON.stringify(next)); setJournal(next); setAppError(''); return { ok: true }; }
     catch {
       const error = 'Le journal n’a pas pu être sauvegardé. Tes souvenirs déjà enregistrés sont conservés. Libère un peu de stockage sur cet appareil puis réessaie.';
       setAppError(error); return { ok: false, error };
@@ -181,6 +183,13 @@ function App() {
     setEdit({ ...defaults, ...materialDefaults, type, source });
   }
 
+  function addOwnedEquipment(category) {
+    if (!['Lampe UV / LED', 'Aimant cat-eye'].includes(category)) return;
+    const next = [...items, { ...materialDefaults, id: crypto.randomUUID(), type: 'Matériel', name: category, equipmentCategory: category, source: 'manual' }];
+    if (!persist(next)) setAppError('Le matériel n’a pas pu être sauvegardé. Libère du stockage puis réessaie.');
+    else setAppError('');
+  }
+
   function change(values) {
     setSaveError('');
     setEdit(current => current ? { ...current, ...values } : null);
@@ -188,7 +197,7 @@ function App() {
 
   function persist(next) {
     try {
-      localStorage.setItem('nm-collection-v2', JSON.stringify(next));
+      browserStorage.setItem('nm-collection-v2', JSON.stringify(next));
       setItems(next);
       setEdit(null);
       return true;
@@ -224,13 +233,13 @@ function App() {
   const colorCount = new Set(items.filter(item => item.type !== 'Matériel' && item.family).map(item => item.family)).size;
 
   return <div className="app phase2" style={{ '--a': th[0], '--b': th[1], '--soft': th[2], '--paper': th[3] }}>
-    <header><Brand /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
+    <header><Brand /><ContextHelp key={route || tab} screen={route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
     <main>
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
-      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
+      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
-          <small>PHASE 2 · COLLECTION</small><h1>Ma collection</h1>
+          <small>MES PRODUITS</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
           <div className="collectionStats">
             <div><b>{items.length}</b><span>Produits</span></div>
@@ -273,8 +282,8 @@ function App() {
         </section>}
         <section className="phase3Preview">
           <small>MES ENVIES</small><h2>Et si on créait avec tout ça ?</h2>
-          <p>Choisis une humeur, un univers et ton temps. Retrouve des idées composées avec tes couleurs et ton matériel.</p>
-          <button className="moreIdeas" onClick={() => navigate('create')}><Palette />Créer ma manucure</button>
+
+          <button className="moreIdeas" onClick={() => navigate('create')}><Palette />Générer une idée</button>
         </section>
       </> : tab === 'profile' ? <ProfileView personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView journal={journal} sessions={tutorials.sessions} items={items} route={route} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
     </main>
@@ -302,7 +311,7 @@ function App() {
           </button>)}
           <button onClick={() => start('barcode')}><span className="importIcon"><ScanLine /></span><span className="importCopy"><b>Scanner le produit</b><small>Photo du code-barres ou saisie des chiffres</small></span><ChevronRight className="importArrow" /></button>
         </div>
-        <div className="smartHint"><WandSparkles /><span><b>Ta collection, à ton rythme</b><small>Lien, photo ou code-barres : vérifie les informations retrouvées avant de les garder. Tout reste modifiable.</small></span></div>
+
       </section>
     </div>}
 

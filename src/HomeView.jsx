@@ -1,3 +1,4 @@
+import { browserStorage } from './storage';
 import React, { useEffect, useMemo, useState } from 'react';
 import { UserRound, Library, Palette, Heart, ArrowRight, ChevronRight, BookHeart, ListChecks, Play, BookmarkCheck, Sparkles, RotateCcw, Clock3, Check, Leaf } from 'lucide-react';
 import NailPreview from './NailPreview';
@@ -34,7 +35,7 @@ function ResumeProgress({ session }) {
 }
 
 export default function HomeView({ profile, items, library, journal, tutorials, personalModel, personalSettings, onNavigate, onOpen, onResume, onJournal, onJournalSession, onCollection, onPersonalization }) {
-  const [options] = useState(() => readCreationState(localStorage, profile).options);
+  const [options] = useState(() => readCreationState(browserStorage, profile).options);
   const liveLearning = personalSettings.enabled ? personalModel.ranking : null;
   const liveStamp = personalSettings.enabled ? personalModel.stamp : 'off';
   const [run, setRun] = useState(() => ({ seed: homeSeed(), learning: liveLearning, stamp: liveStamp, exclude: '' }));
@@ -48,7 +49,7 @@ export default function HomeView({ profile, items, library, journal, tutorials, 
   const nextTitle = home.priority === 'resume' ? resume.idea.title : home.priority === 'retained' ? retained.title : readiness ? readiness.title : 'On crée ta prochaine pose ?';
 
   return <div className="homePage smartHome">
-    <section className="homeGreeting"><small>TON NAILMOODS, À TON RYTHME</small><h1>{profile.name ? 'Bonjour, ' + profile.name + '.' : 'Bienvenue dans ton univers.'}</h1><p>{resume ? 'Ta pose t’attend, là où tu l’as laissée.' : retained ? 'Ton envie est déjà là. À toi de choisir ton moment.' : 'Tes couleurs, tes envies, un moment pour toi.'}</p>
+    <section className="homeGreeting"><small>TON NAILMOODS, À TON RYTHME</small><h1>{profile.name ? 'Bonjour, ' + profile.name + '.' : 'Bienvenue dans ton univers.'}</h1><p>{resume ? 'Ta pose t’attend, là où tu l’as laissée.' : retained ? 'Ton envie est déjà là. À toi de choisir ton moment.' : items.length ? 'Tes couleurs, tes envies, un moment pour toi.' : 'Des idées de manucure avec les produits que tu possèdes.'}</p>
       <div className="homeStats"><button onClick={() => onNavigate('collection')}><b>{home.report.inventoryColors}</b><span>vernis coloré{home.report.inventoryColors > 1 ? 's' : ''}</span></button><button onClick={() => onNavigate('journal')}><b>{personalModel.counts.poses}</b><span>pose{personalModel.counts.poses > 1 ? 's' : ''} réalisée{personalModel.counts.poses > 1 ? 's' : ''}</span></button><button onClick={() => onNavigate('favorites')}><b>{library.favorites.length}</b><span>inspiration{library.favorites.length > 1 ? 's' : ''} favorite{library.favorites.length > 1 ? 's' : ''}</span></button></div>
     </section>
 

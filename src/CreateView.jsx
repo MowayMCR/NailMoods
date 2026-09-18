@@ -1,3 +1,4 @@
+import { browserStorage } from './storage';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker } from 'lucide-react';
 import { createSuggestions, inventoryStamp } from './creationEngine';
@@ -22,8 +23,8 @@ const durationLabel = value => value === 90 ? '90 min max' : value + ' min max';
 const polishCountLabel = value => value === 'auto' ? 'Automatique' : value + ' vernis';
 const polishCountHints = { auto: 'Des associations de 1 à 5 vernis, selon ta collection.', 1: 'Un seul vernis coloré.', 2: 'Duos, accents et détails.', 3: 'Un trio à répartir sur les ongles.', 4: 'Quatre vernis dans une même composition.', 5: 'Un vernis différent sur chaque ongle.' };
 
-export default function CreateView({ items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
-  const [state, setState] = useState(() => readCreationState(localStorage, profile));
+export default function CreateView({ onEquipment, items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
+  const [state, setState] = useState(() => readCreationState(browserStorage, profile));
   const [picker, setPicker] = useState(null);
   const [storageError, setStorageError] = useState(false);
   const resultAnchor = useRef(null);
@@ -37,10 +38,12 @@ export default function CreateView({ items, profile, onCollection, route, librar
   const pendingLearning = activeRun && state.learningStamp !== liveStamp && (state.learning || liveLearning);
   const chosen = activeRun && report.results.find(idea => idea.id === state.selected);
   const decorations = decorationChoice(options);
+  const missingLamp = report.blocked.some(entry => entry.reason === 'Lampe UV / LED à renseigner dans le matériel.');
+  const missingMagnet = report.blocked.some(entry => entry.reason === 'Aimant cat-eye à renseigner dans le matériel.');
   const selectedDecoration = report.tools.stickers.find(item => String(item.id) === decorations.id);
   const decorationLabel = decorations.mode === 'without' ? 'Sans décorations' : decorations.mode === 'with' ? decorations.id ? selectedDecoration?.name || 'À choisir' : 'Avec mes décorations' : 'Automatique';
   useEffect(() => {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); setStorageError(false); }
+    try { browserStorage.setItem(KEY, JSON.stringify(state)); setStorageError(false); }
     catch { setStorageError(true); }
   }, [state]);
 
@@ -98,7 +101,7 @@ export default function CreateView({ items, profile, onCollection, route, librar
         <button className="creationLimitsTile" onClick={() => setPicker('constraints')}><SlidersHorizontal /><small>Mes limites</small><b>{options.constraints.length ? options.constraints.length + ' choix' : 'Tout mon matériel'}</b><ChevronRight className="tileArrow" /></button>
       </div>
       {options.constraints.length > 0 && <div className="creationLimits">{limits.filter(([key]) => options.constraints.includes(key)).map(([key, label]) => <span key={key}>{label}</span>)}</div>}
-      <p className="creationHint">Les premiers choix viennent de ton profil. Tu peux les adapter à cette envie sans modifier tes habitudes.</p>
+
     </section>
 
     <section className="creationInventory">
@@ -112,10 +115,12 @@ export default function CreateView({ items, profile, onCollection, route, librar
     {state.generated && !activeRun && <p className="creationNotice" role="status">Ta collection a changé. Relance les idées pour utiliser son contenu actuel.</p>}
     {pendingLearning && <p className="creationNotice" role="status">Tes retours ou tes réglages ont changé. Recompose tes idées pour les prendre en compte.</p>}
     {report.results.length === 0 ? <section className="creationEmpty" role="status">
-      <Palette /><h2>On ajuste un petit détail ?</h2>
+      <Palette /><h2>{missingLamp ? 'As-tu une lampe UV / LED ?' : missingMagnet ? 'As-tu un aimant cat-eye ?' : 'Préparons ta première idée'}</h2>
+      {missingLamp && <><p>Tes semi-permanents ou gels nécessitent une lampe. Ajoute celle que tu possèdes pour les utiliser dans tes idées.</p><button onClick={() => onEquipment('Lampe UV / LED')}>J’ai une lampe UV / LED</button></>}
+      {missingMagnet && <><p>Ces couleurs nécessitent un aimant cat-eye.</p><button onClick={() => onEquipment('Aimant cat-eye')}>J’ai un aimant cat-eye</button></>}
       <p>{report.decorationUnavailable ? decorations.id ? 'La décoration choisie n’est plus disponible dans ta collection. Choisis-en une autre ou repasse en automatique.' : 'Ajoute des stickers ou des strass dans ta collection, ou choisis des idées sans décorations.' : report.availableColors && report.countUnavailable ? 'Tu as choisi ' + report.requestedPolishCount + ' vernis. Avec ta collection, le type de pose et tes limites actuelles, ' + report.maxPolishCount + ' au maximum peuvent être associés. Ajuste ce nombre, tes limites ou ta collection.' : report.availableColors ? 'Aucune idée ne tient dans le temps choisi. Essaie un peu plus de temps.' : report.inventoryColors ? 'Tes couleurs ne sont pas utilisables avec les limites ou le matériel actuellement renseignés. Consulte les produits non retenus ci-dessus.' : 'Ajoute au moins une couleur de vernis dans ta collection pour composer tes premières idées.'}</p>
       <button onClick={report.decorationUnavailable ? () => setPicker('decorations') : report.availableColors ? () => setPicker(report.countUnavailable ? 'polishCount' : 'duration') : onCollection}>{report.decorationUnavailable ? 'Choisir mes décorations' : report.availableColors ? report.countUnavailable ? 'Ajuster le nombre de vernis' : 'Ajuster mon temps' : 'Ouvrir ma collection'}<ArrowRight /></button>
-    </section> : <button className="creationGenerate" onClick={generate}><Sparkles />{activeRun ? 'Recomposer mes idées' : 'Trouver mes idées'}<ArrowRight /></button>}
+    </section> : <button className="creationGenerate" onClick={generate}><Sparkles />{activeRun ? 'Recomposer mes idées' : 'Générer une idée'}<ArrowRight /></button>}
     <p className="creationTimeNote">Temps indicatifs pour la couleur et la décoration, hors préparation, dépose et séchage.</p>
     {storageError && <p className="formError" role="alert">Tes choix restent disponibles ici, mais n’ont pas pu être sauvegardés sur cet appareil.</p>}
 
