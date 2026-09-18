@@ -13,3 +13,6 @@ L’accueil peut proposer une idée sans inventaire. Les aides n’imposent plus
 
 ## Critère externe restant
 Pas de compte propriétaire/administrateur ni d’authentification dans cette version : les données sont locales au navigateur. Le navigateur de contrôle contient les données QA précédentes et n’expose pas de contexte privé neuf pilotable. Le test automatisé vierge ne remplace donc pas une première visite complète dans un nouveau navigateur. Ce critère demandé ne peut pas être déclaré validé sans cet essai.
+
+## Vérification publique
+Commit applicatif f2103a4dd6e368e963fa69d5397ddad2f009c168 ; workflow 35347876993 terminé avec succès. Sur le lien public : sélection Inspire-moi, génération de quatre compositions libres, sauvegarde d’une idée et réouverture après rechargement, couleurs explicitement signalées comme couleurs de style ; sélection Avec ma collection et génération de quatre idées avec les produits QA. Inventaire préexistant du navigateur : trois couleurs et une lampe. Ce test public ne satisfait pas le critère de session intégralement vierge, qui reste ouvert.
