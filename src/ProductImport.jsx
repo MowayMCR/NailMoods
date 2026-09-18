@@ -6,7 +6,7 @@ import { readProductPhoto, readBarcodeDetails } from './recognition';
 import { imageCanvas } from './recognition';
 import { preparePhoto } from './ProductPhoto';
 import { barcodeObservation, mergeRecognitionEvidence } from './productIdentity';
-import { recognizeEvidence, recognitionPatch, pendingBarcodeReport } from './recognitionReport';
+import { recognizeEvidence, recognitionPatch, pendingBarcodeReport, interruptedRecognition } from './recognitionReport';
 import RecognitionStatus from './RecognitionStatus';
 import { photoPalette, generationFamily, preciseShade, colorFamilyChange } from './colorAnalysis';
 import './product-import.css';
@@ -43,7 +43,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
   const [catalogQuery, setCatalogQuery] = useState('');
   const [text, setText] = useState(''), [matches, setMatches] = useState([]);
   const task = useRef(null), revision = useRef(0), barcodePhoto = useRef(null), barcodeCamera = useRef(null);
-  function cancel() { revision.current++; task.current?.abort(); task.current = null; setBusy(''); onBusy(false); }
+  function cancel(interrupted = false) { if(interrupted && report?.barcodeState==='read_pending'){const retained=interruptedRecognition(report);setReport(retained);onChange(recognitionPatch(retained));} revision.current++; task.current?.abort(); task.current = null; setBusy(''); onBusy(false); }
   useEffect(() => () => { revision.current++; task.current?.abort(); onBusy(false); }, [onBusy]);
   // A late response must never replace another URL/photo or a reopened product.
   useEffect(() => { cancel(); setCandidate(null); setMatches([]); setLocalMatches([]); setText(''); setError(''); }, [item.url, item.photo]);
@@ -140,7 +140,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
       <p className="fieldHelp">Le texte est lu sur ton appareil. Une photo nette du nom et de la marque aide à retrouver le produit.</p>
       {text && <div className="readLabelResult"><label>Texte lu — tu peux le corriger<textarea rows="4" value={text} onChange={event => { setText(event.target.value); setMatches([]); setLocalMatches([]); setCandidate(null); }} /></label><p className="fieldHelp">Choisis la ligne contenant le nom.</p><div className="labelLines">{[...new Set(text.split('\n').map(line => line.trim()).filter(line => line.length > 2))].slice(0, 18).map((line, index) => <button key={index} type="button" onClick={() => useLine(line)}>{line}</button>)}</div><button type="button" className="importSecondary" disabled={Boolean(busy)} onClick={() => run('Recherche des noms lus…', signal => analyzeEvidence({rawText:text,ocrViews:report?.ocrViews || [],barcodes:report?.barcodes || [],barcodeAttempted:report?.barcodeAttempted,ocr:true},signal), 60000)}>Chercher dans NailMoods</button></div>}
     </div>}
-    {busy && <div className="importProgress" role="status"><span>{busy}</span><button type="button" onClick={cancel}>Annuler</button></div>}
+    {busy && <div className="importProgress" role="status"><span>{busy}</span><button type="button" onClick={()=>cancel(true)}>Annuler</button></div>}
     <RecognitionStatus report={report} busy={Boolean(busy)} onSecondView={()=>secondView.current.click()}/>
     {(error || report && !report.matches?.length) && <div className="formError" role="alert"><p>{error || report.message}</p><p>Continue avec les champs ci-dessous : nom et couleur suffisent. Tu peux aussi photographier l’étiquette ou ajouter une URL.</p><a href={'https://www.google.com/search?q=' + encodeURIComponent([catalogQuery || text, item.brand, item.name, item.reference, item.barcode, 'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Rechercher la référence sur le web</a><div className="photoActions"><button type="button" onClick={onPhoto}>Photographier l’étiquette</button><button type="button" onClick={onColor}>Ajouter avec cette couleur</button><button type="button" onClick={onManual}>Saisir manuellement</button></div><p>Si tu trouves le produit sur le web, colle son URL ci-dessus pour vérifier les informations.</p></div>}
     {localMatches.length > 0 && <div className="catalogMatches"><p>Correspondances à confirmer · le score mesure la proximité des informations, pas une certitude.</p>{localMatches.map(match => <button type="button" key={match.product.catalogId} onClick={() => setCandidate(catalogCandidate(match))}><span>{match.product.brand} — {match.product.name}<small>{match.product.collection}{match.product.reference ? ' · Réf. ' + match.product.reference : ''}</small><small>Correspondance {match.confidence} · score {match.score}/100 · {match.reason}</small></span></button>)}</div>}

@@ -6,7 +6,7 @@ import { imageCanvas, readProductPhoto } from './recognition';
 import { photoPalette, generationFamily, validHex } from './colorAnalysis';
 import { loadCatalog, catalogCandidate, catalogueProvenance } from './catalog';
 import RecognitionStatus from './RecognitionStatus';
-import { recognizeEvidence, recognitionPatch, pendingBarcodeReport } from './recognitionReport';
+import { recognizeEvidence, recognitionPatch, pendingBarcodeReport, interruptedRecognition } from './recognitionReport';
 import { mergeRecognitionEvidence } from './productIdentity';
 import { browserStorage } from './storage';
 import { snapshotIdea } from './inspirations';
@@ -104,13 +104,15 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
     setDraft(d=>({...d,...candidate.fields,provenance:catalogueProvenance(candidate)}));
   }
   function changeDraft(key,value) {
-    task.current?.abort();setReading(false);
-    setDraft(d=>({...d,[key]:value,...(['name','brand','reference'].includes(key)?{provenance:undefined}: {})}));
+    task.current?.abort();setReading(false);setReadStatus('');
+    const retained=interruptedRecognition(recognition);if(retained!==recognition)setRecognition(retained);
+    setDraft(d=>({...d,...(retained?recognitionPatch(retained):{}),[key]:value,...(['name','brand','reference'].includes(key)?{provenance:undefined}: {})}));
   }
   function confirm() {
     try {
       if(products.length>=2)return;
-      const product=confirmedScanProduct(draft,'scan-'+Date.now()+'-'+products.length);
+      const retained=interruptedRecognition(recognition);
+      const product=confirmedScanProduct({...draft,...(retained?recognitionPatch(retained):{})},'scan-'+Date.now()+'-'+products.length);
       task.current?.abort();setReading(false);setProducts(previous=>[...previous,product]);setAdded(false);
       if(!products.length)track(product.provenance.kind==='nailmoods'?'first_product_recognized':'first_product_unrecognized');
       else track('second_product_added');
@@ -158,8 +160,9 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
       {readStatus && <p role="status" className="scanHint">{readStatus}</p>}
       {!recognition && draft.photo && <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);secondView.current.click();}}>Photographier dessous / dos</button>}
       <RecognitionStatus report={recognition} busy={busy} onSecondView={()=>{task.current?.abort();setReading(false);secondView.current.click();}}/>
+      {candidates.length>0 && <p className="scanHint">Touche une référence pour la confirmer, ou continue avec la couleur seule.</p>}
       {candidates.length>0 && <div className="scanCandidates" aria-label="Références possibles">{candidates.map(match=><button key={match.product.catalogId} aria-pressed={draft.provenance?.catalogId===match.product.catalogId} onClick={()=>chooseCandidate(match)}><b>{match.product.brand} · {match.product.reference || match.product.name}</b><small>{match.product.collection ? match.product.collection+' · ' : ''}{match.product.name} · {match.reason}</small><small>Correspondance {match.confidence} · indice {match.score}/100</small></button>)}</div>}
-      <button className="scanPrimary" disabled={!validHex(draft.color)} onClick={confirm}><Check/>{draft.provenance?'C’est bien celui-ci':recognition && !recognition.matches.length?'Utiliser cette couleur':'C’est bien ça'}</button>
+      <button className="scanPrimary" disabled={!validHex(draft.color)} onClick={confirm}><Check/>{draft.provenance?'C’est bien celui-ci':recognition?'Utiliser cette couleur':'C’est bien ça'}</button>
       {recognition && !recognition.matches.length && <a className="scanText" href={'https://www.google.com/search?q='+encodeURIComponent([recognition.parsed?.brand,...(recognition.parsed?.shadeCodes || []),draft.rawBarcode,'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Rechercher la référence</a>}
       {reading && <small>La lecture de l’étiquette est facultative : tu peux continuer maintenant.</small>}
       <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);setCorrect(v=>!v);}}><Pipette/>{correct?'Fermer la correction':'Corriger'}</button>

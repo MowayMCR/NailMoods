@@ -20,3 +20,7 @@ export function pendingBarcodeReport(previous = {}, observation) {
   const barcodes=[...new Map([...(previous.barcodes || []),observation].map(b=>[b.rawBarcode+'|'+b.barcodeSource,b])).values()];
   return {...previous,barcodes,rawText:previous.rawText || '',matches:[],title:'Code-barres lu',message:'Le code est conservé. Lecture de l’étiquette en cours…',needsSecondView:true,barcodeState:'read_pending',failure:'',barcodeAttempted:true,at:new Date().toISOString()};
 }
+
+export function interruptedRecognition(report) {
+  return report?.barcodeState==='read_pending' ? {...report,barcodeState:'read_unresolved',message:'Le code lu est conservé. La lecture a été interrompue ; tu peux continuer avec la couleur ou relancer la recherche.',failure:'recognition_interrupted'} : report;
+}

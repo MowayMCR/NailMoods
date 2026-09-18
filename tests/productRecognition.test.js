@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { matchCatalog, catalogCandidate } from '../src/catalog.js';
 import { canonicalBarcode, barcodeObservation, parseProductText, mergeRecognitionEvidence, recognitionPresentation } from '../src/productIdentity.js';
-import { recognizeEvidence, recognitionPatch, diagnosticText } from '../src/recognitionReport.js';
+import { recognizeEvidence, recognitionPatch, diagnosticText, pendingBarcodeReport, interruptedRecognition } from '../src/recognitionReport.js';
 import { confirmedScanProduct, generateScannedIdeas } from '../src/scanGenerate.js';
 const catalogue=JSON.parse(fs.readFileSync(new URL('../public/catalog-v1.json',import.meta.url),'utf8')).products;
 // Synthetic checksummed identifiers ONLY in test fixtures; never attributed to KIKO or written to the catalogue.
@@ -21,6 +21,8 @@ test('2. unknown EAN with known SKU still finds the product and preserves the ra
  const report=recognizeEvidence([fixture],{rawText:'Marque de test\nSKU-TEST',barcodes:[barcodeObservation(unknown,'EAN_13','scanner')]});
  assert.equal(report.matches[0].product.catalogId,'fixture');assert.equal(report.matches[0].evidence.barcode,null);assert.equal(report.matches[0].evidence.reference,88);
  assert.equal(recognitionPatch(report).rawBarcode,unknown);assert.equal(recognitionPatch(report).barcodeFormat,'EAN_13');assert.equal(recognitionPatch(report).barcodeConfidence,null);
+ const sku=recognizeEvidence([fixture],{barcodes:[barcodeObservation('SKU-TEST','CODE_128','scanner')]});assert.equal(sku.matches[0].product.catalogId,'fixture');
+ const interrupted=interruptedRecognition(pendingBarcodeReport({},barcodeObservation(unknown,'EAN_13','scanner')));assert.equal(interrupted.failure,'recognition_interrupted');assert.equal(recognitionPatch(interrupted).rawBarcode,unknown);
 });
 test('3. shade number and brand work without any EAN, including short KIKO and leading zero',()=>{
  assert.equal(matchCatalog(catalogue,'KIKO 239')[0].product.name,'Minty Frost');
