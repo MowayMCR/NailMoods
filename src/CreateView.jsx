@@ -3,7 +3,7 @@ import { productColor } from './colorAnalysis';
 import IdeaProducts from './IdeaProducts';
 import ColorSelection from './ColorSelection';
 import { generateInspirations } from './freeInspiration';
-import { browserStorage } from './storage';
+import { useStorage } from './StorageContext';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker } from 'lucide-react';
 import { createSuggestions, inventoryStamp, profileDefaults } from './creationEngine';
@@ -29,6 +29,7 @@ const polishCountLabel = value => value === 'auto' ? 'Automatique' : value + ' v
 const polishCountHints = { auto: 'Des associations de 1 à 5 couleurs.', 1: 'Un seul vernis coloré.', 2: 'Duos, accents et détails.', 3: 'Un trio à répartir sur les ongles.', 4: 'Quatre vernis dans une même composition.', 5: 'Un vernis différent sur chaque ongle.' };
 
 export default function CreateView({ onSaveIdea, entryOptions, onEntryConsumed, onRename, onEquipment, items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
+  const browserStorage=useStorage();
   const [state, setState] = useState(() => { const saved = readCreationState(browserStorage, profile); return entryOptions ? { ...saved, options: { ...saved.options, ...entryOptions, ...(entryOptions.intent === 'inspire' ? { requiredColorIds: [] } : {}) }, generated: false, selected: null } : saved; });
   useEffect(() => { if (entryOptions) onEntryConsumed(); }, []);
   const [picker, setPicker] = useState(null);

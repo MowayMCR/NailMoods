@@ -9,7 +9,7 @@ import { loadCatalog, catalogCandidate, catalogueProvenance } from './catalog';
 import RecognitionStatus from './RecognitionStatus';
 import { recognizeEvidence, recognitionPatch, pendingBarcodeReport, interruptedRecognition } from './recognitionReport';
 import { mergeRecognitionEvidence } from './productIdentity';
-import { browserStorage } from './storage';
+import { useStorage } from './StorageContext';
 import { snapshotIdea } from './inspirations';
 import NailPreview from './NailPreview';
 import RecipeSummary from './RecipeSummary';
@@ -24,6 +24,7 @@ export function ScanBottles() {
 // Paid actions require explicit capabilities supplied by a real entitlement adapter.
 // No plan is inferred from localStorage, the profile or a query parameter.
 export default function ScanGenerate({ profile = {}, items = [], onBack, capabilities = {}, onAddProducts, onSaveJournal }) {
+  const browserStorage=useStorage();
   const [stage,setStage] = useState('capture'), [products,setProducts] = useState([]), [draft,setDraft] = useState(null);
   const [recognition,setRecognition] = useState(null);
   const secondView = useRef(null);

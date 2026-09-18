@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import Sheet from './Sheet';
-import { browserStorage } from './storage';
+import { useStorage } from './StorageContext';
 import { betaQuestions, severityOptions, feedbackReport } from './betaFeedback';
 
 const categories=['Bug','Produit non reconnu','Mauvaise couleur','Idée générée incohérente','Suggestion','Problème d’interface'];
 const key='nm-feedback-draft-v1';
-function readDraft(){try{return JSON.parse(browserStorage.getItem(key)||'null')||{};}catch{return {};}}
+function readDraft(browserStorage){try{return JSON.parse(browserStorage.getItem(key)||'null')||{};}catch{return {};}}
 export default function Feedback({ screen, onClose }) {
-  const [draft,setDraft]=useState(readDraft);
+  const browserStorage=useStorage();
+  const [draft,setDraft]=useState(()=>readDraft(browserStorage));
   const [message,setMessage]=useState('');
   const category=categories.includes(draft.category)?draft.category:'';
   const update=values=>{const next={...draft,...values};setDraft(next);try{browserStorage.setItem(key,JSON.stringify(next));setMessage('Brouillon conservé sur cet appareil.');}catch{setMessage('Brouillon non sauvegardé. Copie ton retour avant de fermer.');}};

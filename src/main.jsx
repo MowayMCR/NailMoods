@@ -5,7 +5,8 @@ import CollectionFilters from './CollectionFilters';
 import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf } from './collection';
 import ContextHelp from './ContextHelp';
 import Feedback from './Feedback';
-import { browserStorage } from './storage';
+import { useStorage } from './StorageContext';
+import AccountRoot from './cloud/AccountRoot';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Home, Palette, Library, BookHeart, UserRound, ChevronRight, X, Check, Search, Plus, Camera, Trash2, Heart, Link, ScanLine, Image, PenLine, WandSparkles, Package } from 'lucide-react';
@@ -35,7 +36,7 @@ function Brand() {
   return <div className="brandFinal officialBrand"><img className="brandWordmark" src={import.meta.env.BASE_URL + 'nailmoods-official.png'} alt="NailMoods — Explore. Crée. Ressens." /><img className="brandSymbol" src={import.meta.env.BASE_URL + 'nailmoods-symbol.png'} alt="NailMoods" /></div>;
 }
 
-function readStored(key, fallback) {
+function readStored(browserStorage, key, fallback) {
   try { return JSON.parse(browserStorage.getItem(key) || 'null') ?? fallback; }
   catch { return fallback; }
 }
@@ -44,12 +45,13 @@ const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, re
 const tabRoutes = { scan: 'scan', home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris', tutorials: 'tutoriel' };
 const tabFromHash = () => window.location.hash.startsWith('#journal/') ? 'journal' : window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || window.location.hash === '#favoris' ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
 
-function App() {
+function App({ accountAccess }) {
+  const browserStorage=useStorage();
   const [tab, setTab] = useState(tabFromHash);
   const [creationEntry, setCreationEntry] = useState(null);
   const [route, setRoute] = useState(() => window.location.hash);
   const [profile, setProfile] = useState(() => {
-    const stored = readStored('nm-profile', {});
+    const stored = readStored(browserStorage, 'nm-profile', {});
     return { ...defaultProfile, ...stored, styles: Array.isArray(stored?.styles) ? stored.styles : defaultProfile.styles };
   });
   const [library, setLibrary] = useState(() => readInspirations(browserStorage));
@@ -63,7 +65,7 @@ function App() {
   const tutorialSession = route.startsWith('#tutoriel/') ? tutorials.sessions.find(session => session.id === route.slice('#tutoriel/'.length)) : null;
   const activeTutorial = tutorials.sessions.find(session => session.id === tutorials.activeId);
   const [items, setItems] = useState(() => {
-    const stored = readStored('nm-collection-v2', starter);
+    const stored = readStored(browserStorage, 'nm-collection-v2', starter);
     return Array.isArray(stored) ? stored : starter;
   });
   const [search, setSearch] = useState('');
@@ -254,6 +256,7 @@ function App() {
   return <div className="app phase2" style={{ '--a': th[0], '--b': th[1], '--soft': th[2], '--paper': th[3] }}>
     <header><Brand /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
     <main>
+      {accountAccess}
       <div id="context-help-slot" />
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && tab !== 'scan' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
@@ -389,4 +392,4 @@ function App() {
   </div>;
 }
 
-createRoot(document.getElementById('root')).render(<App />);
+createRoot(document.getElementById('root')).render(<AccountRoot App={App} />);

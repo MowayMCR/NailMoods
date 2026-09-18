@@ -1,4 +1,4 @@
-import { browserStorage } from './storage';
+import { useStorage } from './StorageContext';
 import React, { useEffect, useMemo, useState } from 'react';
 import { UserRound, Library, Palette, Heart, ArrowRight, ChevronRight, BookHeart, ListChecks, Play, BookmarkCheck, Sparkles, RotateCcw, Clock3, Check, Leaf } from 'lucide-react';
 import NailPreview from './NailPreview';
@@ -36,6 +36,7 @@ function ResumeProgress({ session }) {
 }
 
 export default function HomeView({ profile, items, library, journal, tutorials, personalModel, personalSettings, onNavigate, onOpen, onResume, onJournal, onJournalSession, onCollection, onPersonalization, onCreate, onScan }) {
+  const browserStorage=useStorage();
   const [options] = useState(() => readCreationState(browserStorage, profile).options);
   const liveLearning = personalSettings.enabled ? personalModel.ranking : null;
   const liveStamp = personalSettings.enabled ? personalModel.stamp : 'off';

@@ -2,10 +2,11 @@ import React, { useId, useState } from 'react';
 import { Check } from 'lucide-react';
 import { validHex } from './colorAnalysis';
 import { polishFamilies, collectionSwatches, readRecentColors, rememberColor } from './polishPalette';
-import { browserStorage } from './storage';
+import { useStorage } from './StorageContext';
 import './polishPalette.css';
 
 export default function PolishPalette({value='',onChange,items=[]}) {
+  const browserStorage=useStorage();
   const id=useId();
   const [group,setGroup]=useState('Nudes & roses');
   const [recent,setRecent]=useState(()=>readRecentColors(browserStorage));

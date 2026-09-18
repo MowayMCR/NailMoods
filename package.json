@@ -12,6 +12,7 @@
     "predev": "node scripts/prepare-recognition.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.116.0",
     "@tesseract.js-data/eng": "1.0.0",
     "@tesseract.js-data/fra": "1.0.0",
     "@vitejs/plugin-react": "latest",
