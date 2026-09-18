@@ -7,7 +7,7 @@ import { productColor } from './colorAnalysis';
 import { PersonalizationSummary } from './PersonalizationView';
 import './profile.css';
 
-export default function ProfileView({ onCreate, onEquipment, onFavorites, profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
+export default function ProfileView({ accountAccess, onCreate, onEquipment, onFavorites, profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
   const [picker, setPicker] = useState(null);
   const [panel, setPanel] = useState(null);
   const [universes, setUniverses] = useState(false);
@@ -19,6 +19,7 @@ export default function ProfileView({ onCreate, onEquipment, onFavorites, profil
   const tile = (key, label) => <button key={key} className="settingTile" onClick={() => setPicker(key)}><small>{label}</small><b>{profile[key]}</b><ChevronRight /></button>;
   return <div className="profilePage">
     <section className="profileHero"><button className="profileAvatarButton" aria-label="Modifier mon avatar et le thème" aria-haspopup="dialog" onClick={() => setPanel('appearance')}>{avatar(true)}<span className="avatarEditHint" aria-hidden="true"><Pencil size={12} /></span></button><div><small>MON UNIVERS</small><h1>{profile.name || 'Mon profil'}</h1><p>Ton profil guide tes inspirations.</p></div></section>
+    {accountAccess}
     <section className="card"><h2>À propos de moi</h2><p>Quelques informations pour des idées qui te ressemblent. Tu peux aussi créer une idée sans compléter ton profil.</p><label className="nameField">Prénom<input value={profile.name} onChange={event => onChange({ ...profile, name: event.target.value })} /></label>
       <div className="profileGrid">{tile('shape', 'FORME')}{tile('length', 'LONGUEUR')}{tile('level', 'NIVEAU')}{tile('duration', 'TEMPS')}<div className="wide">{tile('technique', 'TYPE DE POSE')}</div></div>
     </section>

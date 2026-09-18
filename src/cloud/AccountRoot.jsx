@@ -107,8 +107,9 @@ export default function AccountRoot({App}){
   const ready=loaded?.userId===userId && !guestOverride;
   const guest=!userId || guestOverride;
   const label=ready?(loaded.store.profile?.display_name || session.user.email || 'Mon compte'):'Mode invité';
-  const accountAccess=<aside className="accountBar" aria-label="Compte et synchronisation">
-    <button type="button" onClick={()=>{setMode(userId?'account':'login');setOpen(true);setAuthError('');setMessage('');}}>{label}<span>{ready?loaded.workspace.name || 'Espace personnel':userId?'Mon compte':'Se connecter'}</span></button>
+  const accountAccess=<aside className="accountBar accountProfileCard" aria-label="Compte et synchronisation">
+    <div className="accountProfileIntro"><small>MON COMPTE</small><h2>{label}</h2><p>{ready ? (loaded.workspace.name || 'Espace personnel') : userId ? 'Ton compte est connecté. Retrouve ton espace personnel.' : 'Explore librement. Connecte-toi pour retrouver tes données sur tes appareils.'}</p></div>
+    <button className="accountConnect" type="button" onClick={()=>{setMode(userId?'account':'login');setOpen(true);setAuthError('');setMessage('');}}>{ready?'Gérer mon compte':userId?'Ouvrir mon compte':'Se connecter'}</button>
     {ready && count>0 && !loaded.store.migrationDone && <button type="button" onClick={()=>{setMode('account');setOpen(true);}}>Importer mes données invitées</button>}
     {ready && <span role="status">{status.kind==='saving'?'Enregistrement…':status.kind==='error'?'À synchroniser':status.pending?'En attente':'Synchronisé'}</span>}
     {ready && status.kind==='error' && <div className="accountNotice" role="alert"><p>{status.message}</p><button onClick={()=>loaded.store.pending?void loaded.store.flush():setRetry(v=>v+1)}>Réessayer</button><button onClick={()=>{setMode('account');setOpen(true);}}>Mon compte</button></div>}
