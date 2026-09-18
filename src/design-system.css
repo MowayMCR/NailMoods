@@ -49,3 +49,5 @@ nav{height:calc(78px + env(safe-area-inset-bottom));padding-bottom:env(safe-area
 @media(max-width:360px){.smartHome{padding:10px 12px 24px;gap:14px}.smartHome .homeGreeting{padding:22px 16px}.inspirationIntent{gap:6px}.inspirationIntent button{font-size:12px;padding:10px 6px}.creationHero .quickGenerate{font-size:13px}.countPreview{right:9px;gap:2px}.countPreview i{width:5px}.homeShortcuts{gap:8px}.profileShortcuts span{font-size:14px}}
 .catalogSearch{border:1px solid #D39CA738;border-radius:14px;padding:12px;margin-bottom:14px;background:linear-gradient(120deg,var(--soft),#fff)}.catalogSearch summary{min-height:32px;cursor:pointer;font-size:13px;color:var(--b)}
 .creationPage .creationHero,.creationPage .creationHero h1 em,.creationPage .creationHero>p,.creationPage .creationEyebrow{color:var(--b)}.creationPage .creationProfile span{color:var(--b);background:#fff;border-color:#D39CA738}
+
+.filterRow{flex-wrap:wrap;overflow:visible;gap:7px}.filterRow button{white-space:normal}

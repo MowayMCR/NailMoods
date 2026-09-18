@@ -14,7 +14,9 @@
 ## Vérification
 - 128 tests automatisés réussis : génération Free sans données, petite collection, stickers, tutoriels, journal, profil, imports, sauvegardes et suggestions catalogue.
 - Compilation de production réussie ; aucun conflit d’espacement dans les modifications Git.
-- Contrôle du navigateur public : à compléter après déploiement.
+- Navigateur public : Accueil, Créer, Collection, Journal, Profil et Favoris parcourus. Génération effective de quatre idées en mode libre puis quatre avec la petite collection existante. CTA du profil accessible ; fermeture/réouverture de l’aide vérifiée. Aperçus des cinq ongles présents dans les favoris et le journal.
+- Mesure DOM de l’accueil à 430 px : aucun chevauchement entre sections ni débordement des descendants. Vue compacte : quatre cartes, aucun débordement horizontal. Captures visuelles contrôlées sur Accueil, Créer, Collection et Journal.
+- Filtres de collection désormais sur plusieurs lignes pour éviter la barre de défilement horizontale.
 
 ## Limites / téléphone
 - Le navigateur de contrôle contient des données de test. Le scénario zéro donnée est vérifié dans les tests automatisés ; la session publique entièrement vierge reste à contrôler séparément.
