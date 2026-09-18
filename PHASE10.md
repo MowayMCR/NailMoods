@@ -34,3 +34,15 @@ L’application actuelle n’a pas de compte serveur : profil et collection rest
 À relever par testeuse (sans traçage automatique) : premier produit sans aide oui/non + durée ; reconnaissance exacte/partielle/absente ; solution de repli comprise oui/non ; première inspiration fidèle oui/non ; collection/journal retrouvés au retour oui/non ; obstacle et catégorie du retour. Aucun résultat de test utilisateur réel n’est prérempli.
 
 Limites : pas de validation tactile/caméra sur appareil physique par l’agent ; scores non calibrés ; pas de synchronisation multi-appareil ; pas de collecte centralisée. La V1 catalogue identifie des références, pas des couleurs commerciales exactes en l’absence de HEX vérifiés.
+
+## Recette effectuée sur le lien public
+- Recherche CANNI 9058 : candidat 98/100 à confirmer, indices par champ visibles, couleur « Non évalué ».
+- Recherche ReferenceQA999999999 : message non bloquant, web / étiquette / couleur / manuel visibles.
+- URL réelle Le Mini Macaron Dark Plum : nom, marque, code-barres, photo et informations proposées à confirmer ; aucune application automatique.
+- Tags floral + doré enregistrés sur la planche de test et retrouvés après rechargement ; quatre propositions utilisant cette planche.
+- Fiche → recette → sauvegarde → tutoriel → « Je l’ai faite » → journal : schéma avec stickers, quatre produits, note et recette retrouvés après rechargement.
+- Produit personnel neuf saisi manuellement avec #225577 : sauvegardé, rouvert comme non vérifié, trois inspirations générées utilisant exactement ce HEX (15 ongles observés).
+- Retour de test : brouillon conservé après fermeture/réouverture, copie confirmée. Pas de retour transmis à un tiers.
+- Affichage de l’application à 430 CSS px et modale de retour contrôlés sans débordement horizontal.
+
+Ces tests sont ceux du navigateur de recette, pas ceux d’un groupe de nouvelles utilisatrices. Les tests matériels sur téléphone et la session externe entièrement vierge restent à réaliser.
