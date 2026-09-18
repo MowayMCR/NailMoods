@@ -45,8 +45,6 @@
 .profilePage .favoriteStyles .moodGlyph{color:inherit;width:16px;height:16px}
 .creationOptions>button{gap:12px;min-height:48px;border-color:var(--nm-line)}.creationOptions>button>span{flex:1;min-width:0;text-align:left}
 .creationTiles>button{border-radius:20px;background:linear-gradient(145deg,#fff 50%,var(--soft));box-shadow:0 3px 12px #73345106}
-.creationTiles [data-choice=mood]::after{width:34px;height:42px;border-radius:80% 0 80% 0;transform:rotate(25deg);opacity:.6}
-.creationTiles [data-choice=style]::after{width:26px;height:36px;opacity:.6}
 .creationTiles>button>svg:first-child{width:24px;height:24px;stroke-width:1.35}
 /* Home cards share a rhythm, with a separate accent for each role. */
 .homeShortcuts>button{position:relative;border:1px solid var(--nm-line);border-radius:21px;padding:17px 14px;gap:10px;box-shadow:0 4px 14px #73345106;min-width:0}
@@ -74,3 +72,6 @@
 .ideaTopline>span:first-child{display:inline-flex;align-items:center;gap:6px}.ideaTopline .moodGlyph{width:17px;height:17px}
 .creationTiles>button>b{font-family:inherit}
 .journalHero .journalPrimary{background:var(--b);color:#fff;border-color:var(--b)}
+
+.countPreview{display:flex;align-items:flex-end;gap:3px;position:absolute;right:12px;top:13px;color:var(--a);pointer-events:none}.countPreview svg{display:block;width:13px;height:26px;flex:none}
+@media(max-width:360px){.countPreview{right:9px;gap:2px}.countPreview svg{width:11px;height:24px}}
