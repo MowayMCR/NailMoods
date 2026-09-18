@@ -30,7 +30,7 @@ Encart repliable « Diagnostic de reconnaissance », avec copie à la demande : 
 
 ## Recette indispensable sur les deux flacons réels
 
-Les photos, numéros de teinte et codes des deux KIKO ayant échoué ne sont pas fournis dans cette conversation. Leur reconnaissance réelle ne peut pas être déclarée validée par les tests de parsing.
+Les photos avant/dos et le diagnostic d’un premier flacon sont désormais fournis (voir correctif ci-dessous). Un nouveau scan physique après correction reste nécessaire ; les tests de parsing ne le remplacent pas.
 
 Pour chacun : face avant → lecture code → dessous/dos si nécessaire → vérifier la proposition et la couleur → confirmer/corriger → générer. En cas d’échec, copier le diagnostic depuis l’encart repliable.
 
@@ -52,3 +52,12 @@ Un code décodé peut légitimement rester absent du catalogue tant que ses EAN 
 - Scan & Génère, saisie `KIKO 239` sans EAN : proposition explicite KIKO Milano / Power Pro Nail Lacquer / Minty Frost. Confirmation puis trois inspirations obtenues avec le HEX choisi `#356a59` ; ce HEX de test ne prétend pas être la teinte officielle de Minty Frost.
 - Saisie `KIKO 9999` : aucune fausse proposition, bouton « Utiliser cette couleur », trois inspirations obtenues malgré l’absence de référence.
 - Aucun débordement horizontal constaté dans la colonne de l’application. Ces essais utilisent la saisie et le moteur de recherche ; ils ne valident pas la capture physique, l’OCR réel des deux flacons ou le décodeur sur leurs étiquettes.
+
+## Correctif du diagnostic réel — 18 septembre 2026
+
+- EAN effectivement décodé : `8059385036113`, absent du catalogue. Face avant : KIKO Smart Fast Dry Nail Lacquer. Au dos, `024` est visible près du code ; `366` est aussi visible, sans attribution automatique de rôle.
+- Cause du faux positif : le fragment OCR `- 1` devenait la référence `01` après normalisation, proposant à tort Power Pro Transparent.
+- Les fragments numériques ponctués et chiffres OCR isolés sans contexte suffisant sont écartés et consignés dans `ignoredNumbers`. Les numéros explicitement étiquetés et la saisie manuelle restent disponibles.
+- La gamme Smart visible est reconnue même si elle est absente du catalogue, pour empêcher un rapprochement Power Pro. Les 50 entrées KIKO actuelles appartiennent toutes à Power Pro ; aucun EAN ni produit catalogue n’a été inventé ou modifié.
+- Trois tests supplémentaires couvrent le diagnostic exact, les chiffres isolés et le conflit Smart/Power Pro. Résultat : 162 tests réussis, compilation réussie.
+- Le code brut et le recours à la couleur restent conservés. L’OCR des photos et le scan physique doivent être retestés sur téléphone ; aucune identification commerciale exacte du flacon n’est revendiquée par ce correctif.

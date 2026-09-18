@@ -16,13 +16,15 @@ export function barcodeObservation(rawBarcode, barcodeFormat = 'UNKNOWN', source
 export function productBarcodes(product) {
   return [product.ean13,product.gtin,product.barcode,...(Array.isArray(product.barcodeAliases)?product.barcodeAliases:[])].map(canonicalBarcode).filter(Boolean);
 }
-export function parseProductText(text, products = [], {brand='',collection=''} = {}) {
+export function parseProductText(text, products = [], {brand='',collection='',ocr=false} = {}) {
   const raw=String(text || '').slice(0,12000), q=identityText(raw);
   const known=[...new Set(products.map(p=>p.brand).filter(Boolean))];
   const detectedBrand=/\bkik[o0]\b/.test(q)?known.find(b=>canonicalBrand(b)==='kiko milano') || 'KIKO Milano':known.filter(b=>identityContains(q,identityText(b))).sort((a,b)=>b.length-a.length)[0] || '';
   const useBrand=brand || detectedBrand;
   const ranges=[...new Set(products.filter(p=>!useBrand || canonicalBrand(p.brand)===canonicalBrand(useBrand)).map(p=>p.collection).filter(Boolean))];
-  const detectedCollection=ranges.find(c=>identityContains(q,identityText(c))) || ranges.find(c=>{
+  // Recognize a visible range even when this catalogue has no shades from it.
+  const visibleRange=canonicalBrand(useBrand)==='kiko milano' && /\bsmart(?: fast dry)?(?: nail lacquer)?\b/.test(q)?'Smart Fast Dry Nail Lacquer':'';
+  const detectedCollection=visibleRange || ranges.find(c=>identityContains(q,identityText(c))) || ranges.find(c=>{
     const distinctive=identityText(c).split(' ').filter(w=>!['nail','lacquer','polish','vernis','gel','colour','color'].includes(w));
     return distinctive.length>=2 && identityContains(q,distinctive.join(' '));
   }) || '';
@@ -30,19 +32,26 @@ export function parseProductText(text, products = [], {brand='',collection=''} =
   for(const line of raw.split(/\r?\n/)) {
     for(const m of line.matchAll(/(?<!\d)(?:\d[ -]?){7,13}\d(?!\d)/g))if(canonicalBarcode(m[0]))barcodes.push(barcodeObservation(m[0].trim(),'OCR_DIGITS','ocr'));
   }
-  const shadeCodes=[], references=[];
-  for(const m of q.matchAll(/\bkik[o0](?: milano)?\s+(\d{1,4})\b(?!\s*(?:ml|oz|g|m)\b)/g))shadeCodes.push(m[1]);
+  const shadeCodes=[], references=[], ignoredNumbers=[];
   for(const line of raw.split(/\r?\n/)) {
     const normalized=identityText(line);
+    // Do not join separate OCR lines or erase a dash before interpreting a number.
+    const inline=line.match(/\bkik[o0](?:\s+milano)?[ \t]+(\d{1,4})\b(?!\s*(?:ml|oz|g|m)\b)/i);
+    if(inline)shadeCodes.push(inline[1]);
     for(const m of normalized.matchAll(/\b(?:sku|ref|reference|art|article)\s+([a-z0-9]+(?:[-/][a-z0-9]+)?)\b/g)){references.push(m[1]);if(/^\d{1,4}$/.test(m[1]))shadeCodes.push(m[1]);}
     for(const m of normalized.matchAll(/\b(?:shade|teinte|colou?r|col|numero|num|no|n)\s+(\d{1,4})\b/g))shadeCodes.push(m[1]);
     // Strip packaging quantities/batch information, not arbitrary numeric substrings.
     let clean=line.replace(/\b(?:lot|batch|exp|mfg|made|pa[o0])\b[^\n]*/gi,'').replace(/\b\d+(?:[.,]\d+)?\s*(?:ml|fl\.?\s*oz|oz|g|kg|%|months?|mois|m)\b/gi,'').replace(/\b(?:19|20)\d{2}[-/]\d{1,2}[-/]\d{1,2}\b/g,'');
     clean=identityText(clean);
     for(const value of [useBrand,detectedBrand,collection,detectedCollection,'KIKO','MILANO','NAIL LACQUER','NAIL POLISH'])if(value)clean=clean.replace(new RegExp('\\b'+identityText(value).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','g'),' ').trim();
-    if(/^\d{1,4}$/.test(clean))shadeCodes.push(clean);
+    if(/^\d{1,4}$/.test(clean)){
+      const punctuated=/^[\s|]*[-–—•.,'’]+\s*\d{1,4}\s*$/.test(line);
+      const weakSingle=ocr && clean.length===1 && !collection && !detectedCollection && !inline;
+      if(punctuated || weakSingle)ignoredNumbers.push({value:clean,line,reason:punctuated?'fragment_ocr_ponctue':'chiffre_isole_sans_contexte'});
+      else shadeCodes.push(clean);
+    }
   }
-  return {rawText:raw,brand:useBrand,detectedBrand,collection:collection || detectedCollection,shadeCodes:[...new Set(shadeCodes)],references:[...new Set(references)],barcodes:[...new Map(barcodes.map(b=>[canonicalBarcode(b.rawBarcode),b])).values()]};
+  return {rawText:raw,brand:useBrand,detectedBrand,collection:collection || detectedCollection,shadeCodes:[...new Set(shadeCodes)],ignoredNumbers,references:[...new Set(references)],barcodes:[...new Map(barcodes.map(b=>[canonicalBarcode(b.rawBarcode),b])).values()]};
 }
 export function mergeRecognitionEvidence(previous = {}, next = {}) {
   const observations=[...(previous.barcodes || []),...(next.barcodes || [])];

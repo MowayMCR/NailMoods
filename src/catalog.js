@@ -12,7 +12,7 @@ const editDistance = (a,b) => {
 export function matchCatalog(products, query, { brand = '', collection = '', ocr = false, rawBarcode = '', barcodes = [], shadeCodes = [] } = {}) {
   const q=catalogText(query);
   if(/^#[a-f0-9]{6}$/i.test(String(query).trim()))return [];
-  const parsed=parseProductText(query,products,{brand,collection});
+  const parsed=parseProductText(query,products,{brand,collection,ocr});
   const b=canonicalBrand(parsed.brand), c=catalogText(parsed.collection);
   const codes=[...new Set([...shadeCodes,...parsed.shadeCodes].map(shortCode))];
   const barcodeKeys=[rawBarcode,...barcodes.map(v=>typeof v==='string'?v:v.rawBarcode),...parsed.barcodes.map(v=>v.rawBarcode),q.replace(/ /g,'')].map(canonicalBarcode).filter(Boolean);

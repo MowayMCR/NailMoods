@@ -72,3 +72,22 @@ test('legacy 1801 references stay usable and optional aliases do not require a m
  assert.equal(recognitionPresentation({barcodes:[barcodeObservation(unknown,'OCR_DIGITS','ocr')]}).title,'Code-barres relevé');
  const report=recognizeEvidence([],{barcodes:[barcodeObservation(unknown,'EAN_13','scanner')]},{catalogAvailable:false,hasColor:true});assert.equal(report.failure,'catalogue_unavailable');assert.equal(recognitionPatch(report).rawBarcode,unknown);
 });
+
+test('real KIKO diagnostic: decoded EAN and noisy - 1 must not propose Power Pro Transparent',()=>{
+ const rawOCR=["| SEE\n\ny\n\nsata\n\nIl\n\nTIE\n\nae\n\noN\n\nPl\n\n' §","ss\n\n=\n\n|\n\n|\n\n‘\n\n]\n\nm\n\nI Is\n\nvu (On ee\n\n:\n\nKIKO\n\n|\n\nMay 366\n\nBh\n\n1011\n\nGate\n\nREGENT STREET, LONDON WA 340 (UK)\n\nMADE IN FRANCE-FABRIQUÉ EN FRANCE\n\na ”\n\n- 1\n\nw"];
+ const report=recognizeEvidence(catalogue,{rawText:rawOCR.join('\n'),ocrViews:rawOCR.map(text=>({text})),barcodes:[barcodeObservation('8059385036113','EAN_13','scanner')],barcodeAttempted:true},{hasColor:true});
+ assert.deepEqual(report.matches,[]);assert.equal(report.barcodeState,'read_unknown');assert.equal(recognitionPatch(report).rawBarcode,'8059385036113');assert.ok(!report.parsed.shadeCodes.includes('1'));assert.ok(report.parsed.ignoredNumbers.some(n=>n.value==='1'));
+ assert.match(report.message,/couleur/);
+});
+test('OCR single digits need context; punctuation is not erased into a shade reference',()=>{
+ for(const text of ['KIKO\n- 1','KIKO\n1','KIKO\n|\n- 1','KIKO\nPOWER PRO\n- 1'])assert.deepEqual(matchCatalog(catalogue,text,{ocr:true}),[],text);
+ assert.equal(matchCatalog(catalogue,'KIKO\nPOWER PRO\n1',{ocr:true})[0].product.reference,'01');
+ assert.equal(matchCatalog(catalogue,'KIKO\nTeinte 1',{ocr:true})[0].product.reference,'01');
+ assert.equal(matchCatalog(catalogue,'KIKO 1')[0].product.reference,'01');
+});
+test('a visible Smart range absent from the catalogue never becomes Power Pro',()=>{
+ const text='SMART\nFAST DRY\nNAIL LACQUER\nKIKO MILANO\n024\n366';
+ const report=recognizeEvidence(catalogue,{rawText:text,barcodes:[barcodeObservation('8059385036113','EAN_13','scanner')]},{hasColor:true});
+ assert.equal(report.parsed.collection,'Smart Fast Dry Nail Lacquer');assert.deepEqual(report.matches,[]);
+ assert.deepEqual(matchCatalog(catalogue,'KIKO SMART FAST DRY 01'),[]);
+});
