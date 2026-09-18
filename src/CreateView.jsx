@@ -15,17 +15,18 @@ import { CREATION_KEY as KEY, readCreationState } from './creationState';
 
 const modes = [
   { id: 'usual', title: 'Comme d’habitude', subtitle: 'Mes favoris, mon univers', icon: Heart },
-  { id: 'change', title: 'Envie de changement', subtitle: 'Redécouvrir ma collection', icon: Shuffle },
+  { id: 'change', title: 'Envie de changement', subtitle: 'Explorer d’autres associations', icon: Shuffle },
   { id: 'surprise', title: 'Surprends-moi', subtitle: 'Une association inattendue', icon: Sparkles },
 ];
 const levels = ['Très simple', 'Un peu de détail', 'À l’aise'];
 const limits = [['noDrawing', 'Sans dessin', 'Pas de French, de lignes ou de pois dessinés.'], ['noLamp', 'Sans lampe', 'Uniquement les vernis classiques.'], ['favorites', 'Vernis favoris uniquement', 'Les couleurs marquées d’un cœur.']];
 const durationLabel = value => value === 90 ? '90 min max' : value + ' min max';
 const polishCountLabel = value => value === 'auto' ? 'Automatique' : value + ' vernis';
-const polishCountHints = { auto: 'Des associations de 1 à 5 vernis, selon ta collection.', 1: 'Un seul vernis coloré.', 2: 'Duos, accents et détails.', 3: 'Un trio à répartir sur les ongles.', 4: 'Quatre vernis dans une même composition.', 5: 'Un vernis différent sur chaque ongle.' };
+const polishCountHints = { auto: 'Des associations de 1 à 5 couleurs.', 1: 'Un seul vernis coloré.', 2: 'Duos, accents et détails.', 3: 'Un trio à répartir sur les ongles.', 4: 'Quatre vernis dans une même composition.', 5: 'Un vernis différent sur chaque ongle.' };
 
-export default function CreateView({ onRename, onEquipment, items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
-  const [state, setState] = useState(() => readCreationState(browserStorage, profile));
+export default function CreateView({ entryOptions, onEntryConsumed, onRename, onEquipment, items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
+  const [state, setState] = useState(() => { const saved = readCreationState(browserStorage, profile); return entryOptions ? { ...saved, options: { ...saved.options, ...entryOptions }, generated: false, selected: null } : saved; });
+  useEffect(() => { if (entryOptions) onEntryConsumed(); }, []);
   const [picker, setPicker] = useState(null);
   const [storageError, setStorageError] = useState(false);
   const resultAnchor = useRef(null);
@@ -77,7 +78,7 @@ export default function CreateView({ onRename, onEquipment, items, profile, onCo
       <span className="creationEyebrow"><Sparkles /> L’ENVIE DU JOUR</span>
       <h1>Et si on créait<br /><em>ta prochaine pose ?</em></h1>
       <p>Des idées tout de suite, avec ou sans collection.</p>
-      <button className="profileApply" onClick={() => change(profileDefaults(profile))}>Utiliser les préférences de mon profil</button><div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
+      <button className="profileApply" onClick={() => change(profileDefaults(profile))}>Utiliser les préférences de mon profil</button><button className="homePrimary quickGenerate" onClick={generate}><Sparkles />Générer une idée<ArrowRight /></button><div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
     </section>
 
     <button className="creationSaved" onClick={() => onRoute('favorites')}><span><Heart />Mes inspirations favorites</span><small>{library.favorites.length} idée{library.favorites.length > 1 ? 's' : ''}</small><ChevronRight /></button>
@@ -89,17 +90,17 @@ export default function CreateView({ onRename, onEquipment, items, profile, onCo
       </button>)}</div>
       {options.mode === 'surprise' && <div className="surpriseChoices" aria-label="Degré de surprise">
         {[['Safe', 'Un petit pas'], ['Creative', 'Plus de fantaisie'], ['Chaos', 'J’ose les contrastes']].map(([value, label]) => <button key={value} aria-pressed={options.surprise === value} className={options.surprise === value ? 'on' : ''} onClick={() => change({ surprise: value })}><b>{value}</b><small>{label}</small></button>)}
-        <p>La surprise respecte toujours ton temps, ton niveau et ton matériel.</p>
+        <p>Tes choix guident les propositions. Les adaptations sont indiquées avec les idées.</p>
       </div>}
     </section>
 
     <section className="creationSection">
       <div className="creationSectionTitle"><span>02</span><h2>Ajoute ta touche</h2></div>
-      <div className="creationTiles">{Object.entries(selections).map(([key, choice]) => <button key={key} onClick={() => setPicker(key)}>
-        <choice.icon /><small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key]}</b><ChevronRight className="tileArrow" />
+      <div className="creationTiles">{Object.entries(selections).map(([key, choice]) => <button key={key} data-choice={key} onClick={() => setPicker(key)}>
+        <choice.icon />{key === 'polishCount' && <span className="countPreview" aria-hidden="true">{Array.from({ length: options.polishCount === 'auto' ? 5 : Number(options.polishCount) }, (_, index) => <i key={index} />)}</span>}<small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key]}</b><ChevronRight className="tileArrow" />
       </button>)}
         <button className="creationDecorationsTile" onClick={() => setPicker('decorations')}><Sticker /><small>Décorations</small><b>{decorationLabel}</b><ChevronRight className="tileArrow" /></button>
-        <button className="creationLimitsTile" onClick={() => setPicker('constraints')}><SlidersHorizontal /><small>Mes limites</small><b>{options.constraints.length ? options.constraints.length + ' choix' : 'Tout mon matériel'}</b><ChevronRight className="tileArrow" /></button>
+        <button className="creationLimitsTile" onClick={() => setPicker('constraints')}><SlidersHorizontal /><small>Mes limites</small><b>{options.constraints.length ? options.constraints.length + ' choix' : 'Aucune limite'}</b><ChevronRight className="tileArrow" /></button>
       </div>
       {options.constraints.length > 0 && <div className="creationLimits">{limits.filter(([key]) => options.constraints.includes(key)).map(([key, label]) => <span key={key}>{label}</span>)}</div>}
 

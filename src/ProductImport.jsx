@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, ScanLine, Camera, Image as ImageIcon, Check, X } from 'lucide-react';
-import { fetchProduct, lookupBarcode, shopifyCandidate, miniMacaronCatalog, textMatches, inferTraits, normalizeText } from './productImport';
+import { fetchProduct, catalogSuggestions, lookupBarcode, shopifyCandidate, miniMacaronCatalog, textMatches, inferTraits, normalizeText } from './productImport';
 import { readPhotoText, readBarcodePhoto } from './recognition';
 import { colorFamilyChange } from './colorAnalysis';
 import './product-import.css';
@@ -30,6 +30,7 @@ function Review({ candidate, existing, onUse, onDismiss }) {
 
 export default function ProductImport({ item, onChange, onBusy, photoBusy }) {
   const [candidate, setCandidate] = useState(null), [busy, setBusy] = useState(''), [error, setError] = useState(''), [message, setMessage] = useState('');
+  const [catalogQuery, setCatalogQuery] = useState('');
   const [text, setText] = useState(''), [matches, setMatches] = useState([]);
   const task = useRef(null), revision = useRef(0), barcodePhoto = useRef(null), barcodeCamera = useRef(null);
   function cancel() { revision.current++; task.current?.abort(); task.current = null; setBusy(''); onBusy(false); }
@@ -46,7 +47,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy }) {
       if (version !== revision.current || controller.signal.aborted) return;
       if (result?.fields) setCandidate(result);
       else if (result?.text !== undefined) { setText(result.text); if (!result.text) setError('Aucun texte lisible. Essaie une photo plus nette et rapprochée de l’étiquette.'); }
-      else if (Array.isArray(result)) { setMatches(result); if (!result.length) setError('Aucune correspondance certaine. Utilise une ligne du texte comme nom ou complète la fiche.'); }
+      else if (Array.isArray(result)) { setMatches(result); if (!result.length) setError('Cette référence n’est pas encore dans NailMoods, ou aucun résultat suffisamment proche n’a été trouvé. Tu peux compléter la fiche manuellement.'); }
     } catch (err) {
       if (version === revision.current) setError(controller.signal.aborted ? 'La recherche a pris trop de temps. Vérifie ta connexion et réessaie.' : err?.name === 'TypeError' ? 'Ce site est indisponible ou ne permet pas la lecture directe. Tu peux importer une capture de sa fiche ou remplir le produit.' : err.message);
     } finally { clearTimeout(timeout); if (version === revision.current) { setBusy(''); onBusy(false); task.current = null; } }
@@ -73,6 +74,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy }) {
   }
 
   return <div className="productImport">
+    <details className="catalogSearch"><summary>Rechercher dans le catalogue</summary><p className="fieldHelp">Catalogue disponible : Le Mini Macaron Europe. Toute autre marque peut être ajoutée manuellement.</p><label>Nom ou référence<input value={catalogQuery} onChange={event => setCatalogQuery(event.target.value)} placeholder="Nom de teinte, SKU, référence…" /></label><button type="button" className="importSecondary" disabled={Boolean(busy) || catalogQuery.trim().length < 3} onClick={() => run('Recherche dans le catalogue…', async signal => catalogSuggestions(await miniMacaronCatalog(signal), catalogQuery), 60000)}>Rechercher la référence</button></details>
     <label>Lien du produit (facultatif)<input type="url" value={item.url} onChange={event => onChange({ url: event.target.value })} placeholder="https://…" /></label>
     <button type="button" className="importPrimary" disabled={Boolean(busy) || photoBusy || !item.url.trim()} onClick={() => run('Lecture de la fiche produit…', signal => fetchProduct(item.url, signal))}><Link />Récupérer depuis le lien</button>
     <p className="fieldHelp">Le Mini Macaron et les boutiques autorisant la lecture de leurs fiches. Si un site bloque l’import, utilise une photo ou une capture.</p>
@@ -92,8 +94,8 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy }) {
       {text && <div className="readLabelResult"><label>Texte lu — tu peux le corriger<textarea rows="4" value={text} onChange={event => { setText(event.target.value); setMatches([]); setCandidate(null); }} /></label><p className="fieldHelp">Choisis la ligne contenant le nom.</p><div className="labelLines">{[...new Set(text.split('\n').map(line => line.trim()).filter(line => line.length > 2))].slice(0, 18).map((line, index) => <button key={index} type="button" onClick={() => useLine(line)}>{line}</button>)}</div><button type="button" className="importSecondary" disabled={Boolean(busy)} onClick={() => run('Recherche des noms lus…', async signal => textMatches(await miniMacaronCatalog(signal), text), 60000)}>Chercher chez Le Mini Macaron</button></div>}
     </div>}
     {busy && <div className="importProgress" role="status"><span>{busy}</span><button type="button" onClick={cancel}>Annuler</button></div>}
-    {error && <div className="formError" role="alert"><p>{error}</p><p>Tu peux continuer avec le nom et la teinte, ou ajouter une photo ou une URL.</p><a href={'https://www.google.com/search?q=' + encodeURIComponent([item.brand, item.name, item.reference, item.barcode, 'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Rechercher la référence sur le web</a></div>}
-    {matches.length > 0 && <div className="catalogMatches"><p>Est-ce ton produit ?</p>{matches.map(product => <button key={product.id} type="button" onClick={() => run('Lecture du produit…', signal => fetchProduct(`https://leminimacaron.eu/products/${encodeURIComponent(product.handle)}`, signal))}>{product.title}</button>)}</div>}
+    {error && <div className="formError" role="alert"><p>{error}</p><p>Continue avec les champs ci-dessous : nom et couleur suffisent. Tu peux aussi photographier l’étiquette ou ajouter une URL.</p><a href={'https://www.google.com/search?q=' + encodeURIComponent([catalogQuery, item.brand, item.name, item.reference, item.barcode, 'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Rechercher la référence sur le web</a></div>}
+    {matches.length > 0 && <div className="catalogMatches"><p>Références possibles · à confirmer</p>{matches.slice(0, 3).map(product => <button key={product.id} type="button" onClick={() => run('Lecture du produit…', signal => fetchProduct(`https://leminimacaron.eu/products/${encodeURIComponent(product.handle)}`, signal))}>{product.title}</button>)}</div>}
     {candidate && <Review key={candidate.source + candidate.fields.name + candidate.method} candidate={candidate} existing={item} onUse={useCandidate} onDismiss={() => setCandidate(null)} />}
     {message && <p className="importSuccess" role="status"><Check />{message}</p>}
   </div>;

@@ -1,3 +1,4 @@
+import { profileDefaults } from './creationEngine';
 import CollectionFilters from './CollectionFilters';
 import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf } from './collection';
 import ContextHelp from './ContextHelp';
@@ -40,6 +41,7 @@ const tabFromHash = () => window.location.hash.startsWith('#journal/') ? 'journa
 
 function App() {
   const [tab, setTab] = useState(tabFromHash);
+  const [creationEntry, setCreationEntry] = useState(null);
   const [route, setRoute] = useState(() => window.location.hash);
   const [profile, setProfile] = useState(() => {
     const stored = readStored('nm-profile', {});
@@ -243,7 +245,7 @@ function App() {
       <div id="context-help-slot" />
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
-      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
+      {route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>MES PRODUITS</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
@@ -265,7 +267,7 @@ function App() {
         <CollectionFilters items={items.filter(item => filter === 'Tous' || item.type === filter)} filters={collectionFilters} onChange={setCollectionFilters} count={filtered.length} />
         <div className="collectionViewBar"><span>{filtered.length} fiche{filtered.length > 1 ? 's' : ''}</span><button aria-pressed={compactCollection} onClick={() => setCompactCollection(value => !value)}>Vue compacte</button><button onClick={() => navigate('create')}>Créer une idée <Palette size={15} /></button></div>
         <section className={'collectionGrid ' + (compactCollection ? 'collectionCompact' : '')}>
-          {filtered.slice(0, visibleCount).map(item => <button key={item.id} className="productCard" onClick={() => {
+          {filtered.slice(0, visibleCount).map(item => <button key={item.id} className="productCard" style={{ '--product-accent': item.type === 'Matériel' ? 'var(--a)' : productColor(item) }} onClick={() => {
             setSaveError('');
             setEdit({ ...defaults, ...materialDefaults, ...item });
           }}>
@@ -273,9 +275,9 @@ function App() {
               item.type === 'Matériel' ? <EquipmentVisual item={item} /> :
                 <div className="bottle" aria-hidden="true"><i style={{ background: productColor(item) }} /><span style={{ background: productColor(item) }} /></div>}
             <div className="productInfo">
-              <small>{item.type === 'Matériel' ? equipmentInfo(item).name : item.family + ' · ' + item.depth}</small>
+              <small>{item.type === 'Matériel' ? equipmentInfo(item).name : [item.type, item.family, item.depth].filter(Boolean).join(' · ')}</small>
               <b>{item.name}</b>
-              <span>{item.brand}</span><span>{item.type === 'Matériel'
+              {item.brand && <span>{item.brand}</span>}{item.reference && <span>Réf. {item.reference}</span>}<span>{item.type === 'Matériel'
                 ? [item.materialStyle, 'Qté : ' + (item.quantity ?? 1)].filter(Boolean).join(' · ')
                 : [item.finish, item.effect !== 'Aucun' && item.effect].filter(Boolean).join(' · ')}</span>
             </div>
@@ -286,7 +288,7 @@ function App() {
         {filtered.length === 0 && <section className="emptyCollection">
           <Package aria-hidden="true" />
           <h2>{items.length ? 'Aucun résultat' : filter === 'Matériel' ? 'Ta boîte à matériel' : 'Aucun produit pour le moment'}</h2>
-          <p>{items.length ? 'Essaie un autre nom ou efface les filtres.' : filter === 'Matériel' ? 'Lampes, stickers, pinceaux, limes… Rassemble ici ce que tu possèdes.' : 'Ajoute ton premier produit dans cette catégorie.'}</p>
+          <p>{items.length ? 'Essaie un autre nom ou efface les filtres.' : filter === 'Matériel' ? 'Lampes, stickers, pinceaux, limes… Rassemble ici ce que tu possèdes.' : 'Ta collection personnalise tes idées. Tu peux aussi créer sans ajouter de produit.'}</p>
           {!search && <button onClick={() => filter === 'Matériel' ? start('manual', 'Matériel') : setImporter(true)}><Plus />{filter === 'Matériel' ? 'Ajouter du matériel' : 'Ajouter un produit'}</button>}
         </section>}
         <section className="phase3Preview">
@@ -294,7 +296,7 @@ function App() {
 
           <button className="moreIdeas" onClick={() => navigate('create')}><Palette />Générer une idée</button>
         </section>
-      </> : tab === 'profile' ? <ProfileView onCreate={() => navigate('create')} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView journal={journal} sessions={tutorials.sessions} items={items} route={route} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
+      </> : tab === 'profile' ? <ProfileView onCreate={() => { setCreationEntry(profileDefaults(profile)); navigate('create'); }} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView onCreate={() => { setCreationEntry({ intent: 'inspire' }); navigate('create'); }} profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView journal={journal} sessions={tutorials.sessions} items={items} route={route} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
     </main>
     <nav>{[['home', Home, 'Accueil'], ['create', Palette, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Journal'], ['profile', UserRound, 'Profil']].map(([id, Icon, label]) =>
       <button key={id} className={tab === id ? 'on' : ''} aria-current={tab === id ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}</span></button>

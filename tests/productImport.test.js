@@ -105,3 +105,12 @@ test('new previews use the sampled hex and keep previous favorites unchanged', (
   assert.ok(next.nails.every(nail => nail.color === '#521b69'));
   assert.ok(before.nails.every(nail => nail.color === '#735b91'));
 });
+
+test('catalog suggestions prioritize exact references and cap uncertain choices without selecting a product', async () => {
+  const { catalogSuggestions } = await import('../src/productImport.js');
+  const catalog = ['Rose Gold', 'Rose Nude', 'Rose Cream', 'Rose Pastel'].map((title, id) => ({ id, title, variants: [{ sku: id === 3 ? 'rose' : 'NM-' + id, requires_shipping: true }] }));
+  assert.equal(catalogSuggestions(catalog, 'rose')[0].id, 3);
+  assert.equal(catalogSuggestions(catalog, 'rose').length, 3);
+  assert.deepEqual(catalogSuggestions(catalog, 'inconnue'), []);
+  assert.deepEqual(catalogSuggestions(catalog, 'ro'), []);
+});

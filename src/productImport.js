@@ -186,3 +186,17 @@ export function textMatches(products, text) {
     return name.length >= 4 && normalized.includes(` ${name} `) && product.variants?.some(v => v.requires_shipping !== false);
   }).slice(0, 8);
 }
+
+// Suggestions only: a user must select and review the reference before import.
+export function catalogSuggestions(products, query) {
+  const q = normalizeText(query).trim();
+  if (q.length < 3) return [];
+  const words = q.split(' ').filter(word => word.length > 2 && !['gel', 'polish', 'mini', 'macaron', 'vernis'].includes(word));
+  return products.map(product => {
+    const title = normalizeText(product.title || '');
+    const exactReference = (product.variants || []).some(v => [v.sku, v.barcode].some(value => value && normalizeText(String(value)) === q));
+    const fullName = textMatches([product], query).length > 0;
+    const matched = words.filter(word => title.includes(word)).length;
+    return { product, score: exactReference ? 1000 : fullName ? 500 : matched && matched >= Math.ceil(words.length / 2) ? matched : 0 };
+  }).filter(row => row.score).sort((a, b) => b.score - a.score).slice(0, 3).map(row => row.product);
+}
