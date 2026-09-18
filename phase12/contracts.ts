@@ -13,7 +13,7 @@ export interface PublicProProfile {
 // Opaque existing app payloads stay in versioned envelopes to avoid rewriting
 // the collection/generation/journal engines. Attachments require private storage.
 export interface WorkspaceRecord {
-  workspaceId: string; kind: 'profile'|'collection'|'inspirations'|'journal'|'tutorials'|'preferences';
+  workspaceId: string; kind: 'profile'|'collection'|'inspirations'|'journal'|'tutorials'|'personalization'|'creation'|'recentColors';
   recordId: string; revision: number; schemaVersion: number; payload: unknown;
   updatedAt: string; deletedAt?: string;
 }

@@ -19,4 +19,5 @@ test('shared inspiration excludes private fields and internal product IDs while 
  const result=shareableInspiration(idea);const encoded=JSON.stringify(result);
  assert.ok(!encoded.includes('PRIVATE'));assert.ok(!encoded.includes('private-product'));assert.ok(result.steps.length);assert.equal(result.nails.length,5);assert.equal(result.palette[0].color,'#813c60');
  assert.ok(result.nails.every(n=>result.palette.some(p=>p.id===n.productId)));assert.equal(idea.notes,'PRIVATE');
+ idea.nails[0].color={private:'PRIVATE'};assert.ok(!JSON.stringify(shareableInspiration(idea)).includes('PRIVATE'));
 });

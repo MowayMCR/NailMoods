@@ -50,3 +50,12 @@ Le stockage reste local à ce stade. Les permissions caméra, capture native, co
 |---|---|---|---|---|---|---|
 
 Freeze V1 seulement après absence de bloquant/gênant restant et validation humaine du scénario.
+
+## Recette navigateur sur la publication Phase 11
+
+- Aide Scan : premier passage, Passer, réouverture par (?), deux étapes, Terminer, rechargement sans répétition : vérifiés.
+- Nuancier Scan : Cassis puis HEX prune `#683650`, deuxième couleur beige rosé `#d5b1aa`, French + Mat remplacé par French + Brillant : quatre poses et fiche détaillée avec pinceau recommandé/variante sans pinceau.
+- Bilan bêta : les douze champs sont vides au premier affichage, impact/catégorie facultatifs. Aucun retour de testeuse inventé ou envoyé.
+- Ajout manuel « Nuancier sauge — test Phase 11 » en Vernis : teinte `#9aa891`, sauvegarde, rechargement et réouverture conservant le HEX, présence dans « Ma collection » du nuancier. La classification initiale trop beige de cette teinte sauge a été corrigée pour suivre sa famille de génération verte.
+- Contrôle visuel du nuancier dans la colonne de l'app : pastilles mesurées 44 × 44 px, pas de débordement horizontal de la fiche ni du bilan.
+- Ces essais utilisent le navigateur distant et sa collection de test préexistante, pas une vraie nouvelle utilisatrice ni un téléphone physique. Le scénario vierge complet et l'évaluation de compréhension restent à faire.

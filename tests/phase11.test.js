@@ -15,6 +15,7 @@ test('manual and pipette corrections replace stale catalogue and confirmed color
   assert.equal(productColor(changed),'#356a59');assert.equal(productColor({...changed,...colorFamilyChange(changed,'Rose')}),'#356a59');
  }
  assert.equal(original.catalogColorValidated,true);assert.equal(original.catalogColor,'#ffffff');
+ assert.equal(chosenShadeChange('#9aa891').family,'Vert');
 });
 test('recent shades survive reload, deduplicate and never store an invalid or truncated HEX',()=>{
  const storage=memory();storage.setItem(RECENT_COLORS_KEY,'{"broken":true}');assert.deepEqual(readRecentColors(storage),[]);

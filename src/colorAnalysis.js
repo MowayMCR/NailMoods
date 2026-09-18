@@ -18,7 +18,8 @@ export function colorFamilyChange(item, family) {
 // An explicit choice (including the photo pipette) overrides older catalogue data.
 // This only changes the user's copy, never the shared catalogue.
 export function chosenShadeChange(color, source = 'manual') {
-  const {color:shade,family,depth}=describeColor(color);
+  const {color:shade,depth}=describeColor(color);
+  const family=generationFamily({color:shade});
   return {shade,confirmedColor:shade,catalogColorValidated:false,family,depth,color:colorFamilies.find(([name])=>name===family)[1],colorSource:source,colorUpdatedAt:new Date().toISOString()};
 }
 const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));

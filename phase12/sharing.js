@@ -1,4 +1,4 @@
-import { productColor } from '../src/colorAnalysis.js';
+import { productColor, validHex } from '../src/colorAnalysis.js';
 import { validIdea } from '../src/inspirations.js';
 import { buildTutorial } from '../src/tutorial.js';
 
@@ -14,7 +14,7 @@ export function shareableInspiration(idea) {
     version:1,title:text(idea.title),pattern:text(idea.pattern),shape:text(idea.shape),length:text(idea.length),
     mood:text(idea.options?.mood),style:text(idea.options?.style),
     palette:idea.palette.map(p=>({id:productIds.get(String(p.id)),name:text(p.name),brand:text(p.brand),reference:text(p.reference),type:text(p.type),color:productColor(p),finish:text(p.finish),effect:text(p.effect),unpainted:p.unpainted===true})),
-    nails:idea.nails.map(n=>({productId:productIds.get(String(n.productId)),color:n.color,...(n.accentProductId!=null?{accentProductId:productIds.get(String(n.accentProductId)),accentColor:n.accentColor}:{}),drawing:text(n.drawing),decoration:text(n.decoration),finish:text(n.finish)})),
+    nails:idea.nails.map(n=>({productId:productIds.get(String(n.productId)),color:validHex(n.color)?n.color.toLowerCase():productColor(idea.palette.find(p=>String(p.id)===String(n.productId))),...(n.accentProductId!=null?{accentProductId:productIds.get(String(n.accentProductId)),accentColor:validHex(n.accentColor)?n.accentColor.toLowerCase():productColor(idea.palette.find(p=>String(p.id)===String(n.accentProductId)))}:{}),drawing:text(n.drawing),decoration:text(n.decoration),finish:text(n.finish)})),
     resources,
     steps:buildTutorial(idea).filter(s=>!s.hand||s.hand==='left').map(s=>({title:text(s.title,200),body:text(s.body,2000),hint:text(s.hint,500)})),
   };
