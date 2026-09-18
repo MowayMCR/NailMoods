@@ -45,7 +45,7 @@ const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, re
 const tabRoutes = { scan: 'scan', home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris', tutorials: 'tutoriel' };
 const tabFromHash = () => window.location.hash.startsWith('#journal/') ? 'journal' : window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || window.location.hash === '#favoris' ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
 
-function App({ accountAccess }) {
+function App({ accountAccess, syncNotice }) {
   const browserStorage=useStorage();
   const [tab, setTab] = useState(tabFromHash);
   const [creationEntry, setCreationEntry] = useState(null);
@@ -256,6 +256,7 @@ function App({ accountAccess }) {
   return <div className="app phase2" style={{ '--a': th[0], '--b': th[1], '--soft': th[2], '--paper': th[3] }}>
     <header><Brand /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
     <main>
+      {tab !== 'profile' && syncNotice}
       <div id="context-help-slot" />
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && tab !== 'scan' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}

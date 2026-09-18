@@ -8,6 +8,7 @@ import { personalWorkspace, repository } from './repository';
 import { createAccountStore, readGuest, guestCount } from './store';
 import './account.css';
 import { recordCloudEvent } from './diagnostics';
+import {cacheError} from './cache/index';
 
 let client=null,configurationError=false;
 try{client=getCloudClient();}catch{configurationError=true;}
@@ -25,6 +26,7 @@ export default function AccountRoot({App}){
   const [status,setStatus]=useState({kind:'saved',pending:0}),[retry,setRetry]=useState(0),[revision,setRevision]=useState(0);
   const [open,setOpen]=useState(false),[mode,setMode]=useState('login'),[email,setEmail]=useState(''),[password,setPassword]=useState('');
   const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState(''),[guestOverride,setGuestOverride]=useState(false),[confirmRemote,setConfirmRemote]=useState(false);
+  const [confirmCacheClear,setConfirmCacheClear]=useState(false);
   const active=useRef(null), mounted=useRef(true);
   const userId=session?.user?.id || null;
   useEffect(()=>{
@@ -92,30 +94,37 @@ export default function AccountRoot({App}){
     recordCloudEvent(browserStorage,mode,true);
     }catch(error){recordCloudEvent(browserStorage,mode,false);setAuthError(authMessage(error));}finally{if(mounted.current)setBusy(false);}
   }
-  async function logout(){setBusy(true);setAuthError('');try{await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(authMessage(error));}finally{setBusy(false);}}
+  async function logout(){setBusy(true);setAuthError('');try{await active.current?.ensureDurable();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{setBusy(false);}}
   async function migrate(){setBusy(true);setAuthError('');try{
     const guest=readGuest(browserStorage);
     const done=await loaded.store.migrate(guest);
-    setRevision(v=>v+1);recordCloudEvent(browserStorage,'migration',done);setMessage(done?'Import terminé. La copie invitée est conservée sur cet appareil.':'Import conservé sur cet appareil, synchronisation à reprendre.');
+    setRevision(v=>v+1);recordCloudEvent(browserStorage,'migration',done);setMessage(done?'Import terminé. La copie invitée est conservée sur cet appareil.':'La synchronisation de l’import reste à reprendre. La copie invitée est conservée.');
   }catch(error){setAuthError(error.message || 'L’import n’a pas abouti. Les données invitées sont conservées.');}finally{setBusy(false);}}
   function exportDraft(){
     const blob=new Blob([JSON.stringify(loaded.store.exportDraft(),null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='nailmoods-copie-locale.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
   async function useRemote(){setBusy(true);setAuthError('');try{await loaded.store.load({useRemote:true});setConfirmRemote(false);setRevision(v=>v+1);setMessage('La version en ligne est chargée. La copie précédente reste conservée sur cet appareil.');}catch{setAuthError('Impossible de recharger. Ta copie locale reste conservée.');}finally{setBusy(false);}}
+  async function clearCache(){setBusy(true);setAuthError('');try{await loaded.store.clearCache();setConfirmCacheClear(false);setMessage('Le cache de ce compte est nettoyé. Les données en ligne et la copie invitée sont conservées.');}catch(error){setAuthError(error.message);}finally{setBusy(false);}}
+  useEffect(()=>{
+    if(!status.pending && status.kind!=='saving')return;
+    const warn=event=>{event.preventDefault();event.returnValue='';};window.addEventListener('beforeunload',warn);
+    return ()=>window.removeEventListener('beforeunload',warn);
+  },[status.pending,status.kind]);
   let count=0,guestInvalid=false;try{count=guestCount(readGuest(browserStorage));}catch{guestInvalid=true;}
   const ready=loaded?.userId===userId && !guestOverride;
   const guest=!userId || guestOverride;
   const label=ready?(loaded.store.profile?.display_name || session.user.email || 'Mon compte'):'Mode invité';
+  const syncNotice=ready && status.kind==='error' && <div className="accountNotice" role="alert"><p>{status.message}</p><button onClick={()=>(loaded.store.pending || ['quota','cache_unavailable'].includes(status.code))?void loaded.store.flush():setRetry(v=>v+1)}>Réessayer</button><button onClick={()=>{setMode('account');setOpen(true);}}>Mon compte</button></div>;
   const accountAccess=<aside className="accountBar accountProfileCard" aria-label="Compte et synchronisation">
     <div className="accountProfileIntro"><small>MON COMPTE</small><h2>{label}</h2><p>{ready ? (loaded.workspace.name || 'Espace personnel') : userId ? 'Ton compte est connecté. Retrouve ton espace personnel.' : 'Explore librement. Connecte-toi pour retrouver tes données sur tes appareils.'}</p></div>
     <button className="accountConnect" type="button" onClick={()=>{setMode(userId?'account':'login');setOpen(true);setAuthError('');setMessage('');}}>{ready?'Gérer mon compte':userId?'Ouvrir mon compte':'Se connecter'}</button>
     {ready && count>0 && !loaded.store.migrationDone && <button type="button" onClick={()=>{setMode('account');setOpen(true);}}>Importer mes données invitées</button>}
     {ready && <span role="status">{status.kind==='saving'?'Enregistrement…':status.kind==='error'?'À synchroniser':status.pending?'En attente':'Synchronisé'}</span>}
-    {ready && status.kind==='error' && <div className="accountNotice" role="alert"><p>{status.message}</p><button onClick={()=>loaded.store.pending?void loaded.store.flush():setRetry(v=>v+1)}>Réessayer</button><button onClick={()=>{setMode('account');setOpen(true);}}>Mon compte</button></div>}
+    {syncNotice}
   </aside>;
   return <>
-    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
+    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
     {configurationError && <p role="alert">Le compte est temporairement indisponible. Le mode invité reste accessible.</p>}
     {open && service && <Sheet title={mode==='signup'?'Créer mon compte':mode==='recovery'?'Retrouver mon compte':mode==='password'?'Nouveau mot de passe':userId?'Mon compte':'Se connecter'} onClose={()=>{if(!busy){setOpen(false);setPassword('');}}} className="accountSheet">
       {mode==='account' && userId ? <>
@@ -127,7 +136,7 @@ export default function AccountRoot({App}){
           {guestInvalid && <p role="alert">Certaines données invitées sont illisibles. Elles sont conservées ; l’import n’a pas été lancé.</p>}
           {loaded.store.migrationDone && <p>Les données invitées ont été importées. Leur copie locale est conservée.</p>}
           <button disabled={busy || status.pending>0} onClick={()=>{setRetry(v=>v+1);setOpen(false);}}>Actualiser depuis mon compte</button>
-          {status.kind==='error' && <section><button disabled={busy} onClick={exportDraft}>Télécharger ma copie locale</button><button disabled={busy} onClick={()=>setConfirmRemote(true)}>Utiliser la version en ligne</button>{confirmRemote && <><p>Les changements en attente ne seront pas envoyés. Une sauvegarde locale sera conservée ; télécharge-la pour pouvoir la consulter.</p><button disabled={busy} onClick={useRemote}>Confirmer le rechargement</button><button onClick={()=>setConfirmRemote(false)}>Annuler</button></>}</section>}
+          {status.kind==='error' && <section><button disabled={busy || status.pending>0} onClick={()=>setConfirmCacheClear(true)}>Nettoyer le cache local</button>{confirmCacheClear && <><p>Nettoyer uniquement le cache reconstituable de ce compte ? Tes données en ligne, ta copie invitée et tes sauvegardes restent conservées.</p><button disabled={busy} onClick={clearCache}>Confirmer le nettoyage</button><button onClick={()=>setConfirmCacheClear(false)}>Annuler</button></>}<button disabled={busy} onClick={exportDraft}>Télécharger ma copie locale</button><button disabled={busy} onClick={()=>setConfirmRemote(true)}>Utiliser la version en ligne</button>{confirmRemote && <><p>Les changements en attente ne seront pas envoyés. Une sauvegarde locale sera conservée ; télécharge-la pour pouvoir la consulter.</p><button disabled={busy} onClick={useRemote}>Confirmer le rechargement</button><button onClick={()=>setConfirmRemote(false)}>Annuler</button></>}</section>}
           {status.pending>0 && <p>Les modifications en attente resteront sur cet appareil après déconnexion. Reconnecte-toi ici pour les synchroniser.</p>}
         </>}
         <button disabled={busy} onClick={()=>changeMode('password')}>Changer mon mot de passe</button><button disabled={busy} onClick={logout}>Se déconnecter</button>

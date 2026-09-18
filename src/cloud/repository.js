@@ -24,13 +24,13 @@ export function repository(client,userId,workspaceId) {
     verifyUser,
     async load() {
       await verifyUser();
-      const [profile,...sets]=await Promise.all([checked(client.from('profiles').select('id,account_tier,display_name,avatar_url,preferences').eq('id',userId).single()),...TABLES.map(t=>all(t,'workspace_id',workspaceId)),all('favorites','user_id',userId)]);
+      const [profile,...sets]=await Promise.all([checked(client.from('profiles').select('id,account_tier,display_name,avatar_url,preferences,updated_at').eq('id',userId).single()),...TABLES.map(t=>all(t,'workspace_id',workspaceId)),all('favorites','user_id',userId)]);
       return {profile,rows:Object.fromEntries(TABLES.map((t,i)=>[t,sets[i]])),favorites:sets.at(-1).filter(f=>f.entity_type==='inspiration')};
     },
     async write(op,base) {
       await verifyUser();
       if(op.table==='profiles') {
-        const current=await checked(client.from('profiles').select('id,display_name,preferences').eq('id',userId).single());
+        const current=await checked(client.from('profiles').select('id,display_name,preferences,updated_at').eq('id',userId).single());
         // Patch only this preference entry, preserving unrelated server preferences.
         let values;
         if(op.preferenceKey) values={preferences:{...current.preferences,nailmoodsExtras:{...current.preferences?.nailmoodsExtras,[op.preferenceKey]:op.value}}};
@@ -39,7 +39,8 @@ export function repository(client,userId,workspaceId) {
         const prior=op.preferenceKey?(current.preferences?.nailmoodsExtras?.[op.preferenceKey] ?? (op.preferenceKey==='hiddenSessions'?[]:null)):current.preferences?.nailmoodsProfile;
         if(!same(prior ?? null,op.before ?? null) && !same(prior,op.value)) throw new CloudError('conflict','Ces préférences ont changé sur un autre appareil. Recharge le compte avant de les modifier.');
         let q=client.from('profiles').update(values).eq('id',userId);
-        q=current.preferences===null?q.is('preferences',null):q.eq('preferences',JSON.stringify(current.preferences));
+        if(!current.updated_at)throw new CloudError('version','La version distante de cette fiche est indisponible. Recharge le compte avant de réessayer.');
+        q=q.eq('updated_at',current.updated_at);
         const saved=await checked(q.select('id').single());return saved;
       }
       if(op.table==='favorites') {
@@ -59,9 +60,9 @@ export function repository(client,userId,workspaceId) {
       if(!current)return checked(scoped(op.table).insert({...op.values,id:op.rowId,workspace_id:workspaceId,created_by:userId}).select('*').single());
       let q=op.action==='delete'?scoped(op.table).delete():scoped(op.table).update(op.values);
       q=q.eq('workspace_id',workspaceId).eq('id',op.rowId);
-      // Atomic compare-and-set on existing JSON payload, no schema migration.
-      const payload='metadata' in current?'metadata':'snapshot';
-      q=current[payload]===null?q.is(payload,null):q.eq(payload,JSON.stringify(current[payload]));
+      // Existing server triggers update this timestamp. Never put photos/snapshots in a URL.
+      if(!current.updated_at)throw new CloudError('version','La version distante de cette fiche est indisponible. Recharge le compte avant de réessayer.');
+      q=q.eq('updated_at',current.updated_at);
       return checked(q.select('*').single());
     },
   };
