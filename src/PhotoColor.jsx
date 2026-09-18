@@ -3,7 +3,7 @@ import { Pipette, Check } from 'lucide-react';
 import { colorFamilies, describeColor, photoPalette, preciseShade, productColor, sampleColor, validHex } from './colorAnalysis';
 import { imageCanvas } from './recognition';
 
-function Sampler({ source, onSelect, onDone }) {
+export function Sampler({ source, onSelect, onDone }) {
   const canvas = useRef(null), pixels = useRef(null);
   const [palette, setPalette] = useState([]), [point, setPoint] = useState(null), [color, setColor] = useState(''), [error, setError] = useState(''), [loading, setLoading] = useState(true);
   useEffect(() => {

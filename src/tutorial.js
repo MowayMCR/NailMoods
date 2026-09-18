@@ -12,7 +12,7 @@ export const emptyTimer = () => ({ status: 'idle', stepId: null, durationMs: 0, 
 const magneticInstructions = magnet => 'Travaille un ongle à la fois : applique la couleur, forme l’effet avec ' + magnet.name + ', puis fixe-le selon la notice avant de passer au suivant.';
 
 export function buildTutorial(idea, firstHand = 'left') {
-  const products = uniqueProducts([...idea.palette, ...idea.resources]);
+  const products = uniqueProducts([...idea.palette, ...idea.resources]).filter(product => !product.unpainted);
   const steps = [{
     id: 'products', kind: 'products', title: 'Rassemble tes produits', section: 'Avant de commencer',
     body: 'Prépare les références de cette inspiration près de toi. Quand tout est prêt, passe à la suite en une seule touche.',
@@ -24,6 +24,7 @@ export function buildTutorial(idea, firstHand = 'left') {
   for (const hand of firstHand === 'right' ? ['right', 'left'] : ['left', 'right']) {
     const add = step => steps.push({ ...step, id: hand + '-' + step.id, hand, section: handLabels[hand] });
     for (const product of idea.palette) {
+      if (product.unpainted) continue;
       const targets = idea.nails.flatMap((nail, index) => sameId(nail.productId, product.id) ? [index] : []);
       if (!targets.length) continue;
       // Keep nail-by-nail application advice, with one validation for the color.

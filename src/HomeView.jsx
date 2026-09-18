@@ -2,6 +2,7 @@ import { browserStorage } from './storage';
 import React, { useEffect, useMemo, useState } from 'react';
 import { UserRound, Library, Palette, Heart, ArrowRight, ChevronRight, BookHeart, ListChecks, Play, BookmarkCheck, Sparkles, RotateCcw, Clock3, Check, Leaf } from 'lucide-react';
 import NailPreview from './NailPreview';
+import { ScanBottles } from './ScanGenerate';
 import { DecorationPhoto } from './DecorationPicker';
 import { isDecoration } from './decorations';
 import { productColor } from './colorAnalysis';
@@ -34,7 +35,7 @@ function ResumeProgress({ session }) {
   </div>;
 }
 
-export default function HomeView({ profile, items, library, journal, tutorials, personalModel, personalSettings, onNavigate, onOpen, onResume, onJournal, onJournalSession, onCollection, onPersonalization, onCreate }) {
+export default function HomeView({ profile, items, library, journal, tutorials, personalModel, personalSettings, onNavigate, onOpen, onResume, onJournal, onJournalSession, onCollection, onPersonalization, onCreate, onScan }) {
   const [options] = useState(() => readCreationState(browserStorage, profile).options);
   const liveLearning = personalSettings.enabled ? personalModel.ranking : null;
   const liveStamp = personalSettings.enabled ? personalModel.stamp : 'off';
@@ -53,6 +54,8 @@ export default function HomeView({ profile, items, library, journal, tutorials, 
       <button className="homePrimary" onClick={create}><Sparkles />Créer une idée<ArrowRight /></button>
       <div className="homeStats"><button onClick={() => onNavigate('collection')}><b>{home.report.inventoryColors}</b><span>couleur{home.report.inventoryColors > 1 ? 's' : ''}</span></button><button onClick={() => onNavigate('journal')}><b>{journal.entries.length}</b><span>souvenir{journal.entries.length > 1 ? 's' : ''}</span></button><button onClick={() => onNavigate('favorites')}><b>{library.favorites.length}</b><span>idée{library.favorites.length > 1 ? 's' : ''} favorite{library.favorites.length > 1 ? 's' : ''}</span></button></div>
     </section>
+
+    <section className="scanHomeCard" aria-labelledby="scan-home-title"><div><small><Sparkles size={14}/>UNE IDÉE SOUS LA MAIN</small><h2 id="scan-home-title">Scan &amp; Génère</h2><p>Montre-moi tes couleurs, je te propose une pose.</p></div><ScanBottles/><button className="homePrimary" onClick={onScan}>Scanner mes vernis<ArrowRight/></button></section>
 
     {!items.length && <section className="homeCollectionInvite"><Library /><div><b>Ta collection, à ton rythme</b><p>Ajoute tes produits pour personnaliser tes idées.</p><button className="homeTextButton" onClick={() => onNavigate('collection')}>Ajouter mes premiers produits<ChevronRight /></button><button className="homeTextButton" onClick={create}>Continuer sans collection<ArrowRight /></button></div></section>}
 
