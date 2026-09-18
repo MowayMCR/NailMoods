@@ -4,6 +4,7 @@ import { profileDefaults } from './creationEngine';
 import CollectionFilters from './CollectionFilters';
 import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf } from './collection';
 import ContextHelp from './ContextHelp';
+import Feedback from './Feedback';
 import { browserStorage } from './storage';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -53,6 +54,7 @@ function App() {
   });
   const [library, setLibrary] = useState(() => readInspirations(browserStorage));
   const [appError, setAppError] = useState('');
+  const [feedbackOpen,setFeedbackOpen]=useState(false);
   const [tutorials, setTutorials] = useState(() => readTutorials(browserStorage));
   const [journal, setJournal] = useState(() => readJournal(browserStorage));
   const [personalSettings, setPersonalSettings] = useState(() => readPersonalization(browserStorage));
@@ -307,7 +309,9 @@ function App() {
           <button className="moreIdeas" onClick={() => navigate('create')}><Palette />Générer une idée</button>
         </section>
       </> : tab === 'profile' ? <ProfileView onCreate={() => { setCreationEntry(profileDefaults(profile)); navigate('create'); }} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView onScan={() => navigate('scan')} onCreate={() => { setCreationEntry({ intent: 'inspire' }); navigate('create'); }} profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView onFavorites={() => navigate('favorites')} library={library} profile={profile} journal={journal} sessions={tutorials.sessions} items={items} route={route} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
+    <button className="betaFeedbackLink" onClick={()=>setFeedbackOpen(true)}>Donner mon avis sur NailMoods</button>
     </main>
+    {feedbackOpen&&<Feedback screen={tab} onClose={()=>setFeedbackOpen(false)}/>}
     <nav>{[['home', Home, 'Accueil'], ['create', Palette, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Journal'], ['profile', UserRound, 'Profil']].map(([id, Icon, label]) =>
       <button key={id} className={tab === id || tab === 'scan' && id === 'home' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'home' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}</span></button>
     )}</nav>
@@ -356,7 +360,7 @@ function App() {
         {material && <EquipmentFields item={edit} onChange={change} />}
         <ProductPhoto cameraInputRef={productCamera} value={edit.photo} onChange={photo => change({ photo })} onBusy={setPhotoBusy} maxSize={1200} />
         {!material && <>
-          <div ref={productColorArea}><PhotoColor item={edit} onChange={change} onValidityChange={setShadeValid} /></div>
+          <div ref={productColorArea}><PhotoColor items={items} item={edit} onChange={change} onValidityChange={setShadeValid} /></div>
           <label>Finition<select value={edit.finish} onChange={event => change({ finish: event.target.value })}>
             {['Brillant', 'Crème', 'Jelly', 'Pailleté', 'Nacré', 'Métallique', 'Chrome', 'Cat-eye', 'Mat', 'Autre'].map(value => <option key={value}>{value}</option>)}
           </select></label>

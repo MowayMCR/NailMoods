@@ -15,6 +15,12 @@ export function colorFamilyChange(item, family) {
   const shade = preciseShade(item), color = colorFamilies.find(([name]) => name === family)?.[1];
   return { family, ...(color ? { color } : {}), shade, colorSource: shade ? item.colorSource === 'photo' ? 'photo' : 'manual' : 'palette' };
 }
+// An explicit choice (including the photo pipette) overrides older catalogue data.
+// This only changes the user's copy, never the shared catalogue.
+export function chosenShadeChange(color, source = 'manual') {
+  const {color:shade,family,depth}=describeColor(color);
+  return {shade,confirmedColor:shade,catalogColorValidated:false,family,depth,color:colorFamilies.find(([name])=>name===family)[1],colorSource:source,colorUpdatedAt:new Date().toISOString()};
+}
 const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
 const hex = values => '#' + values.map(value => Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, '0')).join('');
 // Perceptual distance in OKLab; family is a suggestion, the sampled hex is kept.

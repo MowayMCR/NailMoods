@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Pipette, Check } from 'lucide-react';
-import { colorFamilies, describeColor, photoPalette, preciseShade, productColor, sampleColor, validHex } from './colorAnalysis';
+import { colorFamilies, chosenShadeChange, describeColor, photoPalette, preciseShade, productColor, sampleColor, validHex } from './colorAnalysis';
+import PolishPalette from './PolishPalette';
 import { imageCanvas } from './recognition';
 
 export function Sampler({ source, onSelect, onDone }) {
@@ -49,16 +50,16 @@ export function Sampler({ source, onSelect, onDone }) {
   </div>;
 }
 
-export default function PhotoColor({ item, onChange, onValidityChange }) {
+export default function PhotoColor({ item, items = [], onChange, onValidityChange }) {
   const effectiveColor = productColor(item);
   const [open, setOpen] = useState(false), [draft, setDraft] = useState(effectiveColor), [saved, setSaved] = useState(false);
   useEffect(() => { setDraft(effectiveColor); }, [effectiveColor]);
   useEffect(() => { onValidityChange(validHex(draft)); }, [draft, onValidityChange]);
   useEffect(() => { setOpen(false); setSaved(false); }, [item.photo]);
   function useColor(color, source) {
-    const { color: shade, family, depth } = describeColor(color);
-    onChange({ shade, ...(source === 'manual' ? { confirmedColor: shade } : {}), family, depth, color: colorFamilies.find(([name]) => name === family)[1], colorSource: source, colorUpdatedAt: new Date().toISOString() });
-    setDraft(shade); setSaved(true);
+    const patch=chosenShadeChange(color,source);
+    onChange(patch);
+    setDraft(patch.shade); setSaved(true);
   }
   function editColor(value) {
     setDraft(value); setSaved(false);
@@ -72,8 +73,7 @@ export default function PhotoColor({ item, onChange, onValidityChange }) {
   const measured = Boolean(preciseShade(item));
   return <section className="preciseColor">
     <div className="fieldHead"><b>Ma teinte</b><small>{item.catalogColorValidated ? 'Teinte catalogue validée' : measured ? item.colorSource === 'photo' ? 'Prélevée dans une photo' : 'Personnalisée' : 'Teinte de la famille'}</small></div>
-    <div className="hexColor"><input type="color" aria-label="Choisir ma teinte" value={validHex(draft) ? draft : effectiveColor} onChange={event => editColor(event.target.value)} /><label>Code couleur<input aria-label="Code couleur" aria-invalid={!validHex(draft)} aria-describedby={!validHex(draft) ? 'shade-error' : undefined} value={draft || ''} maxLength="7" spellCheck="false" onChange={event => editColor(event.target.value)} /></label></div>
-    {!validHex(draft) && <p id="shade-error" className="fieldHelp">Complète ce code, par exemple #703650, avant d’enregistrer.</p>}
+    <PolishPalette value={draft} onChange={editColor} items={items} />
     {item.photo && <button type="button" className="importSecondary" aria-expanded={open} onClick={() => { setOpen(value => !value); setSaved(false); }}><Pipette />{open ? 'Fermer le prélèvement' : 'Prélever une teinte dans la photo'}</button>}
     {open && item.photo && <Sampler key={item.photo} source={item.photo} onSelect={color => useColor(color, 'photo')} onDone={() => setOpen(false)} />}
     {item.catalogColorValidated && <p className="fieldHelp">La couleur validée du catalogue reste prioritaire dans les inspirations.</p>}

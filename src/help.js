@@ -1,6 +1,7 @@
 import { browserStorage } from './storage.js';
 
 export const guides = {
+  scan: { title: 'Scan & Génère', slides: [['palette','Montre tes couleurs','Photographie un ou deux vernis. Tu peux aussi choisir une couleur sans photo. Vérifie ou corrige la teinte avant de continuer.'],['sparkles','Une référence inconnue ? Continue','La couleur suffit pour créer tes idées. Choisis un effet, puis ouvre une pose pour voir les couleurs et sa recette.']] },
   home: { title: 'Bienvenue dans NailMoods', slides: [['palette', 'Tes produits, tes inspirations', 'Ouvre Créer puis Inspire-moi, même sans collection.'], ['sparkles', 'Ta première pose', 'Ouvre Créer, choisis une idée et conserve-la dans tes favoris.']] },
   collection: { title: 'Ma collection', slides: [['package', 'Ajoute ce que tu possèdes', 'Photo, URL, scan ou saisie manuelle : choisis avec Ajouter.'], ['palette', 'Vérifie ta vraie teinte', 'Ouvre le produit pour ajuster sa couleur et son type de pose.'], ['lamp', 'Pense aussi au matériel', 'Ajoute ta lampe et tes stickers. Filtrer et trier permet de retrouver tes favoris, marques et couleurs.']] },
   equipment: { title: 'Mon matériel', slides: [['lamp', 'Tes outils, à part', 'Renseigne ta lampe, tes pinceaux et tes accessoires dans Matériel.'], ['sticker', 'Une idée réalisable', 'La génération tient compte de ta lampe, de ton aimant et de tes outils. Ajoute aussi tes stickers.']] },

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Camera, ImagePlus, ArrowLeft, ArrowRight, Check, Sparkles, RotateCcw, Pipette, X } from 'lucide-react';
 import { preparePhoto } from './ProductPhoto';
+import PolishPalette from './PolishPalette';
 import { Sampler } from './PhotoColor';
 import { imageCanvas, readProductPhoto } from './recognition';
 import { photoPalette, generationFamily, validHex } from './colorAnalysis';
@@ -75,7 +76,7 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
       if(!isSecond){
         const canvas=await imageCanvas(photo,controller.signal,700);if(controller.signal.aborted)return;
         const palette=photoPalette(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height));color=palette[0] || '';
-        setDraft({photo,color,name:'',brand:'',reference:'',finish:'',type:'Vernis'});setCorrect(!palette.length);setRecognition(null);
+        setDraft({photo,color,photoColors:palette,name:'',brand:'',reference:'',finish:'',type:'Vernis'});setCorrect(!palette.length);setRecognition(null);
         if(!products.length)track('first_product_scanned');
       }
       setStage('confirm');setBusy(false);setReading(true);setCandidates([]);
@@ -157,6 +158,7 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
       <h2>{draft.provenance?'Produit à confirmer':draft.photo?'Couleur estimée':'Ta couleur'}</h2>
       <div className="scanDetected">{draft.photo && <img src={draft.photo} alt="Ton vernis photographié"/>}<i style={{background:draft.color || 'transparent'}}/><div><strong>{draft.name || (validHex(draft.color)?generationFamily({color:draft.color}):'Choisis une couleur')}</strong><span>{[draft.brand,draft.reference].filter(Boolean).join(' · ')}</span><small>{draft.color}</small></div></div>
       <p className="scanHint">La lumière et les reflets influencent la teinte. Vérifie-la avant de continuer.</p>
+      {draft.photo && <><p className="scanHint">Le bouchon ou le fond peuvent être détectés. Choisis la couleur du vernis, ou prélève-la directement sur la photo.</p><div className="photoPalette" role="group" aria-label="Couleurs proposées depuis la photo">{(draft.photoColors||[]).map(color=><button key={color} type="button" aria-label={'Retenir la couleur '+color} aria-pressed={draft.color===color} style={{background:color}} onClick={()=>changeDraft('color',color)}>{draft.color===color&&<Check/>}</button>)}</div><button className="scanSecondary" aria-expanded={sampling} onClick={()=>setSampling(v=>!v)}><Pipette/>{sampling?'Fermer le prélèvement':'Choisir sur la photo'}</button>{sampling&&<Sampler source={draft.photo} onSelect={color=>changeDraft('color',color)} onDone={()=>setSampling(false)}/>}</>}
       {readStatus && <p role="status" className="scanHint">{readStatus}</p>}
       {!recognition && draft.photo && <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);secondView.current.click();}}>Photographier dessous / dos</button>}
       <RecognitionStatus report={recognition} busy={busy} onSecondView={()=>{task.current?.abort();setReading(false);secondView.current.click();}}/>
@@ -167,11 +169,7 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
       {reading && <small>La lecture de l’étiquette est facultative : tu peux continuer maintenant.</small>}
       <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);setCorrect(v=>!v);}}><Pipette/>{correct?'Fermer la correction':'Corriger'}</button>
       {correct && <div className="scanCorrection">
-        {!validHex(draft.color) && <div className="photoPalette" aria-label="Couleurs de départ">{['#813c60','#356a59','#dba5aa','#e9c6b5','#553366','#225577'].map(color=><button key={color} aria-label={'Choisir '+color} style={{background:color}} onClick={()=>changeDraft('color',color)}/>)}</div>}
-        <label>Couleur<input type="color" value={validHex(draft.color)?draft.color:'#813c60'} onChange={e=>changeDraft('color',e.target.value)}/></label>
-        <label>Code couleur<input value={draft.color} placeholder="#813c60" maxLength={7} onChange={e=>changeDraft('color',e.target.value)} autoComplete="off"/></label>
-        {draft.photo && <button className="scanSecondary" onClick={()=>setSampling(v=>!v)}><Pipette/>Prélever sur la photo</button>}
-        {sampling && <Sampler source={draft.photo} onSelect={color=>changeDraft('color',color)} onDone={()=>setSampling(false)}/>}
+        <PolishPalette value={draft.color} onChange={color=>changeDraft('color',color)} items={items}/>
         <label>Référence ou nom à rechercher<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Ex. CANNI 9058"/></label><small role="status">{lookupStatus}</small>
         <label>Nom (facultatif)<input value={draft.name || ''} maxLength={100} onChange={e=>changeDraft('name',e.target.value)}/></label>
         <div className="scanFields"><label>Marque<input value={draft.brand || ''} maxLength={80} onChange={e=>changeDraft('brand',e.target.value)}/></label><label>Référence<input value={draft.reference || ''} maxLength={80} onChange={e=>changeDraft('reference',e.target.value)}/></label></div>
