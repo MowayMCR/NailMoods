@@ -1,0 +1,74 @@
+/* Finishing layer: theme-aware accents, never applied to product or nail colors. */
+:root {
+  --nm-serif: Georgia, 'Times New Roman', serif;
+  --nm-line: color-mix(in srgb, var(--a) 19%, white);
+  --nm-muted: #756570;
+  --nm-petal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M79 105C56 80 48 49 32 12M66 87C40 86 26 71 24 52C44 54 60 65 66 87ZM53 61C72 51 82 32 77 13C59 22 49 38 53 61ZM39 31C23 32 12 23 9 7C25 8 35 16 39 31Z'/%3E%3Cpath d='M87 65v8m-4-4h8M17 91v6m-3-3h6'/%3E%3C/svg%3E");
+}
+.app h1,.app h2,.app h3{font-family:var(--nm-serif);font-weight:400;letter-spacing:-.025em;text-wrap:pretty}
+.app button,.app input,.app select,.app textarea{font-family:inherit}
+.smartHome .homeGreeting h1{font-size:34px;line-height:1.12;font-weight:400}
+.creationPage .creationHero h1,.collectionHero h1,.journalHero h1,.journalHeading h1{font-size:30px;line-height:1.16;font-weight:400;letter-spacing:-.025em}
+.profilePage .card h2,.homeSectionTitle h2,.creationSectionTitle h2,.journalSectionTitle h2{font-size:23px;line-height:1.2}
+.app .sheetTitle h2{font-size:25px;line-height:1.2;font-weight:400;margin-bottom:16px;overflow-wrap:anywhere}
+.ideaBody h3,.journalEntryCopy h2{font-size:23px;line-height:1.2}
+.profilePage .card p,.smartHome .homeHint,.creationHint{font-size:12px;line-height:1.6;color:var(--nm-muted)}
+.profilePage .nameField{margin-top:14px;font-size:12px}.profilePage .nameField input{font-size:16px}
+.profilePage .settingTile small,.creationTiles>button>small{font-size:10px;letter-spacing:.055em;font-weight:600}
+.profilePage .settingTile b,.creationTiles>button>b{font-size:14px;font-weight:600;line-height:1.4}
+/* Botanical corners appear only on selected introductory surfaces. */
+.collectionHero,.journalHero,.smartHome .homeGreeting,.personalSummary,.phase3Preview{position:relative;isolation:isolate}
+.collectionHero::after,.journalHero::after,.smartHome .homeGreeting::after,.personalSummary::after,.phase3Preview::after{
+  content:'';position:absolute;right:8px;top:7px;width:70px;height:80px;background:var(--a);opacity:.13;
+  mask:var(--nm-petal) center/contain no-repeat;pointer-events:none;z-index:-1;
+}
+.smartHome .homeGreeting::after{background:white;opacity:.22;width:86px;height:96px}
+.personalSummary::after{width:45px;height:54px;right:25px;opacity:.09}
+.collectionHero{border:1px solid var(--nm-line);border-radius:0 0 26px 26px}
+.collectionStats{gap:8px}.collectionStats>div{border-radius:16px!important;box-shadow:0 3px 12px #73345105;padding:10px 8px}
+.collectionStats b{font-family:var(--nm-serif);font-size:25px;font-weight:400}.collectionStats span{font-size:11px;letter-spacing:.02em}
+.collectionFilters{border-color:var(--nm-line);background:linear-gradient(120deg,#fff,var(--paper));box-shadow:none}
+.collectionFilters summary{min-height:44px;display:list-item;padding:8px 0;color:var(--b);font-weight:500}
+.filterRow button{border-color:var(--nm-line);background:#fff;box-shadow:0 2px 7px #73345104}
+.filterRow button.on,.filterRow button[aria-pressed=true]{background:var(--soft);color:var(--b);border-color:var(--a)}
+.collectionViewBar .collectionCreateAction{background:var(--b);color:#fff;border-color:var(--b);font-weight:600;padding:10px 14px;box-shadow:0 4px 12px #73345112}
+.productCard{border-radius:21px;box-shadow:0 4px 16px #73345108;background:radial-gradient(ellipse at 85% 5%,var(--soft),transparent 60%),#fff}
+.productCard .productInfo b{font-family:var(--nm-serif);font-weight:400;font-size:19px;letter-spacing:-.02em}
+.productInfo small{letter-spacing:.025em}.productInfo span{color:var(--nm-muted)}
+.phase3Preview{border:1px solid var(--nm-line);background:linear-gradient(115deg,var(--soft),#fff);border-radius:22px}
+/* Small symbols provide a visual cue without changing any option or its label. */
+.moodGlyph{flex:0 0 auto;color:var(--a);vertical-align:middle;pointer-events:none}
+.profilePage .universePicker .universeGroup{margin:22px 0}.profilePage .universeGroup h3{font-size:20px;display:flex;align-items:center;gap:10px;color:var(--b)}
+.profilePage .universeGroup h3::after{content:'';height:1px;flex:1;background:linear-gradient(90deg,var(--nm-line),transparent)}
+.profilePage .universePicker .chips{gap:8px}.profilePage .universePicker .chips button{display:inline-flex;align-items:center;gap:7px;min-height:44px;white-space:normal;text-align:left;border-color:var(--nm-line);background:linear-gradient(135deg,#fff,var(--paper));padding:9px 12px;font-size:13px}
+.profilePage .universePicker .chips button.on{background:var(--soft);border-color:var(--a);color:var(--b);box-shadow:inset 0 0 0 1px var(--a)}
+.profilePage .favoriteStyles .moodGlyph{color:inherit;width:16px;height:16px}
+.creationOptions>button{gap:12px;min-height:48px;border-color:var(--nm-line)}.creationOptions>button>span{flex:1;min-width:0;text-align:left}
+.creationTiles>button{border-radius:20px;background:linear-gradient(145deg,#fff 50%,var(--soft));box-shadow:0 3px 12px #73345106}
+.creationTiles [data-choice=mood]::after{width:34px;height:42px;border-radius:80% 0 80% 0;transform:rotate(25deg);opacity:.6}
+.creationTiles [data-choice=style]::after{width:26px;height:36px;opacity:.6}
+.creationTiles>button>svg:first-child{width:24px;height:24px;stroke-width:1.35}
+/* Home cards share a rhythm, with a separate accent for each role. */
+.homeShortcuts>button{position:relative;border:1px solid var(--nm-line);border-radius:21px;padding:17px 14px;gap:10px;box-shadow:0 4px 14px #73345106;min-width:0}
+.homeShortcuts>button>b{font-size:15px;line-height:1.35;font-weight:600}.homeShortcuts>button>small{font-size:12px;line-height:1.5;color:var(--nm-muted)}
+.homeShortcuts>button>svg:first-child{padding:8px;box-sizing:content-box;width:23px;height:23px;border-radius:14px;background:var(--soft);stroke-width:1.4}
+.homeShortcuts [data-content=create]{background:linear-gradient(145deg,#fff 45%,var(--soft));border-radius:24px 24px 24px 8px}
+.homeShortcuts [data-content=favorites]{background:radial-gradient(ellipse at top right,var(--soft),#fff 75%);border-top:2px solid var(--a)}
+.homeShortcuts [data-content=profile]{background:var(--paper)}
+.homeShortcuts [data-content=journal]{border-left:2px solid color-mix(in srgb,var(--a) 40%,white)}
+.homeShortcuts [data-content=collection]{border-bottom:2px solid color-mix(in srgb,var(--a) 40%,white)}
+.ideaCard{border-radius:24px;border-color:var(--nm-line);box-shadow:0 5px 18px #73345108}.ideaTopline{letter-spacing:.07em;font-size:10px;color:var(--b)}
+/* Modal rhythm and focus styling are shared; native fields retain a 16px font. */
+.productSheet{border:1px solid var(--nm-line);background:linear-gradient(150deg,var(--paper),#fff 35%);box-shadow:0 18px 60px #321c3220}
+.productSheet .sheetTitle>div>small{font-size:10px;letter-spacing:.13em;color:var(--a);font-weight:600}
+.productSheet label{line-height:1.5;font-weight:500}.productSheet input,.productSheet select,.productSheet textarea{border-color:var(--nm-line);border-radius:12px;font-size:16px;line-height:1.4}
+.productSheet .fieldHelp{font-size:12px;line-height:1.5;color:var(--nm-muted)}
+.saveProduct,.journalPrimary,.detailPrimary,.creationGenerate{border-radius:16px;min-height:48px;font-weight:600;letter-spacing:.01em;box-shadow:0 4px 12px #73345112}
+.journalEntryCard{border-radius:22px;box-shadow:0 5px 18px #73345108}.journalVisual{background:radial-gradient(ellipse at center,#fff,var(--soft));padding:12px}
+.journalVisual img{border-radius:14px}.journalVisual .nailPreview{margin:6px auto}
+.journalEntryCopy{padding:17px;border-left:2px solid color-mix(in srgb,var(--a) 35%,white)}.journalEntryCopy>small{letter-spacing:.07em;font-size:10px}
+.journalPending article{border:1px solid var(--nm-line);border-radius:20px;background:linear-gradient(130deg,#fff,var(--paper));padding:16px}
+.journalPending article>div>button{min-height:44px;border:1px solid var(--nm-line);border-radius:12px;padding:10px 13px;background:var(--soft);color:var(--b);font-weight:600}
+@media(max-width:360px){.smartHome .homeGreeting h1{font-size:31px}.app .sheetTitle h2{font-size:23px}.homeShortcuts>button{padding:14px 11px}.homeShortcuts>button>b{font-size:14px}.profilePage .universePicker .chips button{font-size:12px;padding:9px 10px}.creationPage .creationHero h1{font-size:28px}}
+
+.ideaTopline>span:first-child{display:inline-flex;align-items:center;gap:6px}.ideaTopline .moodGlyph{width:17px;height:17px}
