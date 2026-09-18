@@ -75,10 +75,14 @@ for (const count of [1, 2, 3, 4, 5]) test('variants use exactly ' + count + ' ow
   assert.equal(JSON.stringify(idea), before);
 });
 
-test('variants cannot use removed tools or invent enough polishes to replace an incomplete collection', () => {
+test('variants explain missing tools and simplify incomplete collections without invented possessions', () => {
   const idea = snapshotIdea(source, options);
-  assert.equal(createVariants(idea, polishes, profile).length, 0, 'missing lamp');
-  assert.equal(createVariants(idea, [polishes[0], lamp], profile).length, 0, 'not enough colors');
+  const noLamp = createVariants(idea, polishes, profile);
+  assert.ok(noLamp.length);
+  assert.ok(noLamp.every(v => v.requirements.some(r => /Lampe/.test(r.name))));
+  const fewer = createVariants(idea, [polishes[0], lamp], profile);
+  assert.ok(fewer.every(v => v.palette.every(p => p.id === polishes[0].id)));
+  assert.ok(noLamp.every(v => v.resources.every(r => r.id !== lamp.id)));
   const one = snapshotIdea(createSuggestions([polishes[0], lamp], profile, { polishCount: 1 }).results[0], { polishCount: 1 });
   assert.equal(createVariants(one, [polishes[0], lamp], profile).length, 0, 'one solid manicure cannot be regenerated into fake variants');
 });

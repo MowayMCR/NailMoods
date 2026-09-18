@@ -78,7 +78,7 @@ test('an outdated retained idea keeps its original shades and clearly reports ch
   assert.ok(home.retained.nails.every(nail => nail.color !== '#ffffff'));
 });
 
-test('empty stock, missing lamp, exact count, missing decoration and insufficient time all have actionable empty states', () => {
+test('Free home always offers an inspiration for empty or incomplete inventories', () => {
   const scenarios = [
     { items: [], options, route: 'collection', title: /premières couleurs/ },
     { items: colors.map(item => ({ ...item, type: 'Semi-permanent' })), options: { ...options, decorations: 'without' }, route: 'create', title: /collection/ },
@@ -88,10 +88,10 @@ test('empty stock, missing lamp, exact count, missing decoration and insufficien
   ];
   for (const scenario of scenarios) {
     const home = buildHome({ ...base(), ...scenario });
-    assert.equal(home.inspiration, null);
-    assert.equal(home.priority, 'readiness');
-    assert.equal(home.readiness.route, scenario.route);
-    assert.match(home.readiness.title, scenario.title);
+    assert.ok(home.inspiration);
+    assert.equal(home.priority, 'create');
+    assert.equal(home.readiness, null);
+    assert.ok(home.inspiration.palette.every(p => scenario.items.length ? scenario.items.some(i => i.id === p.id) : p.conceptual));
   }
 });
 

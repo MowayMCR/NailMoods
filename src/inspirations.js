@@ -1,3 +1,4 @@
+import { generateInspirations } from './freeInspiration.js';
 import { auxiliary, createSuggestions, normalize, profileDefaults } from './creationEngine.js';
 import { productColor } from './colorAnalysis.js';
 import { isDecoration } from './decorations.js';
@@ -64,6 +65,7 @@ export function toggleFavorite(library, idea) {
 }
 
 export function productStatus(saved, items) {
+  if (saved.conceptual) return { state: 'conceptual', label: 'Couleur de style · à choisir dans tes produits', current: null };
   const current = items.find(item => sameId(item.id, saved.id));
   if (!current || Number(current.quantity ?? 1) <= 0) return { state: 'missing', label: 'Absent de ta collection', current };
   const fields = ['name', 'brand', 'type', 'finish', 'effect', 'usage', 'equipmentCategory', 'materialStyle', 'reference'];
@@ -103,8 +105,8 @@ export function createVariants(idea, items, profile, seed = 1, learning = null) 
   const shapeProfile = { ...profile, shape: idea.shape, length: idea.length };
   const paletteIds = new Set(idea.palette.map(item => String(item.id)));
   const samePaletteItems = items.filter(item => paletteIds.has(String(item.id)) || item.type === 'Matériel' || auxiliary(item));
-  const close = createSuggestions(samePaletteItems, shapeProfile, options, seed, 12, learning).results;
-  const other = createSuggestions(items, shapeProfile, options, seed, 12, learning).results;
+  const close = samePaletteItems.some(item => ['Vernis', 'Semi-permanent', 'Gel'].includes(item.type)) || idea.intent === 'inspire' ? generateInspirations(samePaletteItems, shapeProfile, options, seed, 12, learning).results : [];
+  const other = generateInspirations(items, shapeProfile, options, seed, 12, learning).results;
   const seen = new Set([compositionKey(idea)]);
   return [...close, ...other].filter(candidate => {
     const key = compositionKey(candidate);
@@ -113,7 +115,7 @@ export function createVariants(idea, items, profile, seed = 1, learning = null) 
     return true;
   }).slice(0, 3).map(candidate => ({
     ...snapshotIdea(candidate, options),
-    variantLabel: candidate.palette.every(item => paletteIds.has(String(item.id))) ? 'Avec les mêmes vernis' : 'Avec d’autres vernis de ta collection',
+    variantLabel: candidate.intent === 'inspire' ? 'Variante de style · couleurs à adapter' : candidate.palette.every(item => paletteIds.has(String(item.id))) ? 'Avec les mêmes vernis' : 'Avec d’autres vernis de ta collection',
   }));
 }
 

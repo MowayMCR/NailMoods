@@ -97,10 +97,10 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const usable = available.filter(item => {
     let reason;
     if (constraints.has('noLamp') && needsLamp(item)) reason = 'Écarté pour cette envie sans lampe.';
-    else if (needsLamp(item) && !tools.lamp) reason = 'Lampe UV / LED à renseigner dans le matériel.';
-    else if (magnetic(item) && !tools.magnet) reason = 'Aimant cat-eye à renseigner dans le matériel.';
+    else if (!options.allowMissingEquipment && needsLamp(item) && !tools.lamp) reason = 'Lampe UV / LED à renseigner dans le matériel.';
+    else if (!options.allowMissingEquipment && magnetic(item) && !tools.magnet) reason = 'Aimant cat-eye à renseigner dans le matériel.';
     else if (item.usage === 'Sur une couleur de base' || item.usage === 'Autre') reason = 'Mode d’application et base compatible à préciser.';
-    else if (item.usage === 'Avec top coat' && !topCoats.some(top => top.type === item.type)) reason = 'Top coat du même type de pose à renseigner.';
+    else if (!options.allowMissingEquipment && item.usage === 'Avec top coat' && !topCoats.some(top => top.type === item.type)) reason = 'Top coat du même type de pose à renseigner.';
     else if (constraints.has('favorites') && !item.fav) reason = 'Écarté : vernis favoris uniquement.';
     if (reason) { blocked.push({ item, reason }); return false; }
     return true;
@@ -202,7 +202,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (preferred.includes(base.family)) reasons.push('Une teinte dans ton univers ' + options.style);
     if (options.mode === 'change' && !base.fav) reasons.push('Une couleur à redécouvrir');
     if (decorated) reasons.push('Avec ta décoration ' + sticker.name);
-    if (drawing.has(pattern)) reasons.push('Avec ' + (pattern === 'dots' ? tools.dotting.name : tools.fineBrush.name));
+    if (drawing.has(pattern)) reasons.push('Avec ' + (pattern === 'dots' ? tools.dotting?.name || 'un outil à pois' : tools.fineBrush?.name || 'un pinceau fin'));
     if (!reasons.length) reasons.push('Avec les produits de ta collection');
     const personal = personalAdjustment({ pattern, palette, resources, nails }, options, personalModel);
     candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score: score + personal.score, reasons: [...new Set([...personal.reasons, ...reasons])].slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte' });
@@ -223,8 +223,8 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
         add('paletteSticker', base, null, sticker, 0, [base, second], [0, 1, 0, 1, 0]);
         add('paletteSticker', base, null, sticker, 1, [base, second], [0, 0, 0, 1, 0]);
       }
-      if (tools.dotting) add('dots', base, second);
-      if (tools.fineBrush) { add('french', base, second); add('line', base, second); }
+      if (tools.dotting || options.allowMissingEquipment) add('dots', base, second);
+      if (tools.fineBrush || options.allowMissingEquipment) { add('french', base, second); add('line', base, second); }
     }
   }
   const arrangements = {

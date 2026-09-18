@@ -22,16 +22,18 @@ export default function InspirationView({ onRename, idea, items, profile, favori
   const [renaming, setRenaming] = useState(false);
   const [title, setTitle] = useState(idea.title);
   const [finger, setFinger] = useState(0);
+  const [simpleVariant, setSimpleVariant] = useState(false);
   const [variantSeed, setVariantSeed] = useState(1);
   const [showVariants, setShowVariants] = useState(false);
   const [variantLearning, setVariantLearning] = useState(null);
   const heading = useRef(null);
   const variantsAnchor = useRef(null);
   const availability = ideaAvailability(idea, items);
-  const outdated = availability.filter(item => item.state !== 'available');
-  const variants = useMemo(() => showVariants ? createVariants(idea, items, profile, variantSeed, variantLearning) : [], [idea, items, profile, variantSeed, showVariants, variantLearning]);
+  const outdated = availability.filter(item => !['available', 'conceptual'].includes(item.state));
+  const variants = useMemo(() => showVariants ? createVariants(simpleVariant ? { ...idea, options: { ...idea.options, constraints: ['noDrawing'], decorations: 'without' } } : idea, items, profile, variantSeed, variantLearning) : [], [idea, items, profile, variantSeed, showVariants, variantLearning, simpleVariant]);
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); heading.current?.focus({ preventScroll: true }); }, [idea.key]);
-  function generateVariants() {
+  function generateVariants(simple = false) {
+    setSimpleVariant(simple === true);
     setVariantLearning(learning);
     setShowVariants(true);
     if (showVariants) setVariantSeed(seed => seed + 1);
@@ -45,11 +47,12 @@ export default function InspirationView({ onRename, idea, items, profile, favori
       <p className="detailMuted">Touche un ongle pour voir sa composition. La même répartition est prévue sur les deux mains.</p>
       <NailPreview idea={idea} onSelect={setFinger} selectedIndex={finger} labels={fingers} />
       <div className="fingerDetail" aria-live="polite"><div><small>LES DEUX MAINS</small><h3>{fingers[finger]}</h3></div><ul>{nailDetails(idea, finger).map(({ label, item }) => <li key={label}><i style={{ background: item.type === 'Matériel' ? idea.nails[finger].decoration?.color : item.color }} /><span><small>{label}</small><b>{item.name}</b></span></li>)}</ul></div>
-      <p className="detailFootnote">Aperçu schématique avec les teintes enregistrées dans ta collection. Tu peux les prélever dans une photo sur tes fiches produits. Les reflets et les motifs restent illustratifs.</p>
+      <p className="detailFootnote">{idea.intent === 'inspire' ? 'Couleurs de style : choisis des produits adaptés pour réaliser cette inspiration.' : 'Aperçu schématique avec les teintes enregistrées dans ta collection.'} Tu peux les prélever dans une photo sur tes fiches produits. Les reflets et les motifs restent illustratifs.</p>
     </section>
     <section className="detailTiming"><Clock3 /><div><b>≈ {idea.minutes} min pour la couleur et la décoration</b><p>Préparation, dépose et séchage en plus. Pour les temps d’application et la compatibilité de ta lampe, suis les notices de tes produits.</p></div></section>
     {outdated.length > 0 && <div className="detailNotice" role="status"><b>Ta collection a évolué</b><p>Cette fiche conserve la composition enregistrée. {outdated.length} produit{outdated.length > 1 ? 's ont' : ' a'} changé ou manque{outdated.length > 1 ? 'nt' : ''} dans ta collection. Les variantes utilisent son contenu actuel.</p></div>}
     <section className="detailSection"><div className="detailSectionTitle"><h2>Les vernis</h2><span>{idea.palette.length} référence{idea.palette.length > 1 ? 's' : ''}</span></div><ul className="detailProducts">{idea.palette.map(item => <ProductRow key={item.id} item={item} items={items} onCollection={onCollection} />)}</ul></section>
+    {idea.requirements?.length > 0 && <section className="detailSection"><h2>Pour reproduire cette inspiration</h2><ul>{idea.requirements.map(r => <li key={r.name}>{r.name}{r.required ? ' · nécessaire pour la réalisation' : ''}</li>)}</ul><button className="detailSecondary" onClick={() => generateVariants(true)}>Variante sans pinceau ni dessin</button></section>}
     <section className="detailSection"><div className="detailSectionTitle"><h2>À préparer</h2><Package /></div>{idea.resources.length ? <ul className="detailProducts">{idea.resources.map(item => <ProductRow key={item.id} item={item} items={items} role={resourceRole(item)} onCollection={onCollection} />)}</ul> : <p className="detailMuted">Aucun outil de nail art supplémentaire pour cette composition.</p>}<p className="detailFootnote">Cette liste couvre la composition. Prévois aussi les produits de préparation et de finition requis par ta pose.</p></section>
     <section className="detailSection detailWhy"><h2>Pourquoi cette idée ?</h2><ul>{idea.reasons.map(reason => <li key={reason}><Check />{reason}</li>)}</ul></section>
     <div className="detailActions"><button className="detailPrimary" aria-pressed={selected} aria-label={selected ? 'Ne plus retenir cette inspiration' : 'Retenir cette inspiration'} onClick={onSelect}>{selected ? <BookmarkCheck /> : <Check />}{selected ? 'C’est mon idée retenue' : 'Retenir cette inspiration'}</button><button className="detailSecondary" onClick={onFavorite}><Heart fill={favorite ? 'currentColor' : 'none'} />{favorite ? 'Retirer des favoris' : 'Garder dans mes favoris'}</button></div>
@@ -63,7 +66,7 @@ export default function InspirationView({ onRename, idea, items, profile, favori
 export function FavoritesView({ favorites, items, onOpen, onFavorite, onBack, completedKeys = new Set() }) {
   return <div className="inspirationPage favoritesPage"><div className="detailToolbar"><button onClick={onBack}><ArrowLeft />Créer</button></div><section className="detailHero"><small>MES ENVIES À GARDER</small><h1>Mes inspirations<br /><em>favorites</em></h1><p>{favorites.length} inspiration{favorites.length > 1 ? 's' : ''} conservée{favorites.length > 1 ? 's' : ''} sur cet appareil.</p></section>
     {!favorites.length ? <section className="creationEmpty"><Heart /><h2>Les idées qui te ressemblent</h2><p>Touche le cœur d’une inspiration pour la garder ici, même après avoir créé de nouvelles idées.</p><button onClick={onBack}>Trouver mes idées<ArrowRight /></button></section> : <div className="favoriteIdeaList">{favorites.map(idea => {
-      const changed = ideaAvailability(idea, items).some(item => item.state !== 'available');
+      const changed = ideaAvailability(idea, items).some(item => !['available', 'conceptual'].includes(item.state));
       return <article className="ideaCard" key={idea.key}><div className="ideaTopline"><span>{idea.palette.length} VERNIS · ≈ {idea.minutes} MIN</span><button className="ideaHeart" aria-label={'Retirer ' + idea.title + ' des favoris'} onClick={() => onFavorite(idea)}><Heart fill="currentColor" /></button></div><NailPreview idea={idea} /><div className="ideaBody">{completedKeys.has(idea.key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<h3>{idea.title}</h3><p>{idea.palette.map(item => item.name).join(' · ')}</p>{changed && <p className="favoriteChanged">Collection modifiée · détails dans la fiche</p>}<button className="detailPrimary" onClick={() => onOpen(idea)}>Ouvrir la fiche<ArrowRight /></button></div></article>;
     })}</div>}
   </div>;

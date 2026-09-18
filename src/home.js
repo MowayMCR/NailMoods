@@ -1,3 +1,4 @@
+import { generateInspirations } from './freeInspiration.js';
 import { createSuggestions } from './creationEngine.js';
 import { ideaAvailability } from './inspirations.js';
 import { filterJournal, localDate, pendingJournalPoses } from './journal.js';
@@ -22,7 +23,7 @@ export function buildHome({ items, profile, library, tutorials, journal, options
     || byRecent[0] || null;
   const completed = new Set(tutorials.sessions.filter(session => session.status === 'completed').map(session => session.idea.key));
   const retained = library.selected && !completed.has(library.selected.key) && !unfinished.some(session => session.idea.key === library.selected.key) ? library.selected : null;
-  const report = createSuggestions(items, profile, options, seed, 12, learning);
+  const report = generateInspirations(items, profile, options, seed, 12, learning);
   const reserved = new Set([retained, ...unfinished.map(session => session.idea)].filter(Boolean).map(personalRecipeKey));
   const availableIdeas = report.results.filter(idea => !reserved.has(personalRecipeKey(idea)));
   const inspiration = availableIdeas.find(idea => personalRecipeKey(idea) !== exclude) || availableIdeas[0] || null;

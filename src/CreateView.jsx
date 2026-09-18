@@ -1,3 +1,4 @@
+import { generateInspirations } from './freeInspiration';
 import { browserStorage } from './storage';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker } from 'lucide-react';
@@ -28,13 +29,13 @@ export default function CreateView({ onRename, onEquipment, items, profile, onCo
   const [picker, setPicker] = useState(null);
   const [storageError, setStorageError] = useState(false);
   const resultAnchor = useRef(null);
-  const options = state.options;
+  const options = useMemo(() => ({ ...state.options, intent: state.options.intent || (items.some(i => ['Vernis', 'Semi-permanent', 'Gel'].includes(i.type)) ? 'collection' : 'inspire') }), [state.options, items]);
   const stamp = useMemo(() => inventoryStamp(items), [items]);
   const activeRun = state.generated && state.inventory === stamp;
   const liveLearning = personalSettings.enabled ? personalModel.ranking : null;
   const liveStamp = personalSettings.enabled ? personalModel.stamp : 'off';
   const learning = activeRun ? state.learning : liveLearning;
-  const report = useMemo(() => createSuggestions(items, profile, options, state.seed || 1, 4, learning), [items, profile, options, state.seed, learning]);
+  const report = useMemo(() => generateInspirations(items, profile, options, state.seed || 1, 4, learning), [items, profile, options, state.seed, learning]);
   const pendingLearning = activeRun && state.learningStamp !== liveStamp && (state.learning || liveLearning);
   const chosen = activeRun && report.results.find(idea => idea.id === state.selected);
   const decorations = decorationChoice(options);
@@ -72,10 +73,10 @@ export default function CreateView({ onRename, onEquipment, items, profile, onCo
   if (openedKey) return <section className="creationEmpty"><h1>Cette fiche n’est plus disponible</h1><p>Retrouve tes favoris ou compose une nouvelle inspiration.</p><button onClick={() => onRoute('favorites')}>Mes favoris</button><button onClick={() => onRoute('create')}>Créer une inspiration</button></section>;
 
   return <div className="creationPage">
-    <section className="creationHero">
+    <section className="creationHero"><div className="inspirationIntent" aria-label="Mon intention"><button aria-pressed={options.intent !== 'collection'} onClick={() => change({ intent: 'inspire' })}>Inspire-moi</button><button aria-pressed={options.intent === 'collection'} onClick={() => change({ intent: 'collection' })}>Avec ma collection</button></div>
       <span className="creationEyebrow"><Sparkles /> L’ENVIE DU JOUR</span>
       <h1>Et si on créait<br /><em>ta prochaine pose ?</em></h1>
-      <p>Une envie, tes couleurs, ton petit détail.</p>
+      <p>Des idées tout de suite, avec ou sans collection.</p>
       <button className="profileApply" onClick={() => change(profileDefaults(profile))}>Utiliser les préférences de mon profil</button><div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
     </section>
 
@@ -105,40 +106,38 @@ export default function CreateView({ onRename, onEquipment, items, profile, onCo
     </section>
 
     <section className="creationInventory">
-      <Package /><div><b>À partir de ta collection</b><p>{report.inventoryColors} couleur{report.inventoryColors > 1 ? 's' : ''} · {report.tools.equipment.length} matériel{report.tools.equipment.length > 1 ? 's' : ''} & accessoires</p></div><button onClick={onCollection} aria-label="Ouvrir ma collection"><ChevronRight /></button>
+      <Package /><div><b>{options.intent === 'collection' ? 'À partir de ta collection' : 'Ta personnalisation, quand tu veux'}</b><p>{report.inventoryColors} couleur{report.inventoryColors > 1 ? 's' : ''} · {report.tools.equipment.length} matériel{report.tools.equipment.length > 1 ? 's' : ''} & accessoires</p></div><button onClick={onCollection} aria-label="Ouvrir ma collection"><ChevronRight /></button>
     </section>
-    {(report.blocked.length > 0 || report.effects.length > 0) && <details className="creationReadiness">
+    {options.intent === 'collection' && (report.blocked.length > 0 || report.effects.length > 0) && <details className="creationReadiness">
       <summary>{report.blocked.length + report.effects.length} produit{report.blocked.length + report.effects.length > 1 ? 's' : ''} non retenu{report.blocked.length + report.effects.length > 1 ? 's' : ''} pour cette envie</summary>
       <ul>{report.blocked.map(({ item, reason }) => <li key={item.id}><b>{item.name}</b><span>{reason}</span></li>)}{report.effects.map(item => <li key={item.id}><b>{item.name}</b><span>Effet à appliquer sur une base : sa compatibilité et ses accessoires restent à préciser. Il n’est pas utilisé comme couleur seule.</span></li>)}</ul>
       <button onClick={onCollection}>Voir mes fiches produits <ArrowRight /></button>
     </details>}
     {state.generated && !activeRun && <p className="creationNotice" role="status">Ta collection a changé. Relance les idées pour utiliser son contenu actuel.</p>}
     {pendingLearning && <p className="creationNotice" role="status">Tes retours ou tes réglages ont changé. Recompose tes idées pour les prendre en compte.</p>}
-    {report.results.length === 0 ? <section className="creationEmpty" role="status">
-      <Palette /><h2>{missingLamp ? 'As-tu une lampe UV / LED ?' : missingMagnet ? 'As-tu un aimant cat-eye ?' : 'Préparons ta première idée'}</h2>
-      {missingLamp && <><p>Tes semi-permanents ou gels nécessitent une lampe. Ajoute celle que tu possèdes pour les utiliser dans tes idées.</p><button onClick={() => onEquipment('Lampe UV / LED')}>J’ai une lampe UV / LED</button></>}
-      {missingMagnet && <><p>Ces couleurs nécessitent un aimant cat-eye.</p><button onClick={() => onEquipment('Aimant cat-eye')}>J’ai un aimant cat-eye</button></>}
-      <p hidden={missingLamp || missingMagnet}>{report.decorationUnavailable ? decorations.id ? 'La décoration choisie n’est plus disponible dans ta collection. Choisis-en une autre ou repasse en automatique.' : 'Ajoute des stickers ou des strass dans ta collection, ou choisis des idées sans décorations.' : report.availableColors && report.countUnavailable ? 'Tu as choisi ' + report.requestedPolishCount + ' vernis. Avec ta collection, le type de pose et tes limites actuelles, ' + report.maxPolishCount + ' au maximum peuvent être associés. Ajuste ce nombre, tes limites ou ta collection.' : report.availableColors ? 'Aucune idée ne tient dans le temps choisi. Essaie un peu plus de temps.' : report.inventoryColors ? 'Tes couleurs ne sont pas utilisables avec les limites ou le matériel actuellement renseignés. Consulte les produits non retenus ci-dessus.' : 'Ajoute au moins une couleur de vernis dans ta collection pour composer tes premières idées.'}</p>
-      <button onClick={report.decorationUnavailable ? () => setPicker('decorations') : report.availableColors ? () => setPicker(report.countUnavailable ? 'polishCount' : 'duration') : onCollection}>{report.decorationUnavailable ? 'Choisir mes décorations' : report.availableColors ? report.countUnavailable ? 'Ajuster le nombre de vernis' : 'Ajuster mon temps' : 'Ouvrir ma collection'}<ArrowRight /></button>
-    </section> : <button className="creationGenerate" onClick={generate}><Sparkles />{activeRun ? 'Une autre idée' : 'Générer une idée'}<ArrowRight /></button>}
+    {report.requestedIntent === 'collection' && report.intent === 'inspire' && <p className="creationNotice">Ta collection ne contient pas encore de couleur utilisable : voici des inspirations libres, à personnaliser quand tu veux.</p>}
+    {report.adjusted && <p className="creationNotice">Voici une alternative avec un nombre de couleurs, des décorations ou un temps adaptés aux possibilités disponibles.</p>}
+    <button className="creationGenerate" onClick={generate}><Sparkles />{activeRun ? 'Une autre idée' : 'Générer une idée'}<ArrowRight /></button>
+    <button className="coachLink" onClick={onCollection}>Personnaliser avec mes couleurs et mon matériel<ChevronRight /></button>
     <p className="creationTimeNote">Temps indicatifs pour la couleur et la décoration, hors préparation, dépose et séchage.</p>
     {storageError && <p className="formError" role="alert">Tes choix restent disponibles ici, mais n’ont pas pu être sauvegardés sur cet appareil.</p>}
 
     {activeRun && <section className="creationResults" ref={resultAnchor} aria-labelledby="ideas-title">
-      <div className="creationSectionTitle"><span>03</span><div><small>COMPOSÉES AVEC CE QUE TU POSSÈDES</small><h2 id="ideas-title">{report.results.length} idée{report.results.length > 1 ? 's' : ''} pour toi</h2></div></div>
-      {report.results.length < 4 && <p className="creationNotice">Ta collection et tes choix permettent {report.results.length} proposition{report.results.length > 1 ? 's' : ''} distincte{report.results.length > 1 ? 's' : ''} pour le moment. Aucun produit supplémentaire n’a été ajouté aux idées.</p>}
-      <p className="creationHint">Aperçus schématiques avec tes teintes enregistrées. Les reflets et motifs restent illustratifs. Vérifie la compatibilité des produits et de la lampe sur leurs notices.</p>
+      <div className="creationSectionTitle"><span>03</span><div><small>{report.intent === 'inspire' ? 'INSPIRATIONS LIBRES · COULEURS DE STYLE' : 'AVEC LES TEINTES DE TA COLLECTION'}</small><h2 id="ideas-title">{report.results.length} idée{report.results.length > 1 ? 's' : ''} pour toi</h2></div></div>
+      {report.results.length < 4 && <p className="creationNotice">Ta collection et tes choix permettent {report.results.length} proposition{report.results.length > 1 ? 's' : ''} distincte{report.results.length > 1 ? 's' : ''} pour le moment. Aucun produit n’a été ajouté à ta collection.</p>}
+      <p className="creationHint">{report.intent === 'inspire' ? 'Couleurs d’inspiration, sans référence commerciale ni produit ajouté à ta collection.' : 'Aperçus schématiques avec tes teintes enregistrées.'} Les reflets et motifs restent illustratifs. Vérifie la compatibilité des produits et de la lampe sur leurs notices.</p>
       {chosen && <button className="chosenIdea" onClick={() => onOpen(chosen, options)}><BookmarkCheck /><span><b>Ton idée retenue</b><small>{chosen.title} · {chosen.palette.map(item => item.name).join(' + ')}</small></span><ChevronRight /></button>}
       <div className="ideaList">{report.results.map((idea, index) => <article className={'ideaCard ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id}>
         <div className="ideaTopline"><span>ENVIE {String(index + 1).padStart(2, '0')}</span><span><Clock3 />≈ {idea.minutes} min</span></div>
         <NailPreview idea={idea} />
-        <div className="ideaBody">{completedKeys.has(snapshotIdea(idea, options).key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3>{idea.title}</h3><p>{idea.description}</p>
+        <div className="ideaBody">{completedKeys.has(snapshotIdea(idea, { ...options, intent: idea.intent }).key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3>{idea.title}</h3><p>{idea.description}</p>
           <div className="ideaProducts">{idea.palette.map(item => <span key={item.id}><i style={{ background: item.color }} />{item.name}</span>)}</div>
           {idea.resources.filter(isDecoration).map(item => <div className="ideaDecoration" key={item.id}><DecorationPhoto item={item} /><div><small>MA DÉCORATION</small><b>{item.name}</b><span>Motif schématique sur les ongles</span></div></div>)}
+          {idea.requirements?.length > 0 && <p className="creationNotice">Pour la réaliser : {idea.requirements.map(r => r.name).join(' · ')}</p>}
           {idea.resources.some(item => !isDecoration(item)) && <div className="ideaEquipment"><small>AVEC MON MATÉRIEL</small><p>{idea.resources.filter(item => !isDecoration(item)).map(item => item.name).join(' · ')}</p></div>}
           <ul className="ideaReasons">{idea.reasons.map(reason => <li key={reason}><Check />{reason}</li>)}</ul>
-          <button className="chooseIdea" aria-pressed={chosen?.id === idea.id} onClick={() => { const saved = snapshotIdea(idea, options); const clear = chosen?.id === idea.id; if (onSelect(saved, clear)) setState(previous => ({ ...previous, selected: clear ? null : idea.id })); }}>{chosen?.id === idea.id ? <Check /> : <BookmarkCheck />}{chosen?.id === idea.id ? 'Idée retenue' : 'Je choisis cette idée'}</button>
-          <div className="ideaCardActions"><button className="detailPrimary" onClick={() => onOpen(idea, options)}>Voir la fiche<ArrowRight /></button><button className="ideaHeart" aria-label={(library.favorites.some(saved => saved.key === snapshotIdea(idea, options).key) ? 'Retirer des favoris : ' : 'Ajouter aux favoris : ') + idea.title} aria-pressed={library.favorites.some(saved => saved.key === snapshotIdea(idea, options).key)} onClick={() => onFavorite(snapshotIdea(idea, options))}><Heart fill={library.favorites.some(saved => saved.key === snapshotIdea(idea, options).key) ? 'currentColor' : 'none'} /></button></div>
+          <button className="chooseIdea" aria-pressed={chosen?.id === idea.id} onClick={() => { const saved = snapshotIdea(idea, { ...options, intent: idea.intent }); const clear = chosen?.id === idea.id; if (onSelect(saved, clear)) setState(previous => ({ ...previous, selected: clear ? null : idea.id })); }}>{chosen?.id === idea.id ? <Check /> : <BookmarkCheck />}{chosen?.id === idea.id ? 'Idée retenue' : 'Je choisis cette idée'}</button>
+          <div className="ideaCardActions"><button className="detailPrimary" onClick={() => onOpen(idea, { ...options, intent: idea.intent })}>Voir la fiche<ArrowRight /></button><button className="ideaHeart" aria-label={(library.favorites.some(saved => saved.key === snapshotIdea(idea, { ...options, intent: idea.intent }).key) ? 'Retirer des favoris : ' : 'Ajouter aux favoris : ') + idea.title} aria-pressed={library.favorites.some(saved => saved.key === snapshotIdea(idea, { ...options, intent: idea.intent }).key)} onClick={() => onFavorite(snapshotIdea(idea, { ...options, intent: idea.intent }))}><Heart fill={library.favorites.some(saved => saved.key === snapshotIdea(idea, { ...options, intent: idea.intent }).key) ? 'currentColor' : 'none'} /></button></div>
         </div>
       </article>)}</div>
       {report.total > report.results.length && <button className="moreIdeas" onClick={generate}><RotateCcw />Proposer d’autres associations</button>}

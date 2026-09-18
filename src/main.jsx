@@ -100,7 +100,7 @@ function App() {
     catch { if (allowMemory) setLibrary(next); setAppError('Cette inspiration reste visible, mais la sauvegarde n’a pas abouti sur cet appareil. Les favoris déjà enregistrés sont conservés. Libère un peu de stockage puis réessaie.'); return false; }
   }
   function openIdea(idea, options) {
-    const saved = snapshotIdea(idea, options || idea.options);
+    const saved = snapshotIdea(idea, { ...(options || idea.options), ...(idea.intent ? { intent: idea.intent } : {}) });
     saveLibrary(rememberIdea(library, saved), true);
     setTab('create');
     setRoute('#inspiration/' + saved.key);
