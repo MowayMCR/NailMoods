@@ -1,3 +1,4 @@
+import { StorageHint } from './StorageContext';
 import React from 'react';
 import { Sparkles, ChevronRight, Heart, BookHeart } from 'lucide-react';
 import Sheet from './Sheet';
@@ -22,7 +23,7 @@ export default function PersonalizationPanel({ model, settings, onChange, onClos
     {model.unexplored.length > 0 && <section><h3>À explorer avec « Envie de changement »</h3>{chips(model.unexplored)}<p>Ces vernis ne figurent pas encore dans tes poses enregistrées.</p></section>}
     {model.practice.length > 0 && <section><h3>À ton rythme</h3><p>{model.practice.join(', ')} : tes retours indiquent une réalisation parfois difficile. Les compositions simples prennent un peu plus de place, et tu gardes accès à tous les niveaux.</p></section>}
     <section className="personalModes"><h3>Selon ton envie du jour</h3><p><b>Comme d’habitude</b> rapproche les idées de tes coups de cœur.</p><p><b>Envie de changement</b> laisse plus de place aux vernis peu utilisés et aux nouvelles associations.</p><p><b>Surprends-moi</b> varie les propositions tout en respectant tes limites.</p></section>
-    <details className="personalDetails"><summary>Quels retours sont utilisés ?</summary><p>Les inspirations favorites, les références des poses réalisées, « J’adore », « J’aime bien », « À refaire » et la facilité ressentie. Une pose dans le journal et son tutoriel ne comptent qu’une fois.</p><p>« À ajuster » concerne la composition essayée : ses vernis ne sont pas écartés. Les notes libres, photos et durées de tenue ne sont pas interprétées pour ce classement.</p><p>Modifie un retour ou retire un favori pour corriger ces repères. Tout reste sur cet appareil. Mettre en pause conserve ton journal et tes favoris.</p></details>
+    <details className="personalDetails"><summary>Quels retours sont utilisés ?</summary><p>Les inspirations favorites, les références des poses réalisées, « J’adore », « J’aime bien », « À refaire » et la facilité ressentie. Une pose dans le journal et son tutoriel ne comptent qu’une fois.</p><p>« À ajuster » concerne la composition essayée : ses vernis ne sont pas écartés. Les notes libres, photos et durées de tenue ne sont pas interprétées pour ce classement.</p><p>Modifie un retour ou retire un favori pour corriger ces repères. <StorageHint guest="Tout reste sur cet appareil." account="Ces données restent privées dans ton compte."/> Mettre en pause conserve ton journal et tes favoris.</p></details>
     <div className="personalActions"><button onClick={onJournal}><BookHeart />Ouvrir mon journal</button><button onClick={onFavorites}><Heart />Mes inspirations favorites</button></div>
   </Sheet>;
 }

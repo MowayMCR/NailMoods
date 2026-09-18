@@ -41,3 +41,7 @@ Depuis une session Supabase administrative autorisée :
 6. Recette téléphone : scan caméra, première idée Free, produit inconnu, tutoriel, journal, fermeture/réouverture, compte et mode invité.
 
 Phase 12A non déclarée validée tant que ces essais serveur et humains ne sont pas réalisés. Phase 12B : profils Pro publics, partage et messagerie restent hors périmètre de ce lot.
+
+## Publication et recette navigateur
+
+Déploiement GitHub Pages réussi après les 194 tests. Sur la version publiée : accueil accessible en invité, 10 produits/accessoires de test, 4 favoris et 2 souvenirs locaux toujours présents. Ouverture et fermeture du formulaire de compte vérifiées : champs email/password avec autocomplete, boutons de 48 px (fermeture 44 px), aucun débordement horizontal dans la colonne de 400 px du navigateur de contrôle. Après fermeture, Inspire-moi génère effectivement quatre propositions sans connexion. Ce contrôle utilise le navigateur de test existant ; il ne remplace pas une nouvelle session vierge sur téléphone.

@@ -109,8 +109,9 @@ export default function AccountRoot({App}){
   const label=ready?(loaded.store.profile?.display_name || session.user.email || 'Mon compte'):'Mode invité';
   const accountAccess=<aside className="accountBar" aria-label="Compte et synchronisation">
     <button type="button" onClick={()=>{setMode(userId?'account':'login');setOpen(true);setAuthError('');setMessage('');}}>{label}<span>{ready?loaded.workspace.name || 'Espace personnel':userId?'Mon compte':'Se connecter'}</span></button>
+    {ready && count>0 && !loaded.store.migrationDone && <button type="button" onClick={()=>{setMode('account');setOpen(true);}}>Importer mes données invitées</button>}
     {ready && <span role="status">{status.kind==='saving'?'Enregistrement…':status.kind==='error'?'À synchroniser':status.pending?'En attente':'Synchronisé'}</span>}
-    {ready && status.kind==='error' && <div className="accountNotice" role="alert"><p>{status.message}</p><button onClick={()=>void loaded.store.flush()}>Réessayer</button><button onClick={()=>{setMode('account');setOpen(true);}}>Mon compte</button></div>}
+    {ready && status.kind==='error' && <div className="accountNotice" role="alert"><p>{status.message}</p><button onClick={()=>loaded.store.pending?void loaded.store.flush():setRetry(v=>v+1)}>Réessayer</button><button onClick={()=>{setMode('account');setOpen(true);}}>Mon compte</button></div>}
   </aside>;
   return <>
     {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}

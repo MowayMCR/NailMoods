@@ -54,6 +54,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
     });return running;
   }
   const adapter={
+    accountScoped:true,
     getItem(k){return state?.views[k]===undefined?null:JSON.stringify(state.views[k]);},
     setItem(k,json){check();const value=JSON.parse(json);if(same(state.views[k],value))return;const next=clone(state);changes(next,k,state.views[k],value);next.views[k]=value;save(next);void flush();},
   };

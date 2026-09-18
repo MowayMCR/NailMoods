@@ -1,3 +1,4 @@
+import { StorageHint } from './StorageContext';
 import RecipeSummary from './RecipeSummary';
 import JournalVariants from './JournalVariants';
 import React, { useEffect, useRef, useState } from 'react';
@@ -78,7 +79,7 @@ function JournalEditor({ entry, session, items, onSave, onNavigate }) {
         {draft.products.length > 0 && <div className="journalProductPills">{draft.products.map(item => <span key={item.id}>{item.type !== 'Matériel' && <i style={{ background: item.color || 'var(--soft)' }} />}<b>{item.name}</b><button type="button" aria-label={'Retirer ' + item.name + ' des produits utilisés'} onClick={() => change({ products: draft.products.filter(value => String(value.id) !== String(item.id)) })}><X /></button></span>)}</div>}
         <button type="button" className="journalSecondary" onClick={() => setProductsOpen(true)}><Package />{draft.products.length ? 'Modifier les produits' : 'Choisir dans ma collection'}</button>
       </section>
-      <div className="journalFormActions">{error && <p className="formError" role="alert">{error}</p>}<button type="submit" className="journalPrimary" disabled={photoBusy}><Check />{photoBusy ? 'Préparation de la photo…' : entry ? 'Enregistrer les modifications' : 'Enregistrer ma pose'}</button><small>Conservée dans ce navigateur, sur cet appareil.</small></div>
+      <div className="journalFormActions">{error && <p className="formError" role="alert">{error}</p>}<button type="submit" className="journalPrimary" disabled={photoBusy}><Check />{photoBusy ? 'Préparation de la photo…' : entry ? 'Enregistrer les modifications' : 'Enregistrer ma pose'}</button><small><StorageHint guest="Conservée dans ce navigateur, sur cet appareil." account="Conservée dans ton compte après synchronisation."/></small></div>
     </form>
     {productsOpen && <ProductPicker products={draft.products} items={items} onApply={products => { change({ products }); setProductsOpen(false); }} onClose={() => setProductsOpen(false)} />}
   </div>;
@@ -141,6 +142,6 @@ export default function JournalView({ onFavorites, library, profile, journal, se
       : journal.entries.length ? <section className="journalEmpty"><Search /><h2>Aucune pose trouvée</h2><p>{repeatOnly ? 'Les poses marquées « à refaire » apparaîtront ici.' : 'Essaie un autre nom, produit ou mot de tes notes.'}</p><button className="journalSecondary" onClick={() => { setQuery(''); setRepeatOnly(false); }}>Voir toutes mes poses</button></section>
         : <section className="journalEmpty"><BookHeart /><h2>Tes prochaines poses apparaîtront ici</h2><p>Ajoute une pose déjà réalisée, avec ou sans photo. Tes inspirations favorites restent dans Créer.</p><button className="journalSecondary" onClick={onCreate}>Créer ma première inspiration<ArrowRight /></button></section>}
     {library?.favorites.length > 0 && <section className="journalPending"><h2>Mes envies sauvegardées</h2><p>Tes favoris, à réaliser quand tu veux. Ils ne sont pas comptés comme des poses réalisées.</p>{library.favorites.slice(0, 6).map(idea => <article key={idea.key}><div><NailPreview idea={idea} compact /><h3>{idea.title}</h3><button onClick={() => onIdea(idea)}>Retrouver cette inspiration<ArrowRight /></button></div></article>)}<button className="journalSecondary" onClick={onFavorites}>Voir toutes mes inspirations favorites<ArrowRight /></button></section>}
-    <p className="journalLocal">Ton journal est conservé dans ce navigateur, sur cet appareil.</p>
+    <p className="journalLocal"><StorageHint guest="Ton journal est conservé dans ce navigateur, sur cet appareil." account="Ton journal est lié à ton compte. L’état de synchronisation est indiqué en haut de la page."/></p>
   </div>;
 }
