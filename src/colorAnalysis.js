@@ -59,3 +59,21 @@ export function photoPalette({ data, width, height }, count = 6) {
   }
   return result;
 }
+
+// Ranking uses the measured shade, without rewriting the user's classification.
+export function generationFamily(item) {
+  const exact=preciseShade(item) || (validHex(item.color) ? item.color : '');
+  if(!exact) return item.family || describeColor(productColor(item)).family;
+  // Gold and silver describe a finish; retain them only when explicitly metallic.
+  if(['Or','Argent'].includes(item.family) && /métall|metall|chrome/i.test(item.finish || '')) return item.family;
+  const channels=rgb(exact).map(v=>v/255), high=Math.max(...channels), low=Math.min(...channels), delta=high-low;
+  if(delta > .06) {
+    const [r,g,b]=channels;
+    const hue=((high===r?(g-b)/delta:high===g?(b-r)/delta+2:(r-g)/delta+4)*60+360)%360;
+    // Hue protects dark greens/blues from the nearest, similarly dark brown swatch.
+    if(hue>=65 && hue<170) return 'Vert';
+    if(hue>=170 && hue<255) return 'Bleu';
+    if(hue>=255 && hue<295) return 'Violet';
+  }
+  return describeColor(exact).family;
+}

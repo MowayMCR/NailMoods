@@ -1,3 +1,4 @@
+import RecipeSummary from './RecipeSummary';
 import JournalVariants from './JournalVariants';
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, BookHeart, Camera, Check, ChevronRight, Heart, Package, PenLine, Plus, Search, Trash2, X } from 'lucide-react';
@@ -11,6 +12,7 @@ import './journal.css';
 
 function JournalVisual({ entry, compact = false }) {
   return <div className={'journalVisual' + (compact ? ' compact' : '')}>
+    {entry.photo && entry.idea && <NailPreview idea={entry.idea} compact />}
     {entry.photo ? <img src={entry.photo} alt={'Résultat de la pose « ' + entry.title + ' »'} loading="lazy" /> : entry.idea ? <><NailPreview idea={entry.idea} /><small>Inspiration · aperçu schématique</small></> : <div className="journalNoPhoto"><Camera /><span>Un souvenir à compléter</span></div>}
   </div>;
 }
@@ -92,7 +94,7 @@ function JournalDetail({ entry, profile, items, onNavigate, onSave, onDelete, on
     <div className="journalToolbar"><button onClick={() => onNavigate('')}><ArrowLeft />Mon journal</button><button onClick={() => onNavigate(entry.id + '/modifier')}><PenLine />Modifier</button></div>
     <section className="journalHeading"><small>{journalDate(entry.date)}</small><h1 ref={heading} tabIndex={-1}>{entry.title}</h1></section>
     <JournalVisual entry={entry} /><div className="journalToolbar"><button onClick={() => setVariantsOpen(true)}>Créer une variante<ArrowRight /></button></div>
-    <section className="journalDetailBody">
+    <RecipeSummary idea={entry.idea} /><section className="journalDetailBody">
       {error && <p className="formError" role="alert">{error}</p>}
       <div className="journalBadges">{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.ease && <span>Réalisation : {easeLabels[entry.ease].toLocaleLowerCase('fr')}</span>}{entry.wearDays !== '' && <span>Tenue observée : {entry.wearDays} jour{entry.wearDays > 1 ? 's' : ''}</span>}</div>
       <button className="journalRepeatToggle" aria-pressed={entry.repeat} onClick={() => { const result = onSave({ ...entry, repeat: !entry.repeat }); setError(result.ok ? '' : result.error); }}><Heart fill={entry.repeat ? 'currentColor' : 'none'} />{entry.repeat ? 'Dans mes poses à refaire' : 'Garder dans mes poses à refaire'}</button>

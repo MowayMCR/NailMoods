@@ -1,3 +1,4 @@
+import { decorationTags, stickerTags, isDecoration } from './decorations';
 import React from 'react';
 import { Lightbulb, Sticker, Brush, Minus, Sparkles, Magnet, Stamp, Scissors, Package, PenLine, Palette } from 'lucide-react';
 
@@ -50,6 +51,7 @@ export function EquipmentFields({ item, onChange }) {
       <label>Quantité<input type="number" min="1" max="9999" step="1" inputMode="numeric" value={item.quantity ?? 1} onChange={event => onChange({ quantity: event.target.value })} /></label>
     </div>
     {type.decorative && <label>Couleur / motif (facultatif)<input value={item.materialStyle || ''} onChange={event => onChange({ materialStyle: event.target.value })} placeholder="Doré, argenté, fleurs, étoiles…" /></label>}
+    {isDecoration(item) && <fieldset className="stickerTags"><legend>Motifs et univers <small>facultatif · plusieurs choix possibles</small></legend><div>{decorationTags.map(tag=><button key={tag} type="button" aria-pressed={stickerTags(item).includes(tag)} onClick={()=>onChange({decorationTags:stickerTags(item).includes(tag)?stickerTags(item).filter(t=>t!==tag):[...stickerTags(item),tag]})}>{tag}</button>)}</div></fieldset>}
     <label>Notes (facultatif)<textarea rows="3" value={item.notes || ''} onChange={event => onChange({ notes: event.target.value })} placeholder="Taille, grain, embout, contenu du lot…" /></label>
   </>;
 }

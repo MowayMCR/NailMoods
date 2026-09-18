@@ -1,12 +1,12 @@
-import { productColor } from './colorAnalysis.js';
-import { decorationChoice, isDecoration } from './decorations.js';
+import { productColor, generationFamily } from './colorAnalysis.js';
+import { decorationChoice, isDecoration, stickerTags, stickerAffinity } from './decorations.js';
 import { personalAdjustment, validPersonalSnapshot } from './personalization.js';
 
 // Suggestions use owned products only. Resolve the shade once for nails and product swatches alike.
 export const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 export const normalizePolishCount = value => ['number', 'string'].includes(typeof value) && [1, 2, 3, 4, 5].includes(Number(value)) ? Number(value) : 'auto';
 const unique = items => [...new Map(items.filter(Boolean).map(item => [String(item.id), item])).values()];
-const fieldText = item => normalize([item.name, item.reference, item.materialStyle].filter(Boolean).join(' '));
+const fieldText = item => normalize([item.name, item.reference, item.materialStyle, ...stickerTags(item)].filter(Boolean).join(' '));
 export const auxiliary = item => /\b(base\s*coat|top\s*coat|primer|cleaner|dissolvant|remover|huile)\b/.test(normalize(item.name).replace(/-/g, ' '));
 const needsLamp = item => ['Semi-permanent', 'Gel'].includes(item.type);
 const magnetic = item => /cat.?eye|magnetique|avec aimant/.test(normalize([item.finish, item.effect, item.usage].join(' ')));
@@ -62,8 +62,12 @@ export function inventoryTools(items) {
   };
 }
 
-export function stickerAppearance(item) {
-  const value = fieldText(item);
+export function stickerAppearance(item, options = {}) {
+  let value = fieldText(item);
+  const tags=stickerTags(item), style=normalize(options.style+' '+options.mood);
+  const preferred=/floral|nature|douce|roman/.test(style)?['floral','cœur']:/witch|myster|celestial/.test(style)?['lune','étoile']:[];
+  const chosen=preferred.find(tag=>tags.includes(tag));
+  if(chosen) value=normalize(chosen)+' '+value.replace(/etoil|star|lune|moon|feuille|leaf|leaves|feuillage|ligne|bande|stripe|fleur|floral|flower|coeur|heart/g,'');
   return {
     motif: /etoil|star/.test(value) ? 'star' : /lune|moon/.test(value) ? 'moon' : /feuille|leaf|leaves|feuillage/.test(value) ? 'leaf' : /ligne|bande|stripe/.test(value) ? 'stripe' : /fleur|floral|flower/.test(value) ? 'flower' : /coeur|heart/.test(value) ? 'heart' : /strass|gem|rhinestone/.test(value) ? 'gem' : 'generic',
     color: /argent|silver/.test(value) ? '#b9bfcf' : /dore|\bor\b|gold/.test(value) ? '#d0aa58' : /automn|autumn|cuivr|copper/.test(value) ? '#be7849' : /blanc|white/.test(value) ? '#fff8ef' : /noir|black/.test(value) ? '#28212e' : '#d9c7b2',
@@ -78,7 +82,7 @@ const hashScore = (text, seed) => {
 
 export function createSuggestions(items = [], profile = {}, supplied = {}, seed = 1, limit = 4, learning = null) {
   supplied = { ...supplied, requiredColorIds: Array.isArray(supplied.requiredColorIds) ? [...new Set(supplied.requiredColorIds.filter(id => ['string', 'number'].includes(typeof id)).map(String))].slice(0, 5) : [] };
-  items = items.map(item => item.type === 'Matériel' ? item : { ...item, color: productColor(item) });
+  items = items.map(item => item.type === 'Matériel' ? item : { ...item, color: productColor(item), family: generationFamily(item) });
   const personalModel = validPersonalSnapshot(learning) ? learning : null;
   const options = { ...profileDefaults(profile), ...supplied };
   const constraints = new Set(Array.isArray(options.constraints) ? options.constraints : []);
@@ -89,7 +93,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const decoration = decorationChoice(options);
   const requestedDecorations = decoration.mode === 'with' && decoration.id ? tools.stickers.filter(item => String(item.id) === decoration.id) : tools.stickers;
   // An explicit choice remains selectable even beyond the bounded automatic sample.
-  const usableDecorations = decoration.mode === 'without' ? [] : requestedDecorations.slice(0, 20);
+  const usableDecorations = decoration.mode === 'without' ? [] : [...requestedDecorations].sort((a,b)=>stickerAffinity(b,options)-stickerAffinity(a,options)).slice(0, 20);
   const decorationUnavailable = decoration.mode === 'with' && !usableDecorations.length;
   const blocked = [];
   const effects = items.filter(item => item.type === 'Effet' && !auxiliary(item));
@@ -154,7 +158,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
         color: polish.color || '#b88699',
         finish: polish.finish,
         effect: polish.effect,
-        decoration: decorated && (variant === 1 ? [1, 3].includes(index) : index === 3) ? stickerAppearance(sticker) : null,
+        decoration: decorated && (variant === 1 ? [1, 3].includes(index) : index === 3) ? stickerAppearance(sticker, options) : null,
         drawing: drawing.has(pattern) && (pattern === 'french' || index === 3) ? pattern : null,
         accentColor: second?.color,
         accentProductId: drawing.has(pattern) && (pattern === 'french' || index === 3) ? second?.id : null,
@@ -188,7 +192,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       palette: 'Du pouce à l’auriculaire : ' + nails.map(nail => palette.find(item => item.id === nail.productId).name).join(', ') + '.',
       paletteSticker: palette.length + ' vernis répartis sur les cinq ongles, avec ' + sticker?.name + (variant === 1 ? ' sur l’index et l’annulaire.' : ' sur l’annulaire.'),
     };
-    let score = primaryScore(base) + (palette.length > 1 ? palette.slice(1).reduce((sum, item) => sum + primaryScore(item), 0) / (palette.length - 1) * 0.2 : 0);
+    let score = (sticker ? stickerAffinity(sticker, options) : 0) + primaryScore(base) + (palette.length > 1 ? palette.slice(1).reduce((sum, item) => sum + primaryScore(item), 0) / (palette.length - 1) * 0.2 : 0);
     if (options.occasion === 'Travail' && ['solid', 'accent', 'line'].includes(pattern)) score += 12;
     if (['Soirée', 'Événement'].includes(options.occasion) && ['sticker', 'duo', 'french', 'palette', 'paletteSticker'].includes(pattern)) score += 12;
     if (['Douce', 'Au calme', 'Chic'].includes(options.mood) && ['solid', 'accent'].includes(pattern)) score += 6;

@@ -6,7 +6,7 @@ import { readPhotoText, readBarcodePhoto } from './recognition';
 import { colorFamilyChange } from './colorAnalysis';
 import './product-import.css';
 
-const fieldNames = { collection: 'Gamme', finishDetail: 'Détail de finition', catalogColor: 'Teinte catalogue validée', name: 'Nom', brand: 'Marque', type: 'Nature', equipmentCategory: 'Matériel', reference: 'Référence', barcode: 'Code-barres', family: 'Famille de couleur', finish: 'Finition', effect: 'Effet', usage: 'Utilisation', photo: 'Photo de la boutique' };
+const fieldNames = { sku: 'SKU', collection: 'Gamme', finishDetail: 'Détail de finition', catalogColor: 'Teinte catalogue validée', name: 'Nom', brand: 'Marque', type: 'Nature', equipmentCategory: 'Matériel', reference: 'Référence', barcode: 'Code-barres', family: 'Famille de couleur', finish: 'Finition', effect: 'Effet', usage: 'Utilisation', photo: 'Photo de la boutique' };
 
 function Review({ candidate, existing, onUse, onDismiss }) {
   const [current, setCurrent] = useState(candidate);
@@ -22,7 +22,7 @@ function Review({ candidate, existing, onUse, onDismiss }) {
     {candidate.source && <p className="fieldHelp">Source : <a href={candidate.source} target="_blank" rel="noreferrer">{new URL(candidate.source).hostname}</a></p>}
     {current.needsVariant && <label>Variante du produit<select value={current.variantId} onChange={event => variant(event.target.value)}><option value="" disabled>Choisis la référence exacte</option>{current.variants.map(value => <option key={value.id} value={value.id}>{value.title === 'Default Title' ? 'Référence unique' : value.title}</option>)}</select></label>}
     {current.images.length > 0 && <><p className="fieldHelp">Choisis la photo à garder.</p><div className="importImages">{current.images.map((source, index) => <button key={source} type="button" aria-label={`Photo produit ${index + 1}`} aria-pressed={current.fields.photo === source} onClick={() => setCurrent(value => ({ ...value, fields: { ...value.fields, photo: source } }))}><img src={source} alt="" loading="lazy" referrerPolicy="no-referrer" />{current.fields.photo === source && <Check />}</button>)}</div></>}
-    {candidate.confidence && <p className="fieldHelp">Correspondance {candidate.confidence} · score {candidate.score}/100. {candidate.reason}. Confirme la référence et la teinte.</p>}<p className="fieldHelp">Coche les informations à reprendre. Tu pourras ensuite tout corriger.</p>
+    {candidate.confidence && <p className="fieldHelp">Correspondance {candidate.confidence} · score {candidate.score}/100. {candidate.reason}. Confirme la référence et la teinte.</p>}{candidate.evidence && <details className="recognitionEvidence"><summary>Détail de la correspondance</summary><p>Indices de rapprochement, pas des probabilités. Une couleur seule ne confirme jamais une référence.</p><dl>{Object.entries({brand:'Marque',collection:'Gamme',reference:'Référence / SKU',name:'Nom de teinte',color:'Couleur'}).map(([key,label])=><div key={key}><dt>{label}</dt><dd>{candidate.evidence[key] == null ? 'Non évalué' : candidate.evidence[key] + '/100'}</dd></div>)}</dl></details>}<p className="fieldHelp">Coche les informations à reprendre. Tu pourras ensuite tout corriger.</p>
     <div className="importFields">{Object.entries(current.fields).filter(([key, value]) => value && fieldNames[key]).map(([key, value]) => <label key={key}><input type="checkbox" checked={selected.includes(key)} onChange={() => toggle(key)} /><span><small>{fieldNames[key]}</small><b>{key === 'photo' ? existing.photo ? 'Remplacer ma photo actuelle' : 'Ajouter la photo sélectionnée' : value}</b>{key !== 'photo' && existing.id && existing[key] && existing[key] !== value && <small>Actuellement : {existing[key]}</small>}</span></label>)}</div>
     {candidate.catalogId && !current.fields.catalogColor && <p className="fieldHelp">La référence est connue, mais sa teinte exacte n’est pas renseignée dans le catalogue. Confirme ta couleur dans la fiche, par photo ou avec le sélecteur.</p>}
     {current.fields.family && <p className="fieldHelp">La famille de couleur ne donne pas la teinte exacte. Prélève-la dans la photo après l’import.</p>}
@@ -49,7 +49,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
       const result = await action(controller.signal, progress => { if (version === revision.current) setBusy(`Lecture de l’étiquette… ${progress} %`); });
       if (version !== revision.current || controller.signal.aborted) return;
       if (result?.fields) setCandidate(result);
-      else if (result?.catalogMatches) { setLocalMatches(result.catalogMatches); if (!result.catalogMatches.length) setError('Cette référence n’est pas encore dans NailMoods.'); }
+      else if (result?.catalogMatches) { setLocalMatches(result.catalogMatches); if (!result.catalogMatches.length) setError('Je ne trouve pas encore cette référence dans mon catalogue.'); }
       else if (result?.text !== undefined) { setText(result.text); if (!result.text) setError('Aucun texte lisible. Essaie une photo plus nette et rapprochée de l’étiquette.'); }
       else if (Array.isArray(result)) { setMatches(result); if (!result.length) setError('Cette référence n’est pas encore dans NailMoods, ou aucun résultat suffisamment proche n’a été trouvé. Tu peux compléter la fiche manuellement.'); }
     } catch (err) {
@@ -66,6 +66,15 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
     const brand = /le mini macaron/.test(normalizeText(text)) ? 'Le Mini Macaron' : '';
     setCandidate({ fields: { name: line.slice(0, 200), ...(brand ? { brand } : {}), ...inferTraits(line) }, images: [], variants: [], method: 'text', source: '' });
   }
+  async function lookupCode(code, signal) {
+    // The global catalogue is checked first; unavailable catalogue never blocks fallback.
+    try {
+      const products=await loadCatalog(signal);
+      const hits=products.filter(product=>product.barcode && String(product.barcode)===String(code));
+      if(hits.length) return {catalogMatches:hits.slice(0,3).map(product=>({product,score:hits.length===1?98:82,confidence:hits.length===1?'élevée':'moyenne',reason:'Code-barres exact · à confirmer',evidence:{brand:null,collection:null,reference:100,name:null,color:null}}))};
+    } catch(error) { if(signal.aborted) throw error; }
+    return lookupBarcode(code,signal);
+  }
   async function barcodeFile(event) {
     const file = event.target.files?.[0]; event.target.value = ''; if (!file) return;
     await run('Lecture du code-barres…', async signal => {
@@ -73,12 +82,12 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
       if (signal.aborted) return;
       onChange({ barcode: code });
       setBusy('Recherche du produit…');
-      return lookupBarcode(code, signal);
+      return lookupCode(code, signal);
     }, 60000);
   }
 
   return <div className="productImport">
-    <details className="catalogSearch" open={item.source === 'catalog' ? true : undefined}><summary>Rechercher dans le catalogue</summary><p className="fieldHelp">Catalogue NailMoods V1 · 1 801 références. Tu confirmes toujours le produit avant de l’ajouter.</p><label>Nom ou référence<input value={catalogQuery} onChange={event => setCatalogQuery(event.target.value)} placeholder="Nom de teinte, SKU, référence…" /></label><button type="button" className="importSecondary" disabled={Boolean(busy) || catalogQuery.trim().length < 3} onClick={() => run('Recherche dans le catalogue…', async signal => ({ catalogMatches: matchCatalog(await loadCatalog(signal), catalogQuery, { brand: item.brand, collection: item.collection }) }), 60000)}>Rechercher la référence</button></details>
+    <details className="catalogSearch" open={item.source === 'catalog' ? true : undefined}><summary>Rechercher dans le catalogue</summary><p className="fieldHelp">Catalogue NailMoods V1 · 1 801 références. Tu confirmes toujours le produit avant de l’ajouter.</p><label>Nom ou référence<input value={catalogQuery} onChange={event => setCatalogQuery(event.target.value)} placeholder="Nom de teinte, SKU, référence…" /></label><button type="button" className="importSecondary" disabled={Boolean(busy) || catalogQuery.trim().length < 2} onClick={() => run('Recherche dans le catalogue…', async signal => ({ catalogMatches: matchCatalog(await loadCatalog(signal), catalogQuery, { brand: item.brand, collection: item.collection }) }), 60000)}>Rechercher la référence</button></details>
     <label>Lien du produit (facultatif)<input type="url" value={item.url} onChange={event => onChange({ url: event.target.value })} placeholder="https://…" /></label>
     <button type="button" className="importPrimary" disabled={Boolean(busy) || photoBusy || !item.url.trim()} onClick={() => run('Lecture de la fiche produit…', signal => fetchProduct(item.url, signal))}><Link />Récupérer depuis le lien</button>
     <p className="fieldHelp">Le Mini Macaron et les boutiques autorisant la lecture de leurs fiches. Si un site bloque l’import, utilise une photo ou une capture.</p>
@@ -86,7 +95,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
       <summary><ScanLine />Code-barres</summary>
       <p className="fieldHelp">Recherche dans le catalogue Le Mini Macaron Europe. Les références absentes peuvent être ajoutées avec leur lien ou leur nom.</p>
       <label>Chiffres du code-barres<input inputMode="numeric" value={item.barcode || ''} onChange={event => { cancel(); setCandidate(null); onChange({ barcode: event.target.value }); }} placeholder="Ex. 3760297541507" /></label>
-      <button type="button" className="importSecondary" disabled={Boolean(busy) || !item.barcode} onClick={() => run('Recherche dans le catalogue…', signal => lookupBarcode(item.barcode, signal), 60000)}>Rechercher ce code</button>
+      <button type="button" className="importSecondary" disabled={Boolean(busy) || !item.barcode} onClick={() => run('Recherche dans le catalogue…', signal => lookupCode(item.barcode, signal), 60000)}>Rechercher ce code</button>
       <input ref={barcodeCamera} hidden type="file" accept="image/*" capture="environment" aria-label="Photographier un code-barres" onChange={barcodeFile} />
       <input ref={barcodePhoto} hidden type="file" accept="image/*" aria-label="Importer un code-barres" onChange={barcodeFile} />
       <div className="photoActions"><button type="button" disabled={Boolean(busy)} onClick={() => barcodeCamera.current.click()}><Camera />Photographier le code</button><button type="button" disabled={Boolean(busy)} onClick={() => barcodePhoto.current.click()}><ImageIcon />Photo du code</button></div>

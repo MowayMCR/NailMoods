@@ -1,3 +1,4 @@
+import Feedback from './Feedback';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CircleHelp, Palette, Package, Lightbulb, Sparkles, Heart, Sticker, BookHeart, X, ArrowRight } from 'lucide-react';
@@ -9,6 +10,7 @@ const actions = { home: ['Ajouter mes produits', 'collection'], profile: ['Explo
 export default function ContextHelp({ screen, step, onNavigate }) {
   const guide = guides[screen];
   const [offer, setOffer] = useState(() => !helpSeen(screen));
+  const [feedback, setFeedback] = useState(false);
   const [opened, setOpened] = useState(false);
   const [slide, setSlide] = useState(0);
   const [slot, setSlot] = useState(null);
@@ -45,9 +47,10 @@ export default function ContextHelp({ screen, step, onNavigate }) {
           if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) move(currentSlide.current + (dx < 0 ? 1 : -1));
           touch.current = null;
         }}><div className="coachIllustration" aria-hidden="true"><Icon strokeWidth={1.3} /><i /><i /></div><div aria-live="polite"><h2 ref={heading} tabIndex={-1}>{title}</h2><p>{copy}</p></div></div>
-        <div className="coachActions"><button onClick={() => finish(true)}>Passer</button>{slide > 0 && <button onClick={() => move(slide - 1)}>Précédent</button>}<button className="coachNext" onClick={() => slide === guide.slides.length - 1 ? finish() : move(slide + 1)}>{slide === guide.slides.length - 1 ? 'Terminer' : 'Suivant'}<ArrowRight /></button></div>
+        <button className="coachLink" onClick={()=>setFeedback(true)}>Signaler un problème ou une suggestion</button><div className="coachActions"><button onClick={() => finish(true)}>Passer</button>{slide > 0 && <button onClick={() => move(slide - 1)}>Précédent</button>}<button className="coachNext" onClick={() => slide === guide.slides.length - 1 ? finish() : move(slide + 1)}>{slide === guide.slides.length - 1 ? 'Terminer' : 'Suivant'}<ArrowRight /></button></div>
         {slide === guide.slides.length - 1 && actions[screen] && onNavigate && <button className="coachLink" onClick={() => { finish(); onNavigate(actions[screen][1]); }}>{actions[screen][0]}<ArrowRight /></button>}
       </section>}
+      {feedback && <Feedback screen={screen + ' / ' + step} onClose={()=>setFeedback(false)} />}
     </>, slot)}
   </div>;
 }

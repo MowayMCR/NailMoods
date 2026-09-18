@@ -35,7 +35,7 @@ export function generateInspirations(items = [], profile = {}, supplied = {}, se
   const tools = inventoryTools(items);
   const results = report.results.map(idea => {
     // Restore real product metadata; the preview never overwrites a user's product.
-    const palette = idea.palette.map(p => intent === 'collection' ? { ...p, ...items.find(i => String(i.id) === String(p.id)), color: p.color } : p);
+    const palette = idea.palette.map(p => intent === 'collection' ? { ...p, ...items.find(i => String(i.id) === String(p.id)), color: p.color, family: p.family } : p);
     const requirements = [];
     const add = (name, owned, required = false) => { if (!owned) requirements.push({ name, required }); };
     if (palette.some(p => ['Semi-permanent', 'Gel'].includes(p.type))) add('Lampe compatible avec les produits', tools.lamp, true);

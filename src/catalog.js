@@ -18,12 +18,13 @@ export function matchCatalog(products, query, { brand = '', collection = '', ocr
     const pb=catalogText(product.brand), pc=catalogText(product.collection), name=catalogText(product.name), ref=catalogText(product.reference);
     if(explicitBrand && pb!==explicitBrand) return [];
     if(c && pc!==c) return [];
-    const referenceExact=contains(q,ref);
+    const skuExact=contains(q,catalogText(product.sku));
+    const referenceExact=contains(q,ref) || skuExact;
     // A wrong number must never fuzzy-match an adjacent shade reference.
     if(numberTokens.length && ref && !referenceExact && !numberTokens.some(t=>tokens(name).includes(t))) return [];
     const nameExact=contains(q,name);
     let score=0,reason='';
-    if(referenceExact){score=explicitBrand?98:90;reason='Référence exacte'+(explicitBrand?' et marque':'');}
+    if(referenceExact){score=explicitBrand?98:90;reason=(skuExact?'SKU exact':'Référence exacte')+(explicitBrand?' et marque':'');}
     else if(nameExact){score=explicitBrand?94:84;reason='Nom de teinte exact'+(explicitBrand?' et marque':'');}
     else {
       const useful=tokens(q).filter(t=>t.length>2 && !tokens(pb+' '+pc).includes(t));
@@ -33,22 +34,24 @@ export function matchCatalog(products, query, { brand = '', collection = '', ocr
     }
     if(!score) return [];
     if(ocr){score=Math.min(score,88);reason+=' · texte lu sur photo';}
-    return [{product,score,reason}];
+    const cap=ocr?88:100;
+    const evidence={brand:explicitBrand?Math.min(100,cap):null,collection:(c===pc&&c || contains(q,pc))?Math.min(100,cap):null,reference:referenceExact?Math.min(100,cap):null,name:nameExact?Math.min(100,cap):reason.startsWith('Nom proche')?Math.min(70,cap):null,color:null};
+    return [{product,score,reason,evidence}];
   }).sort((a,b)=>b.score-a.score || a.product.name.localeCompare(b.product.name,'fr',{numeric:true}));
   const ambiguous=ranked.length>1 && ranked[0].score===ranked[1].score;
   return ranked.slice(0,3).map(row=>({...row,score:ambiguous?Math.min(row.score,82):row.score,confidence:!ambiguous&&row.score>=90?'élevée':'moyenne'}));
 }
 export function catalogCandidate(match) {
   const p=match.product;
-  const fields=Object.fromEntries(['brand','collection','name','reference','type','url','family','finish','usage'].filter(k=>p[k]).map(k=>[k,p[k]]));
+  const fields=Object.fromEntries(['brand','collection','name','reference','type','url','family','finish','usage','sku'].filter(k=>p[k]).map(k=>[k,p[k]]));
   const finishes = { creme: 'Crème', jelly: 'Jelly', paillete: 'Pailleté', metallique: 'Métallique', brillant: 'Brillant', 'cat eye': 'Cat-eye', mat: 'Mat' };
   fields.finish = finishes[catalogText(p.finish)] || 'Autre';
   if (p.finish && !finishes[catalogText(p.finish)]) fields.finishDetail = p.finish;
   if(p.colorValidated === true && validHex(p.catalogColor)) fields.catalogColor=p.catalogColor;
-  return {fields,images:[],variants:[],method:'catalog',source:p.url || '',catalogId:p.catalogId,catalogVersion:'V1-2026-09-17',score:match.score,confidence:match.confidence,reason:match.reason};
+  return {fields,images:[],variants:[],method:'catalog',source:p.url || '',catalogId:p.catalogId,catalogVersion:'V1-2026-09-17',evidence:match.evidence,identity: Object.fromEntries(['brand','collection','reference','sku','name'].filter(k=>p[k]).map(k=>[k,p[k]])),score:match.score,confidence:match.confidence,reason:match.reason};
 }
 export function catalogueProvenance(candidate) {
-  return {kind:'nailmoods',verified:false,catalogId:candidate.catalogId,catalogVersion:candidate.catalogVersion,recognitionScore:candidate.score,confirmedAt:new Date().toISOString(),importMethod:'catalog'};
+  return {kind:'nailmoods',verified:false,catalogId:candidate.catalogId,catalogVersion:candidate.catalogVersion,recognitionScore:candidate.score,recognitionEvidence:candidate.evidence,catalogIdentity:candidate.identity,confirmedAt:new Date().toISOString(),importMethod:'catalog'};
 }
 let cached;
 export async function loadCatalog(signal) {
@@ -58,4 +61,16 @@ export async function loadCatalog(signal) {
   const data=await response.json();
   if(!Array.isArray(data.products)) throw new Error('Catalogue illisible. La saisie manuelle reste disponible.');
   cached=data.products;return cached;
+}
+
+// Future swatch import can refer to these stable groups without editing the catalogue.
+export function catalogCollections(products) {
+  const groups=new Map();
+  for(const p of products) {
+    if(!p.brand || !p.collection || !p.catalogId) continue;
+    const id=JSON.stringify([p.brand,p.collection]);
+    if(!groups.has(id)) groups.set(id,{id,brand:p.brand,name:p.collection,origin:'nailmoods',productIds:[]});
+    groups.get(id).productIds.push(p.catalogId);
+  }
+  return [...groups.values()];
 }

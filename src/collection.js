@@ -20,6 +20,7 @@ export function collectionResults(items, query = '', type = 'Tous', filters = em
 export function provenanceOf(item) {
   const provenance = item.provenance;
   const kinds = ['nailmoods', 'verified_creator', 'validated_community', 'discovered', 'personal'];
+  if(provenance?.catalogIdentity && Object.entries(provenance.catalogIdentity).some(([key,value]) => text(item[key]) !== text(value))) return { ...provenance, kind:'personal', verified:false, derivedFrom:provenance.catalogId, locallyModified:true };
   return provenance && kinds.includes(provenance.kind) ? { ...provenance } : { kind: 'personal', verified: false, importMethod: item.source || 'manual' };
 }
 export function duplicateCandidates(product, items) {
