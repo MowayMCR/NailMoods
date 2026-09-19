@@ -11,10 +11,21 @@ import { productColor } from './colorAnalysis';
 import { easeLabels, feelingLabels, filterJournal, journalDate, journalProducts, journalValidation, localDate, newJournalEntry, pendingJournalPoses } from './journal';
 import './journal.css';
 
-function JournalVisual({ entry, compact = false }) {
+function JournalVisual({ entry, compact = false, media = null }) {
+  const [resolved, setResolved] = useState(() => typeof entry.photo === 'string' && !entry.photo.startsWith('data:') && !entry.mediaPath ? entry.photo : '');
+  useEffect(() => {
+    let active = true;
+    if (!entry.mediaPath || !media) { setResolved(entry.photo || ''); return () => { active = false; }; }
+    const promise = entry.visibility === 'public' && entry.publicMediaPath
+      ? Promise.resolve(media.publicUrl('journal', entry.remoteId || entry.id))
+      : media.signedUrl(entry.mediaPath);
+    promise.then(url => { if (active) setResolved(url); }).catch(() => { if (active) setResolved(''); });
+    return () => { active = false; };
+  }, [entry.photo, entry.mediaPath, entry.publicMediaPath, entry.visibility, media]);
+  const photo = resolved || (typeof entry.photo === 'string' && entry.photo.startsWith('data:') ? entry.photo : '');
   return <div className={'journalVisual' + (compact ? ' compact' : '')}>
-    {entry.photo && entry.idea && <NailPreview idea={entry.idea} compact />}
-    {entry.photo ? <img src={entry.photo} alt={'Résultat de la pose « ' + entry.title + ' »'} loading="lazy" /> : entry.idea ? <><NailPreview idea={entry.idea} /><small>Inspiration · aperçu schématique</small></> : <div className="journalNoPhoto"><Camera /><span>Un souvenir à compléter</span></div>}
+    {photo && entry.idea && <NailPreview idea={entry.idea} compact />}
+    {photo ? <img src={photo} alt={'Résultat de la pose « ' + entry.title + ' »'} loading="lazy" /> : entry.idea ? <><NailPreview idea={entry.idea} /><small>Inspiration · aperçu schématique</small></> : <div className="journalNoPhoto"><Camera /><span>Un souvenir à compléter</span></div>}
   </div>;
 }
 
@@ -66,6 +77,7 @@ function JournalEditor({ entry, session, items, onSave, onNavigate }) {
       </section>
       <section className="journalFormCard">
         <fieldset className="journalFeedback"><legend>Ton ressenti <small>facultatif</small></legend><div>{Object.entries(feelingLabels).map(([value, label]) => <button key={value} type="button" aria-pressed={draft.feeling === value} onClick={() => change({ feeling: draft.feeling === value ? '' : value })}>{label}</button>)}</div></fieldset>
+        <fieldset className="journalFeedback"><legend>Visibilité</legend><div><button type="button" aria-pressed={draft.visibility !== 'public'} onClick={() => change({ visibility: 'private' })}>🔒 Privé</button><button type="button" aria-pressed={draft.visibility === 'public'} onClick={() => change({ visibility: 'public' })}>🌍 Public</button></div><small className="journalMuted">Privé par défaut. Une pose publique peut apparaître sur ton profil.</small></fieldset>
         <button type="button" className="journalRepeatToggle" aria-pressed={draft.repeat} onClick={() => change({ repeat: !draft.repeat })}><Heart fill={draft.repeat ? 'currentColor' : 'none'} />Une pose à refaire{draft.repeat && <Check />}</button>
         <label htmlFor="journal-notes">Tes notes <small>facultatif</small><textarea id="journal-notes" rows={3} maxLength={4000} value={draft.notes} onChange={event => change({ notes: event.target.value })} placeholder="Ce que tu as aimé, ce que tu changerais…" /></label>
         <details className="journalMore"><summary>Un peu plus de détails<ChevronRight /></summary>
@@ -85,7 +97,7 @@ function JournalEditor({ entry, session, items, onSave, onNavigate }) {
   </div>;
 }
 
-function JournalDetail({ entry, profile, items, onNavigate, onSave, onDelete, onIdea, onCollection }) {
+function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDelete, onIdea, onCollection }) {
   const [variantsOpen, setVariantsOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState('');
@@ -94,10 +106,10 @@ function JournalDetail({ entry, profile, items, onNavigate, onSave, onDelete, on
   return <div className="journalPage journalDetailPage">
     <div className="journalToolbar"><button onClick={() => onNavigate('')}><ArrowLeft />Mon journal</button><button onClick={() => onNavigate(entry.id + '/modifier')}><PenLine />Modifier</button></div>
     <section className="journalHeading"><small>{journalDate(entry.date)}</small><h1 ref={heading} tabIndex={-1}>{entry.title}</h1></section>
-    <JournalVisual entry={entry} /><div className="journalToolbar"><button onClick={() => setVariantsOpen(true)}>Créer une variante<ArrowRight /></button></div>
+    <JournalVisual entry={entry} media={media} /><div className="journalToolbar"><button onClick={() => setVariantsOpen(true)}>Créer une variante<ArrowRight /></button></div>
     <RecipeSummary idea={entry.idea} /><section className="journalDetailBody">
       {error && <p className="formError" role="alert">{error}</p>}
-      <div className="journalBadges">{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.ease && <span>Réalisation : {easeLabels[entry.ease].toLocaleLowerCase('fr')}</span>}{entry.wearDays !== '' && <span>Tenue observée : {entry.wearDays} jour{entry.wearDays > 1 ? 's' : ''}</span>}</div>
+      <div className="journalBadges"><span>{entry.visibility === 'public' ? '🌍 Public' : '🔒 Privé'}</span>{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.ease && <span>Réalisation : {easeLabels[entry.ease].toLocaleLowerCase('fr')}</span>}{entry.wearDays !== '' && <span>Tenue observée : {entry.wearDays} jour{entry.wearDays > 1 ? 's' : ''}</span>}</div>
       <button className="journalRepeatToggle" aria-pressed={entry.repeat} onClick={() => { const result = onSave({ ...entry, repeat: !entry.repeat }); setError(result.ok ? '' : result.error); }}><Heart fill={entry.repeat ? 'currentColor' : 'none'} />{entry.repeat ? 'Dans mes poses à refaire' : 'Garder dans mes poses à refaire'}</button>
       {entry.notes ? <section className="journalNotes"><h2>Mes notes</h2><p>{entry.notes}</p></section> : <p className="journalMuted">Tu peux compléter ce souvenir avec tes impressions ou la tenue de ta pose.</p>}
       <section className="journalUsed"><div className="journalSectionTitle"><h2>Produits utilisés</h2><span>{entry.products.length}</span></div>
@@ -115,7 +127,7 @@ function JournalDetail({ entry, profile, items, onNavigate, onSave, onDelete, on
   </div>;
 }
 
-export default function JournalView({ onFavorites, library, profile, journal, sessions, items, route, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate }) {
+export default function JournalView({ onFavorites, library, profile, journal, sessions, items, media, route, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate }) {
   const [query, setQuery] = useState('');
   const [repeatOnly, setRepeatOnly] = useState(false);
   const pending = pendingJournalPoses(journal, sessions);
@@ -125,20 +137,20 @@ export default function JournalView({ onFavorites, library, profile, journal, se
   if (path.startsWith('pose/')) {
     const id = path.slice(5), session = sessions.find(value => value.id === id && value.status === 'completed');
     const existing = journal.entries.find(entry => entry.sessionId === id);
-    if (existing) return <JournalDetail profile={profile} key={existing.id} entry={existing} items={items} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
+    if (existing) return <JournalDetail profile={profile} key={existing.id} entry={existing} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
     if (session) return <JournalEditor key={id} session={session} items={items} onSave={onSave} onNavigate={onNavigate} />;
   } else if (path) {
     const editing = path.endsWith('/modifier');
     const id = editing ? path.slice(0, -9) : path;
     const entry = journal.entries.find(value => value.id === id);
-    if (entry) return editing ? <JournalEditor key={id + '/edit'} entry={entry} items={items} onSave={onSave} onNavigate={onNavigate} /> : <JournalDetail profile={profile} key={id} entry={entry} items={items} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
+    if (entry) return editing ? <JournalEditor key={id + '/edit'} entry={entry} items={items} onSave={onSave} onNavigate={onNavigate} /> : <JournalDetail profile={profile} key={id} entry={entry} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
   }
   if (path) return <div className="journalPage"><section className="journalEmpty"><BookHeart /><h1>Cette pose n’est pas disponible</h1><button className="journalPrimary" onClick={() => onNavigate('')}>Retrouver mon journal</button></section></div>;
   return <div className="journalPage">
     <section className="journalHero"><small>LES COULEURS DE MES JOURS</small><h1>Mon journal</h1><p>Mes poses, mes petits essais,<br />et celles que j’ai envie de refaire.</p><div><span><b>{journal.entries.length}</b> pose{journal.entries.length > 1 ? 's' : ''}</span><span><b>{journal.entries.filter(entry => entry.repeat).length}</b> à refaire</span></div><button className="journalPrimary" onClick={() => onNavigate('nouveau')}><Plus />Ajouter une pose</button></section>
     {pending.length > 0 && !query && !repeatOnly && <section className="journalPending"><div className="journalSectionTitle"><h2>À raconter</h2><span>{pending.length}</span></div><p>Tes poses terminées, prêtes à rejoindre ton journal.</p>{pending.map(session => <article key={session.id}><div><small>{journalDate(localDate(session.completedAt || session.updatedAt))}</small><h3>{session.idea.title}</h3><NailPreview idea={session.idea} compact /><button onClick={() => onNavigate('pose/' + session.id)}>Ajouter au journal<ArrowRight /></button></div><button className="journalDismiss" aria-label={'Masquer la suggestion ' + session.idea.title} onClick={() => onDismiss(session.id)}><X /></button></article>)}</section>}
     {journal.entries.length > 0 && <section className="journalControls"><label className="journalSearch"><Search /><input aria-label="Rechercher dans mon journal" value={query} onChange={event => setQuery(event.target.value)} placeholder="Une pose, un produit, une note…" /></label><div className="journalFilters"><button aria-pressed={!repeatOnly} onClick={() => setRepeatOnly(false)}>Toutes</button><button aria-pressed={repeatOnly} onClick={() => setRepeatOnly(true)}><Heart />À refaire</button></div></section>}
-    {filtered.length ? <div className="journalList">{filtered.map(entry => <article key={entry.id}><button className="journalEntryCard" onClick={() => onNavigate(entry.id)}><JournalVisual entry={entry} compact /><div className="journalEntryCopy"><small>{journalDate(entry.date)}</small><h2>{entry.title}</h2><p>{entry.products.slice(0, 3).map(item => item.name).join(' · ') || 'Un souvenir de ta pose'}</p><div>{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.repeat && <span><Heart fill="currentColor" />À refaire</span>}<ChevronRight /></div></div></button></article>)}</div>
+    {filtered.length ? <div className="journalList">{filtered.map(entry => <article key={entry.id}><button className="journalEntryCard" onClick={() => onNavigate(entry.id)}><JournalVisual entry={entry} media={media} compact /><div className="journalEntryCopy"><small>{journalDate(entry.date)}</small><h2>{entry.title}</h2><p>{entry.products.slice(0, 3).map(item => item.name).join(' · ') || 'Un souvenir de ta pose'}</p><div><span>{entry.visibility === 'public' ? '🌍 Public' : '🔒 Privé'}</span>{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.repeat && <span><Heart fill="currentColor" />À refaire</span>}<ChevronRight /></div></div></button></article>)}</div>
       : journal.entries.length ? <section className="journalEmpty"><Search /><h2>Aucune pose trouvée</h2><p>{repeatOnly ? 'Les poses marquées « à refaire » apparaîtront ici.' : 'Essaie un autre nom, produit ou mot de tes notes.'}</p><button className="journalSecondary" onClick={() => { setQuery(''); setRepeatOnly(false); }}>Voir toutes mes poses</button></section>
         : <section className="journalEmpty"><BookHeart /><h2>Tes prochaines poses apparaîtront ici</h2><p>Ajoute une pose déjà réalisée, avec ou sans photo. Tes inspirations favorites restent dans Créer.</p><button className="journalSecondary" onClick={onCreate}>Créer ma première inspiration<ArrowRight /></button></section>}
     {library?.favorites.length > 0 && <section className="journalPending"><h2>Mes envies sauvegardées</h2><p>Tes favoris, à réaliser quand tu veux. Ils ne sont pas comptés comme des poses réalisées.</p>{library.favorites.slice(0, 6).map(idea => <article key={idea.key}><div><NailPreview idea={idea} compact /><h3>{idea.title}</h3><button onClick={() => onIdea(idea)}>Retrouver cette inspiration<ArrowRight /></button></div></article>)}<button className="journalSecondary" onClick={onFavorites}>Voir toutes mes inspirations favorites<ArrowRight /></button></section>}

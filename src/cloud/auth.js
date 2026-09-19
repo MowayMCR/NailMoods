@@ -1,4 +1,5 @@
 import { authReturnUrl } from './config.js';
+import { signupConsent } from '../privacy/policy.js';
 
 // No profile/workspace inserts here: the existing backend trigger owns signup.
 // No user-editable account tier, no logging of SDK errors or credentials.
@@ -11,10 +12,12 @@ export function createAuthService(client, pageUrl) {
     return data;
   }
   return {
-    signUp: (email, password) => checked(auth.signUp({
+    signUp: (email, password, accepted = false, choices = {}, adultConfirmed = false) => {
+      const consent = signupConsent(accepted, choices, adultConfirmed);
+      return checked(auth.signUp({
       email: email.trim(), password,
-      options: { emailRedirectTo: authReturnUrl(pageUrl) },
-    })),
+      options: { emailRedirectTo: authReturnUrl(pageUrl), data: consent },
+    })); },
     signIn: (email, password) => checked(auth.signInWithPassword({ email: email.trim(), password })),
     signOut: () => checked(auth.signOut({ scope: 'local' })),
     restore: () => checked(auth.getSession()),

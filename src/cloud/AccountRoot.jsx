@@ -1,3 +1,4 @@
+import AccountAvatar from '../identity/AccountAvatar';
 import React, { useEffect, useRef, useState } from 'react';
 import Sheet from '../Sheet';
 import { StorageContext } from '../StorageContext';
@@ -6,9 +7,16 @@ import { getCloudClient } from './client';
 import { createAuthService } from './auth';
 import { personalWorkspace, repository } from './repository';
 import { createAccountStore, readGuest, guestCount } from './store';
+import { createMediaStorage } from './mediaStorage';
 import './account.css';
 import { recordCloudEvent } from './diagnostics';
 import {cacheError} from './cache/index';
+import ProfessionalProfilePanel from '../workspaces/ProfessionalProfilePanel';
+import IdentityPanel from '../identity/IdentityPanel';
+import PrivacyPanel, { LegalLinks } from '../privacy/PrivacyPanel';
+import { readGuestConsent } from '../privacy/policy';
+import { clearAccountCache } from '../privacy/service';
+import BetaTierPanel from './BetaTierPanel';
 
 let client=null,configurationError=false;
 try{client=getCloudClient();}catch{configurationError=true;}
@@ -23,10 +31,11 @@ function authMessage(error){
 }
 export default function AccountRoot({App}){
   const [session,setSession]=useState(undefined),[loaded,setLoaded]=useState(null),[loadError,setLoadError]=useState('');
-  const [status,setStatus]=useState({kind:'saved',pending:0}),[retry,setRetry]=useState(0),[revision,setRevision]=useState(0);
+  const [status,setStatus]=useState({kind:'saved',pending:0}),[retry,setRetry]=useState(0),[revision,setRevision]=useState(0),[mediaMigration,setMediaMigration]=useState(null);
   const [open,setOpen]=useState(false),[mode,setMode]=useState('login'),[email,setEmail]=useState(''),[password,setPassword]=useState('');
   const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState(''),[guestOverride,setGuestOverride]=useState(false),[confirmRemote,setConfirmRemote]=useState(false);
   const [confirmCacheClear,setConfirmCacheClear]=useState(false);
+  const [termsAccepted,setTermsAccepted]=useState(false),[adultConfirmed,setAdultConfirmed]=useState(false);
   const active=useRef(null), mounted=useRef(true);
   const userId=session?.user?.id || null;
   useEffect(()=>{
@@ -51,21 +60,22 @@ export default function AccountRoot({App}){
   },[]);
   useEffect(()=>{
     let cancelled=false,store;
-    active.current?.close();active.current=null;setLoaded(null);setLoadError('');
+    active.current?.close();active.current=null;setLoaded(null);setLoadError('');setMediaMigration(null);
     if(!userId || guestOverride)return;
     (async()=>{
       try{
         const {data,error}=await client.auth.getUser();
         if(error || data.user?.id!==userId)throw new Error('La session n’a pas pu être vérifiée. Réessaie ou reconnecte-toi.');
         const workspace=await personalWorkspace(client,userId);if(cancelled)return;
-        store=createAccountStore({storage:browserStorage,repo:repository(client,userId,workspace.id),userId,workspaceId:workspace.id,onStatus:next=>{if(!cancelled){setStatus(next);if(next.kind==='error'||next.kind==='saved')recordCloudEvent(browserStorage,'sync',next.kind==='saved');}}});
+        const media=createMediaStorage(client,{userId});
+        store=createAccountStore({storage:browserStorage,repo:repository(client,userId,workspace.id),userId,workspaceId:workspace.id,media,onStatus:next=>{if(!cancelled){setStatus(next);if(next.kind==='error'||next.kind==='saved')recordCloudEvent(browserStorage,'sync',next.kind==='saved');}}});
         active.current=store;
-        try{await store.load();}catch(error){
+        try{await store.load();const mediaStats=await store.migrateMedia();if(!cancelled)setMediaMigration(mediaStats);}catch(error){
           if(!store.hasCache)throw error;
           setStatus({kind:'error',pending:store.pending,message:'Les données distantes ne sont pas accessibles. Voici la copie de ce compte sur cet appareil. Réessaie pour synchroniser.'});
         }
         if(cancelled){store.close();return;}
-        setLoaded({store,workspace,userId});
+        setLoaded({store,workspace,userId,media});
         if(store.pending)void store.flush();
       }catch(error){if(!cancelled)setLoadError(error.message || 'Ton espace n’a pas pu être chargé. Réessaie.');}
     })();
@@ -76,12 +86,12 @@ export default function AccountRoot({App}){
     const online=()=>void loaded.store.flush();window.addEventListener('online',online);
     return ()=>window.removeEventListener('online',online);
   },[loaded]);
-  function changeMode(next){setMode(next);setMessage('');setAuthError('');setPassword('');}
+  function changeMode(next){setAdultConfirmed(false);setTermsAccepted(false);setMode(next);setMessage('');setAuthError('');setPassword('');}
   async function submit(event){
     event.preventDefault();setBusy(true);setMessage('');setAuthError('');
     try{
       if(mode==='signup'){
-        const data=await service.signUp(email,password);setPassword('');
+        const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {},adultConfirmed);setPassword('');
         if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);}
         else setMessage('Si cette adresse peut être inscrite, un email de confirmation va arriver. Ouvre le lien dans ce navigateur, puis connecte-toi.');
       }else if(mode==='recovery'){
@@ -96,10 +106,12 @@ export default function AccountRoot({App}){
   }
   async function logout(){setBusy(true);setAuthError('');try{await active.current?.ensureDurable();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{setBusy(false);}}
   async function migrate(){setBusy(true);setAuthError('');try{
+    if(import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && loaded.store.profile?.account_tier==='free')throw new Error('L’import dans la collection est disponible avec Plus. Ta copie invitée reste conservée.');
     const guest=readGuest(browserStorage);
     const done=await loaded.store.migrate(guest);
     setRevision(v=>v+1);recordCloudEvent(browserStorage,'migration',done);setMessage(done?'Import terminé. La copie invitée est conservée sur cet appareil.':'La synchronisation de l’import reste à reprendre. La copie invitée est conservée.');
   }catch(error){setAuthError(error.message || 'L’import n’a pas abouti. Les données invitées sont conservées.');}finally{setBusy(false);}}
+  async function migrateMediaNow(){setBusy(true);setAuthError('');try{const stats=await loaded.store.migrateMedia();setMediaMigration(stats);setMessage(stats.remaining===0?'Les médias historiques sont à jour.':'La migration média reste à terminer ; aucune ancienne donnée n’a été supprimée.');}catch(error){setAuthError(error.message || 'La migration média n’a pas abouti. Les anciennes données sont conservées.');}finally{setBusy(false);}}
   function exportDraft(){
     const blob=new Blob([JSON.stringify(loaded.store.exportDraft(),null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='nailmoods-copie-locale.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -111,6 +123,11 @@ export default function AccountRoot({App}){
     const warn=event=>{event.preventDefault();event.returnValue='';};window.addEventListener('beforeunload',warn);
     return ()=>window.removeEventListener('beforeunload',warn);
   },[status.pending,status.kind]);
+  async function accountDeleted(id){
+    active.current?.close();active.current=null;setLoaded(null);
+    clearAccountCache(window.localStorage,id);
+    try{await service.signOut();}finally{setSession(null);setGuestOverride(false);setOpen(false);window.location.reload();}
+  }
   let count=0,guestInvalid=false;try{count=guestCount(readGuest(browserStorage));}catch{guestInvalid=true;}
   const ready=loaded?.userId===userId && !guestOverride;
   const guest=!userId || guestOverride;
@@ -124,7 +141,7 @@ export default function AccountRoot({App}){
     {syncNotice}
   </aside>;
   return <>
-    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
+    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice} media={ready?loaded.media:null} profileExtras={<>{ready&&<AccountAvatar client={client} userId={userId} workspaceId={loaded?.workspace.id}/>}<IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/><ProfessionalProfilePanel key={'professional:'+(userId || 'guest')} client={client} userId={userId} tier={loaded?.store.profile?.account_tier}/><PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
     {configurationError && <p role="alert">Le compte est temporairement indisponible. Le mode invité reste accessible.</p>}
     {open && service && <Sheet title={mode==='signup'?'Créer mon compte':mode==='recovery'?'Retrouver mon compte':mode==='password'?'Nouveau mot de passe':userId?'Mon compte':'Se connecter'} onClose={()=>{if(!busy){setOpen(false);setPassword('');}}} className="accountSheet">
       {mode==='account' && userId ? <>
@@ -132,9 +149,11 @@ export default function AccountRoot({App}){
         {guestOverride && <button onClick={()=>{setGuestOverride(false);setOpen(false);}}>Ouvrir mon espace connecté</button>}
         {ready && <>
           <p>Compte {loaded.store.profile?.account_tier || 'free'} · {status.pending?`${status.pending} modification(s) en attente`:'Données synchronisées'}</p>
+          {import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && <BetaTierPanel client={client} userId={userId} store={loaded.store} onApplied={async()=>{await loaded.store.load();setRevision(v=>v+1);}}/>}
           {count>0 && !loaded.store.migrationDone && <section className="accountImport"><h3>Importer mes données actuelles dans mon compte ?</h3><p>{count} élément(s) trouvé(s) dans le mode invité sur cet appareil. Les données déjà présentes dans ton compte seront conservées.</p><button disabled={busy} onClick={migrate}>Importer mes données</button><p>Tu peux aussi fermer cette fenêtre et le faire plus tard.</p></section>}
           {guestInvalid && <p role="alert">Certaines données invitées sont illisibles. Elles sont conservées ; l’import n’a pas été lancé.</p>}
           {loaded.store.migrationDone && <p>Les données invitées ont été importées. Leur copie locale est conservée.</p>}
+          {mediaMigration && <section className="accountImport" aria-label="Migration des médias historiques"><h3>Médias historiques</h3><p>Détectés : {mediaMigration.detected} · Migrés : {mediaMigration.migrated} · Échecs : {mediaMigration.failed} · Restants : {mediaMigration.remaining}</p>{mediaMigration.remaining>0 && <button disabled={busy} onClick={migrateMediaNow}>Relancer la migration média</button>}</section>}
           <button disabled={busy || status.pending>0} onClick={()=>{setRetry(v=>v+1);setOpen(false);}}>Actualiser depuis mon compte</button>
           {status.kind==='error' && <section><button disabled={busy || status.pending>0} onClick={()=>setConfirmCacheClear(true)}>Nettoyer le cache local</button>{confirmCacheClear && <><p>Nettoyer uniquement le cache reconstituable de ce compte ? Tes données en ligne, ta copie invitée et tes sauvegardes restent conservées.</p><button disabled={busy} onClick={clearCache}>Confirmer le nettoyage</button><button onClick={()=>setConfirmCacheClear(false)}>Annuler</button></>}<button disabled={busy} onClick={exportDraft}>Télécharger ma copie locale</button><button disabled={busy} onClick={()=>setConfirmRemote(true)}>Utiliser la version en ligne</button>{confirmRemote && <><p>Les changements en attente ne seront pas envoyés. Une sauvegarde locale sera conservée ; télécharge-la pour pouvoir la consulter.</p><button disabled={busy} onClick={useRemote}>Confirmer le rechargement</button><button onClick={()=>setConfirmRemote(false)}>Annuler</button></>}</section>}
           {status.pending>0 && <p>Les modifications en attente resteront sur cet appareil après déconnexion. Reconnecte-toi ici pour les synchroniser.</p>}
@@ -144,7 +163,9 @@ export default function AccountRoot({App}){
         <p>Retrouve ta collection, tes inspirations et ton journal sur tes appareils. Tu peux aussi continuer sans compte.</p>
         {mode!=='password' && <label>Email<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>}
         {mode!=='recovery' && <label>Mot de passe<input type="password" autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?1:8} required value={password} onChange={e=>setPassword(e.target.value)} disabled={busy}/></label>}
-        <button className="accountPrimary" disabled={busy}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
+        <LegalLinks/>
+        {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={adultConfirmed} onChange={e=>setAdultConfirmed(e.target.checked)} disabled={busy}/>Je certifie avoir 18 ans ou plus.</label><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>J’accepte les Conditions d’utilisation</label></>}
+        <button className="accountPrimary" disabled={busy || (mode==='signup' && (!termsAccepted || !adultConfirmed))}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
         {mode==='login' && <><button type="button" disabled={busy} onClick={()=>changeMode('signup')}>Créer mon compte</button><button type="button" disabled={busy} onClick={()=>changeMode('recovery')}>Mot de passe oublié</button></>}
         {(mode==='signup' || mode==='recovery') && <button type="button" disabled={busy} onClick={()=>changeMode('login')}>J’ai déjà un compte</button>}
         <button type="button" disabled={busy} onClick={()=>{setOpen(false);setPassword('');}}>Continuer à explorer</button>

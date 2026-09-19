@@ -1,3 +1,4 @@
+import { TECHNOLOGIES, readGuestConsent, permissions } from './privacy/policy.js';
 import { generateInspirations } from './freeInspiration.js';
 import { generationFamily, productColor, validHex } from './colorAnalysis.js';
 import { inventoryTools } from './creationEngine.js';
@@ -54,6 +55,7 @@ export function generateScannedIdeas(products, effects = [], profile = {}, equip
 export const scanEvents = ['scan_generate_opened','camera_permission_granted','camera_permission_refused','first_product_scanned','first_product_recognized','first_product_unrecognized','second_product_added','effect_selected','scan_generate_completed','product_added_to_collection','generated_idea_saved'];
 // Local, bounded diagnostics. No photo, OCR, identity, color or product data is recorded.
 export function trackScan(storage, event, data = {}) {
+  if (!TECHNOLOGIES.analytics || storage.accountScoped || !permissions({consent:readGuestConsent(storage)}).analytics) return;
   if (!scanEvents.includes(event)) return;
   try {
     const parsed = JSON.parse(storage.getItem('nm-scan-events-v1') || '[]');

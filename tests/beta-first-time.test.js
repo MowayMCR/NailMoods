@@ -29,8 +29,7 @@ test('help completion is screen-specific; telemetry remains bounded and has no i
   assert.equal(helpSeen('journal', storage), false);
   for (let i=0;i<220;i++) trackHelp('help_opened', { screen:'collection', source:'button', slide:1, step:'overview' }, storage);
   const entries = JSON.parse(storage.getItem('nm-help-events-v1'));
-  assert.equal(entries.length, 200);
-  assert.deepEqual(Object.keys(entries[0]), ['event','screen','source','slide','step','timestamp']);
+  assert.equal(entries, null);
   for (const guide of Object.values(guides)) assert.ok(guide.slides.length >= 2 && guide.slides.length <= 4);
 });
 test('blocked storage getter does not crash startup; writes cannot falsely succeed', () => {
@@ -56,5 +55,5 @@ test('phase 8: material help is independent, replayable and short', () => {
   assert.equal(helpSeen('equipment',storage),true);
   assert.ok(guides.equipment.slides.length <= 3);
   trackHelp('help_opened',{screen:'equipment',source:'button',slide:1,step:'overview'},storage);
-  assert.equal(JSON.parse(storage.getItem('nm-help-events-v1'))[0].source,'button');
+  assert.equal(storage.getItem('nm-help-events-v1'),null);
 });

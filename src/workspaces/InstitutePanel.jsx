@@ -1,0 +1,39 @@
+import React,{useEffect,useState} from 'react';
+import {Building2,ChevronRight,Mail,ShieldCheck,UsersRound} from 'lucide-react';
+import Sheet from '../Sheet';
+import {instituteService,instituteError} from './instituteService';
+import {instituteRoleLabel} from './professionalProfile';
+
+export default function InstitutePanel({client,userId,mode='institute_associate',onChanged}){
+ const [spaces,setSpaces]=useState([]),[inbox,setInbox]=useState([]),[state,setState]=useState(null),[open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[handle,setHandle]=useState(''),[confirmation,setConfirmation]=useState(null);
+ useEffect(()=>{setSpaces([]);setInbox([]);setState(null);setOpen(false);},[userId,mode]);
+ if(!userId)return null;
+ async function refresh(){const service=instituteService(client);const [s,i]=await Promise.all([service.list(),service.inbox()]);setSpaces(s);setInbox(i);return s;}
+ async function start(){setOpen(true);setBusy(true);setError('');try{const next=await refresh();const preferred=mode==='institute_owner'?next.find(item=>item.owner_user_id===userId):next.find(item=>item.owner_user_id!==userId);if(preferred)await choose(preferred.id,false);}catch{setError('Les espaces Institut ne sont pas accessibles pour le moment. Tes autres fonctions restent disponibles.');}finally{setBusy(false);}}
+ async function choose(id,showBusy=true){if(showBusy)setBusy(true);setError('');try{setState(await instituteService(client).state(id));}catch(e){setError(instituteError(e));}finally{if(showBusy)setBusy(false);}}
+ async function act(action,workspaceId,options){setBusy(true);setError('');try{await instituteService(client).act(action,workspaceId,options);setConfirmation(null);setHandle('');const next=await refresh();if(action==='leave')setState(null);else if(state?.workspace.id===workspaceId)setState(await instituteService(client).state(workspaceId));else if(action==='accept'){const joined=next.find(item=>item.id===workspaceId);if(joined)setState(await instituteService(client).state(joined.id));}onChanged?.();}catch(e){setError(instituteError(e));}finally{setBusy(false);}}
+ async function setRole(targetId,role){setBusy(true);setError('');try{await instituteService(client).setRole(state.workspace.id,targetId,role);setState(await instituteService(client).state(state.workspace.id));onChanged?.();}catch(e){setError(instituteError(e));}finally{setBusy(false);}}
+ const owner=state?.workspace.owner_user_id===userId;
+ const myMembership=state?.members.find(member=>member.user_id===userId);
+ const title=mode==='institute_owner'?'Mon institut':'Institut & invitations';
+ return <section className="proSpaceSummary" aria-labelledby="institute-summary-title">
+   <div className="proSpaceIcon"><Building2 aria-hidden="true"/></div>
+   <div><h3 id="institute-summary-title">{title}</h3><p>{mode==='institute_owner'?'Gère ton espace, les invitations et les rôles de ton équipe.':'Accepte une invitation et retrouve le rôle qui t’a été attribué.'}</p></div>
+   <button className="proSpaceOpen" onClick={start}>{mode==='institute_owner'?'Gérer mon institut':'Voir mes invitations'}<ChevronRight aria-hidden="true"/></button>
+ {open&&<Sheet title={title} className="privacySheet instituteSheet" onClose={()=>{if(!busy){setOpen(false);setConfirmation(null);}}}>
+   {busy&&<p className="sheetStatus" role="status">Mise à jour…</p>}{error&&<p className="formError" role="alert">{error}</p>}
+   <section className="instituteBlock"><div className="instituteHeading"><Mail/><div><h3>Invitations reçues</h3><p>Une invitation doit toujours être acceptée explicitement.</p></div></div>
+   {!inbox.length&&!busy&&<div className="compactEmpty">Aucune invitation en attente.</div>}{inbox.map(i=><article className="instituteItem" key={i.id}><div><h4>{i.workspace_name}</h4><p>Rejoins cet espace uniquement si tu connais l’Institut.</p></div><div className="buttonPair"><button disabled={busy} onClick={()=>act('accept',i.workspace_id,{invitationId:i.id})}>Accepter</button><button className="quietButton" disabled={busy} onClick={()=>act('decline',i.workspace_id,{invitationId:i.id})}>Refuser</button></div></article>)}</section>
+   <section className="instituteBlock"><div className="instituteHeading"><Building2/><div><h3>Mes espaces</h3><p>Sélectionne un Institut pour voir ton rôle et ses membres.</p></div></div>
+   {!spaces.length&&!busy&&<div className="compactEmpty">Tu n’appartiens encore à aucun Institut.</div>}<div className="instituteSpaceList">{spaces.map(s=><button className={state?.workspace.id===s.id?'selected':''} key={s.id} disabled={busy} onClick={()=>choose(s.id)}><span>{s.name}<small>{s.owner_user_id===userId?'Propriétaire':'Compte associé'}</small></span><ChevronRight/></button>)}</div></section>
+   {state&&<section className="instituteBlock instituteDetails"><div className="instituteHeading"><UsersRound/><div><h3>{state.workspace.name}</h3><p>{state.members.length} membre{state.members.length>1?'s':''} · {state.entitlement?.seat_limit||'—'} place{state.entitlement?.seat_limit>1?'s':''}</p></div></div>
+   {myMembership&&!owner&&<div className="roleBanner"><ShieldCheck/><span><small>MON RÔLE</small><b>{instituteRoleLabel(myMembership.role)}</b></span></div>}
+   {!state.entitlement?.active&&<p className="formHint">L’offre est inactive. Les données sont conservées, mais aucune nouvelle invitation ne peut être envoyée.</p>}
+   <div className="memberList">{state.members.map(m=><article className="memberCard" key={m.user_id}><div><b>{m.display_name||'Membre'}</b>{m.username&&<small>@{m.username}</small>}</div>{owner&&m.user_id!==userId?<label><span>Rôle</span><select disabled={busy} value={m.role} onChange={event=>setRole(m.user_id,event.target.value)}><option value="manager">Responsable</option><option value="creator">Créatrice / PO</option><option value="member">Collaboratrice</option></select></label>:<span className="rolePill">{instituteRoleLabel(m.role)}</span>}{owner&&m.user_id!==userId&&<div className="memberActions"><button disabled={busy} onClick={()=>setConfirmation({action:'remove',targetId:m.user_id,name:m.display_name})}>Retirer</button><button disabled={busy} onClick={()=>setConfirmation({action:'transfer',targetId:m.user_id,name:m.display_name})}>Transférer la propriété</button></div>}</article>)}</div>
+   {owner&&<section className="inviteBox"><h4>Inviter une collaboratrice</h4><label><span>@NailMoodsID</span><input value={handle} maxLength={31} autoCapitalize="none" autoCorrect="off" placeholder="ex. marie.nails" onChange={e=>setHandle(e.target.value)}/></label><button className="primaryAction" disabled={busy||handle.trim().length<3} onClick={()=>act('invite',state.workspace.id,{handle})}>Envoyer l’invitation</button>{state.invitations.map(i=><div className="pendingInvite" key={i.id}><span>{i.display_name}<small>Invitation en attente</small></span><button disabled={busy} onClick={()=>act('revoke',state.workspace.id,{invitationId:i.id})}>Révoquer</button></div>)}</section>}
+   {!owner&&<button className="dangerText" disabled={busy} onClick={()=>setConfirmation({action:'leave'})}>Quitter cet Institut</button>}
+   {confirmation&&<div className="confirmationBox" role="group" aria-label="Confirmer le changement d’équipe"><p>{confirmation.action==='transfer'?`Transférer la propriété à ${confirmation.name} ? Tu deviendras membre et perdras les droits de propriétaire.`:confirmation.action==='remove'?`Retirer ${confirmation.name} ? Cette personne perdra l’accès à cet espace.`:'Quitter cet Institut ? Tu perdras l’accès à ses données.'}</p><div className="buttonPair"><button className="primaryAction" disabled={busy} onClick={()=>act(confirmation.action,state.workspace.id,{targetId:confirmation.targetId})}>Confirmer</button><button className="quietButton" disabled={busy} onClick={()=>setConfirmation(null)}>Annuler</button></div></div>}
+   </section>}
+ </Sheet>}
+ </section>;
+}

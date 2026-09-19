@@ -6,6 +6,19 @@ import {createAccountStore,accountCacheKey,migrationKey,mergeGuest,readGuest} fr
 import {COLLECTION,LIBRARY,JOURNAL,PROFILE,TABLES,clone,productRow,productFromRow,profilePatch} from '../src/cloud/mapping.js';
 const memory=()=>{const m=new Map();return {getItem:k=>m.get(k)??null,setItem:(k,v)=>m.set(k,v),removeItem:k=>m.delete(k)};};
 const polish={id:'local-1',name:'Prune',brand:'KIKO',type:'Vernis',confirmedColor:'#553366',color:'#ff0000',reference:'366',rawBarcode:'8059385036113',finish:'Métallique',photo:'photo-test',provenance:{catalogId:'catalog-test',verified:true}};
+test('server tier refresh preserves drafts but never retains a stale cached tier',async()=>{
+ const repo=backend(),store=make(memory(),repo);repo.profile.account_tier='plus';await store.load();
+ repo.fail=true;store.storage.setItem(COLLECTION,JSON.stringify([polish]));await store.flush();
+ repo.fail=false;repo.profile.account_tier='free';await store.load();
+ assert.equal(store.storage.accountTier,'free');assert.equal(store.pending,1);
+ assert.equal(JSON.parse(store.storage.getItem(COLLECTION))[0].id,polish.id);
+});
+test('independent account stores never share account tiers',async()=>{
+ const local=memory(),a=backend(),b=backend();a.profile.account_tier='plus';b.profile.account_tier='pro';
+ const sa=make(local,a,'A','WA'),sb=make(local,b,'B','WB');await sa.load();await sb.load();
+ assert.equal(sa.storage.accountTier,'plus');assert.equal(sb.storage.accountTier,'pro');
+ b.profile.account_tier='free';await sb.load();assert.equal(sa.storage.accountTier,'plus');assert.equal(sb.storage.accountTier,'free');
+});
 function backend(){
  const rows=Object.fromEntries(TABLES.map(t=>[t,[]]));const profile={id:'A',display_name:'',account_tier:'free',preferences:{}};let fail=false;const writes=[];
  return {rows,writes,profile,set fail(v){fail=v;},async load(){if(fail)throw new Error('offline');return clone({profile,rows,favorites:[]});},async write(op){if(fail)throw new Error('offline');writes.push(clone(op));if(TABLES.includes(op.table)){
@@ -16,6 +29,14 @@ function backend(){
 const databases=new WeakMap();
 const cacheFor=storage=>{if(!databases.has(storage))databases.set(storage,new IDBFactory());return createWorkspaceCache({indexedDB:databases.get(storage)});};
 const make=(storage,repo,userId='A',workspaceId='WA',other={})=>createAccountStore({storage,repo,userId,workspaceId,cache:cacheFor(storage),...other});
+test('publishing an existing private journal photo uploads a public copy before writing the reference',async()=>{
+ const repo=backend(),calls=[];const media={download:async p=>{calls.push(p);return new Blob(['test'],{type:'image/png'});},uploadPublic:async()=>({path:'A/WA/journal/public-version.png'})};
+ const store=make(memory(),repo,'A','WA',{media});await store.load();
+ store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'pose',date:'2026-09-19',photo:'A/WA/journal/private.png',mediaPath:'A/WA/journal/private.png',visibility:'public'}]}));
+ assert.equal(await store.flush(),true);assert.deepEqual(calls,['A/WA/journal/private.png']);
+ assert.equal(repo.rows.journal_entries[0].public_media_path,'A/WA/journal/public-version.png');
+ assert.equal(repo.rows.journal_entries[0].media_path,'A/WA/journal/private.png');
+});
 test('mapping preserves real HEX, barcode, sticker tags and unverified personal copy',()=>{
  const row=productRow(polish);assert.equal(row.hex,'#553366');assert.equal(row.barcode,'8059385036113');assert.equal(row.is_verified,false);assert.equal(row.metadata.nailmoods.photo,'photo-test');
  assert.equal(productFromRow({...row,id:'remote'},'user_products').id,'local-1');
@@ -72,6 +93,52 @@ test('old inspiration snapshots remain separate from a later collection edit',as
  const repo=backend(),store=make(memory(),repo);await store.load();const idea={key:'idea-test',title:'Cassis',palette:[polish],options:{mood:'Douce'}};
  store.storage.setItem(LIBRARY,JSON.stringify({recent:[idea],favorites:[idea],selected:null}));await store.flush();const id=repo.rows.inspirations[0].id;assert.equal(repo.writes.at(-1).table,'favorites');assert.equal(repo.writes.at(-1).rowId,id);
  store.storage.setItem(COLLECTION,JSON.stringify([{...polish,confirmedColor:'#ff0000'}]));await store.flush();assert.equal(repo.rows.inspirations[0].snapshot.palette[0].confirmedColor,'#553366');
+});
+
+test('connected journal photo uploads before the Supabase write and stores only a path remotely',async()=>{
+ const local=memory(),repo=backend(),calls=[];
+ const media={
+  async upload({kind,objectId,file}){calls.push(['private',kind,objectId,file.type,file.size]);return {path:`A/WA/${kind}/${objectId}.jpg`};},
+  async uploadPublic({kind,objectId}){calls.push(['public',kind,objectId]);return {path:`A/WA/${kind}/${objectId}.jpg`};},
+ };
+ const store=make(local,repo,'A','WA',{media});await store.load();
+ const photo='data:image/jpeg;base64,'+Buffer.alloc(32,42).toString('base64');
+ store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'j1',version:1,title:'Cassis',date:'2026-09-18',photo,products:[],visibility:'public',idea:null,feeling:'',ease:'',repeat:false,wearDays:'',notes:'',createdAt:1,updatedAt:1}],hiddenSessions:[]}));
+ assert.equal(await store.flush(),true);const write=repo.writes.find(op=>op.table==='journal_entries');
+ assert.equal(calls[0][0],'private');assert.equal(calls[1][0],'public');assert.equal(write.values.media_path,'A/WA/journal/'+write.rowId+'.jpg');assert.equal(write.values.snapshot.photo,'A/WA/journal/'+write.rowId+'.jpg');assert.ok(!JSON.stringify(write).includes('base64'));
+});
+
+test('existing connected journal photos migrate non-destructively and become paths after a successful upload',async()=>{
+ const local=memory(),repo=backend(),calls=[];
+ const media={async upload({objectId}){calls.push(objectId);return {path:`A/WA/journal/${objectId}.jpg`};},async uploadPublic(){return {path:'public'};}};
+ const store=make(local,repo,'A','WA',{media});await store.load();
+ const photo='data:image/jpeg;base64,'+Buffer.alloc(12,9).toString('base64');
+ store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'old-photo',version:1,title:'Souvenir',date:'2026-09-18',photo,products:[],visibility:'private',idea:null,feeling:'',ease:'',repeat:false,wearDays:'',notes:'',createdAt:1,updatedAt:1}],hiddenSessions:[]}));
+ assert.equal(await store.flush(),true);const stats=await store.migrateMedia();assert.deepEqual(stats,{detected:0,migrated:0,failed:0,remaining:0});
+ assert.equal(calls.length,1);assert.equal(repo.rows.journal_entries[0].media_path,'A/WA/journal/'+repo.rows.journal_entries[0].id+'.jpg');
+});
+
+test('public journal media is removed when a pose returns to private',async()=>{
+ const local=memory(),repo=backend(),calls=[];
+ const media={async upload({kind,objectId}){return {path:`A/WA/${kind}/${objectId}.jpg`};},async uploadPublic({kind,objectId}){return {path:`A/WA/${kind}/${objectId}.jpg`};},async removePublic(path){calls.push(path);}};
+ const store=make(local,repo,'A','WA',{media});await store.load();
+ const photo='data:image/jpeg;base64,'+Buffer.alloc(8,7).toString('base64');
+ store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'public-pose',title:'Public',date:'2026-09-18',photo,products:[],visibility:'public'}],hiddenSessions:[]}));
+ assert.equal(await store.flush(),true);const row=repo.rows.journal_entries[0];assert.equal(row.visibility,'public');assert.ok(row.public_media_path);
+ const current=JSON.parse(store.storage.getItem(JOURNAL));current.entries[0].visibility='private';store.storage.setItem(JOURNAL,JSON.stringify(current));assert.equal(await store.flush(),true);
+ assert.deepEqual(calls,[row.public_media_path]);assert.equal(repo.rows.journal_entries[0].visibility,'private');assert.equal(repo.rows.journal_entries[0].public_media_path,null);
+});
+
+test('media migration reports and uploads inspiration snapshots without leaving data URLs',async()=>{
+ const local=memory(),repo=backend(),calls=[];
+ const media={async upload({kind,objectId}){calls.push([kind,objectId]);return {path:`A/WA/${kind}/${objectId}.jpg`};},async uploadPublic(){return {path:'public'};}};
+ const store=make(local,repo,'A','WA',{media});await store.load();
+ const photo='data:image/png;base64,'+Buffer.alloc(8,4).toString('base64');
+ const idea={key:'idea-media',title:'Rose',photo,options:{mood:'Douce'}};
+ store.storage.setItem(LIBRARY,JSON.stringify({recent:[idea],favorites:[],selected:null}));
+ assert.equal(await store.flush(),true);const stats=await store.migrateMedia();
+ assert.deepEqual(stats,{detected:0,migrated:0,failed:0,remaining:0});
+ assert.equal(calls.length,1);assert.equal(calls[0][0],'inspiration');assert.ok(!JSON.stringify(repo.rows.inspirations[0]).includes('base64'));
 });
 
 test('21 guest products import despite saturated localStorage, retaining guest and remote rows',async()=>{

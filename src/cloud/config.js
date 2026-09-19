@@ -5,6 +5,10 @@ export function publicCloudConfig(env = {}) {
   if (!url && !key) return null;
   if (!url || !key) throw new Error('Configuration Supabase publique incomplète.');
   const parsed = new URL(url);
+  if (env.VITE_BETA_ACCOUNT_TIERS === 'true' && parsed.hostname === 'rvqmtnqvzzxzwfxfyjcg.supabase.co')
+    throw new Error('Le mode bêta de recette est interdit sur le backend de production.');
+  if (env.VITE_DEPLOYMENT_ENV === 'recette' && parsed.hostname !== 'pueqkbwfwxgqzmkauxoz.supabase.co')
+    throw new Error('La preview doit utiliser NailMoods-Recette.');
   if (parsed.protocol !== 'https:' || parsed.username || parsed.password || parsed.search || parsed.hash)
     throw new Error('URL Supabase invalide.');
   if (!key.startsWith('sb_publishable_')) throw new Error('Une clé publique Supabase est requise.');

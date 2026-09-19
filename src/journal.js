@@ -43,7 +43,7 @@ export function newJournalEntry(id, session = null, now = Date.now()) {
   const idea = session && validIdea(session.idea) ? snapshotIdea(session.idea) : null;
   return { id, version: 1, sessionId: session?.id || null, idea, title: idea?.title || '',
     date: localDate(session?.completedAt || now), photo: '', products: idea ? journalProducts([...idea.palette, ...idea.resources]) : [],
-    feeling: '', ease: '', repeat: false, wearDays: '', notes: '', createdAt: now, updatedAt: now };
+    feeling: '', ease: '', repeat: false, wearDays: '', notes: '', visibility: 'private', createdAt: now, updatedAt: now };
 }
 
 export function journalValidation(entry, now = Date.now()) {
@@ -61,7 +61,7 @@ function cleanEntry(entry) {
     photo: safeJournalPhoto(entry.photo), products: journalProducts(entry.products),
     feeling: Object.hasOwn(feelingLabels, entry.feeling) ? entry.feeling : '', ease: Object.hasOwn(easeLabels, entry.ease) ? entry.ease : '',
     repeat: entry.repeat === true, wearDays: /^\d+$/.test(String(entry.wearDays)) && Number(entry.wearDays) <= 365 ? Number(entry.wearDays) : '',
-    notes: text(entry.notes, 4000), createdAt: Number.isFinite(entry.createdAt) ? entry.createdAt : 0, updatedAt: Number.isFinite(entry.updatedAt) ? entry.updatedAt : 0 };
+    notes: text(entry.notes, 4000), visibility: entry.visibility === 'public' ? 'public' : 'private', createdAt: Number.isFinite(entry.createdAt) ? entry.createdAt : 0, updatedAt: Number.isFinite(entry.updatedAt) ? entry.updatedAt : 0 };
 }
 
 export function readJournal(storage) {

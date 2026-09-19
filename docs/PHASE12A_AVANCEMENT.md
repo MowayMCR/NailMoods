@@ -45,3 +45,7 @@ Phase 12A non déclarée validée tant que ces essais serveur et humains ne sont
 ## Publication et recette navigateur
 
 Déploiement GitHub Pages réussi après les 194 tests. Sur la version publiée : accueil accessible en invité, 10 produits/accessoires de test, 4 favoris et 2 souvenirs locaux toujours présents. Ouverture et fermeture du formulaire de compte vérifiées : champs email/password avec autocomplete, boutons de 48 px (fermeture 44 px), aucun débordement horizontal dans la colonne de 400 px du navigateur de contrôle. Après fermeture, Inspire-moi génère effectivement quatre propositions sans connexion. Ce contrôle utilise le navigateur de test existant ; il ne remplace pas une nouvelle session vierge sur téléphone.
+
+## Complément du 18 septembre — accès administratif disponible
+
+L’audit Supabase et la correction des droits de conversation/vérification sont maintenant réalisés. Les détails et distinctions entre vérifications réelles, simulations et scripts non déployés se trouvent dans `PHASE12B_CONFIDENTIALITE_AVANCEMENT.md`. Le runner d’isolation a été étendu et n’accepte plus une erreur réseau comme preuve de sécurité. Aucun compte confirmé n’existe au contrôle : la recette réelle et le passage de phase restent à valider.

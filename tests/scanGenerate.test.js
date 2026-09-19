@@ -41,10 +41,10 @@ test('a label that resembles an auxiliary product does not silently trigger an u
  const product={...green,name:'Top coat test'};
  const ideas=generateScannedIdeas([product]);assert.ok(ideas.length>=2);for(const i of ideas)assert.ok(i.palette.every(p=>p.id===product.id || p.unpainted));
 });
-test('analytics are bounded, contain no private data, and cannot block scanning',()=>{
+test('optional scan analytics stay off without an enabled provider',()=>{
  let raw='[]';const storage={getItem:()=>raw,setItem:(_,v)=>{raw=v;}};
  for(let i=0;i<205;i++)trackScan(storage,'scan_generate_completed',{count:3,photo:'secret',name:'secret'});
- const rows=JSON.parse(raw);assert.equal(rows.length,200);assert.deepEqual(Object.keys(rows[0]),['event','at','count']);
- trackScan(storage,'not_an_event');assert.equal(JSON.parse(raw).length,200);
+ const rows=JSON.parse(raw);assert.equal(rows.length,0);
+ trackScan(storage,'not_an_event');assert.equal(JSON.parse(raw).length,0);
  assert.doesNotThrow(()=>trackScan({getItem:()=>{throw new Error();}},'scan_generate_opened'));
 });
