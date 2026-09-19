@@ -62,7 +62,7 @@ revoke all on function private.record_signup_terms() from public,anon,authentica
 create trigger on_auth_user_terms after insert on auth.users for each row execute function private.record_signup_terms();
 
 -- Delete only the authenticated user's account, after typed confirmation and a live session check.
--- Not enabled in production until message-retention policy and end-to-end deletion QA are agreed.
+-- Not enabled in production until phase12/institute-messaging.sql is deployed and end-to-end deletion QA confirms anonymized message retention.
 create function private.delete_my_nailmoods_account(p_confirmation text) returns void
 language plpgsql security definer set search_path='' as $$
 declare current_user_id uuid := auth.uid();
@@ -78,7 +78,7 @@ begin
   if exists(select 1 from storage.objects where owner_id=current_user_id::text) then raise exception 'storage_cleanup_required'; end if;
   delete from auth.sessions where user_id=current_user_id;
   delete from auth.users where id=current_user_id;
-  -- Existing foreign keys cascade own data, messages and conversations; copies saved by others remain.
+  -- After phase12/institute-messaging.sql, message authors and conversation creators are SET NULL on account deletion.\n  -- Remaining participants keep conversation history; UI must render null sender as « Compte supprimé ».\n  -- Private account-owned data/workspaces still follow their own deletion rules.
 end $$;
 revoke all on function private.delete_my_nailmoods_account(text) from public,anon;
 grant execute on function private.delete_my_nailmoods_account(text) to authenticated;
