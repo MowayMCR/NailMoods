@@ -18,6 +18,8 @@ import { readGuestConsent } from '../privacy/policy';
 import { clearAccountCache } from '../privacy/service';
 import AccountOfferPanel from './AccountOfferPanel';
 import {ACCOUNT_OFFERS,accountOfferService,clearPendingAccountOffer,pendingAccountOffer,rememberPendingAccountOffer} from './betaTier';
+import { createAnalytics, setActiveAnalytics, track } from '../analytics/analytics';
+import { PRIVACY_VERSION } from '../privacy/policy';
 
 let client=null,configurationError=false;
 try{client=getCloudClient();}catch{configurationError=true;}
@@ -38,7 +40,7 @@ export default function AccountRoot({App}){
   const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState(''),[guestOverride,setGuestOverride]=useState(false),[confirmRemote,setConfirmRemote]=useState(false);
   const [confirmCacheClear,setConfirmCacheClear]=useState(false);
   const [termsAccepted,setTermsAccepted]=useState(false),[adultConfirmed,setAdultConfirmed]=useState(false);
-  const active=useRef(null), mounted=useRef(true);
+  const active=useRef(null), mounted=useRef(true), analytics=useRef(null);
   const userId=session?.user?.id || null;
   useEffect(()=>{
     mounted.current=true;
@@ -95,19 +97,19 @@ export default function AccountRoot({App}){
       if(mode==='signup'){
         const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {},adultConfirmed);setPassword('');
         if(data.user?.id)rememberPendingAccountOffer(browserStorage,data.user.id,signupTier);
-        if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);}
+        if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);track('signup_completed');}
         else setMessage('Si cette adresse peut être inscrite, un email de confirmation va arriver. Ouvre le lien dans ce navigateur, puis connecte-toi.');
       }else if(mode==='recovery'){
         await service.requestRecovery(email);setMessage('Si un compte correspond à cette adresse, tu recevras un lien pour choisir un nouveau mot de passe. Ouvre-le dans ce navigateur.');
       }else if(mode==='password'){
         await service.updatePassword(password);setPassword('');setMessage('Ton mot de passe a été mis à jour.');setMode('account');
       }else{
-        const data=await service.signIn(email,password);setPassword('');setSession(data.session);setGuestOverride(false);setOpen(false);
+        const data=await service.signIn(email,password);setPassword('');setSession(data.session);setGuestOverride(false);setOpen(false);track('login_success');
       }
     recordCloudEvent(browserStorage,mode,true);
     }catch(error){recordCloudEvent(browserStorage,mode,false);setAuthError(authMessage(error));}finally{if(mounted.current)setBusy(false);}
   }
-  async function logout(){setBusy(true);setAuthError('');try{await active.current?.ensureDurable();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{setBusy(false);}}
+  async function logout(){setBusy(true);setAuthError('');try{track('logout');await analytics.current?.flush();await active.current?.ensureDurable();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{setBusy(false);}}
   async function migrate(){setBusy(true);setAuthError('');try{
     if(import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && loaded.store.profile?.account_tier==='free')throw new Error('L’import dans la collection est disponible avec Plus. Ta copie invitée reste conservée.');
     const guest=readGuest(browserStorage);
@@ -134,6 +136,14 @@ export default function AccountRoot({App}){
   let count=0,guestInvalid=false;try{count=guestCount(readGuest(browserStorage));}catch{guestInvalid=true;}
   const ready=loaded?.userId===userId && !guestOverride;
   const guest=!userId || guestOverride;
+  useEffect(()=>{
+    let cancelled=false;analytics.current?.stop();analytics.current=null;setActiveAnalytics(null);
+    if(!ready||!client||!userId)return;
+    (async()=>{const {data}=await client.from('user_consents').select('analytics_consent,privacy_version').eq('user_id',userId).order('event_id',{ascending:false}).limit(1).maybeSingle();
+      if(cancelled)return;const enabled=data?.analytics_consent===true&&data?.privacy_version===PRIVACY_VERSION;
+      analytics.current=createAnalytics({client,enabled,workspaceType:loaded.workspace?.kind||'personal',appVersion:import.meta.env.VITE_APP_VERSION||'0.1.0'});setActiveAnalytics(analytics.current);
+    })();return()=>{cancelled=true;analytics.current?.stop();analytics.current=null;setActiveAnalytics(null);};
+  },[ready,userId,loaded?.workspace?.id,retry]);
   useEffect(()=>{
     if(!ready||!userId)return;
     const pending=pendingAccountOffer(browserStorage,userId);if(!pending)return;

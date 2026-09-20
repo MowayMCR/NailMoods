@@ -16,6 +16,7 @@ import { decorationChoice, isDecoration } from './decorations';
 import DecorationPicker, { DecorationPhoto } from './DecorationPicker';
 import { PersonalizationSummary } from './PersonalizationView';
 import { CREATION_KEY as KEY, readCreationState } from './creationState';
+import { track } from './analytics/analytics';
 
 const modes = [
   { id: 'usual', title: 'Comme d’habitude', subtitle: 'Mes favoris, mon univers', icon: Heart },
@@ -66,11 +67,15 @@ export default function CreateView({ onSaveIdea, entryOptions, onEntryConsumed, 
   };
 
   function change(patch) {
+    if(patch.intent)track('create_mode_selected',{mode:patch.intent==='collection'?'my_collection':'inspire_me'},{screen:'create'});
     if (patch.intent === 'inspire') patch = { ...patch, requiredColorIds: [] };
     setState(previous => ({ ...previous, options: { ...previous.options, ...patch }, generated: false, selected: null }));
   }
   function generate() {
+    const started=performance.now();
+    track(state.generated?'generation_regenerated':'generation_started',{difficulty:String(options.level),number_of_colors:options.polishCount==='auto'?0:Number(options.polishCount),render_mode:'illustrated',used_collection:options.intent==='collection'},{screen:'create'});
     setState(previous => ({ ...previous, generated: true, inventory: stamp, seed: (Number(previous.seed) || 0) + 1, selected: null, learning: liveLearning, learningStamp: liveStamp }));
+    track('generation_succeeded',{difficulty:String(options.level),number_of_colors:report.results.length,render_mode:'illustrated',used_collection:options.intent==='collection'},{screen:'create',duration_ms:Math.round(performance.now()-started),success:true});
     requestAnimationFrame(() => resultAnchor.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 

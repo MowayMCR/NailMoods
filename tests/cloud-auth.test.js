@@ -17,7 +17,7 @@ test('signup delegates to auth without injecting privileges or duplicating backe
   let sent;
   const service = createAuthService({ auth: { signUp: async args => { sent=args; return {data:{session:null},error:null}; } } }, page);
   assert.deepEqual(await service.signUp(' a@example.test ', 'password', true, {}, true), {session:null});
-  assert.deepEqual(sent, {email:'a@example.test',password:'password',options:{emailRedirectTo:authReturnUrl(page),data:{adult_confirmed:true,terms_accepted:true,terms_version:'0.1-beta',privacy_version:'0.1-beta',analytics_consent:false,ads_consent:false,personalized_ads_consent:false}}});
+  assert.deepEqual(sent, {email:'a@example.test',password:'password',options:{emailRedirectTo:authReturnUrl(page),data:{adult_confirmed:true,terms_accepted:true,terms_version:'0.1-beta',privacy_version:'0.2-beta',analytics_consent:false,ads_consent:false,personalized_ads_consent:false}}});
 });
 test('recovery callback exchanges once per invocation and removes code from returned navigation', async () => {
   let calls = 0;

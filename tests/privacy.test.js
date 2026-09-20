@@ -9,11 +9,11 @@ test('signup rejects absent or non-boolean terms before making any Auth call',()
  let calls=0;const auth=createAuthService({auth:{signUp(){calls++;}}},'https://example.test');
  for(const acceptance of [undefined,false,'true',1])assert.throws(()=>auth.signUp('test@example.test','password',acceptance));
  assert.equal(calls,0);
- assert.deepEqual(signupConsent(true,yes,true),{adult_confirmed:true,terms_accepted:true,terms_version:'0.1-beta',privacy_version:'0.1-beta',...DENIED});
+ assert.deepEqual(signupConsent(true,yes,true),{adult_confirmed:true,terms_accepted:true,terms_version:'0.1-beta',privacy_version:'0.2-beta',analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
 });
 test('no unselected provider gets anticipatory permission',()=>{
- assert.deepEqual(availableChoices(yes),DENIED);
- assert.deepEqual(permissions({tier:'free',screen:'home',consent:yes}),{analytics:false,ads:false,personalizedAds:false});
+ assert.deepEqual(availableChoices(yes),{analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
+ assert.deepEqual(permissions({tier:'free',screen:'home',consent:yes}),{analytics:true,ads:false,personalizedAds:false});
 });
 test('advertising and personalization are distinct; withdrawal takes immediate effect',()=>{
  const args={tier:'free',screen:'home',technologies:enabled};

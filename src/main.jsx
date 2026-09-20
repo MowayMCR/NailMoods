@@ -31,6 +31,7 @@ import PersonalizationPanel from './PersonalizationView';
 import './design-system.css';
 import './finish.css';
 import { PERSONALIZATION_KEY, readPersonalization, buildPersonalModel } from './personalization';
+import { track } from './analytics/analytics';
 const colors=colorFamilies;const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
 
 function Brand() {
@@ -77,6 +78,7 @@ function App({ accountAccess, syncNotice, profileExtras, media }) {
   const [collectionFilters, setCollectionFilters] = useState({ ...emptyFilters });
   const [compactCollection, setCompactCollection] = useState(false);
   const [visibleCount, setVisibleCount] = useState(40);
+  useEffect(() => { track('screen_viewed', {}, { screen: tab }); if(tab==='collection')track('collection_opened',{}, {screen:tab}); if(tab==='create')track('create_opened',{}, {screen:tab}); if(tab==='journal')track('journal_opened',{}, {screen:tab}); }, []);
   useEffect(() => setVisibleCount(40), [search, filter, collectionFilters]);
   const [edit, setEdit] = useState(null);
   const productName = useRef(null), productCamera = useRef(null), productColorArea = useRef(null);
@@ -94,6 +96,7 @@ function App({ accountAccess, syncNotice, profileExtras, media }) {
     setRoute('#' + tabRoutes[next]);
     window.location.hash = tabRoutes[next];
     window.scrollTo({ top: 0, behavior: 'instant' });
+    track('screen_viewed', {}, { screen: next });
   }
   useEffect(() => {
     const followRoute = () => { setTab(tabFromHash()); setRoute(window.location.hash); window.scrollTo({ top: 0, behavior: 'instant' }); };
@@ -122,7 +125,7 @@ function App({ accountAccess, syncNotice, profileExtras, media }) {
     window.location.hash = 'inspiration/' + saved.key;
   }
   function renameIdea(key, title) { return saveLibrary(renameInspiration(library, key, title)); }
-  function saveIdea(idea) { return saveLibrary(saveInspiration(library, idea)); }
+  function saveIdea(idea) { const saved=saveLibrary(saveInspiration(library, idea));if(saved)track('generation_saved',{technique:idea?.technique||'mixed',render_mode:'illustrated',used_collection:Boolean(idea?.options?.intent==='collection')},{screen:'create'});return saved; }
   function favoriteIdea(idea) { return saveLibrary(toggleFavorite(library, snapshotIdea(idea))); }
   function selectIdea(idea, clear = false) { return saveLibrary({ ...rememberIdea(library, idea), selected: clear ? null : idea }); }
   function saveTutorials(next) {
@@ -179,6 +182,7 @@ function App({ accountAccess, syncNotice, profileExtras, media }) {
     try {
       const result = putJournalEntry(journal, draft);
       const saved = saveJournal(result.store);
+      if(saved.ok)track('journal_entry_saved',{type:draft.type||'pose',visibility:draft.visibility||'private',source:draft.source||'manual'},{screen:'journal'});
       return saved.ok ? { ok: true, id: result.entry.id } : saved;
     } catch (error) { return { ok: false, error: error.message }; }
   }
@@ -208,6 +212,7 @@ function App({ accountAccess, syncNotice, profileExtras, media }) {
     setImporter(false);
     setSaveError('');
     setEdit({ ...defaults, ...materialDefaults, type, source });
+    track('product_add_started',{source,category:type},{screen:'collection'});
   }
 
   function addOwnedEquipment(category) {
@@ -249,6 +254,7 @@ function App({ accountAccess, syncNotice, profileExtras, media }) {
     const product = { ...edit, provenance: provenanceOf(edit), id: edit.id ?? crypto.randomUUID(), name: edit.name.trim(), brand: edit.brand.trim(), url: edit.url.trim() };
     if (material) product.quantity = quantity;
     const saved = persist(edit.id ? items.map(item => item.id === edit.id ? product : item) : [...items, product]);
+    track(saved?'product_added':'product_add_failed',{source:edit.source||'manual',category:edit.type},{screen:'collection',success:saved});
     if (saved && forCreation) {
       setCreationEntry(isDecoration(product) ? { decorations: 'with', decorationId: String(product.id), constraints: [], duration: 90, requiredColorIds: [], intent: items.some(i => ['Vernis', 'Semi-permanent', 'Gel'].includes(i.type)) ? 'collection' : 'inspire' } : { intent: 'collection', requiredColorIds: [String(product.id)], polishCount: 'auto', constraints: [], decorations: 'auto', decorationId: '' });
       navigate('create');
@@ -394,7 +400,7 @@ function App({ accountAccess, syncNotice, profileExtras, media }) {
           <button className="saveProduct" disabled={!edit.name.trim() || photoBusy || importBusy} onClick={() => save()}><Check />{photoBusy ? 'Préparation de la photo…' : importBusy ? 'Recherche en cours…' : 'Enregistrer'}</button>
           {!edit.name.trim() && <p className="fieldHelp">Renseigne un nom pour enregistrer.</p>}
         </div>
-        {edit.id && <button className="deleteProduct" onClick={() => persist(items.filter(item => item.id !== edit.id))}><Trash2 /> Supprimer</button>}
+        {edit.id && <button className="deleteProduct" onClick={() => {const category=edit.type;if(persist(items.filter(item => item.id !== edit.id)))track('product_deleted',{category},{screen:'collection'});}}><Trash2 /> Supprimer</button>}
       </section>
     </div>}
   </div>;

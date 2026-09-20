@@ -43,7 +43,7 @@ export default function PrivacyPanel({ client, userId, tier, guestStorage, onDel
     {panel && <Sheet title={panel === 'choices' ? 'Vos choix de confidentialité' : panel === 'delete' ? 'Supprimer mon compte' : 'Mes données'} className="privacySheet" onClose={() => { if (!busy) setPanel(null); }}>
       {panel === 'choices' && <>
         <p>NailMoods utilise les éléments nécessaires au fonctionnement de l’application. Avec votre accord, certaines technologies peuvent aussi être utilisées pour mesurer l’audience et afficher ou personnaliser des publicités.</p>
-        <p>Actuellement, aucun partenaire publicitaire ni outil de mesure d’audience n’est activé. Nous ne demandons pas d’accord anticipé pour un futur partenaire.</p>
+        <p>Avec ton accord, NailMoods mesure uniquement des événements techniques et d’usage pseudonymisés afin d’améliorer le service, ses performances et sa sécurité. Aucun contenu privé, photo, message, note, email ni prompt complet n’est collecté. Aucun partenaire publicitaire n’est activé.</p>
         {(tier === 'plus' || tier === 'pro') && <p>Ton offre {tier === 'plus' ? 'Plus' : 'Pro'} est sans publicité.</p>}
         <div className="consentActions"><button disabled={busy || !loaded} onClick={() => save({ analytics_consent: true, ads_consent: true, personalized_ads_consent: true })}>Tout accepter</button><button disabled={busy || !loaded} onClick={() => save(DENIED)}>Tout refuser</button><button onClick={() => document.getElementById('privacy-options')?.focus()}>Personnaliser</button></div>
         <div id="privacy-options" tabIndex={-1}><h3>Personnaliser</h3><p><b>Nécessaires · toujours actifs</b><br/>Connexion, sécurité, session, sauvegarde, synchronisation et préférences indispensables.</p>
