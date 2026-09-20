@@ -1,5 +1,6 @@
 -- NailMoods product analytics v1. Private raw data; consent-gated writes only.
 create schema if not exists private;
+create extension if not exists pg_cron;
 
 create table if not exists private.analytics_identities (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -23,6 +24,16 @@ create table if not exists private.analytics_events (
   metadata jsonb not null default '{}', duration_ms integer check(duration_ms between 0 and 86400000), success boolean, error_code text,
   check(jsonb_typeof(metadata)='object'), check(pg_column_size(metadata)<=4096)
 );
+create table if not exists private.analytics_daily_archive (
+  period_day date primary key,
+  dau integer not null,
+  sessions integer not null,
+  events integer not null,
+  generations integer not null,
+  realistic_renders integer not null,
+  estimated_ai_cost numeric not null default 0,
+  calculated_at timestamptz not null default now()
+);
 create index if not exists analytics_events_occurred_idx on private.analytics_events(occurred_at desc);
 create index if not exists analytics_events_name_time_idx on private.analytics_events(event_name,occurred_at desc);
 create index if not exists analytics_events_user_time_idx on private.analytics_events(analytics_user_id,occurred_at desc);
@@ -45,6 +56,7 @@ on conflict(event_name) do update set category=excluded.category,allowed_metadat
 alter table private.analytics_identities enable row level security;
 alter table private.analytics_event_catalog enable row level security;
 alter table private.analytics_events enable row level security;
+alter table private.analytics_daily_archive enable row level security;
 revoke all on all tables in schema private from public,anon,authenticated;
 grant usage on schema private to service_role;
 grant select on all tables in schema private to service_role;
@@ -85,5 +97,16 @@ create or replace view private.analytics_social_usage as select occurred_at::dat
 create or replace view private.analytics_cost_estimates as select occurred_at::date period_day,account_tier,count(*) filter(where event_name='realistic_render_succeeded') realistic_render_count,coalesce(sum(case when metadata->>'estimated_cost' ~ '^[0-9]+([.][0-9]+)?$' then (metadata->>'estimated_cost')::numeric else 0 end) filter(where event_name='realistic_render_succeeded'),0) estimated_ai_cost,count(*) filter(where event_name like '%upload%') upload_count from private.analytics_events group by 1,2;
 create or replace view private.analytics_retention_cohorts as with a as(select analytics_user_id,occurred_at::date d,min(occurred_at::date) over(partition by analytics_user_id) cohort from private.analytics_events) select date_trunc('week',cohort)::date cohort_week,count(distinct analytics_user_id) cohort_users,count(distinct analytics_user_id) filter(where d=cohort+1) retained_d1,count(distinct analytics_user_id) filter(where d=cohort+7) retained_d7,count(distinct analytics_user_id) filter(where d=cohort+30) retained_d30 from a group by 1;
 create or replace view private.analytics_activation as select analytics_user_id,min(occurred_at) filter(where event_name='app_opened') first_seen_at,min(occurred_at) filter(where event_name='profile_completed') profile_completed_at,min(occurred_at) filter(where event_name='product_added') first_product_at,min(occurred_at) filter(where event_name='generation_succeeded') first_generation_at,min(occurred_at) filter(where event_name='generation_saved') first_save_at from private.analytics_events group by 1;
+create or replace function private.rollup_and_purge_analytics() returns void language plpgsql security definer set search_path='' as $$
+begin
+  insert into private.analytics_daily_archive(period_day,dau,sessions,events,generations,realistic_renders,estimated_ai_cost,calculated_at)
+  select e.occurred_at::date,count(distinct e.analytics_user_id),count(distinct e.session_id),count(*),count(*) filter(where e.event_name='generation_succeeded'),count(*) filter(where e.event_name='realistic_render_succeeded'),coalesce(sum(case when e.event_name='realistic_render_succeeded' and e.metadata->>'estimated_cost' ~ '^[0-9]+([.][0-9]+)?$' then (e.metadata->>'estimated_cost')::numeric else 0 end),0),now()
+  from private.analytics_events e where e.occurred_at::date=current_date-1 group by 1
+  on conflict(period_day) do update set dau=excluded.dau,sessions=excluded.sessions,events=excluded.events,generations=excluded.generations,realistic_renders=excluded.realistic_renders,estimated_ai_cost=excluded.estimated_ai_cost,calculated_at=excluded.calculated_at;
+  delete from private.analytics_events where occurred_at < now()-interval '13 months';
+  delete from private.analytics_daily_archive where period_day < current_date-interval '25 months';
+end $$;
+revoke all on function private.rollup_and_purge_analytics() from public,anon,authenticated;
+do $$begin if not exists(select 1 from cron.job where jobname='nailmoods-analytics-retention') then perform cron.schedule('nailmoods-analytics-retention','17 3 * * *','select private.rollup_and_purge_analytics()'); end if;end$$;
 revoke all on all tables in schema private from public,anon,authenticated;
 grant select on all tables in schema private to service_role;
