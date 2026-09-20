@@ -16,7 +16,8 @@ import IdentityPanel from '../identity/IdentityPanel';
 import PrivacyPanel, { LegalLinks } from '../privacy/PrivacyPanel';
 import { readGuestConsent } from '../privacy/policy';
 import { clearAccountCache } from '../privacy/service';
-import BetaTierPanel from './BetaTierPanel';
+import AccountOfferPanel from './AccountOfferPanel';
+import {ACCOUNT_OFFERS,accountOfferService,clearPendingAccountOffer,pendingAccountOffer,rememberPendingAccountOffer} from './betaTier';
 
 let client=null,configurationError=false;
 try{client=getCloudClient();}catch{configurationError=true;}
@@ -33,6 +34,7 @@ export default function AccountRoot({App}){
   const [session,setSession]=useState(undefined),[loaded,setLoaded]=useState(null),[loadError,setLoadError]=useState('');
   const [status,setStatus]=useState({kind:'saved',pending:0}),[retry,setRetry]=useState(0),[revision,setRevision]=useState(0),[mediaMigration,setMediaMigration]=useState(null);
   const [open,setOpen]=useState(false),[mode,setMode]=useState('login'),[email,setEmail]=useState(''),[password,setPassword]=useState('');
+  const [signupTier,setSignupTier]=useState('free');
   const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState(''),[guestOverride,setGuestOverride]=useState(false),[confirmRemote,setConfirmRemote]=useState(false);
   const [confirmCacheClear,setConfirmCacheClear]=useState(false);
   const [termsAccepted,setTermsAccepted]=useState(false),[adultConfirmed,setAdultConfirmed]=useState(false);
@@ -92,6 +94,7 @@ export default function AccountRoot({App}){
     try{
       if(mode==='signup'){
         const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {},adultConfirmed);setPassword('');
+        if(data.user?.id)rememberPendingAccountOffer(browserStorage,data.user.id,signupTier);
         if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);}
         else setMessage('Si cette adresse peut être inscrite, un email de confirmation va arriver. Ouvre le lien dans ce navigateur, puis connecte-toi.');
       }else if(mode==='recovery'){
@@ -131,6 +134,18 @@ export default function AccountRoot({App}){
   let count=0,guestInvalid=false;try{count=guestCount(readGuest(browserStorage));}catch{guestInvalid=true;}
   const ready=loaded?.userId===userId && !guestOverride;
   const guest=!userId || guestOverride;
+  useEffect(()=>{
+    if(!ready||!userId)return;
+    const pending=pendingAccountOffer(browserStorage,userId);if(!pending)return;
+    let cancelled=false;
+    (async()=>{try{
+      await accountOfferService(client).choose(pending.tier);
+      clearPendingAccountOffer(browserStorage);
+      if(cancelled)return;
+      await loaded.store.load();setRevision(value=>value+1);
+    }catch{/* Le choix reste disponible dans Profil → Mon offre. */}})();
+    return()=>{cancelled=true;};
+  },[ready,userId,loaded?.workspace?.id]);
   const label=ready?(loaded.store.profile?.display_name || session.user.email || 'Mon compte'):'Mode invité';
   const syncNotice=ready && status.kind==='error' && <div className="accountNotice" role="alert"><p>{status.message}</p><button onClick={()=>(loaded.store.pending || ['quota','cache_unavailable'].includes(status.code))?void loaded.store.flush():setRetry(v=>v+1)}>Réessayer</button><button onClick={()=>{setMode('account');setOpen(true);}}>Mon compte</button></div>;
   const accountAccess=<aside className="accountBar accountProfileCard" aria-label="Compte et synchronisation">
@@ -141,7 +156,7 @@ export default function AccountRoot({App}){
     {syncNotice}
   </aside>;
   return <>
-    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice} media={ready?loaded.media:null} profileExtras={<>{ready&&<AccountAvatar client={client} userId={userId} workspaceId={loaded?.workspace.id}/>}<IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/><ProfessionalProfilePanel key={'professional:'+(userId || 'guest')} client={client} userId={userId} tier={loaded?.store.profile?.account_tier}/><PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
+    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice} media={ready?loaded.media:null} profileExtras={<>{ready&&<AccountAvatar client={client} userId={userId} workspaceId={loaded?.workspace.id}/>}<IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/>{ready&&<AccountOfferPanel key={'offer:'+userId} client={client} userId={userId} store={loaded.store} onApplied={async()=>{await loaded.store.load();setRevision(v=>v+1);}}/>}<ProfessionalProfilePanel key={'professional:'+(userId || 'guest')} client={client} userId={userId} tier={loaded?.store.profile?.account_tier}/><PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
     {configurationError && <p role="alert">Le compte est temporairement indisponible. Le mode invité reste accessible.</p>}
     {open && service && <Sheet title={mode==='signup'?'Créer mon compte':mode==='recovery'?'Retrouver mon compte':mode==='password'?'Nouveau mot de passe':userId?'Mon compte':'Se connecter'} onClose={()=>{if(!busy){setOpen(false);setPassword('');}}} className="accountSheet">
       {mode==='account' && userId ? <>
@@ -149,7 +164,7 @@ export default function AccountRoot({App}){
         {guestOverride && <button onClick={()=>{setGuestOverride(false);setOpen(false);}}>Ouvrir mon espace connecté</button>}
         {ready && <>
           <p>Compte {loaded.store.profile?.account_tier || 'free'} · {status.pending?`${status.pending} modification(s) en attente`:'Données synchronisées'}</p>
-          {import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && <BetaTierPanel client={client} userId={userId} store={loaded.store} onApplied={async()=>{await loaded.store.load();setRevision(v=>v+1);}}/>}
+          <button onClick={()=>{setOpen(false);setTimeout(()=>document.getElementById('account-offer')?.scrollIntoView({behavior:'smooth',block:'start'}),50);}}>Voir ou changer mon offre</button>
           {count>0 && !loaded.store.migrationDone && <section className="accountImport"><h3>Importer mes données actuelles dans mon compte ?</h3><p>{count} élément(s) trouvé(s) dans le mode invité sur cet appareil. Les données déjà présentes dans ton compte seront conservées.</p><button disabled={busy} onClick={migrate}>Importer mes données</button><p>Tu peux aussi fermer cette fenêtre et le faire plus tard.</p></section>}
           {guestInvalid && <p role="alert">Certaines données invitées sont illisibles. Elles sont conservées ; l’import n’a pas été lancé.</p>}
           {loaded.store.migrationDone && <p>Les données invitées ont été importées. Leur copie locale est conservée.</p>}
@@ -163,6 +178,7 @@ export default function AccountRoot({App}){
         <p>Retrouve ta collection, tes inspirations et ton journal sur tes appareils. Tu peux aussi continuer sans compte.</p>
         {mode!=='password' && <label>Email<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>}
         {mode!=='recovery' && <label>Mot de passe<input type="password" autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?1:8} required value={password} onChange={e=>setPassword(e.target.value)} disabled={busy}/></label>}
+        {mode==='signup'&&<fieldset className="signupOfferChoices"><legend>Quel compte veux-tu essayer ?</legend><p>Le choix reste modifiable dans Profil → Mon offre. Aucun paiement n’est demandé pendant la bêta.</p>{ACCOUNT_OFFERS.map(offer=><button type="button" role="radio" aria-checked={signupTier===offer.tier} className={signupTier===offer.tier?'selected':''} key={offer.tier} onClick={()=>setSignupTier(offer.tier)} disabled={busy}><b>{offer.name}</b><small>{offer.tagline}</small></button>)}</fieldset>}
         <LegalLinks/>
         {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={adultConfirmed} onChange={e=>setAdultConfirmed(e.target.checked)} disabled={busy}/>Je certifie avoir 18 ans ou plus.</label><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>J’accepte les Conditions d’utilisation</label></>}
         <button className="accountPrimary" disabled={busy || (mode==='signup' && (!termsAccepted || !adultConfirmed))}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>

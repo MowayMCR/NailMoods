@@ -28,6 +28,9 @@ Deno.serve(async req=>{
   a=users.A;b=users.B;
   for(const [label,tier] of [['A','plus'],['B','pro'],['C','free']]){const r=await users[label].c.rpc('apply_beta_tier',{p_tier:tier});check('tier_'+label,!r.error&&r.data.tier===tier,r.error?.message);}
   check('D_no_promotion',Boolean((await users.D.c.rpc('apply_beta_tier',{p_tier:'pro'})).error));
+  const dOffer=await users.D.c.rpc('account_offer_state');check('D_offer_choice_available',!dOffer.error&&dOffer.data.canChoose===true&&dOffer.data.tier==='free',dOffer.error?.message);
+  const dPlus=await users.D.c.rpc('choose_beta_account_tier',{p_tier:'plus'});check('D_controlled_choice_plus',!dPlus.error&&dPlus.data.tier==='plus'&&dPlus.data.source==='beta_self_selection',dPlus.error?.message);
+  const dFree=await users.D.c.rpc('choose_beta_account_tier',{p_tier:'free'});check('D_controlled_choice_restore',!dFree.error&&dFree.data.tier==='free',dFree.error?.message);
   check('D_no_direct_tier_write',Boolean((await users.D.c.from('profiles').update({account_tier:'pro'}).eq('id',users.D.id)).error));
   check('C_no_product_write',Boolean((await users.C.c.from('user_products').insert({workspace_id:users.C.w,created_by:users.C.id,hex:'#553366'})).error));
   const identity=await a.c.rpc('set_nailmoods_identity',{p_handle:'recette.alpha',p_visibility:'everyone',p_display_name:'Recette Alpha'});check('identity',!identity.error,identity.error?.message);
