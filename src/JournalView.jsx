@@ -2,13 +2,13 @@ import { StorageHint } from './StorageContext';
 import RecipeSummary from './RecipeSummary';
 import JournalVariants from './JournalVariants';
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, BookHeart, Camera, Check, ChevronRight, Heart, Package, PenLine, Plus, Search, Trash2, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookHeart, Camera, Check, ChevronRight, Heart, Package, PenLine, Plus, Search, Send, Trash2, X } from 'lucide-react';
 import NailPreview from './NailPreview';
 import ProductPhoto from './ProductPhoto';
 import Sheet from './Sheet';
 import { normalize } from './creationEngine';
 import { productColor } from './colorAnalysis';
-import { easeLabels, feelingLabels, filterJournal, journalDate, journalProducts, journalValidation, localDate, newJournalEntry, pendingJournalPoses } from './journal';
+import { easeLabels, feelingLabels, filterJournal, journalDate, journalProducts, journalValidation, localDate, newJournalEntry, newJournalEntryFromIdea, pendingJournalPoses } from './journal';
 import './journal.css';
 
 function JournalVisual({ entry, compact = false, media = null }) {
@@ -49,8 +49,8 @@ function ProductPicker({ products, items, onApply, onClose }) {
   </Sheet>;
 }
 
-function JournalEditor({ entry, session, items, onSave, onNavigate }) {
-  const [draft, setDraft] = useState(() => entry ? JSON.parse(JSON.stringify(entry)) : newJournalEntry('journal-' + crypto.randomUUID(), session));
+function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }) {
+  const [draft, setDraft] = useState(() => entry ? JSON.parse(JSON.stringify(entry)) : draftEntry ? JSON.parse(JSON.stringify(draftEntry)) : newJournalEntry('journal-' + crypto.randomUUID(), session));
   const [photoBusy, setPhotoBusy] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
   const [error, setError] = useState('');
@@ -97,7 +97,7 @@ function JournalEditor({ entry, session, items, onSave, onNavigate }) {
   </div>;
 }
 
-function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDelete, onIdea, onCollection }) {
+function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDelete, onIdea, onCollection, onShareToPro }) {
   const [variantsOpen, setVariantsOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState('');
@@ -119,6 +119,7 @@ function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDel
         })}</ul> : <p className="journalMuted">Aucun produit renseigné pour cette pose.</p>}
       </section>
       {entry.idea && <section className="journalSource"><h2>L’inspiration d’origine</h2><p>{entry.idea.title}</p><button className="journalSecondary" onClick={() => onIdea(entry.idea)}>Retrouver l’inspiration<ArrowRight /></button></section>}
+      {onShareToPro && entry.idea && <button className="journalSecondary journalSharePo" onClick={() => onShareToPro({ source: entry, type: 'journal' })}><Send />Envoyer cette pose à ma PO</button>}
       <button className="journalSecondary" onClick={() => onNavigate(entry.id + '/modifier')}><PenLine />Modifier cette pose</button>
       <button className="journalDelete" onClick={() => { setError(''); setConfirmDelete(true); }}><Trash2 />Supprimer du journal</button>
     </section>
@@ -127,23 +128,24 @@ function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDel
   </div>;
 }
 
-export default function JournalView({ onFavorites, library, profile, journal, sessions, items, media, route, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate }) {
+export default function JournalView({ onFavorites, library, profile, journal, sessions, items, media, route, draftIdea, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate, onShareToPro }) {
   const [query, setQuery] = useState('');
   const [repeatOnly, setRepeatOnly] = useState(false);
   const pending = pendingJournalPoses(journal, sessions);
   const filtered = filterJournal(journal.entries, query, repeatOnly);
   const path = route === '#journal' ? '' : route.slice('#journal/'.length);
   if (path === 'nouveau') return <JournalEditor key="new" items={items} onSave={onSave} onNavigate={onNavigate} />;
+  if (path === 'projet' && draftIdea) return <JournalEditor key={draftIdea.key} draftEntry={newJournalEntryFromIdea('journal-' + crypto.randomUUID(), draftIdea)} items={items} onSave={onSave} onNavigate={onNavigate} />;
   if (path.startsWith('pose/')) {
     const id = path.slice(5), session = sessions.find(value => value.id === id && value.status === 'completed');
     const existing = journal.entries.find(entry => entry.sessionId === id);
-    if (existing) return <JournalDetail profile={profile} key={existing.id} entry={existing} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
+    if (existing) return <JournalDetail profile={profile} key={existing.id} entry={existing} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} onShareToPro={onShareToPro} />;
     if (session) return <JournalEditor key={id} session={session} items={items} onSave={onSave} onNavigate={onNavigate} />;
   } else if (path) {
     const editing = path.endsWith('/modifier');
     const id = editing ? path.slice(0, -9) : path;
     const entry = journal.entries.find(value => value.id === id);
-    if (entry) return editing ? <JournalEditor key={id + '/edit'} entry={entry} items={items} onSave={onSave} onNavigate={onNavigate} /> : <JournalDetail profile={profile} key={id} entry={entry} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} />;
+    if (entry) return editing ? <JournalEditor key={id + '/edit'} entry={entry} items={items} onSave={onSave} onNavigate={onNavigate} /> : <JournalDetail profile={profile} key={id} entry={entry} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} onShareToPro={onShareToPro} />;
   }
   if (path) return <div className="journalPage"><section className="journalEmpty"><BookHeart /><h1>Cette pose n’est pas disponible</h1><button className="journalPrimary" onClick={() => onNavigate('')}>Retrouver mon journal</button></section></div>;
   return <div className="journalPage">

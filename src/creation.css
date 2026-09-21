@@ -81,6 +81,23 @@
 .nailPreview.shortNails svg{max-height:94px}
 .nailPreview.compactNails{min-height:0;width:100%;max-width:228px;gap:2px;padding:10px 9px 7px;margin:10px 0;border-radius:12px}
 .nailPreview.compactNails>svg{height:64px;max-height:64px;max-width:40px;filter:none}
+.nailPreview.realisticNails{background:radial-gradient(ellipse at 50% 18%,#fff 0,#f6edf1 57%,#e9dce3 100%)}
+.nailPreview.realisticNails svg{filter:drop-shadow(0 8px 5px #391c2d2b)}
+.photorealNails{position:relative;overflow:hidden;margin:9px 10px 0;border:1px solid #e5d9df;border-radius:19px;background:#f4f0ed;aspect-ratio:85/62;box-shadow:inset 0 0 0 1px #fff8}
+.photorealNails>svg{display:block;width:100%;height:100%;filter:none;transform:none;object-fit:cover}
+.photorealNails.compactNails{width:100%;max-width:228px;margin:10px 0;border-radius:12px}
+.photorealBadge{position:absolute;left:9px;top:9px;padding:5px 7px;border:1px solid #ffffff80;border-radius:9px;background:#2e2128bd;color:#fff;font-size:7px;font-weight:750;letter-spacing:.08em;backdrop-filter:blur(5px)}
+.photorealHotspots{position:absolute;inset:0;pointer-events:none}
+.photorealHotspots button{position:absolute;width:7.4%;height:16%;pointer-events:auto;border:1px solid transparent;border-radius:50%;background:transparent;color:transparent;padding:0}
+.photorealHotspots button:hover,.photorealHotspots button[aria-pressed=true]{border-color:#fff;background:#ffffff20;box-shadow:0 0 0 2px #613c58aa}
+.photorealHotspots button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.renderPreview{padding-top:10px}
+.renderPreviewHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 13px 3px}
+.renderPreviewHead>span{display:grid;gap:3px;min-width:0}.renderPreviewHead b{font-size:11px;color:var(--a)}.renderPreviewHead small{font-size:8px;color:var(--muted);line-height:1.35}
+.renderPreviewHead>div{display:flex;flex-shrink:0;padding:3px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.renderPreviewHead button{border:0;border-radius:8px;background:transparent;color:var(--muted);min-height:32px;padding:5px 8px;font-size:9px}
+.renderPreviewHead button[aria-pressed=true]{background:var(--a);color:#fff}
+.renderPreview>p{font-size:9px;line-height:1.45;color:var(--muted);margin:3px 17px 8px}
 .ideaBody{padding:13px 18px 18px}
 .ideaDifficulty{font-size:9px;color:var(--a);background:var(--soft);padding:4px 7px;border-radius:7px}
 .ideaBadges{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.ideaPolishCount{font-size:9px;color:var(--muted);border:1px solid var(--line);padding:3px 7px;border-radius:7px}
@@ -118,3 +135,7 @@
 .creationPage button:focus-visible{outline:3px solid var(--a);outline-offset:3px}
 @media(max-width:360px){.creationHero{padding:23px 18px}.creationHero h1{font-size:28px}.creationSection{margin-left:13px;margin-right:13px}.creationTiles>button{padding-left:11px}.creationTiles b{font-size:16px}.creationSectionTitle h2{font-size:21px}.ideaBody{padding:13px 14px 16px}.ideaBody h3{font-size:23px}}
 @media(prefers-reduced-motion:reduce){.creationPage *{scroll-behavior:auto!important}}
+
+/* Les actions restent entièrement au-dessus de la navigation mobile. */
+.creationPage{padding-bottom:128px;scroll-padding-bottom:112px}.creationResults{padding-bottom:42px}.ideaCard:last-child{margin-bottom:18px}
+.renderPreview>p{min-height:14px}

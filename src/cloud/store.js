@@ -43,9 +43,9 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
         : entry)};
     } else if (op.table === 'inspirations') {
       const key = op.values?.snapshot?.key || op.rowId;
-      const library = next.views[LIBRARY] || {favorites:[],recent:[],selected:null};
+      const library = next.views[LIBRARY] || {favorites:[],recent:[],projects:[],selected:null};
       const replace = idea => idea?.key === key ? {...idea, photo: values.media_path || values.photo_url || idea.photo, mediaPath: values.media_path, publicMediaPath: values.public_media_path || null} : idea;
-      next.views[LIBRARY] = {...library, favorites:(library.favorites || []).map(replace), recent:(library.recent || []).map(replace), selected:replace(library.selected)};
+      next.views[LIBRARY] = {...library, favorites:(library.favorites || []).map(replace), projects:(library.projects || []).map(replace), recent:(library.recent || []).map(replace), selected:replace(library.selected)};
     }
   }
   function changes(next,k,before,value){
@@ -210,7 +210,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
         if (typeof entry.photo === 'string' && entry.photo.startsWith('data:image/')) { stats.detected++; return {...entry}; }
         return entry;
       });
-      const library=clone(before[LIBRARY] || {favorites:[],recent:[],selected:null});
+      const library=clone(before[LIBRARY] || {favorites:[],recent:[],projects:[],selected:null});
       const ideas=libraryIdeas(library);
       for (const idea of ideas) {
         const photo=idea.photo || idea.image || idea.coverPhoto;
@@ -241,8 +241,8 @@ export function mergeGuest(remote,guest){
   next[COLLECTION]=[...existing];
   for(const item of guest[COLLECTION] || []){const identity=productIdentity(item);if(!ids.has(String(item.id)) && (!identity || !identities.has(identity))){next[COLLECTION].push(clone(item));ids.add(String(item.id));if(identity)identities.add(identity);}}
   const merge=(a=[],b=[],key)=>[...a,...b.filter(x=>!a.some(y=>y[key]===x[key]))].map(clone);
-  const lib=next[LIBRARY] || {favorites:[],recent:[],selected:null},local=guest[LIBRARY] || {};
-  next[LIBRARY]={...lib,favorites:merge(lib.favorites,local.favorites,'key'),recent:merge(lib.recent,local.recent,'key')};
+  const lib=next[LIBRARY] || {favorites:[],recent:[],projects:[],selected:null},local=guest[LIBRARY] || {};
+  next[LIBRARY]={...lib,favorites:merge(lib.favorites,local.favorites,'key'),projects:merge(lib.projects,local.projects,'key'),recent:merge(lib.recent,local.recent,'key')};
   const journal=next[JOURNAL] || {entries:[],hiddenSessions:[]};next[JOURNAL]={...journal,entries:merge(journal.entries,guest[JOURNAL]?.entries,'id')};
   if(!remote[PROFILE]?.name && !Object.keys(remote[PROFILE] || {}).some(k=>k!=='name'))next[PROFILE]=clone(guest[PROFILE] || remote[PROFILE] || {});
   for(const k of EXTRAS)if(next[k]===undefined && guest[k]!==undefined)next[k]=clone(guest[k]);

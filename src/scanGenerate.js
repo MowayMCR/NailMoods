@@ -2,6 +2,7 @@ import { TECHNOLOGIES, readGuestConsent, permissions } from './privacy/policy.js
 import { generateInspirations } from './freeInspiration.js';
 import { generationFamily, productColor, validHex } from './colorAnalysis.js';
 import { inventoryTools } from './creationEngine.js';
+import { enrichIdeaRendering } from './techniqueRendering.js';
 
 export const scanEffects = ['Classique', 'Mat', 'Brillant', 'French'];
 export function toggleScanEffect(selected, value) {
@@ -48,7 +49,7 @@ export function generateScannedIdeas(products, effects = [], profile = {}, equip
     if (finish) requirements.push({ name: 'Finition ' + (finish === 'Mat' ? 'mate' : 'brillante') + ' : top coat compatible à prévoir si nécessaire', required: false });
     if (french && !inventoryTools(equipment).fineBrush && !requirements.some(r => r.name.includes('Pinceau'))) requirements.push({ name: 'Pinceau fin recommandé · choisis Classique pour une variante sans pinceau', required: false });
     const usesNatural = palette.some(p => p.unpainted);
-    return { ...idea, id: 'scan-' + idea.id + '-' + (finish || 'original'), palette, nails: idea.nails.map(n => ({ ...n, ...(finish && n.productId !== natural.id ? { finish } : {}) })), title: idea.title.replace(/Couleur scannée \d/g, match => scanned[Number(match.at(-1))-1]?.name || match), description: idea.description.replace(/Couleur scannée \d/g, match => scanned[Number(match.at(-1))-1]?.name || match), scanEffects: effects.length ? effects : ['Pas de préférence'], requirements, scanNote: usesNatural ? 'Les zones nude du schéma représentent l’ongle naturel sans couleur, pas un vernis supplémentaire. Leur teinte est indicative.' : '', reasons: ['À partir de tes ' + scanned.length + ' couleur' + (scanned.length > 1 ? 's confirmées' : ' confirmée')], options: { ...idea.options, scanEffects: effects }, intent: 'scan' };
+    return enrichIdeaRendering({ ...idea, id: 'scan-' + idea.id + '-' + (finish || 'original'), palette, nails: idea.nails.map(n => ({ ...n, ...(finish && n.productId !== natural.id ? { finish } : {}) })), title: idea.title.replace(/Couleur scannée \d/g, match => scanned[Number(match.at(-1))-1]?.name || match), description: idea.description.replace(/Couleur scannée \d/g, match => scanned[Number(match.at(-1))-1]?.name || match), scanEffects: effects.length ? effects : ['Pas de préférence'], requirements, scanNote: usesNatural ? 'Les zones nude du schéma représentent l’ongle naturel sans couleur, pas un vernis supplémentaire. Leur teinte est indicative.' : '', reasons: ['À partir de tes ' + scanned.length + ' couleur' + (scanned.length > 1 ? 's confirmées' : ' confirmée')], options: { ...idea.options, scanEffects: effects }, intent: 'scan' });
   }).filter(idea => { const key = JSON.stringify(idea.nails); if (seen.has(key)) return false; seen.add(key); return true; }).slice(0,4);
 }
 

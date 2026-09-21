@@ -41,7 +41,7 @@ export function profilePatch(profile, preferences) {
   const {account_tier,userId,workspaceId,id,...safe} = profile;
   return {display_name:profile.name || '',preferences:{...preferences,nailmoodsProfile:safe}};
 }
-export function libraryIdeas(library={}) { return [...new Map([...(library.recent || []),...(library.favorites || []),library.selected].filter(Boolean).map(i=>[i.key,i])).values()]; }
+export function libraryIdeas(library={}) { return [...new Map([...(library.projects || []),...(library.recent || []),...(library.favorites || []),library.selected].filter(Boolean).map(i=>[i.key,i])).values()]; }
 export function viewsFromRemote(profile, rows, favorites) {
   const preferences=profile.preferences || {};
   const ideas=rows.inspirations.map(r=>({...r.snapshot,title:r.title})).filter(i=>i.key);
@@ -49,7 +49,7 @@ export function viewsFromRemote(profile, rows, favorites) {
   const view={
     [PROFILE]:{...(preferences.nailmoodsProfile || {}),name:profile.display_name || '',username:profile.username || '',discoveryVisibility:profile.discovery_visibility || 'pros'},
     [COLLECTION]:TABLES.slice(0,3).flatMap(t=>rows[t].map(r=>productFromRow(r,t))),
-    [LIBRARY]:{favorites:rows.inspirations.filter(r=>favoriteIds.has(r.id)).map(r=>({...r.snapshot,title:r.title})),recent:ideas.slice(-12).reverse(),selected:null},
+    [LIBRARY]:{favorites:rows.inspirations.filter(r=>favoriteIds.has(r.id)).map(r=>({...r.snapshot,title:r.title})),projects:ideas.filter(i=>i.isProject),recent:ideas.filter(i=>!i.isProject).slice(-12).reverse(),selected:null},
   [JOURNAL]:{entries:rows.journal_entries.map(r=>({...r.snapshot,remoteId:r.id,date:r.performed_on,notes:r.notes || '',photo:r.photo_url || r.media_path || r.snapshot?.photo || '',mediaPath:r.media_path || r.photo_url || null,publicMediaPath:r.public_media_path || null,visibility:r.visibility === 'public' ? 'public' : 'private'})),hiddenSessions:preferences.nailmoodsExtras?.hiddenSessions || []},
   };
   for(const key of EXTRAS) if (preferences.nailmoodsExtras?.[key] !== undefined) view[key]=preferences.nailmoodsExtras[key];

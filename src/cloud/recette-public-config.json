@@ -1,0 +1,6 @@
+{
+  "VITE_SUPABASE_URL": "https://pueqkbwfwxgqzmkauxoz.supabase.co",
+  "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_3SFQwQyxW_jiQsmhhm7wHA_4cejQynJ",
+  "VITE_DEPLOYMENT_ENV": "recette",
+  "VITE_BETA_ACCOUNT_TIERS": "true"
+}

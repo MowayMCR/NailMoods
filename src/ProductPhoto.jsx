@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Camera, Image as ImageIcon, Trash2 } from 'lucide-react';
 
 export async function preparePhoto(file, maxSize = 800) {
-  if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
     throw new Error('Choisis une photo JPG, PNG ou WebP.');
   }
   if (file.size > 20 * 1024 * 1024) {

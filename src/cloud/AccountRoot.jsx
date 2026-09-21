@@ -1,3 +1,7 @@
+import { createAnalytics, setActiveAnalytics, track } from '../analytics/analytics';
+import { PRIVACY_VERSION } from '../privacy/policy';
+import Discovery from '../social/Discovery';
+import SocialHub from '../social/SocialHub';
 import AccountAvatar from '../identity/AccountAvatar';
 import React, { useEffect, useRef, useState } from 'react';
 import Sheet from '../Sheet';
@@ -17,9 +21,8 @@ import PrivacyPanel, { LegalLinks } from '../privacy/PrivacyPanel';
 import { readGuestConsent } from '../privacy/policy';
 import { clearAccountCache } from '../privacy/service';
 import AccountOfferPanel from './AccountOfferPanel';
+import { PoReceivedShares, ShareToPoSheet } from '../social/PoShare';
 import {ACCOUNT_OFFERS,accountOfferService,clearPendingAccountOffer,pendingAccountOffer,rememberPendingAccountOffer} from './betaTier';
-import { createAnalytics, setActiveAnalytics, track } from '../analytics/analytics';
-import { PRIVACY_VERSION } from '../privacy/policy';
 
 let client=null,configurationError=false;
 try{client=getCloudClient();}catch{configurationError=true;}
@@ -29,8 +32,11 @@ function authMessage(error){
   if(code==='invalid_credentials')return 'Email ou mot de passe incorrect.';
   if(code==='email_not_confirmed')return 'Confirme ton adresse avec le lien reçu par email, puis connecte-toi.';
   if(code==='weak_password')return 'Choisis un mot de passe plus long et moins courant.';
-  if(code==='over_email_send_rate_limit' || code==='over_request_rate_limit')return 'Trop de demandes rapprochées. Patiente avant de réessayer.';
-  return 'La connexion n’a pas abouti. Vérifie ton réseau puis réessaie. Si le lien reçu a expiré, demande un nouvel email.';
+  if(['over_email_send_rate_limit','over_request_rate_limit','email_rate_limit_exceeded'].includes(code))return 'Un email a déjà été demandé récemment. Patiente une minute avant de réessayer et vérifie aussi les courriers indésirables.';
+  if(['email_exists','user_already_exists'].includes(code))return 'Un compte existe déjà avec cette adresse. Connecte-toi ou renvoie le mail de confirmation.';
+  if(code==='signup_disabled')return 'La création de compte est temporairement désactivée.';
+  if(error?.name==='AuthRetryableFetchError' || error?.status===0)return 'Le service d’inscription est momentanément inaccessible. Réessaie dans quelques instants.';
+  return 'La demande n’a pas abouti. Réessaie dans quelques instants.';
 }
 export default function AccountRoot({App}){
   const [session,setSession]=useState(undefined),[loaded,setLoaded]=useState(null),[loadError,setLoadError]=useState('');
@@ -39,6 +45,7 @@ export default function AccountRoot({App}){
   const [signupTier,setSignupTier]=useState('free');
   const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState(''),[guestOverride,setGuestOverride]=useState(false),[confirmRemote,setConfirmRemote]=useState(false);
   const [confirmCacheClear,setConfirmCacheClear]=useState(false);
+  const [shareRequest,setShareRequest]=useState(null);
   const [termsAccepted,setTermsAccepted]=useState(false),[adultConfirmed,setAdultConfirmed]=useState(false);
   const active=useRef(null), mounted=useRef(true), analytics=useRef(null);
   const userId=session?.user?.id || null;
@@ -97,19 +104,21 @@ export default function AccountRoot({App}){
       if(mode==='signup'){
         const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {},adultConfirmed);setPassword('');
         if(data.user?.id)rememberPendingAccountOffer(browserStorage,data.user.id,signupTier);
-        if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);track('signup_completed');}
-        else setMessage('Si cette adresse peut être inscrite, un email de confirmation va arriver. Ouvre le lien dans ce navigateur, puis connecte-toi.');
+        if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);}
+        else {setMode('confirm');setMessage('Email de confirmation demandé. Vérifie ta boîte de réception et les courriers indésirables, puis ouvre le lien dans ce navigateur.');}
+      }else if(mode==='confirm'){
+        await service.resendSignupConfirmation(email);setMessage('Un nouveau mail de confirmation a été demandé. Vérifie ta boîte de réception et les courriers indésirables.');
       }else if(mode==='recovery'){
         await service.requestRecovery(email);setMessage('Si un compte correspond à cette adresse, tu recevras un lien pour choisir un nouveau mot de passe. Ouvre-le dans ce navigateur.');
       }else if(mode==='password'){
         await service.updatePassword(password);setPassword('');setMessage('Ton mot de passe a été mis à jour.');setMode('account');
       }else{
-        const data=await service.signIn(email,password);setPassword('');setSession(data.session);setGuestOverride(false);setOpen(false);track('login_success');
+        const data=await service.signIn(email,password);setPassword('');setSession(data.session);setGuestOverride(false);setOpen(false);
       }
     recordCloudEvent(browserStorage,mode,true);
     }catch(error){recordCloudEvent(browserStorage,mode,false);setAuthError(authMessage(error));}finally{if(mounted.current)setBusy(false);}
   }
-  async function logout(){setBusy(true);setAuthError('');try{track('logout');await analytics.current?.flush();await active.current?.ensureDurable();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{setBusy(false);}}
+  async function logout(){setBusy(true);setAuthError('');try{track('logout');void analytics.current?.flush();await active.current?.ensureDurable();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{setBusy(false);}}
   async function migrate(){setBusy(true);setAuthError('');try{
     if(import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && loaded.store.profile?.account_tier==='free')throw new Error('L’import dans la collection est disponible avec Plus. Ta copie invitée reste conservée.');
     const guest=readGuest(browserStorage);
@@ -166,9 +175,9 @@ export default function AccountRoot({App}){
     {syncNotice}
   </aside>;
   return <>
-    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice} media={ready?loaded.media:null} profileExtras={<>{ready&&<AccountAvatar client={client} userId={userId} workspaceId={loaded?.workspace.id}/>}<IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/>{ready&&<AccountOfferPanel key={'offer:'+userId} client={client} userId={userId} store={loaded.store} onApplied={async()=>{await loaded.store.load();setRevision(v=>v+1);}}/>}<ProfessionalProfilePanel key={'professional:'+(userId || 'guest')} client={client} userId={userId} tier={loaded?.store.profile?.account_tier}/><PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
+    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice} media={ready?loaded.media:null} onShareToPro={ready ? request=>setShareRequest(request) : null} profileExtras={<>{ready&&<AccountAvatar client={client} userId={userId} workspaceId={loaded?.workspace.id}/>}{ready&&<><SocialHub client={client}/><Discovery client={client}/></>}<IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/>{ready&&<AccountOfferPanel key={'offer:'+userId} client={client} userId={userId} store={loaded.store} onApplied={async()=>{await loaded.store.load();setRevision(v=>v+1);}}/>}<ProfessionalProfilePanel key={'professional:'+(userId || 'guest')} client={client} userId={userId} tier={loaded?.store.profile?.account_tier}/>{ready&&loaded?.store.profile?.account_tier==='pro'&&<PoReceivedShares client={client}/>}<PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/>{shareRequest&&<ShareToPoSheet client={client} source={shareRequest.source} type={shareRequest.type} onClose={()=>setShareRequest(null)}/>}</StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
     {configurationError && <p role="alert">Le compte est temporairement indisponible. Le mode invité reste accessible.</p>}
-    {open && service && <Sheet title={mode==='signup'?'Créer mon compte':mode==='recovery'?'Retrouver mon compte':mode==='password'?'Nouveau mot de passe':userId?'Mon compte':'Se connecter'} onClose={()=>{if(!busy){setOpen(false);setPassword('');}}} className="accountSheet">
+    {open && service && <Sheet title={mode==='signup'?'Créer mon compte':mode==='confirm'?'Confirmer mon adresse':mode==='recovery'?'Retrouver mon compte':mode==='password'?'Nouveau mot de passe':userId?'Mon compte':'Se connecter'} onClose={()=>{if(!busy){setOpen(false);setPassword('');}}} className="accountSheet">
       {mode==='account' && userId ? <>
         <p>{session.user.email}</p><p>{ready?loaded.workspace.name || 'Espace personnel':'Espace personnel'}</p>
         {guestOverride && <button onClick={()=>{setGuestOverride(false);setOpen(false);}}>Ouvrir mon espace connecté</button>}
@@ -187,13 +196,13 @@ export default function AccountRoot({App}){
       </> : <form onSubmit={submit}>
         <p>Retrouve ta collection, tes inspirations et ton journal sur tes appareils. Tu peux aussi continuer sans compte.</p>
         {mode!=='password' && <label>Email<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>}
-        {mode!=='recovery' && <label>Mot de passe<input type="password" autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?1:8} required value={password} onChange={e=>setPassword(e.target.value)} disabled={busy}/></label>}
+        {!['recovery','confirm'].includes(mode) && <label>Mot de passe<input type="password" autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?1:8} required value={password} onChange={e=>setPassword(e.target.value)} disabled={busy}/></label>}
         {mode==='signup'&&<fieldset className="signupOfferChoices"><legend>Quel compte veux-tu essayer ?</legend><p>Le choix reste modifiable dans Profil → Mon offre. Aucun paiement n’est demandé pendant la bêta.</p>{ACCOUNT_OFFERS.map(offer=><button type="button" role="radio" aria-checked={signupTier===offer.tier} className={signupTier===offer.tier?'selected':''} key={offer.tier} onClick={()=>setSignupTier(offer.tier)} disabled={busy}><b>{offer.name}</b><small>{offer.tagline}</small></button>)}</fieldset>}
         <LegalLinks/>
         {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={adultConfirmed} onChange={e=>setAdultConfirmed(e.target.checked)} disabled={busy}/>Je certifie avoir 18 ans ou plus.</label><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>J’accepte les Conditions d’utilisation</label></>}
-        <button className="accountPrimary" disabled={busy || (mode==='signup' && (!termsAccepted || !adultConfirmed))}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
+        <button className="accountPrimary" disabled={busy || (mode==='signup' && (!termsAccepted || !adultConfirmed))}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='confirm'?'Renvoyer le mail de confirmation':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
         {mode==='login' && <><button type="button" disabled={busy} onClick={()=>changeMode('signup')}>Créer mon compte</button><button type="button" disabled={busy} onClick={()=>changeMode('recovery')}>Mot de passe oublié</button></>}
-        {(mode==='signup' || mode==='recovery') && <button type="button" disabled={busy} onClick={()=>changeMode('login')}>J’ai déjà un compte</button>}
+        {['signup','recovery','confirm'].includes(mode) && <button type="button" disabled={busy} onClick={()=>changeMode('login')}>J’ai déjà un compte</button>}
         <button type="button" disabled={busy} onClick={()=>{setOpen(false);setPassword('');}}>Continuer à explorer</button>
       </form>}
       {message && <p role="status">{message}</p>}{authError && <p className="formError" role="alert">{authError}</p>}

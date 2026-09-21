@@ -1,4 +1,5 @@
 import MoodGlyph from './MoodGlyph';
+import ProfileNail from './ProfileNail';
 import React, { useState } from 'react';
 import { ChevronRight, X, Check, Palette, UserRound, Camera, Sparkles, Search, ArrowRight, Pencil } from 'lucide-react';
 import { profileThemes, avatars, universeGroups, choices } from './profileOptions';
@@ -32,8 +33,8 @@ export default function ProfileView({ accountAccess, extras, onCreate, onEquipme
     <section className="card"><h2>Ma collection</h2><div className="signature">{items.filter(item => item.type !== 'Matériel').slice(0, 5).map(item => <div key={item.id}><i style={{ background: productColor(item) }} /><span>{item.name}</span></div>)}</div><button className="outline" onClick={onCollection}>Voir mes {items.length} produits et accessoires <ArrowRight size={13} /></button></section>
 
     {extras}
-    {picker && <Sheet title={choices[picker].title} onClose={() => setPicker(null)} className="profileSheet">
-      {choices[picker].visual ? <div className="visualOptions">{choices[picker].values.map(([value, description, shape]) => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><div className="finger"><div className="nailDemo"><i className={shape} /></div></div><b>{value}</b><span>{description}</span>{profile[picker] === value && <em><Check /></em>}</button>)}</div> : <div className="optionList">{choices[picker].values.map(value => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><span>{value}</span>{profile[picker] === value && <Check />}</button>)}</div>}
+    {picker && <Sheet title={choices[picker].title} eyebrow="MON NAILMOODS" onClose={() => setPicker(null)} className="profileSheet">
+      {choices[picker].visual ? <div className="visualOptions">{choices[picker].values.map(([value, description, shape]) => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><ProfileNail variant={shape} /><b>{value}</b><span>{description}</span>{profile[picker] === value && <em><Check /></em>}</button>)}</div> : <div className="optionList">{choices[picker].values.map(value => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><span>{value}</span>{profile[picker] === value && <Check />}</button>)}</div>}
     </Sheet>}
     {panel === 'appearance' && <Sheet title="Apparence de mon NailMoods" onClose={() => setPanel(null)} className="profileSheet"><div className="appearance">
       <button onClick={() => setPanel('theme')}><Palette /><span><b>Thème de l’application</b><small>{profileThemes.find(theme => theme[0] === profile.theme)?.[1]}</small></span><ChevronRight /></button>

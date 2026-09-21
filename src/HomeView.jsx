@@ -51,9 +51,9 @@ export default function HomeView({ profile, items, library, journal, tutorials, 
   const nextTitle = home.priority === 'resume' ? resume.idea.title : home.priority === 'retained' ? retained.title : readiness ? readiness.title : 'On crée ta prochaine pose ?';
 
   return <div className="homePage smartHome">
-    <section className="homeGreeting"><small>{profile.name ? 'BONJOUR, ' + profile.name.toLocaleUpperCase('fr') : 'TON NAILMOODS, À TON RYTHME'}</small><h1>Inspire-moi</h1><p>Des idées de manucure selon ton mood, tes envies et tes couleurs. Avec ou sans collection.</p>
+    <section className="homeGreeting"><small>{profile.name ? 'BONJOUR, ' + profile.name.toLocaleUpperCase('fr') : 'TON NAILMOODS, À TON RYTHME'}</small><Leaf className="homeBotanical" aria-hidden="true"/><h1>Inspire-moi</h1><p>Des idées de manucure selon ton mood, tes envies et tes couleurs. Avec ou sans collection.</p>
       <button className="homePrimary" onClick={create}><Sparkles />Créer une idée<ArrowRight /></button>
-      <div className="homeStats"><button onClick={() => onNavigate('collection')}><b>{home.report.inventoryColors}</b><span>couleur{home.report.inventoryColors > 1 ? 's' : ''}</span></button><button onClick={() => onNavigate('journal')}><b>{journal.entries.length}</b><span>souvenir{journal.entries.length > 1 ? 's' : ''}</span></button><button onClick={() => onNavigate('favorites')}><b>{library.favorites.length}</b><span>idée{library.favorites.length > 1 ? 's' : ''} favorite{library.favorites.length > 1 ? 's' : ''}</span></button></div>
+
     </section>
 
     <section className="scanHomeCard" aria-labelledby="scan-home-title"><div><small><Sparkles size={14}/>UNE IDÉE SOUS LA MAIN</small><h2 id="scan-home-title">Scan &amp; Génère</h2><p>Montre-moi tes couleurs, je te propose une pose.</p></div><ScanBottles/><button className="homePrimary" onClick={onScan}>Scanner mes vernis<ArrowRight/></button></section>

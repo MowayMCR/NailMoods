@@ -19,6 +19,9 @@ export function createAuthService(client, pageUrl) {
       options: { emailRedirectTo: authReturnUrl(pageUrl), data: consent },
     })); },
     signIn: (email, password) => checked(auth.signInWithPassword({ email: email.trim(), password })),
+    resendSignupConfirmation: email => checked(auth.resend({
+      type: 'signup', email: email.trim(), options: { emailRedirectTo: authReturnUrl(pageUrl) },
+    })),
     signOut: () => checked(auth.signOut({ scope: 'local' })),
     restore: () => checked(auth.getSession()),
     requestRecovery: email => checked(auth.resetPasswordForEmail(email.trim(), {

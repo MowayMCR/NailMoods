@@ -1,0 +1,61 @@
+{
+  "date": "2026-09-21T13:36:18.521Z",
+  "auth": [
+    {
+      "label": "a",
+      "duration_ms": 8289,
+      "success": true
+    },
+    {
+      "label": "b",
+      "duration_ms": 283,
+      "success": true
+    },
+    {
+      "label": "c",
+      "duration_ms": 503,
+      "success": true
+    }
+  ],
+  "checks": [
+    "real Auth A/B/C",
+    "request and duplicate prevention",
+    "acceptance",
+    "message and retry deduplication",
+    "history B",
+    "C denied",
+    "send denied after removal",
+    "signout/signin and social reload"
+  ],
+  "load": [
+    {
+      "concurrent_requests": 10,
+      "total_ms": 7957,
+      "median_ms": 7753,
+      "p95_ms": 7956,
+      "errors": 0,
+      "error_codes": []
+    },
+    {
+      "concurrent_requests": 25,
+      "total_ms": 7330,
+      "median_ms": 7273,
+      "p95_ms": 7325,
+      "errors": 0,
+      "error_codes": []
+    },
+    {
+      "concurrent_requests": 50,
+      "total_ms": 8827,
+      "median_ms": 8379,
+      "p95_ms": 8796,
+      "errors": 0,
+      "error_codes": []
+    }
+  ],
+  "limitations": [
+    "3 pre-existing fixture accounts; concurrency models sessions, not 50 distinct people",
+    "No physical second-device test",
+    "No uploads or Edge Function load in this script"
+  ]
+}

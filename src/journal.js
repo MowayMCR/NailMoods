@@ -46,6 +46,12 @@ export function newJournalEntry(id, session = null, now = Date.now()) {
     feeling: '', ease: '', repeat: false, wearDays: '', notes: '', visibility: 'private', createdAt: now, updatedAt: now };
 }
 
+export function newJournalEntryFromIdea(id, sourceIdea, now = Date.now()) {
+  if (!validIdea(sourceIdea)) throw new Error('Cette composition ne peut pas être ajoutée au journal.');
+  const idea = snapshotIdea(sourceIdea);
+  return { ...newJournalEntry(id, null, now), idea, title: idea.title, products: journalProducts([...idea.palette, ...idea.resources]), notes: 'Projet préparé à partir de mes photos d’inspiration.' };
+}
+
 export function journalValidation(entry, now = Date.now()) {
   if (!entry || typeof entry.id !== 'string' || !entry.id || entry.version !== 1) return 'Cette fiche ne peut pas être enregistrée.';
   if (!validDate(entry.date) || entry.date > localDate(now)) return 'Choisis la date de ta pose, aujourd’hui ou avant.';

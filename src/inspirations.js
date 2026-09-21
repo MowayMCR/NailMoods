@@ -47,6 +47,7 @@ export function readInspirations(storage) {
     return {
       favorites: Array.isArray(saved.favorites) ? saved.favorites.filter(validIdea) : [],
       recent: Array.isArray(saved.recent) ? saved.recent.filter(validIdea).slice(0, 12) : [],
+      ...(Array.isArray(saved.projects) ? { projects: saved.projects.filter(validIdea) } : {}),
       selected: validIdea(saved.selected) ? saved.selected : null,
     };
   } catch { return empty; }
@@ -57,7 +58,7 @@ export function rememberIdea(library, idea) {
 }
 
 export function findIdea(library, key) {
-  return [...library.favorites, ...library.recent, library.selected].filter(Boolean).find(idea => idea.key === key);
+  return [...library.favorites, ...(library.projects || []), ...library.recent, library.selected].filter(Boolean).find(idea => idea.key === key);
 }
 
 export function toggleFavorite(library, idea) {
@@ -130,13 +131,23 @@ export function renameInspiration(library, key, title) {
   const value = String(title || '').trim().slice(0, 80);
   if (!value) return library;
   const rename = idea => idea?.key === key ? { ...idea, title: value } : idea;
-  return { ...library, favorites: library.favorites.map(rename), recent: library.recent.map(rename), selected: rename(library.selected) };
+  return { ...library, favorites: library.favorites.map(rename), projects: (library.projects || []).map(rename), recent: library.recent.map(rename), selected: rename(library.selected) };
 }
 
 // Idempotent save uses the existing favorite library, never a parallel collection.
 export function saveInspiration(library, idea) {
   const saved = snapshotIdea(idea);
   return rememberIdea({ ...library, favorites: library.favorites.some(item => item.key === saved.key) ? library.favorites : [saved, ...library.favorites] }, saved);
+}
+
+export function saveProject(library, idea) {
+  const saved = { ...snapshotIdea(idea), isProject: true, projectSavedAt: new Date().toISOString() };
+  const projects = [saved, ...(library.projects || []).filter(item => item.key !== saved.key)];
+  return rememberIdea({ ...library, projects }, saved);
+}
+
+export function removeProject(library, key) {
+  return { ...library, projects: (library.projects || []).filter(item => item.key !== key) };
 }
 export function ownedIdeaProducts(idea, items) {
   return [...idea.palette, ...idea.resources].filter(product => !product.conceptual && items.some(item => sameId(item.id, product.id) && Number(item.quantity ?? 1) > 0));

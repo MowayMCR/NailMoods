@@ -30,6 +30,7 @@ jobs:
         run: npm test
       - name: Build
         env:
+          VITE_DEPLOYMENT_ENV: production
           VITE_SUPABASE_URL: https://rvqmtnqvzzxzwfxfyjcg.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_EZthbmym16fnDWx9W6RkEg_ublzI88l
         run: npm run build

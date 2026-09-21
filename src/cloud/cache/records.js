@@ -16,9 +16,9 @@ export function splitWorkspace(state){
    const {entries=[],...shell}=value;parts.set(prefix,{kind:'journal',shell,ids:entries.map(e=>e.id)});
    for(const entry of entries)parts.set(prefix+':'+entry.id,entry);
   }else if(key===LIBRARY){
-   const {favorites=[],recent=[],selected=null,...shell}=value;
-   parts.set(prefix,{kind:'library',shell,favorites:favorites.map(i=>i.key),recent:recent.map(i=>i.key),selected:selected?.key||null});
-   for(const idea of [...recent,...favorites,selected].filter(Boolean))parts.set(prefix+':'+idea.key,idea);
+   const hasProjects=Object.hasOwn(value,'projects'),{favorites=[],projects=[],recent=[],selected=null,...shell}=value;
+   parts.set(prefix,{kind:'library',shell,favorites:favorites.map(i=>i.key),...(hasProjects?{projects:projects.map(i=>i.key)}:{}),recent:recent.map(i=>i.key),selected:selected?.key||null});
+   for(const idea of [...projects,...recent,...favorites,selected].filter(Boolean))parts.set(prefix+':'+idea.key,idea);
   }else parts.set(prefix,{kind:'value',value});
  }
  return parts;
@@ -31,7 +31,7 @@ export function joinWorkspace(parts){
  for(const key of viewKeys){const prefix='view:'+key,part=parts.get(prefix);if(!part)continue;
   if(part.kind==='collection')state.views[key]=part.ids.map(id=>parts.get(prefix+':'+id));
   else if(part.kind==='journal')state.views[key]={...part.shell,entries:part.ids.map(id=>parts.get(prefix+':'+id))};
-  else if(part.kind==='library')state.views[key]={...part.shell,favorites:part.favorites.map(id=>parts.get(prefix+':'+id)),recent:part.recent.map(id=>parts.get(prefix+':'+id)),selected:part.selected?parts.get(prefix+':'+part.selected):null};
+  else if(part.kind==='library')state.views[key]={...part.shell,favorites:part.favorites.map(id=>parts.get(prefix+':'+id)),...(part.projects?{projects:part.projects.map(id=>parts.get(prefix+':'+id))}:{}),recent:part.recent.map(id=>parts.get(prefix+':'+id)),selected:part.selected?parts.get(prefix+':'+part.selected):null};
   else state.views[key]=part.value;
  }
  return state;
