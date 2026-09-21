@@ -1,3 +1,5 @@
+import { SocialGlobal } from './social/SocialHub';
+import { NotificationButton } from './social/SocialContext';
 import { track } from './analytics/analytics';
 import { isDecoration } from './decorations';
 import { auxiliary } from './creationEngine';
@@ -48,7 +50,7 @@ const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, re
 const tabRoutes = { scan: 'scan', home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris', projects: 'projets', tutorials: 'tutoriel' };
 const tabFromHash = () => window.location.hash.startsWith('#journal/') ? 'journal' : window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || ['#favoris', '#projets'].includes(window.location.hash) ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
 
-function App({ accountAccess, syncNotice, profileExtras, media, onShareToPro }) {
+function App({ onThemeChange, accountAccess, syncNotice, profileExtras, media, onShareToPro }) {
   const browserStorage=useStorage();
   const limited=import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && browserStorage.accountScoped && !tierCapabilities(browserStorage.accountTier).personal;
   const [tab, setTab] = useState(tabFromHash);
@@ -90,6 +92,7 @@ function App({ accountAccess, syncNotice, profileExtras, media, onShareToPro }) 
   const [importBusy, setImportBusy] = useState(false);
   const [shadeValid, setShadeValid] = useState(true);
   const th = themes[profile.theme] || themes.nailmoods;
+  useEffect(()=>{onThemeChange?.({'--a':th[0],'--b':th[1],'--soft':th[2],'--paper':th[3]});},[th,onThemeChange]);
   const material = edit?.type === 'Matériel';
 
   function navigate(next) {
@@ -126,6 +129,7 @@ function App({ accountAccess, syncNotice, profileExtras, media, onShareToPro }) 
     setRoute('#inspiration/' + saved.key);
     window.location.hash = 'inspiration/' + saved.key;
   }
+  function publishIdea(idea,patch) { const next={...idea,...patch};const replace=item=>item?.key===idea.key?next:item;return saveLibrary({...library,recent:library.recent.map(replace),favorites:(library.favorites.some(i=>i.key===idea.key)?library.favorites:[idea,...library.favorites]).map(replace),projects:(library.projects||[]).map(replace),selected:replace(library.selected)}); }
   function renameIdea(key, title) { return saveLibrary(renameInspiration(library, key, title)); }
   function saveIdea(idea) { const saved=saveLibrary(saveInspiration(library, idea));if(saved)track('generation_saved',{technique:idea?.technique||'mixed',render_mode:'illustrated',used_collection:Boolean(idea?.options?.intent==='collection')},{screen:'create'});return saved; }
   function saveProjectIdea(idea) { return saveLibrary(saveIdeaProject(library, idea)); }
@@ -275,14 +279,15 @@ function App({ accountAccess, syncNotice, profileExtras, media, onShareToPro }) 
   const colorCount = new Set(items.filter(item => item.type !== 'Matériel' && item.family).map(item => item.family)).size;
 
   return <div className="app phase2" style={{ '--a': th[0], '--b': th[1], '--soft': th[2], '--paper': th[3] }}>
-    <header><Brand /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
+    <header><Brand /><NotificationButton /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
     {import.meta.env.VITE_DEPLOYMENT_ENV==='recette' && <aside role="status" style={{textAlign:'center',padding:'10px',background:'#f8e9ee',color:'#733451'}}>NailMoods-Recette · environnement de test séparé</aside>}
+    <SocialGlobal />
     <main>
       {tab !== 'profile' && syncNotice}
       <div id="context-help-slot" />
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && tab !== 'scan' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
-      {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onBack={() => navigate('home')} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
+      {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onBack={() => navigate('home')} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onPublish={publishIdea} onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>MES PRODUITS</small><h1>Ma collection</h1>
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>

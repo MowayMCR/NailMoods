@@ -1,0 +1,120 @@
+{
+  "moods": [
+    "Classique",
+    "Simple",
+    "Contemporain",
+    "Romantique",
+    "Minimal",
+    "Girly",
+    "Clean girl",
+    "Old money",
+    "Witchy",
+    "Dark feminine",
+    "Goth",
+    "Cottagecore",
+    "Fairycore",
+    "Celestial",
+    "Coquette",
+    "Vintage",
+    "Grunge",
+    "Punk",
+    "Rock",
+    "Emo",
+    "Y2K",
+    "90s"
+  ],
+  "colors": [
+    "Rose",
+    "Rouge",
+    "Bordeaux",
+    "Violet",
+    "Bleu",
+    "Vert",
+    "Jaune",
+    "Orange",
+    "Marron",
+    "Beige",
+    "Blanc",
+    "Noir",
+    "Gris",
+    "Doré",
+    "Argenté"
+  ],
+  "aesthetics": [
+    "Épuré",
+    "Doux",
+    "Sombre",
+    "Élégant",
+    "Coloré",
+    "Naturel",
+    "Alternatif"
+  ],
+  "themes": [
+    "Floral",
+    "Nature",
+    "Étoiles",
+    "Lune",
+    "Cœurs",
+    "Géométrique",
+    "Animalier",
+    "Halloween",
+    "Noël",
+    "Été",
+    "Automne",
+    "Hiver",
+    "Printemps"
+  ],
+  "levels": [
+    "Débutant",
+    "Intermédiaire",
+    "Avancé"
+  ],
+  "techniques": [
+    "Uni",
+    "Duo alterné",
+    "French",
+    "Babyboomer",
+    "Aura",
+    "Dégradé",
+    "Marbré",
+    "Cat eye",
+    "Stickers",
+    "Stamping",
+    "Dessin à main levée",
+    "3D"
+  ],
+  "occasions": [
+    "Tous les jours",
+    "Travail",
+    "Soirée",
+    "Mariage",
+    "Fête",
+    "Vacances",
+    "Rendez-vous"
+  ],
+  "shapes": [
+    "Rond",
+    "Ovale",
+    "Amande",
+    "Carré",
+    "Carré arrondi",
+    "Coffin",
+    "Stiletto"
+  ],
+  "lengths": [
+    "Court",
+    "Moyen",
+    "Long",
+    "Très long"
+  ],
+  "finishes": [
+    "Brillant",
+    "Mat",
+    "Pailleté",
+    "Métallisé",
+    "Chromé",
+    "Irisé",
+    "Transparent",
+    "Jelly"
+  ]
+}

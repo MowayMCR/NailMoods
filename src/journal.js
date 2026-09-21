@@ -1,3 +1,4 @@
+import {cleanTags} from './social/tags.js';
 import { snapshotIdea, validIdea } from './inspirations.js';
 import { normalize } from './creationEngine.js';
 import { preciseShade, productColor } from './colorAnalysis.js';
@@ -61,7 +62,7 @@ export function journalValidation(entry, now = Date.now()) {
 }
 
 function cleanEntry(entry) {
-  return { id: entry.id, version: 1, sessionId: typeof entry.sessionId === 'string' ? entry.sessionId : null,
+  return { mediaPath:typeof entry.mediaPath==='string'?entry.mediaPath:null, publicMediaPath:typeof entry.publicMediaPath==='string'?entry.publicMediaPath:null, remoteId:entry.remoteId||null, publicTags:cleanTags(entry.publicTags), id: entry.id, version: 1, sessionId: typeof entry.sessionId === 'string' ? entry.sessionId : null,
     idea: validIdea(entry.idea) ? snapshotIdea(entry.idea) : null,
     title: text(entry.title, 120).trim() || 'Ma pose du ' + journalDate(entry.date), date: entry.date,
     photo: safeJournalPhoto(entry.photo), products: journalProducts(entry.products),

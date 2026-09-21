@@ -1,3 +1,4 @@
+import { ProfileIdentity } from './identity/IdentityPanel';
 import MoodGlyph from './MoodGlyph';
 import ProfileNail from './ProfileNail';
 import React, { useState } from 'react';
@@ -19,7 +20,7 @@ export default function ProfileView({ accountAccess, extras, onCreate, onEquipme
   const avatar = big => <div className={'avatar ' + (big ? 'big ' : '') + (profile.avatarMode === 'avatar' ? 'avatarArt' : '')}>{profile.avatarMode === 'avatar' ? av?.[2] : (profile.name || 'M')[0]}</div>;
   const tile = (key, label) => <button key={key} className="settingTile" onClick={() => setPicker(key)}><small>{label}</small><b>{profile[key]}</b><ChevronRight /></button>;
   return <div className="profilePage">
-    <section className="profileHero"><button className="profileAvatarButton" aria-label="Modifier mon avatar et le thème" aria-haspopup="dialog" onClick={() => setPanel('appearance')}>{avatar(true)}<span className="avatarEditHint" aria-hidden="true"><Pencil size={12} /></span></button><div><small>MON UNIVERS</small><h1>{profile.name || 'Mon profil'}</h1><p>Ton profil guide tes inspirations.</p></div></section>
+    <section className="profileHero"><button className="profileAvatarButton" aria-label="Modifier mon avatar et le thème" aria-haspopup="dialog" onClick={() => setPanel('appearance')}>{avatar(true)}<span className="avatarEditHint" aria-hidden="true"><Pencil size={12} /></span></button><div><small>MON UNIVERS</small><h1>{profile.name || 'Mon profil'}</h1><ProfileIdentity /><p>Ton profil guide tes inspirations.</p></div></section>
     {accountAccess}
     <section className="card"><h2>À propos de moi</h2><p>Quelques informations pour des idées qui te ressemblent. Tu peux aussi créer une idée sans compléter ton profil.</p><label className="nameField">Prénom<input value={profile.name} onChange={event => onChange({ ...profile, name: event.target.value })} /></label>
       <div className="profileGrid">{tile('shape', 'FORME')}{tile('length', 'LONGUEUR')}{tile('level', 'NIVEAU')}{tile('duration', 'TEMPS')}<div className="wide">{tile('technique', 'TYPE DE POSE')}</div></div>

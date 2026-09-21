@@ -55,12 +55,11 @@ Deno.serve(async req => {
   if (error || !row) return json({ error: 'not_found' }, 404);
   const isPublic = kind === 'journal' ? row.visibility === 'public' : row.is_public === true;
   const user = await requester(req);
-  let allowed = isPublic;
-  if (!allowed && user) {
-    const { data: member } = await admin.from('workspace_members').select('user_id').eq('workspace_id', row.workspace_id).eq('user_id', user.id).maybeSingle();
-    allowed = Boolean(member);
-  }
-  if (!allowed) return json({ error: 'not_found' }, 404);
+  if (!user) return json({ error: 'authentication_required' }, 401);
+  const token=req.headers.get('Authorization')!;
+  const viewer=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_ANON_KEY')!,{global:{headers:{Authorization:token}},auth:{persistSession:false,autoRefreshToken:false}});
+  const {data: allowed,error: accessError}=await viewer.rpc('nm_media_access',{p_kind:kind,p_id:id});
+  if(accessError||allowed!==true)return json({error:'content_unavailable'},403);
   const path = isPublic ? row.public_media_path : row.media_path;
   if (!path || typeof path !== 'string') return json({ error: 'media_unavailable' }, 404);
   if(path.split('/')[0]!==row.created_by || path.split('/')[1]!==row.workspace_id)return json({error:'not_found'},404);

@@ -10,6 +10,6 @@ export default defineConfig(() => {
     VITE_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_EZthbmym16fnDWx9W6RkEg_ublzI88l',
     VITE_DEPLOYMENT_ENV: 'production', VITE_BETA_ACCOUNT_TIERS: 'false'
   };
-  return { plugins: [react()], base: target === 'production' ? '/NailMoods/' : '/',
+  return { server: { host: '0.0.0.0', allowedHosts: ['terminal.local'] }, plugins: [react()], base: target === 'production' ? '/NailMoods/' : '/',
     define: Object.fromEntries(Object.entries(config).map(([key,value])=>[`import.meta.env.${key}`,JSON.stringify(value)])) };
 });

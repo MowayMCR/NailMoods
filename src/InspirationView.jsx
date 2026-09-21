@@ -1,3 +1,6 @@
+import PublicationTags from './social/PublicationTags';
+import {cleanTags,suggestTags} from './social/tags';
+import {useSocial} from './social/SocialContext';
 import RecipeSummary from './RecipeSummary';
 import IdeaProducts from './IdeaProducts';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -20,7 +23,9 @@ function ProductRow({ item, items, role, onCollection }) {
   </li>;
 }
 
-export default function InspirationView({ onSaveIdea, onRename, idea, items, profile, favorite, selected, onFavorite, onSelect, onOpen, onBack, onFavorites, onCollection, onTutorial, tutorialExists, onDone, completed, learning, onShareToPro }) {
+export default function InspirationView({ onPublish, onSaveIdea, onRename, idea, items, profile, favorite, selected, onFavorite, onSelect, onOpen, onBack, onFavorites, onCollection, onTutorial, tutorialExists, onDone, completed, learning, onShareToPro }) {
+  const social=useSocial();
+  const [publishOpen,setPublishOpen]=useState(false),[publicTags,setPublicTags]=useState(()=>idea.publicTags??suggestTags(idea)),[visibility,setVisibility]=useState(idea.isPublic===true?'public':'private'),[publishNotice,setPublishNotice]=useState('');
   const [renaming, setRenaming] = useState(false);
   const [title, setTitle] = useState(idea.title);
   const [finger, setFinger] = useState(0);
@@ -45,6 +50,7 @@ export default function InspirationView({ onSaveIdea, onRename, idea, items, pro
     <div className="detailToolbar"><button onClick={onBack}><ArrowLeft />Mes idées</button><button aria-pressed={favorite} aria-label={favorite ? 'Retirer cette inspiration des favoris' : 'Ajouter cette inspiration aux favoris'} onClick={onFavorite}><Heart fill={favorite ? 'currentColor' : 'none'} />{favorite ? 'En favoris' : 'Favori'}</button></div>
     <section className="detailHero"><small>MON INSPIRATION</small><h1 ref={heading} tabIndex={-1}>{idea.title}</h1>{onRename && <div className="renameIdea">{renaming ? <><label>Nom de mon inspiration<input maxLength={80} value={title} onChange={e => setTitle(e.target.value)} /></label><button disabled={!title.trim()} onClick={() => { if (onRename(title)) setRenaming(false); }}>Enregistrer le nom</button><button onClick={() => { setTitle(idea.title); setRenaming(false); }}>Annuler</button></> : <button onClick={() => setRenaming(true)}>Renommer</button>}</div>}<p>{idea.description}</p><div className="detailBadges"><span><Clock3 />≈ {idea.minutes} min</span><span>{difficultyLabels[idea.rank]}</span><span>{idea.palette.length} vernis</span></div></section>
     <div className="startTutorialAction">{onSaveIdea && <button className="detailSecondary" disabled={favorite} onClick={onSaveIdea}><Heart />{favorite ? 'Pose sauvegardée dans mes favoris' : 'Sauvegarder cette pose'}</button>}<button className="detailPrimary" onClick={onTutorial}><Play />{tutorialExists ? 'Reprendre le tutoriel' : 'Démarrer le tutoriel'}<ArrowRight /></button><small>Une étape à la fois, avec ta progression sauvegardée.</small><button className="detailSecondary markIdeaDone" onClick={onDone}><Check />{completed && !tutorialExists ? 'Voir ma pose réalisée' : 'Je l’ai faite 💅'}</button><small>{completed && !tutorialExists ? 'Cette inspiration est marquée comme réalisée dans tes listes.' : 'Passer le tutoriel et enregistrer la pose comme réalisée.'}</small></div>
+    {social?.userId&&['plus','pro'].includes(social.tier)&&onPublish&&<section className="publicationPanel"><button className="detailSecondary" onClick={()=>setPublishOpen(v=>!v)}>{idea.isPublic?'Modifier ma publication':'Publier cette inspiration'}</button>{publishNotice&&<p role="status">{publishNotice}</p>}{publishOpen&&<><PublicationTags source={idea} value={publicTags} onChange={setPublicTags}/><label>Visibilité<select value={visibility} onChange={e=>setVisibility(e.target.value)}><option value="private">Privé · moi uniquement</option><option value="public">Public · Découvrir et profil visible</option></select></label><button className="detailPrimary" onClick={()=>{if(onPublish({publicTags:cleanTags(publicTags),isPublic:visibility==='public'})){setPublishNotice(visibility==='public'?'Publication enregistrée. Elle sera visible après synchronisation si ton profil est visible.':'Inspiration privée après synchronisation.');setPublishOpen(false);}}}>{visibility==='public'?'Confirmer et publier':'Enregistrer en privé'}</button></>}</section>}
     <section className="detailCanvas"><div className="detailSectionTitle"><h2>Ongle par ongle</h2><span>{idea.shape} · {idea.length}</span></div>
       <p className="detailMuted">Touche un ongle pour voir sa composition. La même répartition est prévue sur les deux mains.</p>
       <NailPreview idea={idea} onSelect={setFinger} selectedIndex={finger} labels={fingers} controls />

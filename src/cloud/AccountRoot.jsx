@@ -2,6 +2,7 @@ import { createAnalytics, setActiveAnalytics, track } from '../analytics/analyti
 import { PRIVACY_VERSION } from '../privacy/policy';
 import Discovery from '../social/Discovery';
 import SocialHub from '../social/SocialHub';
+import { SocialProvider } from '../social/SocialContext';
 import AccountAvatar from '../identity/AccountAvatar';
 import React, { useEffect, useRef, useState } from 'react';
 import Sheet from '../Sheet';
@@ -39,6 +40,7 @@ function authMessage(error){
   return 'La demande n’a pas abouti. Réessaie dans quelques instants.';
 }
 export default function AccountRoot({App}){
+  const [themeStyle,setThemeStyle]=useState({});
   const [session,setSession]=useState(undefined),[loaded,setLoaded]=useState(null),[loadError,setLoadError]=useState('');
   const [status,setStatus]=useState({kind:'saved',pending:0}),[retry,setRetry]=useState(0),[revision,setRevision]=useState(0),[mediaMigration,setMediaMigration]=useState(null);
   const [open,setOpen]=useState(false),[mode,setMode]=useState('login'),[email,setEmail]=useState(''),[password,setPassword]=useState('');
@@ -174,8 +176,8 @@ export default function AccountRoot({App}){
     {ready && <span role="status">{status.kind==='saving'?'Enregistrement…':status.kind==='error'?'À synchroniser':status.pending?'En attente':'Synchronisé'}</span>}
     {syncNotice}
   </aside>;
-  return <>
-    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><App key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice} media={ready?loaded.media:null} onShareToPro={ready ? request=>setShareRequest(request) : null} profileExtras={<>{ready&&<AccountAvatar client={client} userId={userId} workspaceId={loaded?.workspace.id}/>}{ready&&<><SocialHub client={client}/><Discovery client={client}/></>}<IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/>{ready&&<AccountOfferPanel key={'offer:'+userId} client={client} userId={userId} store={loaded.store} onApplied={async()=>{await loaded.store.load();setRevision(v=>v+1);}}/>}<ProfessionalProfilePanel key={'professional:'+(userId || 'guest')} client={client} userId={userId} tier={loaded?.store.profile?.account_tier}/>{ready&&loaded?.store.profile?.account_tier==='pro'&&<PoReceivedShares client={client}/>}<PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/>{shareRequest&&<ShareToPoSheet client={client} source={shareRequest.source} type={shareRequest.type} onClose={()=>setShareRequest(null)}/>}</StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
+  return <div className="accountTheme" style={themeStyle}>
+    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><SocialProvider key={ready?userId:"guest"} client={ready?client:null} userId={ready?userId:null} tier={ready?loaded.store.profile?.account_tier:"free"}><App onThemeChange={setThemeStyle} key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice} media={ready?loaded.media:null} onShareToPro={ready ? request=>setShareRequest(request) : null} profileExtras={<>{ready&&<AccountAvatar client={client} userId={userId} workspaceId={loaded?.workspace.id}/>}{ready&&<><SocialHub client={client}/></>}<IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/>{ready&&<AccountOfferPanel key={'offer:'+userId} client={client} userId={userId} store={loaded.store} onApplied={async()=>{await loaded.store.load();setRevision(v=>v+1);}}/>}<ProfessionalProfilePanel key={'professional:'+(userId || 'guest')} client={client} userId={userId} tier={loaded?.store.profile?.account_tier}/>{ready&&loaded?.store.profile?.account_tier==='pro'&&<PoReceivedShares client={client}/>}<PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/></SocialProvider>{shareRequest&&<ShareToPoSheet client={client} source={shareRequest.source} type={shareRequest.type} onClose={()=>setShareRequest(null)}/>}</StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
     {configurationError && <p role="alert">Le compte est temporairement indisponible. Le mode invité reste accessible.</p>}
     {open && service && <Sheet title={mode==='signup'?'Créer mon compte':mode==='confirm'?'Confirmer mon adresse':mode==='recovery'?'Retrouver mon compte':mode==='password'?'Nouveau mot de passe':userId?'Mon compte':'Se connecter'} onClose={()=>{if(!busy){setOpen(false);setPassword('');}}} className="accountSheet">
       {mode==='account' && userId ? <>
@@ -207,5 +209,5 @@ export default function AccountRoot({App}){
       </form>}
       {message && <p role="status">{message}</p>}{authError && <p className="formError" role="alert">{authError}</p>}
     </Sheet>}
-  </>;
+  </div>;
 }
