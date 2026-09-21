@@ -109,6 +109,7 @@ function App({ onThemeChange, accountAccess, syncNotice, profileExtras, media, o
     return () => window.removeEventListener('hashchange', followRoute);
   }, []);
 
+  useEffect(()=>{const changed=()=>setLibrary(readInspirations(browserStorage));window.addEventListener('nm-library-updated',changed);return()=>window.removeEventListener('nm-library-updated',changed);},[browserStorage]);
   function changeProfile(next) {
     try { browserStorage.setItem('nm-profile', JSON.stringify(next)); setProfile(next); setAppError(''); return true; }
     catch { setAppError('Ton profil n’a pas pu être sauvegardé. Libère un peu de stockage sur cet appareil puis réessaie.'); return false; }
@@ -124,7 +125,7 @@ function App({ onThemeChange, accountAccess, syncNotice, profileExtras, media, o
   }
   function openIdea(idea, options) {
     const saved = snapshotIdea(idea, { ...(options || idea.options), ...(idea.intent ? { intent: idea.intent } : {}) });
-    saveLibrary(rememberIdea(library, saved), true);
+    if(browserStorage.accountScoped&&browserStorage.accountTier==='free'&&saved.intent==='photos')setLibrary(rememberIdea(library,saved));else saveLibrary(rememberIdea(library, saved), true);
     setTab('create');
     setRoute('#inspiration/' + saved.key);
     window.location.hash = 'inspiration/' + saved.key;
@@ -132,7 +133,7 @@ function App({ onThemeChange, accountAccess, syncNotice, profileExtras, media, o
   function publishIdea(idea,patch) { const next={...idea,...patch};const replace=item=>item?.key===idea.key?next:item;return saveLibrary({...library,recent:library.recent.map(replace),favorites:(library.favorites.some(i=>i.key===idea.key)?library.favorites:[idea,...library.favorites]).map(replace),projects:(library.projects||[]).map(replace),selected:replace(library.selected)}); }
   function renameIdea(key, title) { return saveLibrary(renameInspiration(library, key, title)); }
   function saveIdea(idea) { const saved=saveLibrary(saveInspiration(library, idea));if(saved)track('generation_saved',{technique:idea?.technique||'mixed',render_mode:'illustrated',used_collection:Boolean(idea?.options?.intent==='collection')},{screen:'create'});return saved; }
-  function saveProjectIdea(idea) { return saveLibrary(saveIdeaProject(library, idea)); }
+  function saveProjectIdea(idea) { const ok=saveLibrary(saveIdeaProject(library, idea));if(ok)track('project_created',{});return ok; }
   function favoriteIdea(idea) { return saveLibrary(toggleFavorite(library, snapshotIdea(idea))); }
   function selectIdea(idea, clear = false) { return saveLibrary({ ...rememberIdea(library, idea), selected: clear ? null : idea }); }
   function saveTutorials(next) {
@@ -194,6 +195,7 @@ function App({ onThemeChange, accountAccess, syncNotice, profileExtras, media, o
       const result = putJournalEntry(journal, draft);
       const saved = saveJournal(result.store);
       if(saved.ok)track('journal_entry_saved',{type:draft.type||'pose',visibility:draft.visibility||'private',source:draft.source||'manual'},{screen:'journal'});
+      if(saved.ok&&draft.idea?.isProject&&!journal.entries.some(e=>e.id===draft.id))track('project_converted_to_pose',{});
       if (saved.ok) setJournalDraftIdea(null);
       return saved.ok ? { ok: true, id: result.entry.id } : saved;
     } catch (error) { return { ok: false, error: error.message }; }

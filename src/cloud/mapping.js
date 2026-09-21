@@ -4,7 +4,7 @@ export const COLLECTION = 'nm-collection-v2';
 export const LIBRARY = 'nm-inspirations-v1';
 export const JOURNAL = 'nm-journal-v1';
 export const PROFILE = 'nm-profile';
-export const EXTRAS = ['nm-tutorials-v1','nm-personalization-v1','nm-creation-v1','nm-recent-colors-v1'];
+export const EXTRAS = ['nm-tutorials-v1','nm-personalization-v1','nm-creation-v1','nm-recent-colors-v1','nm-photo-draft-v1'];
 export const TABLES = ['user_products','user_stickers','user_equipment','inspirations','journal_entries'];
 export const clone = value => JSON.parse(JSON.stringify(value));
 export const same = (a,b) => stable(a) === stable(b);

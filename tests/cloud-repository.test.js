@@ -39,5 +39,6 @@ test('large journal photos never enter optimistic concurrency URL filters',async
 });
 test('remote collections load in stable pages including more than 500 records',async()=>{
  const c=client(call=>({data:call.table==='profiles'?{id:'A',preferences:{}}:call.table==='user_products'?Array.from({length:call.range[0]===0?500:1},(_,i)=>({id:String(call.range[0]+i)})):[],error:null}));
- const loaded=await repository(c,'A','WA').load();assert.equal(loaded.rows.user_products.length,501);assert.deepEqual(c.calls.filter(c=>c.table==='user_products').map(c=>c.range),[[0,499],[500,999]]);
+ c.rpc=async name=>{assert.equal(name,'nm_capabilities');return {data:{tier:'free'}};};
+ const loaded=await repository(c,'A','WA').load();assert.equal(loaded.profile.account_tier,'free');assert.equal(loaded.rows.user_products.length,501);assert.deepEqual(c.calls.filter(c=>c.table==='user_products').map(c=>c.range),[[0,499],[500,999]]);
 });

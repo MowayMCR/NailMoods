@@ -3,10 +3,12 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {accountOfferService,betaTierService,clearPendingAccountOffer,pendingAccountOffer,rememberPendingAccountOffer,tierCapabilities} from '../src/cloud/betaTier.js';
 
-test('Free previews remain available; only Plus/Pro unlock persistence',()=>{
+test('Free owns personal data; Plus/Pro unlock social and photos',()=>{
  for(const tier of ['free','plus','pro',undefined,'admin','PLUS']){
   const rights=tierCapabilities(tier);
-  assert.equal(rights.personal,['plus','pro'].includes(tier));
+  assert.equal(rights.personal,['free','plus','pro'].includes(tier));
+  assert.equal(rights.social,['plus','pro'].includes(tier));
+  assert.equal(rights.photos,['plus','pro'].includes(tier));
   assert.equal(rights.pro,tier==='pro');
   assert.equal(rights.scan,true);assert.equal(rights.inspire,true);
  }

@@ -24,7 +24,7 @@ Deno.serve(async req => {
   const url = new URL(req.url);
   const kind = url.searchParams.get('kind');
   const id = url.searchParams.get('id');
-  if (!id || !['journal', 'inspiration', 'avatar'].includes(kind || '')) return json({ error: 'invalid_media_reference' }, 400);
+  if (!id || !['journal', 'inspiration', 'avatar','share'].includes(kind || '')) return json({ error: 'invalid_media_reference' }, 400);
 
   const admin = serviceClient();
   if (kind === 'avatar') {
@@ -48,6 +48,15 @@ Deno.serve(async req => {
     const { data: file, error: avatarError } = await admin.storage.from('nailmoods-private').download(path);
     if (avatarError || !file) return json({ error: 'not_found' }, 404);
     return new Response(req.method === 'HEAD' ? null : file, { status: 200, headers: { ...cors, 'Content-Type': file.type || 'application/octet-stream', 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff' } });
+  }
+  if(kind==='share'){
+    const user=await requester(req);if(!user)return json({error:'authentication_required'},401);
+    const viewer=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_ANON_KEY')!,{global:{headers:{Authorization:req.headers.get('Authorization')!}},auth:{persistSession:false,autoRefreshToken:false}});
+    const {data:path,error}=await viewer.rpc('nm_share_media',{p_id:id,p_index:Number(url.searchParams.get('index')||0)});
+    if(error||!path)return json({error:'share_unavailable'},403);
+    const {data:file,error:downloadError}=await admin.storage.from('nailmoods-private').download(path);
+    if(downloadError||!file)return json({error:'media_unavailable'},404);
+    return new Response(req.method==='HEAD'?null:file,{headers:{...cors,'Content-Type':file.type||'application/octet-stream','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});
   }
   const table = kind === 'journal' ? 'journal_entries' : 'inspirations';
   const columns = kind === 'journal' ? 'id,created_by,workspace_id,visibility,media_path,public_media_path' : 'id,created_by,workspace_id,is_public,media_path,public_media_path';

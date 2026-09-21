@@ -170,3 +170,41 @@ for(const size of [100,500])test(`guest import of ${size} distinct products pers
  assert.equal(await store.migrate({[COLLECTION]:products}),true);assert.equal(repo.rows.user_products.length,size);assert.equal(store.pending,0);
  store.close();const reloaded=make(local,repo);await reloaded.load();assert.equal(JSON.parse(reloaded.storage.getItem(COLLECTION)).length,size);
 });
+
+test('photo project references upload privately and survive a fresh device without inline image data',async()=>{
+ const repo=backend(),uploads=[],media={upload:async o=>{uploads.push(o);return {path:`A/WA/reference/${o.objectId}.png`};}};
+ const store=make(memory(),repo,'A','WA',{media});await store.load();
+ const idea={key:'photo-project',title:'Projet',intent:'photos',isProject:true,photoSources:[{src:'data:image/png;base64,YWJj',name:'reference'}]};
+ store.storage.setItem(LIBRARY,JSON.stringify({projects:[idea],favorites:[],recent:[],selected:null}));
+ assert.equal(await store.flush(),true);assert.equal(uploads.length,1);
+ assert.equal(uploads[0].kind,'reference');assert.equal(repo.rows.inspirations[0].snapshot.photoSources[0].src.startsWith('A/WA/reference/'),true);
+ assert.equal(JSON.stringify(repo.rows).includes('base64'),false);
+ const other=make(memory(),repo,'A','WA',{media});await other.load();
+ assert.equal(JSON.parse(other.storage.getItem(LIBRARY)).projects[0].photoSources[0].src,repo.rows.inspirations[0].snapshot.photoSources[0].src);
+});
+test('failed reference upload preserves the queued project for retry',async()=>{
+ const repo=backend();let fail=true;const media={upload:async()=>{if(fail)throw new Error('offline');return {path:'A/WA/reference/p.png'};}};
+ const store=make(memory(),repo,'A','WA',{media});await store.load();
+ const idea={key:'retry-project',title:'Projet',isProject:true,photoSources:[{src:'data:image/png;base64,YWJj'}]};
+ store.storage.setItem(LIBRARY,JSON.stringify({projects:[idea],favorites:[],recent:[],selected:null}));
+ assert.equal(await store.flush(),false);assert.equal(repo.rows.inspirations.length,0);assert.ok(store.pending);
+ fail=false;assert.equal(await store.flush(),true);assert.equal(repo.rows.inspirations.length,1);
+});
+test('photo draft references sync via account preferences and reload on another device',async()=>{
+ const repo=backend(),media={upload:async()=>({path:'A/WA/reference/draft.png'})};
+ const a=make(memory(),repo,'A','WA',{media});await a.load();
+ a.storage.setItem('nm-photo-draft-v1',JSON.stringify({photos:[{id:'a',src:'data:image/png;base64,YWJj',analysis:{colors:['#aa55aa']}}],nailArt:false,overrides:{mood:'Witchy'}}));
+ assert.equal(await a.flush(),true);const b=make(memory(),repo,'A','WA',{media});await b.load();const draft=JSON.parse(b.storage.getItem('nm-photo-draft-v1'));
+ assert.equal(draft.photos[0].src,'A/WA/reference/draft.png');assert.equal(draft.overrides.mood,'Witchy');assert.equal(draft.nailArt,false);
+});
+
+test('editing a photo draft during upload preserves the normalized conflict baseline',async()=>{
+ const repo=backend();let release;const blocked=new Promise(resolve=>{release=resolve;});let started;const uploading=new Promise(resolve=>{started=resolve;});
+ const media={upload:async()=>{started();await blocked;return {path:'A/WA/reference/draft.png'};}};
+ const originalWrite=repo.write;repo.write=async op=>{if(op.preferenceKey==='nm-photo-draft-v1'&&repo.profile.preferences.nailmoodsExtras?.[op.preferenceKey])assert.deepEqual(op.before,repo.profile.preferences.nailmoodsExtras[op.preferenceKey]);return originalWrite(op);};
+ const store=make(memory(),repo,'A','WA',{media});await store.load();
+ const draft={photos:[{src:'data:image/png;base64,YWJj'}],overrides:{mood:'Witchy'}};
+ store.storage.setItem('nm-photo-draft-v1',JSON.stringify(draft));await uploading;
+ store.storage.setItem('nm-photo-draft-v1',JSON.stringify({...draft,overrides:{mood:'Coquette'}}));release();
+ assert.equal(await store.flush(),true);assert.equal(repo.profile.preferences.nailmoodsExtras['nm-photo-draft-v1'].overrides.mood,'Coquette');
+});

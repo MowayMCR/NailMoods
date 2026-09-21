@@ -1,3 +1,4 @@
+import {stopActiveAnalytics} from '../analytics/analytics';
 import React, { useEffect, useState } from 'react';
 import Sheet from '../Sheet';
 import { TERMS_VERSION, PRIVACY_VERSION, TECHNOLOGIES, DENIED, availableChoices, readGuestConsent, GUEST_CONSENT_KEY } from './policy';
@@ -21,8 +22,10 @@ export default function PrivacyPanel({ client, userId, tier, guestStorage, onDel
     setBusy(true); setNotice('');
     try {
       const safe = availableChoices(next);
+      if(!safe.analytics_consent)stopActiveAnalytics();
       const value = userId ? await privacyService(client).save(safe, acceptTerms, confirmAdult) : { ...safe, privacy_version: PRIVACY_VERSION, consent_updated_at: new Date().toISOString() };
       if (!userId) guestStorage.setItem(GUEST_CONSENT_KEY, JSON.stringify(value));
+      window.dispatchEvent(new Event('nm-consent-changed'));
       setRecord(value); setChoices(safe); setNotice('Tes choix sont enregistrés. Les fonctions essentielles restent accessibles.');
     } catch { setNotice('Tes choix n’ont pas pu être enregistrés. Aucun service facultatif n’est activé. Réessaie.'); }
     finally { setBusy(false); }

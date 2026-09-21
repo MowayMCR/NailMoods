@@ -1,3 +1,4 @@
+import {track} from './analytics/analytics.js';
 import { browserStorage } from './storage.js';
 import { permissions, readGuestConsent, TECHNOLOGIES } from './privacy/policy.js';
 
@@ -21,6 +22,7 @@ export function photoAnalyticsMetadata(value = {}) {
 // Consent-gated and non-blocking. Images, names, colors and free text are deliberately discarded.
 export function trackPhotoEvent(event, metadata = {}, storage = browserStorage) {
   if (!PHOTO_ANALYTICS_EVENTS.includes(event)) return false;
+  track(event,photoAnalyticsMetadata(metadata));
   if (!TECHNOLOGIES.analytics || storage.accountScoped || !permissions({ consent: readGuestConsent(storage) }).analytics) return false;
   try {
     const rows = JSON.parse(storage.getItem('nm-photo-events-v1') || '[]');

@@ -1,10 +1,10 @@
 export function tierCapabilities(tier) {
- const personal=tier==='plus'||tier==='pro';
- return {personal,pro:tier==='pro',inspire:true,scan:true};
+ const personal=['free','plus','pro'].includes(tier);
+ return {personal,social:tier==='plus'||tier==='pro',photos:tier==='plus'||tier==='pro',pro:tier==='pro',inspire:true,scan:true};
 }
 export const ACCOUNT_OFFERS=Object.freeze([
- {tier:'free',name:'Free',tagline:'Découvrir NailMoods',features:['Scan & Génère','Inspiration simple','Créations personnelles']},
- {tier:'plus',name:'Plus',tagline:'Garder tout mon univers',features:['Collection synchronisée','Journal, Découvrir et favoris','Produits et inspirations sauvegardés']},
+ {tier:'free',name:'Free',tagline:'Découvrir NailMoods',features:['Collection et matériel personnels','Inspirations illustrées et tutoriels','Journal, poses et favoris personnels']},
+ {tier:'plus',name:'Plus',tagline:'Garder tout mon univers',features:['Toutes les fonctions Free','Projets depuis 1 à 4 photos','Découvrir, connexions et partage avec ma PO']},
  {tier:'pro',name:'Pro',tagline:'Créer mon espace professionnel',features:['Profil Pro et espace professionnel','Collection / nuancier Pro','Partages et futurs échanges avec les comptes Plus']},
 ]);
 export function normalizeAccountTier(value){return ['free','plus','pro'].includes(value)?value:'free';}

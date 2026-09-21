@@ -31,7 +31,7 @@ export default function IdentityPanel({client,userId,onSaved}){
    <p className="formHint">Ta collection, tes poses privées et ton journal ne sont jamais rendus publics par ce réglage.</p>
  </div>:<p>Chargement de ton identité…</p>}{notice&&<p role="status">{notice}</p>}</Sheet>}
  {notice&&!panel&&<p className="proNotice" role="status">{notice}</p>}
- <button className="nmShortcut" onClick={openSearch}><Search/>Rechercher sur NailMoods<ChevronRight/></button>
+ {['plus','pro'].includes(social?.tier)&&<button className="nmShortcut" onClick={openSearch}><Search/>Rechercher sur NailMoods<ChevronRight/></button>}
  {panel==='search'&&<Sheet title="Rechercher" eyebrow="SUR NAILMOODS" onClose={()=>setPanel(null)} className="privacySheet identitySearchSheet"><form className="identitySearchForm" onSubmit={search}>
    <label><span>Nom ou @NailMoodsID</span><div className="searchField"><Search/><input value={query} minLength={2} maxLength={80} required placeholder="ex. @studio.marie" onChange={event=>setQuery(event.target.value)}/></div></label>
    <label><span>Type de profil</span><select value={kind} onChange={event=>{setKind(event.target.value);setResults([]);setSearched(false);}}><option value="">Tous les profils visibles</option><option value="independent">Créatrice indépendante</option><option value="institute_owner">Propriétaire d’institut</option><option value="institute_associate">Collaboratrice d’institut</option><option value="institute">Institut</option><option value="creator">Créateur / Marque</option><option value="plus">Compte Plus</option></select></label>

@@ -116,6 +116,31 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
               next.queue[0]={...current,values};replaceQueuedMedia(next,current,values);save(next);
             }
           }
+          // Persist reference images privately before storing their paths in JSON.
+          if(state.queue.length && media){
+            const op=state.queue[0];
+            const source=op.preferenceKey==='nm-photo-draft-v1'?op.value?.photos:op.values?.snapshot?.photoSources;
+            if(Array.isArray(source)&&source.some(p=>p.src?.startsWith('data:image/'))){
+              const sources=[];
+              for(const [index,p] of source.entries()){
+                if(!p.src?.startsWith('data:image/')){sources.push(p);continue;}
+                const file=dataUrlToBlob(p.src);
+                const bytes=await file.arrayBuffer();
+                const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');
+                const saved=await media.upload({userId,workspaceId,kind:'reference',objectId:hash,file});
+                sources.push({...p,src:saved.path});
+              }
+              const next=fork(state);
+              if(op.preferenceKey){const normalized={...op.value,photos:sources};next.queue=next.queue.map((pending,index)=>index===0?{...op,value:normalized}:pending.preferenceKey===op.preferenceKey&&same(pending.before,op.value)?{...pending,before:normalized}:pending);if(same(next.views[op.preferenceKey],op.value))next.views[op.preferenceKey]=normalized;}
+              else {
+                const values={...op.values,snapshot:{...op.values.snapshot,photoSources:sources}};
+                next.queue[0]={...op,values};
+                const lib=next.views[LIBRARY],replace=i=>i?.key===op.values.snapshot.key?{...i,photoSources:sources}:i;
+                next.views[LIBRARY]={...lib,favorites:lib.favorites.map(replace),recent:lib.recent.map(replace),projects:(lib.projects||[]).map(replace),selected:replace(lib.selected)};
+              }
+              save(next);
+            }
+          }
           const snapshot=state;
           await cache.setCachedWorkspace(key,snapshot);cacheFailure=null;check();
           // Changes typed during the asynchronous transaction must be persisted before sending.
@@ -147,6 +172,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
   }
   const adapter={
     accountScoped:true,
+    media,userId,workspaceId,
     get accountTier(){return state?.profile?.account_tier || 'free';},
     getItem(k){return state?.views[k]===undefined?null:JSON.stringify(state.views[k]);},
     setItem(k,json){check();const value=JSON.parse(json);if(same(state.views[k],value))return;const next=fork(state);changes(next,k,state.views[k],value);next.views[k]=value;save(next);void flush();},

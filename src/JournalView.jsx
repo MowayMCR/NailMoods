@@ -2,7 +2,7 @@ import {messageId} from './social/messageState';
 import Discovery from './social/Discovery';
 import PublicationTags from './social/PublicationTags';
 import {cleanTags,suggestTags} from './social/tags';
-import { MessengerTile } from './social/SocialContext';
+import { MessengerTile,useSocial } from './social/SocialContext';
 import { StorageHint } from './StorageContext';
 import RecipeSummary from './RecipeSummary';
 import JournalVariants from './JournalVariants';
@@ -53,6 +53,7 @@ function ProductPicker({ products, items, onApply, onClose }) {
 }
 
 function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }) {
+  const social=useSocial(),canPublish=['plus','pro'].includes(social?.tier);
   const [draft, setDraft] = useState(() => entry ? JSON.parse(JSON.stringify(entry)) : draftEntry ? JSON.parse(JSON.stringify(draftEntry)) : newJournalEntry('journal-' + messageId(), session));
   const [photoBusy, setPhotoBusy] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
@@ -80,7 +81,7 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
       </section>
       <section className="journalFormCard">
         <fieldset className="journalFeedback"><legend>Ton ressenti <small>facultatif</small></legend><div>{Object.entries(feelingLabels).map(([value, label]) => <button key={value} type="button" aria-pressed={draft.feeling === value} onClick={() => change({ feeling: draft.feeling === value ? '' : value })}>{label}</button>)}</div></fieldset>
-        <PublicationTags source={draft} value={draft.publicTags} onChange={publicTags=>change({publicTags})}/><fieldset className="journalFeedback"><legend>Visibilité</legend><div><button type="button" aria-pressed={draft.visibility !== 'public'} onClick={() => change({ visibility: 'private' })}>🔒 Privé</button><button type="button" aria-pressed={draft.visibility === 'public'} onClick={() => change({ visibility: 'public' })}>🌍 Public</button></div><small className="journalMuted">Privé par défaut. Public : la photo et les tags peuvent apparaître dans Découvrir et sur ton profil visible. Tes notes restent privées.</small></fieldset>
+        <PublicationTags source={draft} value={draft.publicTags} onChange={publicTags=>change({publicTags})}/><fieldset className="journalFeedback"><legend>Visibilité</legend><div><button type="button" aria-pressed={draft.visibility !== 'public'} onClick={() => change({ visibility: 'private' })}>🔒 Privé</button><button type="button" disabled={!canPublish} aria-pressed={draft.visibility === 'public'} onClick={() => change({ visibility: 'public' })}>🌍 Public{!canPublish?' · Plus / Pro':''}</button></div><small className="journalMuted">Privé par défaut. Public : la photo et les tags peuvent apparaître dans Découvrir et sur ton profil visible. Tes notes restent privées.</small></fieldset>
         <button type="button" className="journalRepeatToggle" aria-pressed={draft.repeat} onClick={() => change({ repeat: !draft.repeat })}><Heart fill={draft.repeat ? 'currentColor' : 'none'} />Une pose à refaire{draft.repeat && <Check />}</button>
         <label htmlFor="journal-notes">Tes notes <small>facultatif</small><textarea id="journal-notes" rows={3} maxLength={4000} value={draft.notes} onChange={event => change({ notes: event.target.value })} placeholder="Ce que tu as aimé, ce que tu changerais…" /></label>
         <details className="journalMore"><summary>Un peu plus de détails<ChevronRight /></summary>

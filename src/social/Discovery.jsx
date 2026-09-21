@@ -1,3 +1,4 @@
+import {track} from '../analytics/analytics';
 import React,{useEffect,useRef,useState} from 'react';
 import {Compass,ChevronRight,Search,Bookmark,ArrowLeft,ArrowRight} from 'lucide-react';
 import Sheet from '../Sheet';
@@ -12,7 +13,7 @@ export default function Discovery({client:provided}){
  const social=useSocial(),client=provided||social?.client,allowed=Boolean(client&&social?.userId&&['plus','pro'].includes(social?.tier));
  const [open,setOpen]=useState(false),[mode,setMode]=useState('discover'),[query,setQuery]=useState(''),[filters,setFilters]=useState({}),[applied,setApplied]=useState({query:'',filters:{}}),[page,setPage]=useState(0),[rows,setRows]=useState([]),[hasMore,setHasMore]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[handle,setHandle]=useState(null),[detail,setDetail]=useState(null),[revision,setRevision]=useState(0),[saving,setSaving]=useState(null);
  const request=useRef(0);
- async function call(action,data){const r=await client.rpc('nm_discover',{p_action:action,p_data:data});if(r.error)throw r.error;return r.data;}
+ async function call(action,data){const r=await client.rpc('nm_discover',{p_action:action,p_data:data});if(r.error)throw r.error;if(action==='add'||action==='remove')track(action==='add'?'favorite_added':'favorite_removed',{});return r.data;}
  useEffect(()=>{if(!open||!allowed)return;const seq=++request.current;let active=true;setRows([]);setBusy(true);setError('');call(mode,{...applied,offset:page*20}).then(data=>{if(active&&seq===request.current){setRows(data.items||[]);setHasMore(Boolean(data.hasMore));}}).catch(()=>{if(active){setRows([]);setHasMore(false);setError('La découverte est indisponible. Vérifie ton accès Plus / Pro, puis réessaie.');}}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};},[open,allowed,mode,applied,page,revision]);
  useEffect(()=>{if(!open)return;const refresh=()=>{if(document.visibilityState==='visible'){setDetail(null);setHandle(null);setRevision(v=>v+1);}};window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',refresh);return()=>{window.removeEventListener('focus',refresh);document.removeEventListener('visibilitychange',refresh);};},[open]);
  async function read(row){setDetail(null);setError('');try{const fresh=await call('detail',{id:row.id,kind:row.kind});if(!fresh)throw Error();setDetail(fresh);}catch{setError('Cette publication n’est plus disponible.');setRevision(v=>v+1);}}

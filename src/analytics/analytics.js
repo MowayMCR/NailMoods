@@ -4,6 +4,7 @@ const FLUSH_MS = 5000;
 const IDLE_MS = 30 * 60 * 1000;
 let active = null;
 export function setActiveAnalytics(value) { active = value; }
+export function stopActiveAnalytics(){active?.stop();active=null;}
 export function track(eventName, metadata = {}, fields = {}) { active?.track(eventName, metadata, fields); }
 
 function uuid() { return crypto.randomUUID(); }
@@ -42,8 +43,9 @@ export function createAnalytics({ client, enabled, appVersion = '0.1.0', workspa
       success: fields.success ?? null, error_code: fields.error_code ?? null });
     queue = queue.slice(-MAX_QUEUE); if (queue.length >= BATCH_SIZE) void flush(); else schedule();
   }
-  function stop() { stopped = true; if (timer) clearTimeout(timer); timer = null; queue = []; }
+  const visible=()=>{if(document.visibilityState==='visible')enqueue('session_resumed');};
+  function stop() { document.removeEventListener('visibilitychange',visible);window.removeEventListener('pagehide',end);stopped = true; if (timer) clearTimeout(timer); timer = null; queue = []; }
   function end() { if (!enabled || stopped) return; enqueue('session_ended', {}, { duration_ms: Date.now() - sessionStartedAt }); void flush(); }
-  if (enabled) { ensureSession(); enqueue('app_opened'); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') enqueue('session_resumed'); }); window.addEventListener('pagehide', end); }
+  if (enabled) { ensureSession(); enqueue('app_opened'); document.addEventListener('visibilitychange', visible); window.addEventListener('pagehide', end); }
   return { track: enqueue, flush, stop };
 }
