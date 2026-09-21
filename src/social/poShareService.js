@@ -52,8 +52,17 @@ export function comparePoShare(snapshot,items=[]){
  for(const r of techniqueChecks)if(!r.available)verify.push({name:r.name});
  return {available,owned:available,alternatives,missing,verify,techniqueChecks};
 }
+export function filterRecipients(rows,query=''){
+ const q=String(query).trim().replace(/^@+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('fr');
+ return rows.filter(r=>[r.display_name,r.handle,r.pro_handle,r.workspace_name].some(v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('fr').includes(q)));
+}
 export function poShareService(client){return {
- search:async query=>{const connections=await checked(client.rpc('nm_social',{p_action:'list',p_data:{}}));const rows=await checked(client.rpc('search_nailmoods',{p_query:query,p_kind:null,p_city:null}));return(rows||[]).filter(row=>row.entity_type==='workspace'&&connections.some(c=>c.status==='accepted'&&c.pro_handle===row.handle)).map(row=>({...row,user_id:connections.find(c=>c.pro_handle===row.handle).user_id}));},
+ recipients:async({professionalsOnly=true}={})=>{
+  const rows=await checked(client.rpc('nm_social',{p_action:'recipients',p_data:{}}));
+  const accepted=(rows||[]).filter(r=>r.status==='accepted'&&['plus','pro'].includes(r.account_tier));
+  return professionalsOnly?accepted.filter(r=>r.account_tier==='pro').flatMap(r=>(r.workspaces||[]).map(w=>({...r,...w}))):accepted;
+ },
+ sharePublication:(userId,publication,clientId)=>checked(client.rpc('send_nailmoods_publication',{p_recipient_user_id:userId,p_kind:publication.kind,p_id:publication.id,p_client_id:clientId})),
  send:async(workspaceId,sourceId,snapshot)=>{const id=await checked(client.rpc('send_nailmoods_share_to_po',{p_recipient_workspace_id:workspaceId,p_source_local_id:String(sourceId||'').slice(0,120),p_snapshot:snapshot}));track('share_to_pro_sent',{});return id;},
  received:()=>checked(client.rpc('received_nailmoods_po_shares')),
  proposal:(userId,sourceId,snapshot)=>checked(client.rpc('send_nailmoods_proposal',{p_recipient_user_id:userId,p_source_local_id:String(sourceId||'').slice(0,120),p_snapshot:snapshot})),

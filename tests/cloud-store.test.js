@@ -208,3 +208,18 @@ test('editing a photo draft during upload preserves the normalized conflict base
  store.storage.setItem('nm-photo-draft-v1',JSON.stringify({...draft,overrides:{mood:'Coquette'}}));release();
  assert.equal(await store.flush(),true);assert.equal(repo.profile.preferences.nailmoodsExtras['nm-photo-draft-v1'].overrides.mood,'Coquette');
 });
+test('publication retry keeps draft, then photo replacement, removal and re-add clear stale references',async()=>{
+ const repo=backend(),statuses=[];let rejectPublic=true,version=0;
+ const media={upload:async()=>({path:'A/WA/journal/private.png'}),download:async()=>new Blob(['x'],{type:'image/png'}),uploadPublic:async()=>{if(rejectPublic)throw Object.assign(new Error('Publication interrompue. Réessaie.'),{code:'upload_failed'});return {path:'A/WA/journal/public-'+(++version)+'.png'};},removePublic:async()=>{}};
+ const store=make(memory(),repo,'A','WA',{media,onStatus:s=>statuses.push(s)});await store.load();
+ const photo='data:image/png;base64,eA==';
+ store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'retry-pose',date:'2026-09-21',photo,visibility:'public'}]}));
+ assert.equal(await store.flush(),false);assert.equal(repo.rows.journal_entries.length,0);assert.equal(store.pending,1);assert.equal(statuses.at(-1).code,'upload_failed');
+ rejectPublic=false;assert.equal(await store.flush(),true);assert.equal(repo.rows.journal_entries.length,1);assert.equal(store.pending,0);
+ const edit=async changes=>{const j=JSON.parse(store.storage.getItem(JOURNAL));Object.assign(j.entries[0],changes);store.storage.setItem(JOURNAL,JSON.stringify(j));assert.equal(await store.flush(),true);return repo.rows.journal_entries[0];};
+ let row=await edit({photo});assert.equal(row.public_media_path,'A/WA/journal/public-2.png');
+ row=await edit({photo:''});assert.equal(row.media_path,null);assert.equal(row.public_media_path,null);assert.equal(row.photo_url,null);assert.equal(row.snapshot.mediaPath,null);
+ row=await edit({photo});assert.equal(row.public_media_path,'A/WA/journal/public-3.png');
+ row=await edit({visibility:'private',publicMediaPath:null});assert.equal(row.public_media_path,null);
+ row=await edit({visibility:'public',publicMediaPath:null});assert.equal(row.public_media_path,'A/WA/journal/public-4.png');assert.equal(repo.rows.journal_entries.length,1);
+});

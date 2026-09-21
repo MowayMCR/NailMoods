@@ -1,4 +1,5 @@
 import { TABLES, same } from './mapping.js';
+import { readBatch } from './queryBatch.js';
 export class CloudError extends Error { constructor(code,message){super(message);this.code=code;} }
 export async function checked(request) {
   const {data,error}=await request;
@@ -24,7 +25,7 @@ export function repository(client,userId,workspaceId) {
     verifyUser,
     async load() {
       await verifyUser();
-      const [profile,...sets]=await Promise.all([checked(client.from('profiles').select('id,account_tier,display_name,avatar_url,preferences,username,discovery_visibility,updated_at').eq('id',userId).single()),...TABLES.map(t=>all(t,'workspace_id',workspaceId)),all('favorites','user_id',userId)]);
+      const [profile,...sets]=await readBatch([()=>checked(client.from('profiles').select('id,account_tier,display_name,avatar_url,preferences,username,discovery_visibility,updated_at').eq('id',userId).single()),...TABLES.map(t=>()=>all(t,'workspace_id',workspaceId)),()=>all('favorites','user_id',userId)]);
       const capabilities=await checked(client.rpc('nm_capabilities'));
       profile.account_tier=capabilities.tier;
       return {profile,rows:Object.fromEntries(TABLES.map((t,i)=>[t,sets[i]])),favorites:sets.at(-1).filter(f=>f.entity_type==='inspiration')};

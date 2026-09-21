@@ -3,36 +3,80 @@ import {ShareDetails} from './ShareCard';
 import {ReferenceImage} from '../PhotoReferences';
 import {track} from '../analytics/analytics';
 import { Conversation } from './SocialHub';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Check, Search, Send, Sparkles } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Check, Send, Sparkles } from 'lucide-react';
+import ContentImage from './ContentImage';
 import Sheet from '../Sheet';
 import { useStorage } from '../StorageContext';
-import { comparePoShare, poShareService, shareSnapshot,prepareShareImages,shareImages } from './poShareService';
+import { comparePoShare, poShareService, shareSnapshot,prepareShareImages,shareImages,filterRecipients } from './poShareService';
 import './po-share.css';
 
-export function ShareToPoSheet({ client, media,userId,workspaceId,source, type, proposalRecipient=null,onClose }) {
+export function ShareToPoSheet({ client, media,userId,workspaceId,source, type, proposalRecipient=null,publicPublication=null,onClose }) {
   const service = useMemo(() => poShareService(client), [client]);
   const [canSave,setCanSave]=useState(false);
   const [includeNotes,setIncludeNotes]=useState(false),[includeImages,setIncludeImages]=useState(false);
-  const snapshot = useMemo(() => shareSnapshot(source,type,{includeNotes,includeImages}),[source,type,includeNotes,includeImages]);
-  useEffect(()=>{track('share_to_pro_started',{});},[]);
-  const [clientId]=useState(()=>messageId());
+  const snapshot = useMemo(() => shareSnapshot(source||{},type,{includeNotes,includeImages}),[source,type,includeNotes,includeImages]);
+  useEffect(()=>{if(!publicPublication)track('share_to_pro_started',{});},[]);
+  const attempt=useRef(null);
   const [conversation,setConversation]=useState(null);
-  const [query, setQuery] = useState(''), [results, setResults] = useState([]), [selected, setSelected] = useState(proposalRecipient), [busy, setBusy] = useState(false), [notice, setNotice] = useState('');
-  async function search(event) { event.preventDefault(); setBusy(true); setNotice(''); try { const rows = await service.search(query); setResults(rows); if (!rows.length) setNotice('Aucune PO connectée trouvée. Ajoute d’abord ta PO dans Mes connexions.'); } catch { setNotice('La recherche n’est pas disponible pour le moment.'); } finally { setBusy(false); } }
-  async function send() { if (!selected) return; setBusy(true); setNotice(''); try { const prepared=await prepareShareImages(snapshot,{media,userId,workspaceId});if(proposalRecipient)await service.proposal(selected.user_id,source.id||source.key,{...prepared,client_id:clientId,can_save:canSave});else await service.send(selected.entity_id, source.id || source.key, {...prepared,client_id:clientId}); setNotice('Envoyé à ta PO. Elle pourra comparer les couleurs et techniques à sa collection.');setConversation(selected); } catch { setNotice('L’envoi n’a pas abouti. Vérifie que vous utilisez toutes les deux un compte confirmé.'); } finally { setBusy(false); } }
+  const [query,setQuery]=useState(''),[results,setResults]=useState([]),[selected,setSelected]=useState(proposalRecipient);
+  const [step,setStep]=useState(proposalRecipient?'preview':'select'),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[notice,setNotice]=useState(''),[loadError,setLoadError]=useState(''),[revision,setRevision]=useState(0);
+  useEffect(()=>{
+    if(proposalRecipient){setLoading(false);return;}
+    let active=true;setLoading(true);setLoadError('');
+    service.recipients({professionalsOnly:!publicPublication}).then(rows=>{if(active)setResults(rows);})
+      .catch(()=>{if(active)setLoadError('Tes connexions ne sont pas accessibles pour le moment. Réessaie.');})
+      .finally(()=>{if(active)setLoading(false);});
+    return()=>{active=false;};
+  },[service,proposalRecipient,!!publicPublication,revision]);
+  const visible=filterRecipients(results,query);
+  async function send() {
+    if (!selected||busy||step!=='preview') return;
+    setBusy(true);setNotice('');
+    try {
+      const key=JSON.stringify([selected.user_id,selected.entity_id,publicPublication||snapshot,canSave]);
+      if(attempt.current?.key!==key)attempt.current={key,id:messageId()};
+      const clientId=attempt.current.id;
+      if(publicPublication)await service.sharePublication(selected.user_id,publicPublication,clientId);
+      else {
+        const prepared=await prepareShareImages(snapshot,{media,userId,workspaceId});
+        if(proposalRecipient)await service.proposal(selected.user_id,source.id||source.key,{...prepared,client_id:clientId,can_save:canSave});
+        else await service.send(selected.entity_id,source.id||source.key,{...prepared,client_id:clientId});
+      }
+      setConversation(selected);
+    } catch {setNotice('La fiche n’a pas été envoyée. Réessaie ; si votre connexion ou les droits ont changé, choisis une autre destinataire.');}
+    finally {setBusy(false);}
+  }
   if(conversation)return <Conversation client={client} peer={conversation} onClose={onClose}/>;
-  return <Sheet title={proposalRecipient?'Envoyer ma proposition':'Envoyer à ma PO'} eyebrow="PARTAGE PRIVÉ" onClose={onClose} className="poShareSheet">
-    <p>Vérifie la fiche avant de l’envoyer. Ce partage reste privé entre vous.</p>
-    <label className="consentCheck"><input type="checkbox" checked={includeNotes} onChange={e=>setIncludeNotes(e.target.checked)}/>Joindre mes notes privées</label>
-    <label className="consentCheck"><input type="checkbox" checked={includeImages} onChange={e=>setIncludeImages(e.target.checked)}/>Joindre mes photos de référence ({shareImages(source,type).length})</label>
-    <ShareDetails client={client} snapshot={snapshot}/>
-    {includeImages&&<div className="photoThumbs">{snapshot.images.map((p,i)=><ReferenceImage key={i} src={p.src} alt={'Photo qui sera jointe '+(i+1)}/>)}</div>}
-    {proposalRecipient?<><p>À @{proposalRecipient.handle}</p><label className="consentCheck"><input type="checkbox" checked={canSave} onChange={e=>setCanSave(e.target.checked)}/>Autoriser l’enregistrement de cette composition dans ses projets</label></>:<form onSubmit={search}><label>Choisir une PO connectée par son @identifiant<input value={query} onChange={event => setQuery(event.target.value)} placeholder="@ma-po" minLength="2" /></label><button disabled={busy || query.trim().length < 2}><Search />Rechercher</button></form>}
-    <div className="poSearchResults">{results.map(row => <button key={row.entity_id} aria-pressed={selected?.entity_id === row.entity_id} onClick={() => setSelected(row)}><span><b>{row.display_name}</b><small>@{row.handle}</small></span>{selected?.entity_id === row.entity_id && <Check />}</button>)}</div>
-    {notice && <p className="poShareNotice" role="status">{notice}</p>}
-    <button className="poSend" disabled={!selected || busy || notice.startsWith('Envoyé')} onClick={send}><Send />Envoyer cette fiche</button>
+  const title=publicPublication?'Partager une publication':proposalRecipient?'Envoyer ma proposition':'Envoyer à ma PO';
+  return <Sheet title={title} eyebrow="PARTAGE PRIVÉ" onClose={busy?()=>{}:onClose} className="poShareSheet">
+    {step==='select'?<>
+      <p>{publicPublication?'Choisis une personne parmi tes connexions acceptées.':'Choisis une PO parmi tes connexions acceptées.'}</p>
+      <label className="poRecipientFilter">Filtrer mes connexions<input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Nom ou @NailMoodsID" autoComplete="off"/></label>
+      {loading?<p role="status">Chargement de tes connexions…</p>:loadError?<div role="alert"><p>{loadError}</p><button className="poSend" onClick={()=>setRevision(v=>v+1)}>Réessayer</button></div>:<>
+        {!results.length?<p role="status">{publicPublication?'Aucune connexion acceptée pour le moment.':'Aucune PO compatible dans tes connexions acceptées. Les comptes Plus restent disponibles dans Mes connexions pour tes échanges et partages.'}</p>:!visible.length?<p role="status">Aucune connexion ne correspond à ce filtre.</p>:<div className="poSearchResults" aria-label="Connexions acceptées">{visible.map(row=><button key={row.entity_id||row.user_id} onClick={()=>{setSelected(row);setNotice('');setStep('preview');}}><RecipientIdentity client={client} row={row}/><Check aria-hidden="true"/></button>)}</div>}
+      </>}
+    </>:<>
+      <p>À</p><div className="poSelectedRecipient"><RecipientIdentity client={client} row={selected}/></div>
+      {!proposalRecipient&&<button className="poChangeRecipient" disabled={busy} onClick={()=>{setStep('select');setNotice('');setRevision(v=>v+1);}}>Changer de destinataire</button>}
+      <p>Vérifie l’aperçu, puis confirme l’envoi dans votre conversation privée.</p>
+      {publicPublication?<><h3>{publicPublication.title||'Publication NailMoods'}</h3><ContentImage client={client} kind={publicPublication.kind} id={publicPublication.id} title={publicPublication.title} preview={publicPublication.preview}/><p>Le lien reste soumis aux droits de la publication. Si elle devient privée, elle ne sera plus accessible.</p></>:<>
+        <label className="consentCheck"><input type="checkbox" disabled={busy} checked={includeNotes} onChange={e=>setIncludeNotes(e.target.checked)}/>Joindre mes notes privées</label>
+        <label className="consentCheck"><input type="checkbox" disabled={busy} checked={includeImages} onChange={e=>setIncludeImages(e.target.checked)}/>Joindre mes photos de référence ({shareImages(source,type).length})</label>
+        <ShareDetails client={client} snapshot={snapshot}/>
+        {includeImages&&<div className="photoThumbs">{snapshot.images.map((p,i)=><ReferenceImage key={i} src={p.src} alt={'Photo qui sera jointe '+(i+1)}/>)}</div>}
+        {proposalRecipient&&<label className="consentCheck"><input type="checkbox" disabled={busy} checked={canSave} onChange={e=>setCanSave(e.target.checked)}/>Autoriser l’enregistrement de cette composition dans ses projets</label>}
+      </>}
+      {notice&&<p className="poShareNotice" role="alert">{notice}</p>}
+      <button className="poSend" disabled={busy} onClick={send}><Send/>{busy?'Envoi…':notice?'Réessayer l’envoi':'Confirmer et envoyer'}</button>
+    </>}
   </Sheet>;
+}
+export function RecipientIdentity({client,row}) {
+  return <span className="poRecipientIdentity">
+    <span className="poRecipientAvatar" aria-hidden="true">{row.avatar_handle?<img src={client.supabaseUrl+'/functions/v1/media-read?kind=avatar&id='+encodeURIComponent(row.avatar_handle)} alt="" onError={e=>{e.currentTarget.hidden=true;}}/>:null}<span>{(row.display_name||row.handle||'?')[0]}</span></span>
+    <span className="poRecipientText"><b>{row.display_name||row.handle||'Connexion NailMoods'}</b><small>{row.handle?'@'+row.handle:'Identifiant non renseigné'}</small>{row.pro_handle&&<small>{row.workspace_name} · @{row.pro_handle}</small>}<strong className={'poProfileType '+(row.account_tier==='pro'?'professional':'')}>{row.profile_type||(row.account_tier==='pro'?'Pro':'Plus')}</strong></span>
+  </span>;
 }
 
 export function PoReceivedShares({ client }) {

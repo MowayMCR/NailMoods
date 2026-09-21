@@ -35,7 +35,10 @@ export function journalRow(entry) {
   // uploads it. The media uploader replaces it before the Supabase write.
   const photo = typeof entry.photo === 'string' ? entry.photo : '';
   const visibility=entry.visibility === 'public' ? 'public' : 'private';
-  return {performed_on:entry.date,notes:entry.notes || '',photo_url:photo && !photo.startsWith('data:image/') ? photo : null,media_path:entry.mediaPath || null,public_media_path:visibility === 'public' ? (entry.publicMediaPath || null) : null,visibility,snapshot};
+  const mediaPath=photo && !photo.startsWith('data:image/') ? (entry.mediaPath || null) : null;
+  const publicMediaPath=mediaPath && visibility==='public' ? (entry.publicMediaPath || null) : null;
+  snapshot.mediaPath=mediaPath;snapshot.publicMediaPath=publicMediaPath;
+  return {performed_on:entry.date,notes:entry.notes || '',photo_url:photo && !photo.startsWith('data:image/') ? photo : null,media_path:mediaPath,public_media_path:publicMediaPath,visibility,snapshot};
 }
 export function profilePatch(profile, preferences) {
   const {account_tier,userId,workspaceId,id,...safe} = profile;

@@ -67,7 +67,9 @@ export function createMediaStorage(client, { userId } = {}) {
     async uploadPublic({ userId, workspaceId, kind, objectId, file }) {
       validateImage(file);
       const path = mediaPath({ userId, workspaceId, kind, objectId:objectId+'-'+crypto.randomUUID(), contentType: file.type });
-      const { data, error } = await client.storage.from('nailmoods-public').upload(path, file, { contentType: file.type, upsert: true });
+      // A publication gets a fresh immutable path. Upsert unnecessarily requires
+      // SELECT, which this protected bucket deliberately does not grant.
+      const { data, error } = await client.storage.from('nailmoods-public').upload(path, file, { contentType: file.type, upsert: false });
       if (error) throw new MediaStorageError('upload_failed', 'La version publique de la photo n’a pas pu être enregistrée.');
       return { path: data.path || path, bucket: 'nailmoods-public', contentType: file.type, bytes: file.size };
     },

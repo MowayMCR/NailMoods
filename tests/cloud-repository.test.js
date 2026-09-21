@@ -1,7 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {repository,personalWorkspace} from '../src/cloud/repository.js';
+import {readBatch} from '../src/cloud/queryBatch.js';
 // SDK boundary assertions; these do NOT establish server-side RLS behavior.
+test('startup reads preserve result order while bounding simultaneous network calls',async()=>{
+ let active=0,peak=0;
+ const result=await readBatch(Array.from({length:7},(_,i)=>async()=>{active++;peak=Math.max(peak,active);await new Promise(r=>setTimeout(r,10-i));active--;return i;}));
+ assert.deepEqual(result,[0,1,2,3,4,5,6]);assert.equal(peak,3);
+});
+test('startup failure stops scheduling later reads and surfaces the error',async()=>{
+ let later=false;
+ await assert.rejects(readBatch([async()=>{throw Error('network');},async()=>{await new Promise(r=>setTimeout(r,10));},async()=>{later=true;}],2),/network/);
+ assert.equal(later,false);
+});
 function client(handler,user='A'){
  const calls=[];
  return {calls,auth:{getUser:async()=>({data:{user:{id:user}},error:null})},from(table){const call={table,filters:[]};calls.push(call);const q={};for(const method of ['select','eq','is','in','order','range','update','insert','delete','single','maybeSingle'])q[method]=(...args)=>{if(['eq','is','in'].includes(method))call.filters.push([method,...args]);else call[method]=args;return q;};q.then=(resolve,reject)=>Promise.resolve(handler(call)).then(resolve,reject);return q;}};

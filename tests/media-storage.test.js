@@ -32,3 +32,8 @@ test('published media uses the controlled reader, never a public Storage URL', (
   const media = createMediaStorage(client);
   assert.equal(media.publicUrl('journal','entry-1'),'https://example.supabase.co/functions/v1/media-read?kind=journal&id=entry-1');
 });
+test('public copies use fresh paths and INSERT only in the protected bucket',async()=>{
+ const paths=[];const c={storage:{from(bucket){assert.equal(bucket,'nailmoods-public');return {upload:async(path,file,options)=>{assert.equal(options.upsert,false);paths.push(path);return {data:{path},error:null};}};}}};
+ const m=createMediaStorage(c);const args={userId:'A',workspaceId:'W',kind:'journal',objectId:'J',file:new Blob(['image'],{type:'image/png'})};
+ await m.uploadPublic(args);await m.uploadPublic(args);assert.notEqual(paths[0],paths[1]);assert.ok(paths.every(p=>p.startsWith('A/W/journal/J-')));
+});
