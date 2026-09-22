@@ -3,7 +3,7 @@ import Discovery from './social/Discovery';
 import PublicationTags from './social/PublicationTags';
 import {cleanTags,suggestTags,internalTags} from './social/tags';
 import { MessengerTile,useSocial } from './social/SocialContext';
-import { StorageHint } from './StorageContext';
+import { StorageHint, useStorage } from './StorageContext';
 import RecipeSummary from './RecipeSummary';
 import JournalVariants from './JournalVariants';
 import React, { useEffect, useRef, useState } from 'react';
@@ -53,14 +53,23 @@ function ProductPicker({ products, items, onApply, onClose }) {
 }
 
 function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }) {
+  const storage=useStorage();
+  const draftKey='nm-journal-draft:'+ (entry?.id || session?.id || draftEntry?.idea?.key || 'new');
   const social=useSocial(),canPublish=['plus','pro'].includes(social?.tier);
-  const [draft, setDraft] = useState(() => entry ? JSON.parse(JSON.stringify(entry)) : draftEntry ? JSON.parse(JSON.stringify(draftEntry)) : newJournalEntry('journal-' + messageId(), session));
+  const [draft, setDraft] = useState(() => {try{const saved=JSON.parse(storage.getItem(draftKey));if(saved?.id)return saved;}catch{}return entry ? JSON.parse(JSON.stringify(entry)) : draftEntry ? JSON.parse(JSON.stringify(draftEntry)) : newJournalEntry('journal-' + messageId(), session);});
+  const [photoUrl,setPhotoUrl]=useState('');
+  useEffect(()=>{let active=true;setPhotoUrl('');if(draft.mediaPath&&storage.media)storage.media.signedUrl(draft.mediaPath).then(url=>{if(active)setPhotoUrl(url);}).catch(()=>{});return()=>{active=false;};},[draft.mediaPath,storage]);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
   const [error, setError] = useState('');
   const heading = useRef(null);
   useEffect(() => { heading.current?.focus({ preventScroll: true }); }, []);
-  const change = patch => { setDraft(current => ({ ...current, ...patch })); setError(''); };
+  const draftRef=useRef(draft);
+  const change = patch => {
+    const next={...draftRef.current,...patch};draftRef.current=next;setDraft(next);
+    try{storage.setItem(draftKey,JSON.stringify(next));setError('');}
+    catch{setError('Le brouillon n’a pas pu être conservé. Reste sur cet écran et réessaie.');}
+  };
   function save(event) {
     event.preventDefault();
     if (photoBusy) return;
@@ -68,7 +77,7 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
     if (invalid) { setError(invalid); return; }
     const publicTags=cleanTags(draft.publicTags??suggestTags(draft));
     const result = onSave({...draft,publicTags,searchTags:internalTags(Object.values(publicTags).flat().join(' '))});
-    if (result.ok) onNavigate(result.id);
+    if (result.ok) {try{storage.setItem(draftKey,'null');}catch{}onNavigate(result.id);}
     else setError(result.error);
   }
   return <div className="journalPage journalEditPage">
@@ -76,7 +85,7 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
     <section className="journalHeading"><small>{entry ? 'MON SOUVENIR' : 'UNE POSE À GARDER'}</small><h1 ref={heading} tabIndex={-1}>{entry ? 'Modifier ma pose' : 'Raconte ta pose'}</h1><p>Une photo, quelques mots… Tu peux aussi enregistrer maintenant et compléter plus tard.</p></section>
     <form className="journalForm" onSubmit={save} noValidate>
       <section className="journalFormCard">
-        <ProductPhoto value={draft.photo} onChange={photo => change({ photo, mediaPath: null, publicMediaPath: null })} onBusy={setPhotoBusy} alt="Photo du résultat de ma pose" cameraLabel="Photographier ma pose" />
+        <ProductPhoto value={draft.mediaPath ? photoUrl : draft.photo} onChange={photo => change({ photo, mediaPath: null, publicMediaPath: null })} onBusy={setPhotoBusy} alt="Photo du résultat de ma pose" cameraLabel="Photographier ma pose" />
         <label htmlFor="journal-title">Un nom pour cette pose<input id="journal-title" maxLength={120} value={draft.title} onChange={event => change({ title: event.target.value })} placeholder={'Ma pose du ' + journalDate(draft.date)} /></label>
         <label htmlFor="journal-date">Date de la pose<input id="journal-date" type="date" max={localDate()} value={draft.date} onChange={event => change({ date: event.target.value })} /></label>
       </section>
@@ -134,6 +143,8 @@ function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDel
 }
 
 export default function JournalView({ onFavorites, library, profile, journal, sessions, items, media, route, draftIdea, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate, onShareToPro }) {
+  const storage=useStorage();
+  const hasDraft=Boolean(storage.getItem('nm-journal-draft:new') && storage.getItem('nm-journal-draft:new')!=='null');
   const [query, setQuery] = useState('');
   const [repeatOnly, setRepeatOnly] = useState(false);
   const pending = pendingJournalPoses(journal, sessions);
@@ -155,7 +166,7 @@ export default function JournalView({ onFavorites, library, profile, journal, se
   if (path) return <div className="journalPage"><section className="journalEmpty"><BookHeart /><h1>Cette pose n’est pas disponible</h1><button className="journalPrimary" onClick={() => onNavigate('')}>Retrouver mon journal</button></section></div>;
   return <div className="journalPage">
     <div className="journalSocialShortcuts"><MessengerTile /><Discovery /></div>
-    <section className="journalHero"><small>LES COULEURS DE MES JOURS</small><h1>Mon journal</h1><p>Mes poses, mes petits essais,<br />et celles que j’ai envie de refaire.</p><div><span><b>{journal.entries.length}</b> pose{journal.entries.length > 1 ? 's' : ''}</span><span><b>{journal.entries.filter(entry => entry.repeat).length}</b> à refaire</span></div><button className="journalPrimary" onClick={() => onNavigate('nouveau')}><Plus />Ajouter une pose</button></section>
+    <section className="journalHero"><small>LES COULEURS DE MES JOURS</small><h1>Mon journal</h1><p>Mes poses, mes petits essais,<br />et celles que j’ai envie de refaire.</p><div><span><b>{journal.entries.length}</b> pose{journal.entries.length > 1 ? 's' : ''}</span><span><b>{journal.entries.filter(entry => entry.repeat).length}</b> à refaire</span></div><button className="journalPrimary" onClick={() => onNavigate('nouveau')}><Plus />{hasDraft?'Reprendre ma pose en cours':'Ajouter une pose'}</button></section>
     {pending.length > 0 && !query && !repeatOnly && <section className="journalPending"><div className="journalSectionTitle"><h2>À raconter</h2><span>{pending.length}</span></div><p>Tes poses terminées, prêtes à rejoindre ton journal.</p>{pending.map(session => <article key={session.id}><div><small>{journalDate(localDate(session.completedAt || session.updatedAt))}</small><h3>{session.idea.title}</h3><NailPreview idea={session.idea} compact /><button onClick={() => onNavigate('pose/' + session.id)}>Ajouter au journal<ArrowRight /></button></div><button className="journalDismiss" aria-label={'Masquer la suggestion ' + session.idea.title} onClick={() => onDismiss(session.id)}><X /></button></article>)}</section>}
     {journal.entries.length > 0 && <section className="journalControls"><label className="journalSearch"><Search /><input aria-label="Rechercher dans mon journal" value={query} onChange={event => setQuery(event.target.value)} placeholder="Une pose, un produit, une note…" /></label><div className="journalFilters"><button aria-pressed={!repeatOnly} onClick={() => setRepeatOnly(false)}>Toutes</button><button aria-pressed={repeatOnly} onClick={() => setRepeatOnly(true)}><Heart />À refaire</button></div></section>}
     {filtered.length ? <div className="journalList">{filtered.map(entry => <article key={entry.id}><button className="journalEntryCard" onClick={() => onNavigate(entry.id)}><JournalVisual entry={entry} media={media} compact /><div className="journalEntryCopy"><small>{journalDate(entry.date)}</small><h2>{entry.title}</h2><p>{entry.products.slice(0, 3).map(item => item.name).join(' · ') || 'Un souvenir de ta pose'}</p><div><span>{entry.visibility === 'public' ? '🌍 Public' : '🔒 Privé'}</span>{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.repeat && <span><Heart fill="currentColor" />À refaire</span>}<ChevronRight /></div></div></button></article>)}</div>

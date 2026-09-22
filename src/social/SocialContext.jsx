@@ -1,3 +1,4 @@
+import {identityService} from '../identity/service';
 import {track} from '../analytics/analytics';
 import React, {createContext,useContext,useEffect,useState,useRef,useCallback} from 'react';
 import {Bell,MessageCircle,ChevronRight} from 'lucide-react';
@@ -9,7 +10,7 @@ export async function socialCall(client,action,data={}) {
 export function SocialProvider({client,userId,tier,children}) {
  const [rows,setRows]=useState([]),[notifications,setNotifications]=useState([]),[count,setCount]=useState(0),[error,setError]=useState(''),[busy,setBusy]=useState(false),[view,setView]=useState(null),[identity,setIdentity]=useState(null),[identityOpen,setIdentityOpen]=useState(false);
  const mounted=useRef(false),loading=useRef(false);
- const refreshIdentity=useCallback(async()=>{if(!client||!userId)return;const r=await client.from('profiles').select('username,display_name,discovery_visibility').eq('id',userId).single();if(mounted.current&&!r.error)setIdentity(r.data);},[client,userId]);
+ const refreshIdentity=useCallback(async()=>{if(!client||!userId)return;try{const profile=await identityService(client).mine();if(mounted.current)setIdentity(profile);}catch{if(mounted.current)setError('Ton profil n’a pas pu être préparé. Réessaie.');}},[client,userId]);
  const refresh=useCallback(async()=>{
   if(!client||!userId||!['plus','pro'].includes(tier)){setRows([]);setNotifications([]);setCount(0);return;}if(loading.current)return;loading.current=true;setBusy(true);
   try {
