@@ -9,7 +9,7 @@ test('signup rejects absent or non-boolean terms before making any Auth call',()
  let calls=0;const auth=createAuthService({auth:{signUp(){calls++;}}},'https://example.test');
  for(const acceptance of [undefined,false,'true',1])assert.throws(()=>auth.signUp('test@example.test','password',acceptance));
  assert.equal(calls,0);
- assert.deepEqual(signupConsent(true,yes,true),{adult_confirmed:true,terms_accepted:true,terms_version:'0.1-beta',privacy_version:'0.2-beta',analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
+ assert.deepEqual(signupConsent(true,yes,'2010'),{birth_year:2010,terms_accepted:true,terms_version:'0.3-beta',privacy_version:'0.4-beta',analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
 });
 test('no unselected provider gets anticipatory permission',()=>{
  assert.deepEqual(availableChoices(yes),{analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
@@ -63,20 +63,22 @@ test('consent is loaded from the server again after reconnection, never borrowed
  assert.equal((await privacyService(client).load()).ads_consent,false);
  assert.equal((await privacyService(client).load()).user_id,'a');assert.equal(reads,2);
 });
-test('legacy accounts send an explicit adult confirmation independently from terms',async()=>{
+test('privacy confirmation records an explicit age band independently from terms',async()=>{
  let args;
  const client={auth:{getUser:async()=>({data:{user:{id:'legacy'}}})},rpc:async(name,value)=>{args={name,value};return {data:{user_id:'legacy',adult_confirmed_at:'now',terms_version:'0.1-beta'}};}};
- await privacyService(client).save(DENIED,true,true);
+ await privacyService(client).save(DENIED,true,'18_plus');
  assert.equal(args.name,'record_privacy_choices');
  assert.equal(args.value.p_accept_terms,true);
- assert.equal(args.value.p_confirm_adult,true);
+ assert.equal(args.value.p_age_band,'18_plus');
  await privacyService(client).save(DENIED);
  assert.equal(args.value.p_accept_terms,false);
- assert.equal(args.value.p_confirm_adult,false);
+ assert.equal(args.value.p_age_band,null);
 });
-test('adult declaration is independent from terms and mandatory for beta signup',()=>{
- for(const value of [false,undefined,'true',18])assert.throws(()=>signupConsent(true,{},value),/18 ans/);
- assert.equal(signupConsent(true,{},true).adult_confirmed,true);
+test('private birth year is mandatory for beta signup',()=>{
+ const year=new Date().getFullYear();
+ for(const value of [false,undefined,'true',18,'under15',String(year-14)])assert.throws(()=>signupConsent(true,{},value),/année|15 ans/);
+ assert.equal(signupConsent(true,{},String(year-18)).birth_year,year-18);
+ assert.equal('age_band' in signupConsent(true,{},String(year-16)),false);
 });
 test('deleted message authors never expose cached profile identity',async()=>{
  const {messageAuthor}=await import('../src/privacy/deletedIdentity.js');
