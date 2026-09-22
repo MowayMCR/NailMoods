@@ -1,3 +1,4 @@
+import ContentImage from '../social/ContentImage';
 import {useSocial} from '../social/SocialContext';
 import React,{useEffect,useState} from 'react';
 import {ChevronRight,Search,UserRound,Copy,Settings} from 'lucide-react';
@@ -40,7 +41,7 @@ export default function IdentityPanel({client,userId,onSaved}){
  </form>
  {!busy&&!searched&&<div className="searchEmpty"><Search/><b>Retrouve un profil</b><p>Saisis un nom ou un NailMoods ID. Seuls les profils qui ont choisi d’être trouvables apparaissent.</p></div>}
  {!busy&&searched&&!results.length&&<div className="searchEmpty"><Search/><b>Aucun résultat</b><p>Vérifie l’identifiant ou essaie un autre filtre.</p></div>}
- <div className="identityResults">{results.map(row=><article key={row.entity_type+row.entity_id} className="identityResultCard"><div className="resultAvatar"><span>{row.display_name?.[0]||'N'}</span>{row.avatar_url&&<img src={`${client.supabaseUrl}/functions/v1/media-read?kind=avatar&id=${encodeURIComponent(row.handle)}`} alt="" onError={event=>{event.currentTarget.hidden=true;}}/>}</div><div><span className="profileTypePill">{professionalLabel(row.kind)}</span><h3>{row.display_name}</h3><p>@{row.handle}</p>{row.city&&<small>{row.city}</small>}{row.bio&&<p>{row.bio}</p>}{row.styles?.length>0&&<small>{row.styles.join(' · ')}</small>}</div>{import.meta.env.VITE_DEPLOYMENT_ENV==='recette'&&<button onClick={()=>setPublicHandle(row.handle)}>Voir le profil<ChevronRight/></button>}</article>)}</div>{notice&&<p className="formError" role="status">{notice}</p>}
+ <div className="identityResults">{results.map(row=><article key={row.entity_type+row.entity_id} className="identityResultCard"><div className="resultAvatar"><span>{row.display_name?.[0]||'N'}</span>{row.avatar_url&&<ContentImage client={client} kind="avatar" id={row.handle} title="Avatar"/>}</div><div><span className="profileTypePill">{professionalLabel(row.kind)}</span><h3>{row.display_name}</h3><p>@{row.handle}</p>{row.city&&<small>{row.city}</small>}{row.bio&&<p>{row.bio}</p>}{row.styles?.length>0&&<small>{row.styles.join(' · ')}</small>}</div>{import.meta.env.VITE_DEPLOYMENT_ENV==='recette'&&<button onClick={()=>setPublicHandle(row.handle)}>Voir le profil<ChevronRight/></button>}</article>)}</div>{notice&&<p className="formError" role="status">{notice}</p>}
  </Sheet>}
  {publicHandle&&<PublicProfile client={client} handle={publicHandle} onClose={()=>setPublicHandle(null)}/>} </section>;
 }

@@ -74,7 +74,7 @@ export function ShareToPoSheet({ client, media,userId,workspaceId,source, type, 
 }
 export function RecipientIdentity({client,row}) {
   return <span className="poRecipientIdentity">
-    <span className="poRecipientAvatar" aria-hidden="true">{row.avatar_handle?<img src={client.supabaseUrl+'/functions/v1/media-read?kind=avatar&id='+encodeURIComponent(row.avatar_handle)} alt="" onError={e=>{e.currentTarget.hidden=true;}}/>:null}<span>{(row.display_name||row.handle||'?')[0]}</span></span>
+    <span className="poRecipientAvatar" aria-hidden="true">{row.avatar_handle?<ContentImage client={client} kind="avatar" id={row.avatar_handle} title="Avatar"/>:null}<span>{(row.display_name||row.handle||'?')[0]}</span></span>
     <span className="poRecipientText"><b>{row.display_name||row.handle||'Connexion NailMoods'}</b><small>{row.handle?'@'+row.handle:'Identifiant non renseigné'}</small>{row.pro_handle&&<small>{row.workspace_name} · @{row.pro_handle}</small>}<strong className={'poProfileType '+(row.account_tier==='pro'?'professional':'')}>{row.profile_type||(row.account_tier==='pro'?'Pro':'Plus')}</strong></span>
   </span>;
 }

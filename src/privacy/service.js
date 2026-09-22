@@ -24,6 +24,9 @@ export function privacyService(client) {
       for (const [table, column] of Object.entries(tables)) {
         result[table] = await all(client, table, column, current.id);
       }
+      result.support=[];
+      for(let offset=0;;offset+=20){const page=await checked(client.rpc('nm_support',{p_action:'export',p_data:{offset}}));result.support.push(...page.items);if(!page.hasMore)break;}
+      result.blocked_accounts=await checked(client.rpc('nm_safety',{p_action:'blocked',p_data:{}}));
       // Revalidate: never download account A's export after a switch to B during the request.
       if ((await user()).id !== current.id) throw new Error('Le compte a changé. Relance le téléchargement.');
       return result;

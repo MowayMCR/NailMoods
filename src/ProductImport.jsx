@@ -1,3 +1,4 @@
+import {recordRuntimeEvent} from './support/diagnostics';
 import { loadCatalog, catalogCandidate, catalogueProvenance } from './catalog';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, ScanLine, Camera, Image as ImageIcon, Check, X } from 'lucide-react';
@@ -60,7 +61,9 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
       else if (result?.catalogMatches) { setLocalMatches(result.catalogMatches); if (!result.catalogMatches.length) setError('Je ne trouve pas encore cette référence dans mon catalogue.'); }
       else if (result?.text !== undefined) { setText(result.text); if (!result.text) setError('Aucun texte lisible. Essaie une photo plus nette et rapprochée de l’étiquette.'); }
       else if (Array.isArray(result)) { setMatches(result); if (!result.length) setError('Cette référence n’est pas encore dans NailMoods, ou aucun résultat suffisamment proche n’a été trouvé. Tu peux compléter la fiche manuellement.'); }
+      recordRuntimeEvent('import','ok');
     } catch (err) {
+      recordRuntimeEvent('import','error');
       if (version === revision.current) setError(controller.signal.aborted ? 'La recherche a pris trop de temps. Vérifie ta connexion et réessaie.' : err?.name === 'TypeError' ? 'Ce site est indisponible ou ne permet pas la lecture directe. Tu peux importer une capture de sa fiche ou remplir le produit.' : err.message);
     } finally { clearTimeout(timeout); if (version === revision.current) { setBusy(''); onBusy(false); task.current = null; } }
   }

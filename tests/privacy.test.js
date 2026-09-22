@@ -46,7 +46,7 @@ test('delete requires typed confirmation and an authenticated user; failure neve
 });
 test('export paginates owned records only and rejects an account switch',async()=>{
  const calls=[];let authCalls=0,switched=false;
- const client={auth:{getUser:async()=>({data:{user:{id:switched&&++authCalls>1?'b':'a',email:'test@example.test'}}})},from(table){
+ const client={rpc:async(name)=>({data:name==='nm_support'?{items:[],hasMore:false}:[]}),auth:{getUser:async()=>({data:{user:{id:switched&&++authCalls>1?'b':'a',email:'test@example.test'}}})},from(table){
   const chain={select(){return chain;},eq(column,value){calls.push({table,column,value});return chain;},order(column){calls.at(-1).order=column;return chain;},async range(start,end){
    const count=table==='user_products'?(start===0?500:1):1;
    return {data:Array.from({length:count},(_,i)=>({id:`${table}-${start+i}`,owner:'a'}))};

@@ -1,3 +1,4 @@
+import {recordRuntimeEvent} from './support/diagnostics';
 import MoodGlyph from './MoodGlyph';
 import { productColor } from './colorAnalysis';
 import IdeaProducts from './IdeaProducts';
@@ -74,6 +75,7 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
     setState(previous => ({ ...previous, options: { ...previous.options, ...patch }, generated: false, selected: null }));
   }
   function generate() {
+    recordRuntimeEvent('generation','ok');
     const started=performance.now();
     track(state.generated?'generation_regenerated':'generation_started',{difficulty:String(options.level),number_of_colors:options.polishCount==='auto'?0:Number(options.polishCount),render_mode:'illustrated',used_collection:options.intent==='collection'},{screen:'create'});
     setState(previous => ({ ...previous, generated: true, inventory: stamp, seed: (Number(previous.seed) || 0) + 1, selected: null, learning: liveLearning, learningStamp: liveStamp }));

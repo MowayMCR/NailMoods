@@ -1,3 +1,4 @@
+import {APP_VERSION} from './support/diagnostics.js';
 export const severityOptions=[['blocking','Bloquant — une fonction essentielle est inutilisable'],['friction','Gênant — possible, mais difficile à comprendre'],['cosmetic','Cosmétique — visuel ou confort']];
 export const betaQuestions=[
   ['firstProduct','Premier produit ajouté sans aide',['Oui','Non','Non testé']],
@@ -12,5 +13,5 @@ export const betaQuestions=[
 ];
 export function feedbackReport(draft,screen,date=new Date().toISOString()) {
   const severity=severityOptions.find(([key])=>key===draft.severity)?.[1]||'Non renseigné';
-  return ['Retour NailMoods','Version : 12B-preparation.1','Date : '+date,'Écran : '+screen,'Catégorie : '+(draft.category||'Non renseignée'),'Impact : '+severity,'Étapes et résultat observé :',draft.details||'Non renseigné','Résultat attendu :',draft.expected||'Non renseigné',...(draft.surveyEnabled?['','Bilan de première utilisation',...betaQuestions.map(([key,label])=>label+' : '+(draft.survey?.[key]?.trim()||'Non renseigné'))]:[])].join('\n');
+  return ['Retour NailMoods','Version : '+APP_VERSION,'Date : '+date,'Écran : '+screen,'Catégorie : '+(draft.category||'Non renseignée'),'Impact : '+severity,'Étapes et résultat observé :',draft.details||'Non renseigné','Résultat attendu :',draft.expected||'Non renseigné',...(draft.surveyEnabled?['','Bilan de première utilisation',...betaQuestions.map(([key,label])=>label+' : '+(draft.survey?.[key]?.trim()||'Non renseigné'))]:[])].join('\n');
 }

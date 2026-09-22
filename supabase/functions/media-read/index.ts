@@ -31,6 +31,10 @@ Deno.serve(async req => {
 
   const admin = serviceClient(readFetch);
   if (kind === 'avatar') {
+    const user=await requester(req,readFetch);if(!user)return json({error:'authentication_required'},401);
+    const viewer=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_ANON_KEY')!,{global:{fetch:readFetch,headers:{Authorization:req.headers.get('Authorization')!}},auth:{persistSession:false,autoRefreshToken:false}});
+    const {data:visible,error:visibilityError}=await viewer.rpc('get_public_profile',{p_handle:id});
+    if(visibilityError||!visible)return json({error:'profile_unavailable'},403);
     const handle = id.toLowerCase().replace(/^@/, '');
     const { data: profile } = await admin.from('profiles').select('id,avatar_url,username,discovery_visibility').eq('username', handle).maybeSingle();
     let path: string | null = null;

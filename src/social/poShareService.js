@@ -1,4 +1,5 @@
 import {messageId} from './messageState.js';
+import {compareProductIdentity} from '../productMatch.js';
 import { matchPhotoProducts } from '../photoInspiration.js';
 import { track } from '../analytics/analytics.js';
 import { dataUrlToBlob } from '../cloud/mediaStorage.js';
@@ -11,7 +12,7 @@ export function productIdentity(p={}){
  if(p.brand&&p.reference)return 'reference:'+normalized(p.brand)+':'+normalized(p.reference);
  return null;
 }
-const compact=p=>({name:clean(p.name),brand:clean(p.brand),reference:clean(p.reference),barcode:clean(p.barcode||p.rawBarcode),catalogId:clean(p.provenance?.catalogId||p.catalogId),color:p.color||p.shade||p.confirmedColor,type:clean(p.type)});
+const compact=p=>({name:clean(p.name),brand:clean(p.brand),collection:clean(p.collection),reference:clean(p.reference),barcode:clean(p.barcode||p.rawBarcode||p.ean13||p.gtin),catalogId:clean(p.provenance?.catalogId||p.catalogId),color:p.color||p.shade||p.confirmedColor,type:clean(p.type)});
 export function shareSnapshot(source,type='inspiration',{includeNotes=false,includeImages=false}={}){
  const idea=type==='journal'?source.idea:source;
  return {title:clean(source.title||idea?.title||'Inspiration NailMoods'),source_type:type,
@@ -39,7 +40,7 @@ export function comparePoShare(snapshot,items=[]){
  const stocked=items.filter(p=>Number(p.quantity??1)>0),available=[],alternatives=[],missing=[],verify=[];
  const products=snapshot.products?.length?snapshot.products:(snapshot.colors||[]).map(color=>({color,name:'Teinte '+color}));
  for(const p of products){
-  const id=productIdentity(p),exact=id&&stocked.find(i=>productIdentity(i)===id);
+  const id=productIdentity(p),exact=stocked.find(i=>compareProductIdentity(p,i).exact);
   if(exact){available.push({requested:p,item:exact});continue;}
   const color=p.color;
   const m=/^#[a-f0-9]{6}$/i.test(color||'')?matchPhotoProducts([color],stocked):null;

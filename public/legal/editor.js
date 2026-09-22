@@ -10,6 +10,7 @@ fetch('./editor.json', { cache: 'no-store' }).then(response => {
     ['Statut', editor.editorType === 'company' ? 'Société' : 'Personne physique'],
     ...(editor.editorType === 'company' ? [['Forme juridique', editor.companyLegalForm], ['Immatriculation', editor.companyRegistrationNumber]] : []),
     ['Contact confidentialité', editor.privacyContactEmail],
+    ['Support', editor.supportContactEmail],
     ['Adresse légale / professionnelle publiée', editor.publishedProfessionalAddress],
     ['Conservation', editor.retentionPolicy],
   ];

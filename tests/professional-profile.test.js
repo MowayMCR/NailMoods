@@ -74,7 +74,7 @@ test('targeted mobile polish keeps sheets inside the viewport and labels above f
  assert.match(css,/max-height:calc\(100dvh - 32px\)/);
  assert.match(css,/\.homeShortcuts>button::before/);
  assert.match(identity,/<label><span>Nom affiché<\/span><input/);
- assert.match(identity,/media-read\?kind=avatar/);
+ assert.match(identity,/<ContentImage client=\{client\} kind="avatar"/);
  assert.match(professional,/Quel type de profil Pro êtes-vous \?/);
  assert.match(professional,/Voir mon profil comme les autres/);
 });

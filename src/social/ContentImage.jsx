@@ -8,5 +8,5 @@ export default function ContentImage({client,kind,id,index=0,title='',preview,on
  const r=await fetch(`${client.supabaseUrl}/functions/v1/media-read?kind=${encodeURIComponent(kind)}&id=${encodeURIComponent(id)}&index=${index}`,{headers:{Authorization:`Bearer ${data.session.access_token}`},cache:'no-store',signal:controller.signal});
  if(!r.ok){if(active&&[401,403].includes(r.status))onUnavailable?.();return;}const blob=await r.blob();if(active){objectUrl=URL.createObjectURL(blob);setSrc(objectUrl);}})().catch(()=>{});
  return()=>{active=false;controller.abort();if(objectUrl)URL.revokeObjectURL(objectUrl);};},[client,kind,id,index]);
- return src?<img src={src} alt={title} loading="lazy"/>:preview?.nails?.length===5?<NailPreview idea={preview} compact/>:<div className="discoveryNoPhoto"><ImageIcon/><span>Publication sans photo disponible</span></div>;
+ return src?<img src={src} alt={title} loading="lazy"/>:kind==='avatar'?<span aria-label="Avatar indisponible"><ImageIcon aria-hidden="true"/></span>:preview?.nails?.length===5?<NailPreview idea={preview} compact/>:<div className="discoveryNoPhoto"><ImageIcon/><span>Publication sans photo disponible</span></div>;
 }

@@ -7,7 +7,8 @@ import { profileDefaults } from './creationEngine';
 import CollectionFilters from './CollectionFilters';
 import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf } from './collection';
 import ContextHelp from './ContextHelp';
-import Feedback from './Feedback';
+import SupportPanel from './support/SupportPanel';
+import {setDiagnosticsStorage,recordRuntimeEvent} from './support/diagnostics';
 import { useStorage } from './StorageContext';
 import AccountRoot from './cloud/AccountRoot';
 import {tierCapabilities} from './cloud/betaTier';
@@ -64,6 +65,7 @@ function App({ onThemeChange, accountAccess, syncNotice, profileExtras, media, o
   const [library, setLibrary] = useState(() => readInspirations(browserStorage));
   const [appError, setAppError] = useState('');
   const [feedbackOpen,setFeedbackOpen]=useState(false);
+  useEffect(()=>{setDiagnosticsStorage(browserStorage);const offline=()=>recordRuntimeEvent('network','error','offline');const fault=()=>recordRuntimeEvent('ui','error','unhandled');window.addEventListener('offline',offline);window.addEventListener('error',fault);window.addEventListener('unhandledrejection',fault);return()=>{setDiagnosticsStorage(null);window.removeEventListener('offline',offline);window.removeEventListener('error',fault);window.removeEventListener('unhandledrejection',fault);};},[browserStorage]);
   const [tutorials, setTutorials] = useState(() => readTutorials(browserStorage));
   const [journal, setJournal] = useState(() => readJournal(browserStorage));
   const [journalDraftIdea, setJournalDraftIdea] = useState(null);
@@ -341,9 +343,9 @@ function App({ onThemeChange, accountAccess, syncNotice, profileExtras, media, o
           <button className="moreIdeas" onClick={() => navigate('create')}><Palette />Générer une idée</button>
         </section>
       </> : tab === 'profile' ? <ProfileView accountAccess={accountAccess} extras={profileExtras} onCreate={() => { setCreationEntry(profileDefaults(profile)); navigate('create'); }} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView onScan={() => navigate('scan')} onCreate={() => { setCreationEntry({ intent: 'inspire' }); navigate('create'); }} profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView onShareToPro={onShareToPro} media={media} onFavorites={() => navigate('favorites')} library={library} profile={profile} journal={journal} sessions={tutorials.sessions} items={items} route={route} draftIdea={journalDraftIdea} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
-    <button className="betaFeedbackLink" onClick={()=>setFeedbackOpen(true)}>Donner mon avis sur NailMoods</button>
+    <button className="betaFeedbackLink" onClick={()=>setFeedbackOpen(true)}>Aide & Support</button>
     </main>
-    {feedbackOpen&&<Feedback screen={tab} onClose={()=>setFeedbackOpen(false)}/>}
+    {feedbackOpen&&<SupportPanel screen={tab} onClose={()=>setFeedbackOpen(false)}/>}
     <nav>{[['home', Home, 'Accueil'], ['create', Palette, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Journal'], ['profile', UserRound, 'Profil']].map(([id, Icon, label]) =>
       <button key={id} className={tab === id || tab === 'scan' && id === 'home' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'home' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}{limited && ['collection','journal'].includes(id) ? ' · Plus' : ''}</span></button>
     )}</nav>

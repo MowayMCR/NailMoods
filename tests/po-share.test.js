@@ -45,8 +45,8 @@ test('rich sharing has independent explicit choices for notes and images',()=>{
  const photos=shareSnapshot(source,'inspiration',{includeImages:true});assert.equal(photos.notes,'');assert.equal(photos.images.length,1);
 });
 test('PO comparison never equates color similarity with product identity',()=>{
- const rows=[{type:'Vernis',name:'Exact',brand:'Brand',reference:'42',color:'#aa4488',quantity:1},{type:'Vernis',name:'Close',color:'#aa4488',quantity:1}];
- const s={products:[{brand:'Brand',reference:'42',name:'Exact',color:'#aa4488'},{name:'Generic',color:'#aa4488'},{brand:'Other',reference:'99',name:'Missing',color:'#00ff00'},{name:'Unknown'}]};
+ const rows=[{type:'Vernis',name:'Exact',brand:'Brand',collection:'Classic',reference:'42',color:'#aa4488',quantity:1},{type:'Vernis',name:'Close',color:'#aa4488',quantity:1}];
+ const s={products:[{brand:'Brand',collection:'Classic',reference:'42',name:'Exact',color:'#aa4488'},{name:'Generic',color:'#aa4488'},{brand:'Other',reference:'99',name:'Missing',color:'#00ff00'},{name:'Unknown'}]};
  const c=comparePoShare(s,rows);assert.equal(c.available.length,1);assert.equal(c.alternatives.length,1);assert.equal(c.missing.length,1);assert.equal(c.verify.length,1);
  const absent=comparePoShare({products:[s.products[0]]},rows.map(p=>({...p,quantity:0})));assert.equal(absent.available.length,0);
 });
