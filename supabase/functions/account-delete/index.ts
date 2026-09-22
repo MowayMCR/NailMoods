@@ -20,26 +20,29 @@ Deno.serve(async (req) => {
   if (authError || !auth.user) return json({ error: 'authentication_required' }, 401);
   let confirmation = '';
   try { confirmation = String((await req.json())?.confirmation || ''); } catch { return json({ error: 'invalid_request' }, 400); }
-  const { data: list, error: prepareError } = await userClient.rpc('nm_account_deletion_prepare', { p_confirmation: confirmation });
-  if (prepareError) return json({ error: prepareError.message }, 400);
+  // Both RPCs run with the caller's JWT. They validate that the request can
+  // delete only this authenticated account; the service client is used solely
+  // for the Storage API and is never exposed to the browser.
+  const { data: accountId, error: checkError } = await userClient.rpc('nm_account_deletion_check', { p_confirmation: confirmation });
+  if (checkError || accountId !== auth.user.id) return json({ error: checkError?.message || 'authentication_required' }, 400);
   const groups = new Map<string, string[]>();
-  for (const item of list || []) {
-    if (!groups.has(item.bucket)) groups.set(item.bucket, []);
-    groups.get(item.bucket)!.push(item.object_path);
-  }
   const admin = createClient(url, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data: list, error: listError } = await admin.schema('storage').from('objects').select('bucket_id,name').eq('owner_id', auth.user.id);
+  if (listError) return json({ error: 'storage_cleanup_retry_available' }, 503);
+  for (const item of list || []) {
+    if (!groups.has(item.bucket_id)) groups.set(item.bucket_id, []);
+    groups.get(item.bucket_id)!.push(item.name);
+  }
   for (const [bucket, paths] of groups) {
     for (let at = 0; at < paths.length; at += 100) {
       const { error } = await admin.storage.from(bucket).remove(paths.slice(at, at + 100));
       if (error) {
-        await userClient.rpc('nm_account_deletion_mark_failed', { p_code: 'storage_remove_failed' });
         return json({ error: 'storage_cleanup_retry_available' }, 503);
       }
     }
   }
   const { error: finalError } = await userClient.rpc('nm_account_deletion_finalize', { p_confirmation: confirmation });
   if (finalError) {
-    await userClient.rpc('nm_account_deletion_mark_failed', { p_code: 'deletion_finalization_failed' });
     return json({ error: 'storage_cleanup_retry_available' }, 503);
   }
   return json({ deleted: true });
