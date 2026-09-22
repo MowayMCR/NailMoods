@@ -12,8 +12,8 @@ export function createAuthService(client, pageUrl) {
     return data;
   }
   return {
-    signUp: (email, password, accepted = false, choices = {}, birthYear = '') => {
-      const consent = signupConsent(accepted, choices, birthYear);
+    signUp: (email, password, accepted = false, choices = {}) => {
+      const consent = signupConsent(accepted, choices);
       return checked(auth.signUp({
       email: email.trim(), password,
       options: { emailRedirectTo: authReturnUrl(pageUrl), data: consent },
