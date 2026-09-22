@@ -11,6 +11,23 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
   const fork=value=>({...value,views:{...value.views},ids:{...value.ids},bases:{...value.bases},queue:[...value.queue],profile:{...value.profile}});
   function save(next){check();state=next;}
   function failure(error){const safe=error?.name==='QuotaExceededError'?cacheError(error):error;onStatus({kind:'error',pending:state?.queue.length||0,code:safe.code||'save',message:safe.message});}
+  async function persistCache(snapshot) {
+    try {
+      await cache.setCachedWorkspace(key,snapshot);
+      cacheFailure=null;
+      return;
+    } catch (error) {
+      // A second tab that has only read the account carries an older IndexedDB
+      // revision. Refreshing that revision is safe only when it has no drafts
+      // of its own; otherwise keep the explicit conflict rather than risk
+      // overwriting data that is waiting in the other tab.
+      if (error?.code !== 'cache_conflict') throw error;
+      const latest=await cache.getCachedWorkspace(key);
+      if (latest?.queue?.length) throw error;
+      await cache.setCachedWorkspace(key,snapshot);
+      cacheFailure=null;
+    }
+  }
   async function initialize(){
     if(initialized)return;
     if(initializing)return initializing;
@@ -142,7 +159,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
             }
           }
           const snapshot=state;
-          await cache.setCachedWorkspace(key,snapshot);cacheFailure=null;check();
+          await persistCache(snapshot);check();
           // Changes typed during the asynchronous transaction must be persisted before sending.
           if(state!==snapshot)continue;
           if(!state.queue.length)break;
@@ -162,7 +179,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
         }
         if(state.migrationRequested && !state.migrationDone){
           const next=fork(state);next.migrationDone=true;
-          await cache.setCachedWorkspace(key,next);check();save(next);
+          await persistCache(next);check();save(next);
           try{storage.setItem(migrationKey(userId,workspaceId),'true');}catch{/* Optional small compatibility flag; IndexedDB is authoritative. */}
         }
         onStatus({kind:'saved',pending:0});return true;
