@@ -24,9 +24,21 @@ test('media adapter uploads with bounded type and returns a storage reference', 
   const result = await upload({ userId:'u1', workspaceId:'w1', kind:'avatar', objectId:'profile', file:{type:'image/png',size:12} });
   assert.equal(result.path, 'u1/w1/avatar/profile.png');
   assert.equal((await signedUrl(result.path)).startsWith('signed:'), true);
+  assert.equal(calls[0].options.upsert, false);
  assert.equal(calls.length, 1);
 });
 
+
+test('a retry updates an already-created private photo without requiring a read', async () => {
+  const calls=[];
+  const client={storage:{from(){return {
+    upload:async()=>({data:null,error:{statusCode:'409'}}),
+    update:async(path,file,options)=>{calls.push({path,file,options});return {data:{path},error:null};},
+  };}}};
+  const result=await createMediaStorage(client).upload({userId:'u1',workspaceId:'w1',kind:'journal',objectId:'j1',file:{type:'image/jpeg',size:12}});
+  assert.equal(result.path,'u1/w1/journal/j1.jpg');
+  assert.equal(calls.length,1);
+});
 test('published media uses the controlled reader, never a public Storage URL', () => {
   const client = { supabaseUrl:'https://example.supabase.co', storage:{ from(){ return {}; } } };
   const media = createMediaStorage(client);
