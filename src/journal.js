@@ -35,8 +35,17 @@ export function journalProducts(products = []) {
   return [...saved.values()];
 }
 
+function isStoredJournalPhoto(value) {
+  // Account-backed photos are replaced with a private Storage object path as
+  // soon as the upload succeeds. Keep that path on reload: it is turned into
+  // a short-lived signed URL only by the Journal view.
+  return /^[A-Za-z0-9._-]{1,120}\/[A-Za-z0-9._-]{1,120}\/journal\/[A-Za-z0-9._-]{1,120}\.(?:jpe?g|png|webp)$/i.test(value);
+}
+
 export function safeJournalPhoto(value) {
-  return typeof value === 'string' && value.length <= 2000000 && /^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=\r\n]+$/i.test(value) ? value : '';
+  if (typeof value !== 'string') return '';
+  if (isStoredJournalPhoto(value)) return value;
+  return value.length <= 2000000 && /^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=\r\n]+$/i.test(value) ? value : '';
 }
 
 export function newJournalEntry(id, session = null, now = Date.now()) {
@@ -105,7 +114,7 @@ export function removeJournalEntry(store, id) {
 
 export function pendingJournalPoses(store, sessions) {
   return sessions.filter(session => session.status === 'completed' && !store.hiddenSessions.includes(session.id) && !store.entries.some(entry => entry.sessionId === session.id))
-    .sort((a, b) => (b.completedAt || b.updatedAt) - (a.completedAt || a.updatedAt));
+    .sort((a, b) => (b.completedAt || b.updatedAt) - (a.completedAt || a.id.localeCompare(b.id));
 }
 
 export function filterJournal(entries, query = '', repeatOnly = false) {
