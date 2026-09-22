@@ -50,6 +50,9 @@ function readStored(browserStorage, key, fallback) {
 const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, reference: '', materialStyle: '', notes: '', photo: '' };
 const tabRoutes = { scan: 'scan', home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris', projects: 'projets', tutorials: 'tutoriel' };
 const tabFromHash = () => window.location.hash.startsWith('#journal/') ? 'journal' : window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || ['#favoris', '#projets'].includes(window.location.hash) ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
+const themeBackupKey = storage => `nm-theme-v1:${storage.userId || 'guest'}:${storage.workspaceId || 'personal'}`;
+const readThemeBackup = storage => { try { return window.localStorage.getItem(themeBackupKey(storage)) || ''; } catch { return ''; } };
+const saveThemeBackup = (storage, theme) => { try { window.localStorage.setItem(themeBackupKey(storage), theme); } catch { /* The account profile remains the source of truth. */ } };
 
 function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, syncNotice, profileExtras, media, onShareToPro }) {
   const browserStorage=useStorage();
@@ -60,7 +63,8 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const locked=limited && (['collection','journal'].includes(tab)||['#favoris','#projets'].includes(route)||route.startsWith('#tutoriel'));
   const [profile, setProfile] = useState(() => {
     const stored = readStored(browserStorage, 'nm-profile', {});
-    return { ...defaultProfile, ...stored, styles: Array.isArray(stored?.styles) ? stored.styles : defaultProfile.styles };
+    const retainedTheme = readThemeBackup(browserStorage);
+    return { ...defaultProfile, ...stored, theme: themes[retainedTheme] ? retainedTheme : stored?.theme || defaultProfile.theme, styles: Array.isArray(stored?.styles) ? stored.styles : defaultProfile.styles };
   });
   const [library, setLibrary] = useState(() => readInspirations(browserStorage));
   const [appError, setAppError] = useState('');
@@ -113,7 +117,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
 
   useEffect(()=>{const changed=()=>setLibrary(readInspirations(browserStorage));window.addEventListener('nm-library-updated',changed);return()=>window.removeEventListener('nm-library-updated',changed);},[browserStorage]);
   function changeProfile(next) {
-    try { browserStorage.setItem('nm-profile', JSON.stringify(next)); setProfile(next); setAppError(''); return true; }
+    try { browserStorage.setItem('nm-profile', JSON.stringify(next)); if (themes[next.theme]) saveThemeBackup(browserStorage, next.theme); setProfile(next); setAppError(''); return true; }
     catch { setAppError('Ton profil n’a pas pu être sauvegardé. Libère un peu de stockage sur cet appareil puis réessaie.'); return false; }
   }
   function changePersonalization(next) {
