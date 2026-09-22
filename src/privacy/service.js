@@ -11,9 +11,9 @@ export function privacyService(client) {
   async function user() { const data = await checked(client.auth.getUser()); if (!data.user) throw new Error('Reconnecte-toi pour accéder à tes données.'); return data.user; }
   return {
     async load() { const current = await user(); return checked(client.from('user_consents').select('*').eq('user_id', current.id).order('event_id', { ascending: false }).limit(1).maybeSingle()); },
-    async save(choices, acceptTerms = false, confirmAdult = false) {
+    async save(choices, acceptTerms = false, ageBand = '') {
       await user();
-      const saved = await checked(client.rpc('record_privacy_choices', { p_privacy_version: PRIVACY_VERSION, p_terms_version: TERMS_VERSION, p_accept_terms: acceptTerms, p_confirm_adult: confirmAdult, ...Object.fromEntries(Object.entries(availableChoices(choices)).map(([key, value]) => ['p_' + key, value])) }));
+      const saved = await checked(client.rpc('record_privacy_choices', { p_privacy_version: PRIVACY_VERSION, p_terms_version: TERMS_VERSION, p_accept_terms: acceptTerms, p_age_band: ageBand || null, ...Object.fromEntries(Object.entries(availableChoices(choices)).map(([key, value]) => ['p_' + key, value])) }));
       return Array.isArray(saved) ? saved[0] : saved;
     },
     async exportData() {
@@ -34,7 +34,9 @@ export function privacyService(client) {
     async deleteAccount(confirmation) {
       if (confirmation !== 'SUPPRIMER') throw new Error('Écris SUPPRIMER pour confirmer.');
       const current = await user();
-      await checked(client.rpc('delete_my_nailmoods_account', { p_confirmation: confirmation }));
+      if (!client.functions?.invoke) { await checked(client.rpc('delete_my_nailmoods_account', { p_confirmation: confirmation })); return current.id; }
+      const { data, error } = await client.functions.invoke('account-delete', { body: { confirmation } });
+      if (error || !data?.deleted) throw new Error(data?.error || error?.message || 'storage_cleanup_retry_available');
       return current.id;
     },
   };
