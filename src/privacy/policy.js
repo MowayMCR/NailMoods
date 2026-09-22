@@ -35,12 +35,9 @@ export function readGuestConsent(storage) {
     return value?.privacy_version === PRIVACY_VERSION ? { ...availableChoices(value), privacy_version: PRIVACY_VERSION, consent_updated_at: value.consent_updated_at } : null;
   } catch { return null; }
 }
-export function signupConsent(accepted, guestChoices, birthYear = '') {
+export function signupConsent(accepted, guestChoices) {
   if (accepted !== true) throw new Error('Accepte les Conditions d’utilisation pour créer ton compte.');
-  if (!/^\d{4}$/.test(String(birthYear))) throw new Error('Indique ton année de naissance pour continuer.');
-  const year = Number(birthYear), currentYear = new Date().getFullYear();
-  if (year < currentYear - 120 || year > currentYear - 15) throw new Error('NailMoods est accessible à partir de 15 ans. Vérifie ton année de naissance.');
-  // Auth metadata is consumed once by the server-side signup trigger, which stores
-  // the resulting policy in a private table. It is never used to authorise requests.
-  return { birth_year: year, terms_accepted: true, terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, ...availableChoices(guestChoices) };
+  // A new account starts as Free. Age is confirmed later, only when choosing
+  // an offer that requires it; it is never taken from Auth metadata to authorise.
+  return { terms_accepted: true, terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, ...availableChoices(guestChoices) };
 }
