@@ -23,6 +23,8 @@ import { readGuestConsent } from '../privacy/policy';
 import { clearAccountCache } from '../privacy/service';
 import AccountOfferPanel from './AccountOfferPanel';
 import { PoReceivedShares, ShareToPoSheet } from '../social/PoShare';
+import StaffJournal from '../support/StaffJournal';
+import {supportCall} from '../support/service';
 import {ACCOUNT_OFFERS,accountOfferService,clearPendingAccountOffer,pendingAccountOffer,rememberPendingAccountOffer} from './betaTier';
 
 let client=null,configurationError=false;
@@ -30,6 +32,7 @@ try{client=getCloudClient();}catch{configurationError=true;}
 const service=client?createAuthService(client,window.location.href):null;
 function authMessage(error){
   const code=error?.code;
+  if(error?.message?.includes('accessible à partir de 15 ans'))return error.message;
   if(code==='invalid_credentials')return 'Email ou mot de passe incorrect.';
   if(code==='email_not_confirmed')return 'Confirme ton adresse avec le lien reçu par email, puis connecte-toi.';
   if(code==='weak_password')return 'Choisis un mot de passe plus long et moins courant.';
@@ -44,11 +47,14 @@ export default function AccountRoot({App}){
   const [session,setSession]=useState(undefined),[loaded,setLoaded]=useState(null),[loadError,setLoadError]=useState('');
   const [status,setStatus]=useState({kind:'saved',pending:0}),[retry,setRetry]=useState(0),[revision,setRevision]=useState(0),[mediaMigration,setMediaMigration]=useState(null);
   const [open,setOpen]=useState(false),[mode,setMode]=useState('login'),[email,setEmail]=useState(''),[password,setPassword]=useState('');
+  const [accountSection,setAccountSection]=useState('summary');
   const [signupTier,setSignupTier]=useState('free');
   const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState(''),[guestOverride,setGuestOverride]=useState(false),[confirmRemote,setConfirmRemote]=useState(false);
   const [confirmCacheClear,setConfirmCacheClear]=useState(false);
   const [shareRequest,setShareRequest]=useState(null);
-  const [termsAccepted,setTermsAccepted]=useState(false),[adultConfirmed,setAdultConfirmed]=useState(false);
+  const [staffMode,setStaffMode]=useState(false);
+  const [suspension,setSuspension]=useState(false);
+  const [termsAccepted,setTermsAccepted]=useState(false),[birthYear,setBirthYear]=useState('');
   const active=useRef(null), mounted=useRef(true), analytics=useRef(null);
   const userId=session?.user?.id || null;
   useEffect(()=>{
@@ -73,12 +79,15 @@ export default function AccountRoot({App}){
   },[]);
   useEffect(()=>{
     let cancelled=false,store;
-    active.current?.close();active.current=null;setLoaded(null);setLoadError('');setMediaMigration(null);
+    active.current?.close();active.current=null;setLoaded(null);setLoadError('');setMediaMigration(null);setSuspension(false);
     if(!userId || guestOverride)return;
     (async()=>{
       try{
         const {data,error}=await client.auth.getUser();
         if(error || data.user?.id!==userId)throw new Error('La session n’a pas pu être vérifiée. Réessaie ou reconnecte-toi.');
+        const access=await client.rpc('nm_account_access');
+        if(access.error)throw access.error;
+        if(access.data?.suspended){if(!cancelled)setSuspension(true);return;}
         const workspace=await personalWorkspace(client,userId);if(cancelled)return;
         const media=createMediaStorage(client,{userId});
         store=createAccountStore({storage:browserStorage,repo:repository(client,userId,workspace.id),userId,workspaceId:workspace.id,media,onStatus:next=>{if(!cancelled){setStatus(next);if(next.kind==='error'||next.kind==='saved')recordCloudEvent(browserStorage,'sync',next.kind==='saved');}}});
@@ -99,13 +108,13 @@ export default function AccountRoot({App}){
     const online=()=>void loaded.store.flush();window.addEventListener('online',online);
     return ()=>window.removeEventListener('online',online);
   },[loaded]);
-  function changeMode(next){setAdultConfirmed(false);setTermsAccepted(false);setMode(next);setMessage('');setAuthError('');setPassword('');}
+  function changeMode(next){setBirthYear('');setTermsAccepted(false);setMode(next);setMessage('');setAuthError('');setPassword('');}
   async function submit(event){
     event.preventDefault();setBusy(true);setMessage('');setAuthError('');
     try{
       if(mode==='signup'){
-        const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {},adultConfirmed);setPassword('');
-        if(data.user?.id)rememberPendingAccountOffer(browserStorage,data.user.id,signupTier);
+        const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {},birthYear);setPassword('');
+        if(data.user?.id)rememberPendingAccountOffer(browserStorage,data.user.id,signupAgeBand==='15_17'?'free':signupTier);
         if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);}
         else {setMode('confirm');setMessage('Email de confirmation demandé. Vérifie ta boîte de réception et les courriers indésirables, puis ouvre le lien dans ce navigateur.');}
       }else if(mode==='confirm'){
@@ -147,6 +156,12 @@ export default function AccountRoot({App}){
   let count=0,guestInvalid=false;try{count=guestCount(readGuest(browserStorage));}catch{guestInvalid=true;}
   const ready=loaded?.userId===userId && !guestOverride;
   const guest=!userId || guestOverride;
+  useEffect(()=>{
+    let cancelled=false;
+    if(!ready||!client||!userId){setStaffMode(false);return;}
+    supportCall(client,'status').then(result=>{if(!cancelled)setStaffMode(result?.staff===true);}).catch(()=>{if(!cancelled)setStaffMode(false);});
+    return()=>{cancelled=true;};
+  },[ready,client,userId]);
   useEffect(()=>{const changed=()=>setRetry(v=>v+1);window.addEventListener('nm-consent-changed',changed);return()=>window.removeEventListener('nm-consent-changed',changed);},[]);
   useEffect(()=>{
     let cancelled=false;analytics.current?.stop();analytics.current=null;setActiveAnalytics(null);
@@ -168,20 +183,25 @@ export default function AccountRoot({App}){
     }catch{/* Le choix reste disponible dans Profil → Mon offre. */}})();
     return()=>{cancelled=true;};
   },[ready,userId,loaded?.workspace?.id]);
+  const currentYear=new Date().getFullYear();
+  const birthYearNumber=Number(birthYear);
+  const validBirthYear=/^\d{4}$/.test(birthYear) && birthYearNumber>=currentYear-120 && birthYearNumber<=currentYear-15;
+  const signupAgeBand=validBirthYear?(birthYearNumber<=currentYear-18?'18_plus':'15_17'):'';
   const label=ready?(loaded.store.profile?.display_name || session.user.email || 'Mon compte'):'Mode invité';
   const syncNotice=ready && status.kind==='error' && <div className="accountNotice" role="alert"><p>{status.message}</p><button onClick={()=>(loaded.store.pending || ['quota','cache_unavailable'].includes(status.code))?void loaded.store.flush():setRetry(v=>v+1)}>Réessayer</button><button onClick={()=>{setMode('account');setOpen(true);}}>Mon compte</button></div>;
   const accountAccess=<aside className="accountBar accountProfileCard" aria-label="Compte et synchronisation">
     <div className="accountProfileIntro"><small>MON COMPTE</small><h2>{label}</h2><p>{ready ? (loaded.workspace.name || 'Espace personnel') : userId ? 'Ton compte est connecté. Retrouve ton espace personnel.' : 'Explore librement. Connecte-toi pour retrouver tes données sur tes appareils.'}</p></div>
-    <button className="accountConnect" type="button" onClick={()=>{setMode(userId?'account':'login');setOpen(true);setAuthError('');setMessage('');}}>{ready?'Gérer mon compte':userId?'Ouvrir mon compte':'Se connecter'}</button>
+    <button className="accountConnect" type="button" onClick={()=>{setMode(userId?'account':'login');setAccountSection('summary');setOpen(true);setAuthError('');setMessage('');}}>{ready?'Gérer mon compte':userId?'Ouvrir mon compte':'Se connecter'}</button>
     {ready && count>0 && !loaded.store.migrationDone && <button type="button" onClick={()=>{setMode('account');setOpen(true);}}>Importer mes données invitées</button>}
     {ready && <span role="status">{status.kind==='saving'?'Enregistrement…':status.kind==='error'?'À synchroniser':status.pending?'En attente':'Synchronisé'}</span>}
     {syncNotice}
   </aside>;
   return <div className="accountTheme" style={themeStyle}>
-    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><SocialProvider key={ready?userId:"guest"} client={ready?client:null} userId={ready?userId:null} tier={ready?loaded.store.profile?.account_tier:"free"}><App onThemeChange={setThemeStyle} key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} syncNotice={syncNotice} media={ready?loaded.media:null} onShareToPro={ready && ['plus','pro'].includes(loaded.store.profile?.account_tier) ? request=>setShareRequest(request) : null} profileExtras={<>{ready&&<AccountAvatar client={client} userId={userId} workspaceId={loaded?.workspace.id}/>}{ready&&<><SocialHub client={client}/></>}<IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/>{ready&&<AccountOfferPanel key={'offer:'+userId} client={client} userId={userId} store={loaded.store} onApplied={async()=>{await loaded.store.load();setRevision(v=>v+1);}}/>}<ProfessionalProfilePanel key={'professional:'+(userId || 'guest')} client={client} userId={userId} tier={loaded?.store.profile?.account_tier}/>{ready&&loaded?.store.profile?.account_tier==='pro'&&<PoReceivedShares client={client}/>}<PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/></SocialProvider>{shareRequest&&<ShareToPoSheet client={client} media={loaded.media} userId={userId} workspaceId={loaded.workspace.id} source={shareRequest.source} type={shareRequest.type} onClose={()=>setShareRequest(null)}/>}</StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
+    {suspension?<main className="accountLoading"><h1>Compte suspendu</h1><p>Ton accès à NailMoods est temporairement suspendu. Si tu penses qu’il s’agit d’une erreur, contacte l’équipe à contact@nailmoods.com.</p><button onClick={logout}>Se déconnecter</button></main>:<>
+    {guestOverride || (session!==undefined && (guest || ready)) || !service ? <StorageContext.Provider value={ready?loaded.store.storage:browserStorage}><SocialProvider key={ready?userId:"guest"} client={ready?client:null} userId={ready?userId:null} tier={ready?loaded.store.profile?.account_tier:"free"}>{staffMode?<StaffJournal client={client} onSignOut={logout}/>:<><App onThemeChange={setThemeStyle} key={ready?userId+':'+loaded.workspace.id+':'+revision:'guest'} accountAccess={service?accountAccess:null} appearanceExtras={ready?<AccountAvatar client={client} userId={userId} workspaceId={loaded?.workspace.id}/>:null} syncNotice={syncNotice} media={ready?loaded.media:null} onShareToPro={ready && ['plus','pro'].includes(loaded.store.profile?.account_tier) ? request=>setShareRequest(request) : null} profileExtras={<>{ready&&<><SocialHub client={client}/></>}<IdentityPanel key={'identity:'+(userId || 'guest')} client={client} userId={userId} onSaved={()=>setRetry(v=>v+1)}/>{ready&&<AccountOfferPanel key={'offer:'+userId} client={client} userId={userId} store={loaded.store} onApplied={async()=>{await loaded.store.load();setRevision(v=>v+1);}}/>}<ProfessionalProfilePanel key={'professional:'+(userId || 'guest')} client={client} userId={userId} tier={loaded?.store.profile?.account_tier}/>{ready&&loaded?.store.profile?.account_tier==='pro'&&<PoReceivedShares client={client}/>}<PrivacyPanel key={userId || 'guest'} client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted}/></>}/>{shareRequest&&<ShareToPoSheet client={client} media={loaded.media} userId={userId} workspaceId={loaded.workspace.id} source={shareRequest.source} type={shareRequest.type} onClose={()=>setShareRequest(null)}/>}</>}</SocialProvider></StorageContext.Provider> : <main className="accountLoading"><h1>NailMoods</h1><p role="status">{loadError || 'Ouverture de ton espace…'}</p>{loadError && <button onClick={()=>setRetry(v=>v+1)}>Réessayer</button>}<button onClick={()=>setGuestOverride(true)}>Continuer en mode invité</button>{userId && <button onClick={logout}>Se déconnecter</button>}</main>}
     {configurationError && <p role="alert">Le compte est temporairement indisponible. Le mode invité reste accessible.</p>}
     {open && service && <Sheet title={mode==='signup'?'Créer mon compte':mode==='confirm'?'Confirmer mon adresse':mode==='recovery'?'Retrouver mon compte':mode==='password'?'Nouveau mot de passe':userId?'Mon compte':'Se connecter'} onClose={()=>{if(!busy){setOpen(false);setPassword('');}}} className="accountSheet">
-      {mode==='account' && userId ? <>
+      {mode==='account' && userId ? accountSection==='privacy' ? <PrivacyPanel embedded client={client} userId={userId} tier={loaded?.store.profile?.account_tier} guestStorage={browserStorage} localDraft={()=>loaded?.store.exportDraft() || readGuest(browserStorage)} onDeleted={accountDeleted} onBack={()=>setAccountSection('summary')}/> : <>
         <p>{session.user.email}</p><p>{ready?loaded.workspace.name || 'Espace personnel':'Espace personnel'}</p>
         {guestOverride && <button onClick={()=>{setGuestOverride(false);setOpen(false);}}>Ouvrir mon espace connecté</button>}
         {ready && <>
@@ -195,20 +215,20 @@ export default function AccountRoot({App}){
           {status.kind==='error' && <section><button disabled={busy || status.pending>0} onClick={()=>setConfirmCacheClear(true)}>Nettoyer le cache local</button>{confirmCacheClear && <><p>Nettoyer uniquement le cache reconstituable de ce compte ? Tes données en ligne, ta copie invitée et tes sauvegardes restent conservées.</p><button disabled={busy} onClick={clearCache}>Confirmer le nettoyage</button><button onClick={()=>setConfirmCacheClear(false)}>Annuler</button></>}<button disabled={busy} onClick={exportDraft}>Télécharger ma copie locale</button><button disabled={busy} onClick={()=>setConfirmRemote(true)}>Utiliser la version en ligne</button>{confirmRemote && <><p>Les changements en attente ne seront pas envoyés. Une sauvegarde locale sera conservée ; télécharge-la pour pouvoir la consulter.</p><button disabled={busy} onClick={useRemote}>Confirmer le rechargement</button><button onClick={()=>setConfirmRemote(false)}>Annuler</button></>}</section>}
           {status.pending>0 && <p>Les modifications en attente resteront sur cet appareil après déconnexion. Reconnecte-toi ici pour les synchroniser.</p>}
         </>}
-        <button disabled={busy} onClick={()=>changeMode('password')}>Changer mon mot de passe</button><button disabled={busy} onClick={logout}>Se déconnecter</button>
+        <button disabled={busy} onClick={()=>setAccountSection('privacy')}>Confidentialité et mes données</button><button disabled={busy} onClick={()=>changeMode('password')}>Changer mon mot de passe</button><button disabled={busy} onClick={logout}>Se déconnecter</button>
       </> : <form onSubmit={submit}>
         <p>Retrouve ta collection, tes inspirations et ton journal sur tes appareils. Tu peux aussi continuer sans compte.</p>
         {mode!=='password' && <label>Email<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>}
         {!['recovery','confirm'].includes(mode) && <label>Mot de passe<input type="password" autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?1:8} required value={password} onChange={e=>setPassword(e.target.value)} disabled={busy}/></label>}
-        {mode==='signup'&&<fieldset className="signupOfferChoices"><legend>Quel compte veux-tu essayer ?</legend><p>Le choix reste modifiable dans Profil → Mon offre. Aucun paiement n’est demandé pendant la bêta.</p>{ACCOUNT_OFFERS.map(offer=><button type="button" role="radio" aria-checked={signupTier===offer.tier} className={signupTier===offer.tier?'selected':''} key={offer.tier} onClick={()=>setSignupTier(offer.tier)} disabled={busy}><b>{offer.name}</b><small>{offer.tagline}</small></button>)}</fieldset>}
+        {mode==='signup'&&<><label>Année de naissance<input type="text" inputMode="numeric" pattern="[0-9]{4}" maxLength="4" value={birthYear} onChange={event=>{const value=event.target.value.replace(/\D/g,'').slice(0,4);setBirthYear(value);if(Number(value)>currentYear-18)setSignupTier('free');}} placeholder="ex. 1994" autoComplete="bday-year" required disabled={busy}/></label><p className="accountHelp">Elle n’est jamais publique. Elle permet uniquement de vérifier l’accès à partir de 15 ans et de réserver Plus / Pro aux 18 ans ou plus.</p>{birthYear && !validBirthYear&&<p role="alert">Indique une année valide : NailMoods est accessible à partir de 15 ans.</p>}<fieldset className="signupOfferChoices"><legend>Quel compte veux-tu essayer ?</legend><p>Le choix reste modifiable dans Profil → Mon offre. Aucun paiement n’est demandé pendant la bêta.</p>{ACCOUNT_OFFERS.filter(offer=>signupAgeBand==='18_plus'||offer.tier==='free').map(offer=><button type="button" role="radio" aria-checked={signupTier===offer.tier} className={signupTier===offer.tier?'selected':''} key={offer.tier} onClick={()=>setSignupTier(offer.tier)} disabled={busy}><b>{offer.name}</b><small>{offer.tagline}</small></button>)}</fieldset>{signupAgeBand==='15_17'&&<p className="accountHelp">Entre 15 et 17 ans, le compte Free reste personnel et privé.</p>}</>}
         <LegalLinks/>
-        {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={adultConfirmed} onChange={e=>setAdultConfirmed(e.target.checked)} disabled={busy}/>Je certifie avoir 18 ans ou plus.</label><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>J’accepte les Conditions d’utilisation</label></>}
-        <button className="accountPrimary" disabled={busy || (mode==='signup' && (!termsAccepted || !adultConfirmed))}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='confirm'?'Renvoyer le mail de confirmation':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
+        {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>J’accepte les Conditions d’utilisation</label><small>Les comptes Plus et Pro sont réservés aux personnes de 18 ans ou plus. Aucun paiement n’est actif pendant cette bêta.</small></>}
+        <button className="accountPrimary" disabled={busy || (mode==='signup' && (!termsAccepted || !validBirthYear))}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='confirm'?'Renvoyer le mail de confirmation':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
         {mode==='login' && <><button type="button" disabled={busy} onClick={()=>changeMode('signup')}>Créer mon compte</button><button type="button" disabled={busy} onClick={()=>changeMode('recovery')}>Mot de passe oublié</button></>}
         {['signup','recovery','confirm'].includes(mode) && <button type="button" disabled={busy} onClick={()=>changeMode('login')}>J’ai déjà un compte</button>}
         <button type="button" disabled={busy} onClick={()=>{setOpen(false);setPassword('');}}>Continuer à explorer</button>
       </form>}
       {message && <p role="status">{message}</p>}{authError && <p className="formError" role="alert">{authError}</p>}
-    </Sheet>}
+    </Sheet>}</>}
   </div>;
 }
