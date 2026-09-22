@@ -89,6 +89,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const duration = [15, 30, 45, 60, 90].includes(Number(options.duration)) ? Number(options.duration) : 45;
   const maxLevel = [0, 1, 2].includes(Number(options.level)) ? Number(options.level) : 0;
   const requestedPolishCount = normalizePolishCount(options.polishCount);
+  const requestedTechnique = normalize(options.technique);
   const tools = inventoryTools(items);
   const decoration = decorationChoice(options);
   const requestedDecorations = decoration.mode === 'with' && decoration.id ? tools.stickers.filter(item => String(item.id) === decoration.id) : tools.stickers;
@@ -130,6 +131,14 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const candidates = [];
   const seen = new Set();
   function add(pattern, base, second = null, sticker = null, variant = 0, multiPalette = null, arrangement = null) {
+    const matchesTechnique = !requestedTechnique || requestedTechnique === 'libre'
+      || /french/.test(requestedTechnique) && pattern === 'french'
+      || /duo alterne/.test(requestedTechnique) && pattern === 'duo'
+      || /accent nail/.test(requestedTechnique) && pattern === 'accent'
+      || /line art|outline nails/.test(requestedTechnique) && pattern === 'line'
+      || /dot art/.test(requestedTechnique) && pattern === 'dots'
+      || !/french|duo alterne|accent nail|line art|outline nails|dot art/.test(requestedTechnique);
+    if (!matchesTechnique) return;
     const palette = unique(multiPalette || [base, second]);
     if ([...requiredIds].some(id => !palette.some(item => String(item.id) === id))) return;
     if (requestedPolishCount !== 'auto' && palette.length !== requestedPolishCount) return;
@@ -210,6 +219,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (options.mode === 'change' && !base.fav) reasons.push('Une couleur à redécouvrir');
     if (decorated) reasons.push('Avec ta décoration ' + sticker.name);
     if (drawing.has(pattern)) reasons.push('Avec ' + (pattern === 'dots' ? tools.dotting?.name || 'un outil à pois' : tools.fineBrush?.name || 'un pinceau fin'));
+    if (requestedTechnique && requestedTechnique !== 'libre') reasons.push('Inspirée par la technique « ' + options.technique + ' »');
     if (!reasons.length) reasons.push('Avec les produits de ta collection');
     const personal = personalAdjustment({ pattern, palette, resources, nails }, options, personalModel);
     candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score: score + personal.score, reasons: [...new Set([...personal.reasons, ...reasons])].slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte' });
