@@ -113,6 +113,15 @@ test('connected journal photo uploads before the Supabase write and stores only 
  assert.equal(calls[0][0],'private');assert.equal(calls[1][0],'public');assert.equal(write.values.media_path,'A/WA/journal/'+write.rowId+'.jpg');assert.equal(write.values.snapshot.photo,'A/WA/journal/'+write.rowId+'.jpg');assert.ok(!JSON.stringify(write).includes('base64'));
 });
 
+
+test('a pending journal photo is cached before its network upload starts',async()=>{
+ const local=memory(),repo=backend(),cache=cacheFor(local);let cached=false;
+ const media={async upload(){const draft=await cache.getCachedWorkspace(accountCacheKey('A','WA'));cached=Boolean(draft.queue[0]?.values?.snapshot?.photo?.startsWith('data:image/'));return {path:'A/WA/journal/persisted.jpg'};}};
+ const store=make(local,repo,'A','WA',{cache,media});await store.load();
+ const photo='data:image/jpeg;base64,'+Buffer.alloc(16,5).toString('base64');
+ store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'journal-cache',version:1,title:'Photo',date:'2026-09-18',photo,products:[],visibility:'private',idea:null,feeling:'',ease:'',repeat:false,wearDays:'',notes:'',createdAt:1,updatedAt:1}],hiddenSessions:[]}));
+ assert.equal(await store.flush(),true);assert.equal(cached,true);
+});
 test('existing connected journal photos migrate non-destructively and become paths after a successful upload',async()=>{
  const local=memory(),repo=backend(),calls=[];
  const media={async upload({objectId}){calls.push(objectId);return {path:`A/WA/journal/${objectId}.jpg`};},async uploadPublic(){return {path:'public'};}};
