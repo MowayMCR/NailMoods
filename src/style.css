@@ -31,3 +31,4 @@
 .sheetActions .fieldHelp{text-align:center;margin:4px 0}
 .productSheet button:focus-visible,.filterRow button:focus-visible,.productCard:focus-visible{outline:3px solid var(--a);outline-offset:3px}
 .productSheet input[type=file][hidden]{display:none}
+.collectionColorRecall{display:flex;gap:8px;overflow:auto;margin-top:14px;padding:2px 0}.collectionColorRecall>span{flex:0 0 54px;display:grid;justify-items:center;gap:4px;min-width:0}.collectionColorRecall i{width:28px;height:28px;border:2px solid #ffffffaa;border-radius:50%;box-shadow:0 1px 5px #32111d33}.collectionColorRecall b{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 9px/1.2 Inter,system-ui,sans-serif;text-align:center}
