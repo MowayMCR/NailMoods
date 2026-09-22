@@ -1,6 +1,6 @@
 // Bump versions only alongside archived documents and the server policy migration.
-export const TERMS_VERSION = '0.1-beta';
-export const PRIVACY_VERSION = '0.2-beta';
+export const TERMS_VERSION = '0.3-beta';
+export const PRIVACY_VERSION = '0.4-beta';
 export const GUEST_CONSENT_KEY = 'nm-privacy-guest-v1';
 // No vendor is selected. No optional SDK, pixel or advertisement is loaded.
 export const TECHNOLOGIES = Object.freeze({ analytics: true, ads: false, personalizedAds: false });
@@ -35,8 +35,12 @@ export function readGuestConsent(storage) {
     return value?.privacy_version === PRIVACY_VERSION ? { ...availableChoices(value), privacy_version: PRIVACY_VERSION, consent_updated_at: value.consent_updated_at } : null;
   } catch { return null; }
 }
-export function signupConsent(accepted, guestChoices, adultConfirmed = false) {
+export function signupConsent(accepted, guestChoices, birthYear = '') {
   if (accepted !== true) throw new Error('Accepte les Conditions d’utilisation pour créer ton compte.');
-  if (adultConfirmed !== true) throw new Error('La bêta NailMoods est réservée aux personnes de 18 ans et plus.');
-  return { adult_confirmed: true, terms_accepted: true, terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, ...availableChoices(guestChoices) };
+  if (!/^\d{4}$/.test(String(birthYear))) throw new Error('Indique ton année de naissance pour continuer.');
+  const year = Number(birthYear), currentYear = new Date().getFullYear();
+  if (year < currentYear - 120 || year > currentYear - 15) throw new Error('NailMoods est accessible à partir de 15 ans. Vérifie ton année de naissance.');
+  // Auth metadata is consumed once by the server-side signup trigger, which stores
+  // the resulting policy in a private table. It is never used to authorise requests.
+  return { birth_year: year, terms_accepted: true, terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, ...availableChoices(guestChoices) };
 }
