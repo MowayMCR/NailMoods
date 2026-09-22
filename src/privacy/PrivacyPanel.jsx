@@ -4,26 +4,26 @@ import Sheet from '../Sheet';
 import { TERMS_VERSION, PRIVACY_VERSION, TECHNOLOGIES, DENIED, availableChoices, readGuestConsent, GUEST_CONSENT_KEY } from './policy';
 import { privacyService, downloadJSON } from './service';
 import './privacy.css';
-const legal = name => `${import.meta.env.BASE_URL}legal/${name}-0.1-beta.html`;
-export function LegalLinks() { return <p className="legalLinks"><a href={legal('conditions')} target="_blank" rel="noopener">Conditions d’utilisation</a><a href={legal('confidentialite')} target="_blank" rel="noopener">Politique de confidentialité</a></p>; }
-export default function PrivacyPanel({ client, userId, tier, guestStorage, onDeleted, localDraft }) {
+const legal = { conditions: 'conditions-0.3-beta.html', confidentialite: 'confidentialite-0.4-beta.html', informations: 'informations-0.3-beta.html' };
+export function LegalLinks() { return <p className="legalLinks"><a href={`${import.meta.env.BASE_URL}legal/${legal.conditions}`} target="_blank" rel="noopener">Conditions d’utilisation · {TERMS_VERSION}</a><a href={`${import.meta.env.BASE_URL}legal/${legal.confidentialite}`} target="_blank" rel="noopener">Politique de confidentialité · {PRIVACY_VERSION}</a><a href={`${import.meta.env.BASE_URL}legal/${legal.informations}`} target="_blank" rel="noopener">Mentions légales et conservation</a></p>; }
+export default function PrivacyPanel({ client, userId, tier, guestStorage, onDeleted, localDraft, embedded = false, onBack }) {
   const [panel, setPanel] = useState(null), [choices, setChoices] = useState(DENIED), [record, setRecord] = useState(null);
-  const [busy, setBusy] = useState(false), [loaded, setLoaded] = useState(!userId), [notice, setNotice] = useState(''), [confirmation, setConfirmation] = useState(''), [accept, setAccept] = useState(false), [adult, setAdult] = useState(false);
+  const [busy, setBusy] = useState(false), [loaded, setLoaded] = useState(!userId), [notice, setNotice] = useState(''), [confirmation, setConfirmation] = useState(''), [accept, setAccept] = useState(false), [ageBand, setAgeBand] = useState('');
   useEffect(() => { let cancelled = false;
-    setChoices(DENIED); setRecord(null); setLoaded(!userId); setNotice(''); setConfirmation(''); setAccept(false); setAdult(false);
+    setChoices(DENIED); setRecord(null); setLoaded(!userId); setNotice(''); setConfirmation(''); setAccept(false); setAgeBand('');
     if (userId && client) privacyService(client).load().then(value => {
       if (!cancelled) { setRecord(value); setChoices(availableChoices(value || {})); setLoaded(true); }
     }).catch(() => { if (!cancelled) setNotice('Impossible de charger tes choix. Aucun service facultatif n’est activé. Ferme puis rouvre ton profil pour réessayer.'); });
     else { const value = readGuestConsent(guestStorage); setRecord(value); setChoices(availableChoices(value || {})); }
     return () => { cancelled = true; };
   }, [userId, client, guestStorage]);
-  const needsTerms = userId && loaded && (record?.terms_version !== TERMS_VERSION || !record?.adult_confirmed_at);
-  async function save(next = choices, acceptTerms = false, confirmAdult = false) {
+  const needsTerms = userId && loaded && record?.terms_version !== TERMS_VERSION;
+  async function save(next = choices, acceptTerms = false, selectedAgeBand = '') {
     setBusy(true); setNotice('');
     try {
       const safe = availableChoices(next);
       if(!safe.analytics_consent)stopActiveAnalytics();
-      const value = userId ? await privacyService(client).save(safe, acceptTerms, confirmAdult) : { ...safe, privacy_version: PRIVACY_VERSION, consent_updated_at: new Date().toISOString() };
+      const value = userId ? await privacyService(client).save(safe, acceptTerms, selectedAgeBand) : { ...safe, privacy_version: PRIVACY_VERSION, consent_updated_at: new Date().toISOString() };
       if (!userId) guestStorage.setItem(GUEST_CONSENT_KEY, JSON.stringify(value));
       window.dispatchEvent(new Event('nm-consent-changed'));
       setRecord(value); setChoices(safe); setNotice('Tes choix sont enregistrés. Les fonctions essentielles restent accessibles.');
@@ -39,8 +39,8 @@ export default function PrivacyPanel({ client, userId, tier, guestStorage, onDel
   async function remove() { setBusy(true); setNotice(''); try {
     const deleted = await privacyService(client).deleteAccount(confirmation); await onDeleted(deleted);
   } catch (error) { setNotice(error?.message?.includes('shared_workspace') ? 'Ton espace comporte d’autres membres. Transfère sa propriété avant de supprimer ton compte.' : 'La suppression n’a pas abouti. Aucune suppression partielle n’est effectuée. Réessaie ou contacte NailMoods.'); } finally { setBusy(false); } }
-  return <section id="privacy-settings" className="card privacySection"><h2>Confidentialité</h2><p>Tes choix restent les tiens. Refuser les options ne bloque pas NailMoods.</p>
-    {needsTerms && <div role="status"><p>Pour activer les fonctions de compte et de profil public, confirme les règles de la bêta. Tu peux continuer à explorer sans accepter.</p><LegalLinks/><label className="consentCheck"><input type="checkbox" checked={adult} onChange={e => setAdult(e.target.checked)}/>Je certifie avoir 18 ans ou plus.</label><label className="consentCheck"><input type="checkbox" checked={accept} onChange={e => setAccept(e.target.checked)}/>J’accepte les Conditions d’utilisation, version {TERMS_VERSION}</label><button disabled={!accept || !adult || busy} onClick={() => save(choices, true, true)}>Enregistrer mes confirmations</button></div>}
+  return <section id="privacy-settings" className={`privacySection${embedded ? ' privacyEmbedded' : ' card'}`}>{onBack && <button className="privacyBack" type="button" onClick={onBack}>← Retour à mon compte</button>}<h2>Confidentialité</h2><p>Tes choix restent les tiens. Refuser les options ne bloque pas NailMoods.</p>
+    {needsTerms && <div role="status"><p>Une nouvelle version des textes est disponible. Tes usages personnels restent accessibles ; confirme-la lorsque tu souhaites modifier ton offre ou tes réglages sociaux.</p><LegalLinks/><label>Tranche d’âge<select value={ageBand || record?.age_band || ''} onChange={e => setAgeBand(e.target.value)}><option value="">Choisir…</option><option value="15_17">J’ai entre 15 et 17 ans · compte Free personnel</option><option value="18_plus">J’ai 18 ans ou plus</option></select></label><label className="consentCheck"><input type="checkbox" checked={accept} onChange={e => setAccept(e.target.checked)}/>J’accepte les Conditions d’utilisation, version {TERMS_VERSION}</label><button disabled={!accept || !(ageBand || record?.age_band) || busy} onClick={() => save(choices, true, ageBand || record?.age_band)}>Enregistrer mes confirmations</button></div>}
     <div className="privacyLinks"><button onClick={() => { setPanel('choices'); setNotice(''); }}>Mes choix de confidentialité</button><button onClick={() => { setPanel('choices'); setNotice(''); }}>Publicité</button><button onClick={() => { setPanel('data'); setNotice(''); }}>Mes données</button><button disabled={busy} onClick={exportData}>Télécharger mes données</button>{userId && <button onClick={() => { setConfirmation(''); setPanel('delete'); setNotice(''); }}>Supprimer mon compte</button>}</div><LegalLinks/>
     {!panel && notice && <p role="status">{notice}</p>}
     {panel && <Sheet title={panel === 'choices' ? 'Vos choix de confidentialité' : panel === 'delete' ? 'Supprimer mon compte' : 'Mes données'} className="privacySheet" onClose={() => { if (!busy) setPanel(null); }}>
