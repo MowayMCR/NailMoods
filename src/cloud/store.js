@@ -104,6 +104,12 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
         onStatus({kind:'saving',pending:state.queue.length});
         for(;;){
           check();
+          // Make a newly selected photo durable before starting any network
+          // request. A tab switch, refresh or lost connection must leave the
+          // queued photo available for automatic retry, not discard it.
+          const queuedSnapshot=state;
+          await persistCache(queuedSnapshot);check();
+          if(state!==queuedSnapshot)continue;
           // Photos stay as an IndexedDB Blob while an upload is pending; they are
           // replaced by a Storage path before any Supabase write is attempted.
           if (state.queue.length && media) {
