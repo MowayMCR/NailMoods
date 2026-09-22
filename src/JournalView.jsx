@@ -1,7 +1,7 @@
 import {messageId} from './social/messageState';
 import Discovery from './social/Discovery';
 import PublicationTags from './social/PublicationTags';
-import {cleanTags,suggestTags} from './social/tags';
+import {cleanTags,suggestTags,internalTags} from './social/tags';
 import { MessengerTile,useSocial } from './social/SocialContext';
 import { StorageHint } from './StorageContext';
 import RecipeSummary from './RecipeSummary';
@@ -66,7 +66,8 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
     if (photoBusy) return;
     const invalid = journalValidation(draft);
     if (invalid) { setError(invalid); return; }
-    const result = onSave({...draft,publicTags:cleanTags(draft.publicTags??suggestTags(draft))});
+    const publicTags=cleanTags(draft.publicTags??suggestTags(draft));
+    const result = onSave({...draft,publicTags,searchTags:internalTags(Object.values(publicTags).flat().join(' '))});
     if (result.ok) onNavigate(result.id);
     else setError(result.error);
   }
