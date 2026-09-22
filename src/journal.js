@@ -114,7 +114,7 @@ export function removeJournalEntry(store, id) {
 
 export function pendingJournalPoses(store, sessions) {
   return sessions.filter(session => session.status === 'completed' && !store.hiddenSessions.includes(session.id) && !store.entries.some(entry => entry.sessionId === session.id))
-    .sort((a, b) => (b.completedAt || b.updatedAt) - (a.completedAt || a.id.localeCompare(b.id));
+    .sort((a, b) => (b.completedAt || b.updatedAt) - (a.completedAt || a.updatedAt);
 }
 
 export function filterJournal(entries, query = '', repeatOnly = false) {
