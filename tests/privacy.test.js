@@ -9,7 +9,7 @@ test('signup rejects absent or non-boolean terms before making any Auth call',()
  let calls=0;const auth=createAuthService({auth:{signUp(){calls++;}}},'https://example.test');
  for(const acceptance of [undefined,false,'true',1])assert.throws(()=>auth.signUp('test@example.test','password',acceptance));
  assert.equal(calls,0);
- assert.deepEqual(signupConsent(true,yes,'2010'),{birth_year:2010,terms_accepted:true,terms_version:'0.3-beta',privacy_version:'0.4-beta',analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
+ assert.deepEqual(signupConsent(true,yes),{terms_accepted:true,terms_version:'0.3-beta',privacy_version:'0.4-beta',analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
 });
 test('no unselected provider gets anticipatory permission',()=>{
  assert.deepEqual(availableChoices(yes),{analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
@@ -74,11 +74,9 @@ test('privacy confirmation records an explicit age band independently from terms
  assert.equal(args.value.p_accept_terms,false);
  assert.equal(args.value.p_age_band,null);
 });
-test('private birth year is mandatory for beta signup',()=>{
- const year=new Date().getFullYear();
- for(const value of [false,undefined,'true',18,'under15',String(year-14)])assert.throws(()=>signupConsent(true,{},value),/année|15 ans/);
- assert.equal(signupConsent(true,{},String(year-18)).birth_year,year-18);
- assert.equal('age_band' in signupConsent(true,{},String(year-16)),false);
+test('signup starts Free and reserves age confirmation for an offer change',()=>{
+ assert.deepEqual(signupConsent(true,{}),{terms_accepted:true,terms_version:'0.3-beta',privacy_version:'0.4-beta',analytics_consent:false,ads_consent:false,personalized_ads_consent:false});
+ assert.throws(()=>signupConsent(false,{}),/Conditions/);
 });
 test('deleted message authors never expose cached profile identity',async()=>{
  const {messageAuthor}=await import('../src/privacy/deletedIdentity.js');
