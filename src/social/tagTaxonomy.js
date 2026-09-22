@@ -37,6 +37,6 @@ export const TAXONOMY={
  finishes:TAGS.filter(tag=>tag.category==='finish').map(tag=>tag.label)
 };
 export const VISIBLE_TAXONOMY={...TAXONOMY,moods:VISIBLE_TAGS.filter(tag=>['style','envie','ambiance'].includes(tag.category)).map(tag=>tag.label),techniques:VISIBLE_TAGS.filter(tag=>tag.category==='technique').map(tag=>tag.label),finishes:VISIBLE_TAGS.filter(tag=>tag.category==='finish').map(tag=>tag.label),themes:VISIBLE_TAGS.filter(tag=>tag.category==='theme').map(tag=>tag.label)};
-export function resolveTags(value,{related=true}={}){const input=norm(value);if(!input)return[];const direct=TAGS.filter(tag=>[tag.label,...tag.synonyms].some(term=>input.includes(norm(term))));const expanded=related?direct.flatMap(tag=>tag.related_tags.map(label=>TAG_BY_LABEL.get(label)).filter(Boolean)):[];return [...new Map([...direct,...expanded].map(tag=>[tag.id,tag])).values()];}
+export function resolveTags(value,{related=true}={}){const input=norm(value);if(!input)return[];const direct=TAGS.filter(tag=>[tag.label,...tag.synonyms].some(term=>{const needle=norm(term);return input.includes(needle)||needle.includes(input)}));const expanded=related?direct.flatMap(tag=>tag.related_tags.map(label=>TAG_BY_LABEL.get(label)).filter(Boolean)):[];return [...new Map([...direct,...expanded].map(tag=>[tag.id,tag])).values()];}
 export function querySuggestions(value,limit=6){return resolveTags(value,{related:false}).slice(0,limit);}
 export function internalTagIds(value){return resolveTags(value).map(tag=>tag.id);}
