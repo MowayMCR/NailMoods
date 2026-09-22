@@ -1,11 +1,15 @@
 {
-  "editorType": "individual",
-  "publicLegalName": "",
-  "companyLegalForm": "",
-  "companyRegistrationNumber": "",
-  "privacyContactEmail": "",
-  "publishedProfessionalAddress": "",
-  "retentionPolicy": "",
-  "notice": "Champs destinés à être publics uniquement. Ne jamais saisir une adresse personnelle non destinée à la publication.",
-  "supportContactEmail": ""
+  "editorType": "project_in_creation",
+  "publicLegalName": "NailMoods — projet en cours de création",
+  "companyLegalForm": "SASU NailMoods prévue, non immatriculée",
+  "companyRegistrationNumber": "À compléter / À valider lors de l’immatriculation",
+  "privacyContactEmail": "contact@nailmoods.com",
+  "publishedProfessionalAddress": "Non publiée à ce stade",
+  "retentionPolicy": "Compte actif : durée nécessaire au service. Suppression : nettoyage technique résiduel au plus tard sous 30 jours, sauf obligation légale, sécurité ou litige. Support : 3 mois en base active. Signalements et décisions : 12 mois. Analytics pseudonymisés : 24 mois.",
+  "accountDeletionProcedure": "Profil → Confidentialité → Supprimer mon compte. La suppression nettoie les médias associés avant de retirer le compte.",
+  "termsVersion": "0.3-beta",
+  "privacyVersion": "0.4-beta",
+  "effectiveDate": "22 septembre 2026",
+  "notice": "Société en cours de création. Les champs d’immatriculation, siège, capital, RCS, directeur de publication, hébergeur et autres mentions obligatoires restent à compléter et valider avant ouverture externe.",
+  "supportContactEmail": "contact@nailmoods.com"
 }
