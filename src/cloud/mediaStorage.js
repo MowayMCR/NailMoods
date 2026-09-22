@@ -40,7 +40,11 @@ export function createMediaStorage(client, { userId } = {}) {
     async upload({ userId, workspaceId, kind, objectId, file, signal }) {
       validateImage(file);
       const path = mediaPath({ userId, workspaceId, kind, objectId, contentType: file.type });
-      const { data, error } = await client.storage.from(BUCKET).upload(path, file, { contentType: file.type, upsert: true, signal });
+      // An INSERT does not require the read permission that protects a private
+      // file before its Journal row exists. If a previous request completed but
+      // its browser response was lost, update that same owned path on retry.
+      let { data, error } = await client.storage.from(BUCKET).upload(path, file, { contentType: file.type, upsert: false, signal });
+      if (error?.statusCode === '409') ({ data, error } = await client.storage.from(BUCKET).update(path, file, { contentType: file.type, signal }));
       if (error) throw new MediaStorageError('upload_failed', 'La photo n’a pas pu être enregistrée. Réessaie.');
       return { path: data.path || path, bucket: BUCKET, contentType: file.type, bytes: file.size };
     },
