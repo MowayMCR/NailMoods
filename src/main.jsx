@@ -429,3 +429,5 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
 }
 
 createRoot(document.getElementById('root')).render(<AccountRoot App={App} />);
+
+// Keep the selected visual theme available before account synchronisation completes.
