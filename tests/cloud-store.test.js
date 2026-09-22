@@ -77,8 +77,13 @@ test('localStorage quota no longer blocks connected changes',async()=>{
  const local=memory(),repo=backend(),store=make(local,repo);await store.load();local.setItem=()=>{throw new DOMException('Quota exceeded','QuotaExceededError');};
  store.storage.setItem(COLLECTION,JSON.stringify([polish]));assert.equal(await store.flush(),true);assert.equal(repo.rows.user_products.length,1);
 });
-test('another tab modifying IndexedDB prevents stale overwrite',async()=>{
+test('a read-only second tab refreshes its cache revision without blocking a photo or journal sync',async()=>{
  const local=memory(),repo=backend(),statuses=[],first=make(local,repo,'A','WA',{onStatus:s=>statuses.push(s)});await first.load();const other=make(local,repo);await other.load();
+ first.storage.setItem(COLLECTION,JSON.stringify([polish]));assert.equal(await first.flush(),true);assert.equal(repo.writes.length,1);assert.notEqual(statuses.at(-1).code,'cache_conflict');
+});
+test('another tab with queued drafts still prevents a stale cache overwrite',async()=>{
+ const local=memory(),repo=backend(),statuses=[],first=make(local,repo,'A','WA',{onStatus:s=>statuses.push(s)}),other=make(local,repo);await first.load();await other.load();
+ repo.fail=true;other.storage.setItem(COLLECTION,JSON.stringify([{...polish,id:'other'}]));await other.flush();repo.fail=false;
  first.storage.setItem(COLLECTION,JSON.stringify([polish]));assert.equal(await first.flush(),false);assert.equal(statuses.at(-1).code,'cache_conflict');assert.equal(repo.writes.length,0);
 });
 test('local-only writes do not stall later synchronization',async()=>{
