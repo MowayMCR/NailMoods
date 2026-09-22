@@ -200,7 +200,7 @@ export default function AccountRoot({App}){
         <p>{session.user.email}</p><p>{ready?loaded.workspace.name || 'Espace personnel':'Espace personnel'}</p>
         {guestOverride && <button onClick={()=>{setGuestOverride(false);setOpen(false);}}>Ouvrir mon espace connecté</button>}
         {ready && <>
-          <p>Compte {loaded.store.profile?.account_tier || 'free'} · {status.pending?`${status.pending} modification(s) en attente`:'Données synchronisées'}</p>
+          <p>Compte {loaded.store.profile?.account_tier || 'free'} · {status.kind==='error'?'À synchroniser':status.pending?`${status.pending} modification(s) en attente`:'Données synchronisées'}</p>
           <button onClick={()=>{setOpen(false);setTimeout(()=>document.getElementById('account-offer')?.scrollIntoView({behavior:'smooth',block:'start'}),50);}}>Voir ou changer mon offre</button>
           {count>0 && !loaded.store.migrationDone && <section className="accountImport"><h3>Importer mes données actuelles dans mon compte ?</h3><p>{count} élément(s) trouvé(s) dans le mode invité sur cet appareil. Les données déjà présentes dans ton compte seront conservées.</p><button disabled={busy} onClick={migrate}>Importer mes données</button><p>Tu peux aussi fermer cette fenêtre et le faire plus tard.</p></section>}
           {guestInvalid && <p role="alert">Certaines données invitées sont illisibles. Elles sont conservées ; l’import n’a pas été lancé.</p>}
