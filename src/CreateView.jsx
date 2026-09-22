@@ -6,7 +6,7 @@ import ColorSelection from './ColorSelection';
 import { generateInspirations } from './freeInspiration';
 import { useStorage } from './StorageContext';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker, Search, Wand2 } from 'lucide-react';
+import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker, Search, Wand2, Send } from 'lucide-react';
 import { createSuggestions, inventoryStamp, profileDefaults } from './creationEngine';
 import NailPreview from './NailPreview';
 import PhotoInspirationFlow from './PhotoInspirationFlow';
@@ -177,6 +177,7 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
           <ul className="ideaReasons">{idea.reasons.map(reason => <li key={reason}><Check />{reason}</li>)}</ul>
           <button className="chooseIdea" aria-pressed={chosen?.id === idea.id} onClick={() => { const saved = snapshotIdea(idea, idea.options); const clear = chosen?.id === idea.id; if (onSelect(saved, clear)) setState(previous => ({ ...previous, selected: clear ? null : idea.id })); }}>{chosen?.id === idea.id ? <Check /> : <BookmarkCheck />}{chosen?.id === idea.id ? 'Idée retenue' : 'Je choisis cette idée'}</button>
           <button className="detailSecondary" disabled={library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key)} onClick={() => onSaveIdea(snapshotIdea(idea, idea.options))}>{library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key) ? 'Pose sauvegardée dans mes favoris' : 'Sauvegarder cette pose'}</button>
+          {onShareToPro && <button className="detailSecondary ideaShareToPro" onClick={() => onShareToPro({ source: idea, type: 'inspiration' })}><Send />Envoyer à ma PO</button>}
           <div className="ideaCardActions"><button className="detailPrimary" onClick={() => onOpen(idea, idea.options)}>Voir la fiche<ArrowRight /></button><button className="ideaHeart" aria-label={(library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key) ? 'Retirer des favoris : ' : 'Ajouter aux favoris : ') + idea.title} aria-pressed={library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key)} onClick={() => onFavorite(snapshotIdea(idea, idea.options))}><Heart fill={library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key) ? 'currentColor' : 'none'} /></button></div>
         </div>
       </article>)}</div>
