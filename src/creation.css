@@ -68,6 +68,7 @@
 .ideaList{display:grid;gap:17px;margin-top:17px}
 .ideaCard{border:1px solid var(--line);background:#fff;border-radius:23px;overflow:hidden}
 .ideaCard.chosen{border:2px solid var(--a)}
+.ideaShareToPro{width:100%;margin:10px 0 0;justify-content:center}
 .ideaTopline{display:flex;align-items:center;justify-content:space-between;padding:15px 17px 0;color:var(--a);font-size:9px;letter-spacing:.04em;font-weight:700}
 .ideaTopline>span:last-child{display:flex;align-items:center;gap:4px;color:var(--muted);font-weight:500;letter-spacing:0}
 .ideaTopline svg{width:12px;height:12px}
