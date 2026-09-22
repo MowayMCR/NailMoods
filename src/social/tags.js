@@ -1,5 +1,7 @@
 import taxonomy from './taxonomy.json' with {type:'json'};
+import {VISIBLE_TAXONOMY as hiddenVisibleTaxonomy, internalTagIds, resolveTags} from './tagTaxonomy.js';
 export const TAXONOMY=taxonomy;
+export const VISIBLE_TAXONOMY={...TAXONOMY,...Object.fromEntries(Object.entries(hiddenVisibleTaxonomy).map(([key,values])=>[key,values.length?values:TAXONOMY[key]]))};
 export const TAG_LABELS={moods:'Moods',colors:'Couleurs',aesthetics:'Esthétique',themes:'Thème',levels:'Niveau',techniques:'Technique',occasions:'Occasion',shapes:'Forme',lengths:'Longueur',finishes:'Finition'};
 const norm=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 export function cleanTags(value={}) {return Object.fromEntries(Object.entries(TAXONOMY).map(([key,allowed])=>[key,[...new Set((Array.isArray(value?.[key])?value[key]:[]).filter(v=>allowed.includes(v)))].slice(0,8)]));}
@@ -24,3 +26,5 @@ export function suggestTags(source={},photoColors=[]){
  for(const nail of idea.nails||[])if(techniques[nail.pattern])out.techniques.push(techniques[nail.pattern]);
  return cleanTags(out);
 }
+export function searchTags(value){return resolveTags(value).map(tag=>tag.label);}
+export function internalTags(value){return internalTagIds(value);}
