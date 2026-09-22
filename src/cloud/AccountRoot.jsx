@@ -25,7 +25,7 @@ import AccountOfferPanel from './AccountOfferPanel';
 import { PoReceivedShares, ShareToPoSheet } from '../social/PoShare';
 import StaffJournal from '../support/StaffJournal';
 import {supportCall} from '../support/service';
-import {ACCOUNT_OFFERS,accountOfferService,clearPendingAccountOffer,pendingAccountOffer,rememberPendingAccountOffer} from './betaTier';
+import {accountOfferService,clearPendingAccountOffer,pendingAccountOffer} from './betaTier';
 
 let client=null,configurationError=false;
 try{client=getCloudClient();}catch{configurationError=true;}
@@ -48,13 +48,12 @@ export default function AccountRoot({App}){
   const [status,setStatus]=useState({kind:'saved',pending:0}),[retry,setRetry]=useState(0),[revision,setRevision]=useState(0),[mediaMigration,setMediaMigration]=useState(null);
   const [open,setOpen]=useState(false),[mode,setMode]=useState('login'),[email,setEmail]=useState(''),[password,setPassword]=useState('');
   const [accountSection,setAccountSection]=useState('summary');
-  const [signupTier,setSignupTier]=useState('free');
   const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState(''),[guestOverride,setGuestOverride]=useState(false),[confirmRemote,setConfirmRemote]=useState(false);
   const [confirmCacheClear,setConfirmCacheClear]=useState(false);
   const [shareRequest,setShareRequest]=useState(null);
   const [staffMode,setStaffMode]=useState(false);
   const [suspension,setSuspension]=useState(false);
-  const [termsAccepted,setTermsAccepted]=useState(false),[birthYear,setBirthYear]=useState('');
+  const [termsAccepted,setTermsAccepted]=useState(false);
   const active=useRef(null), mounted=useRef(true), analytics=useRef(null);
   const userId=session?.user?.id || null;
   useEffect(()=>{
@@ -108,13 +107,12 @@ export default function AccountRoot({App}){
     const online=()=>void loaded.store.flush();window.addEventListener('online',online);
     return ()=>window.removeEventListener('online',online);
   },[loaded]);
-  function changeMode(next){setBirthYear('');setTermsAccepted(false);setMode(next);setMessage('');setAuthError('');setPassword('');}
+  function changeMode(next){setTermsAccepted(false);setMode(next);setMessage('');setAuthError('');setPassword('');}
   async function submit(event){
     event.preventDefault();setBusy(true);setMessage('');setAuthError('');
     try{
       if(mode==='signup'){
-        const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {},birthYear);setPassword('');
-        if(data.user?.id)rememberPendingAccountOffer(browserStorage,data.user.id,signupAgeBand==='15_17'?'free':signupTier);
+        const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {});setPassword('');
         if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);}
         else {setMode('confirm');setMessage('Email de confirmation demandé. Vérifie ta boîte de réception et les courriers indésirables, puis ouvre le lien dans ce navigateur.');}
       }else if(mode==='confirm'){
@@ -183,10 +181,6 @@ export default function AccountRoot({App}){
     }catch{/* Le choix reste disponible dans Profil → Mon offre. */}})();
     return()=>{cancelled=true;};
   },[ready,userId,loaded?.workspace?.id]);
-  const currentYear=new Date().getFullYear();
-  const birthYearNumber=Number(birthYear);
-  const validBirthYear=/^\d{4}$/.test(birthYear) && birthYearNumber>=currentYear-120 && birthYearNumber<=currentYear-15;
-  const signupAgeBand=validBirthYear?(birthYearNumber<=currentYear-18?'18_plus':'15_17'):'';
   const label=ready?(loaded.store.profile?.display_name || session.user.email || 'Mon compte'):'Mode invité';
   const syncNotice=ready && status.kind==='error' && <div className="accountNotice" role="alert"><p>{status.message}</p><button onClick={()=>(loaded.store.pending || ['quota','cache_unavailable'].includes(status.code))?void loaded.store.flush():setRetry(v=>v+1)}>Réessayer</button><button onClick={()=>{setMode('account');setOpen(true);}}>Mon compte</button></div>;
   const accountAccess=<aside className="accountBar accountProfileCard" aria-label="Compte et synchronisation">
@@ -220,10 +214,10 @@ export default function AccountRoot({App}){
         <p>Retrouve ta collection, tes inspirations et ton journal sur tes appareils. Tu peux aussi continuer sans compte.</p>
         {mode!=='password' && <label>Email<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>}
         {!['recovery','confirm'].includes(mode) && <label>Mot de passe<input type="password" autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?1:8} required value={password} onChange={e=>setPassword(e.target.value)} disabled={busy}/></label>}
-        {mode==='signup'&&<><label>Année de naissance<input type="text" inputMode="numeric" pattern="[0-9]{4}" maxLength="4" value={birthYear} onChange={event=>{const value=event.target.value.replace(/\D/g,'').slice(0,4);setBirthYear(value);if(Number(value)>currentYear-18)setSignupTier('free');}} placeholder="ex. 1994" autoComplete="bday-year" required disabled={busy}/></label><p className="accountHelp">Elle n’est jamais publique. Elle permet uniquement de vérifier l’accès à partir de 15 ans et de réserver Plus / Pro aux 18 ans ou plus.</p>{birthYear && !validBirthYear&&<p role="alert">Indique une année valide : NailMoods est accessible à partir de 15 ans.</p>}<fieldset className="signupOfferChoices"><legend>Quel compte veux-tu essayer ?</legend><p>Le choix reste modifiable dans Profil → Mon offre. Aucun paiement n’est demandé pendant la bêta.</p>{ACCOUNT_OFFERS.filter(offer=>signupAgeBand==='18_plus'||offer.tier==='free').map(offer=><button type="button" role="radio" aria-checked={signupTier===offer.tier} className={signupTier===offer.tier?'selected':''} key={offer.tier} onClick={()=>setSignupTier(offer.tier)} disabled={busy}><b>{offer.name}</b><small>{offer.tagline}</small></button>)}</fieldset>{signupAgeBand==='15_17'&&<p className="accountHelp">Entre 15 et 17 ans, le compte Free reste personnel et privé.</p>}</>}
+        {mode==='signup'&&<p className="accountHelp">Ton compte démarre en Free. Tu pourras choisir Plus ou Pro plus tard dans Profil → Mon offre, après confirmation de ton statut d’âge. Aucun paiement n’est demandé pendant la bêta.</p>}
         <LegalLinks/>
         {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>J’accepte les Conditions d’utilisation</label><small>Les comptes Plus et Pro sont réservés aux personnes de 18 ans ou plus. Aucun paiement n’est actif pendant cette bêta.</small></>}
-        <button className="accountPrimary" disabled={busy || (mode==='signup' && (!termsAccepted || !validBirthYear))}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='confirm'?'Renvoyer le mail de confirmation':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
+        <button className="accountPrimary" disabled={busy || (mode==='signup' && !termsAccepted)}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='confirm'?'Renvoyer le mail de confirmation':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
         {mode==='login' && <><button type="button" disabled={busy} onClick={()=>changeMode('signup')}>Créer mon compte</button><button type="button" disabled={busy} onClick={()=>changeMode('recovery')}>Mot de passe oublié</button></>}
         {['signup','recovery','confirm'].includes(mode) && <button type="button" disabled={busy} onClick={()=>changeMode('login')}>J’ai déjà un compte</button>}
         <button type="button" disabled={busy} onClick={()=>{setOpen(false);setPassword('');}}>Continuer à explorer</button>
