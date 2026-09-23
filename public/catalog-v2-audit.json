@@ -1,0 +1,214 @@
+{
+  "version": "V2-2026-09-23-scan",
+  "basedOn": "V1-2026-09-17",
+  "v1Products": 1801,
+  "v2Products": 1852,
+  "scannedRowsProvided": 51,
+  "mergedIntoV1": 0,
+  "newProductsAdded": 51,
+  "invalidBarcodesSkipped": 0,
+  "productsWithExactBarcode": 51,
+  "productsWithReferenceIdentity": 664,
+  "productsTextOnly": 1137,
+  "brands": 33,
+  "brandStats": {
+    "Manucurist": {
+      "total": 100,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 100
+    },
+    "KIKO Milano": {
+      "total": 50,
+      "barcode": 0,
+      "reference": 50,
+      "textOnly": 0
+    },
+    "Peggy Sage": {
+      "total": 38,
+      "barcode": 0,
+      "reference": 38,
+      "textOnly": 0
+    },
+    "essie": {
+      "total": 102,
+      "barcode": 9,
+      "reference": 0,
+      "textOnly": 93
+    },
+    "CANNI": {
+      "total": 192,
+      "barcode": 0,
+      "reference": 192,
+      "textOnly": 0
+    },
+    "Semilac": {
+      "total": 158,
+      "barcode": 0,
+      "reference": 156,
+      "textOnly": 2
+    },
+    "Le Mini Macaron": {
+      "total": 15,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 15
+    },
+    "OPI": {
+      "total": 91,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 91
+    },
+    "The GelBottle": {
+      "total": 51,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 51
+    },
+    "Indigo Nails": {
+      "total": 260,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 260
+    },
+    "NEONAIL": {
+      "total": 68,
+      "barcode": 0,
+      "reference": 1,
+      "textOnly": 67
+    },
+    "Didier Lab": {
+      "total": 65,
+      "barcode": 0,
+      "reference": 9,
+      "textOnly": 56
+    },
+    "Victoria Vynn": {
+      "total": 24,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 24
+    },
+    "Gelish": {
+      "total": 154,
+      "barcode": 0,
+      "reference": 154,
+      "textOnly": 0
+    },
+    "Claresa": {
+      "total": 4,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 4
+    },
+    "Aprés Nail": {
+      "total": 24,
+      "barcode": 0,
+      "reference": 24,
+      "textOnly": 0
+    },
+    "Bio Sculpture": {
+      "total": 16,
+      "barcode": 0,
+      "reference": 16,
+      "textOnly": 0
+    },
+    "Light Elegance": {
+      "total": 21,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 21
+    },
+    "Kiara Sky": {
+      "total": 20,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 20
+    },
+    "DND Gel": {
+      "total": 24,
+      "barcode": 0,
+      "reference": 24,
+      "textOnly": 0
+    },
+    "Madam Glam": {
+      "total": 24,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 24
+    },
+    "ORLY": {
+      "total": 26,
+      "barcode": 1,
+      "reference": 0,
+      "textOnly": 25
+    },
+    "CND": {
+      "total": 31,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 31
+    },
+    "Bluesky": {
+      "total": 24,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 24
+    },
+    "Akzentz Luxio": {
+      "total": 36,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 36
+    },
+    "Artistic Nail Design": {
+      "total": 30,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 30
+    },
+    "Sally Hansen": {
+      "total": 39,
+      "barcode": 1,
+      "reference": 0,
+      "textOnly": 38
+    },
+    "China Glaze": {
+      "total": 46,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 46
+    },
+    "Zoya": {
+      "total": 60,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 60
+    },
+    "ILNP": {
+      "total": 19,
+      "barcode": 0,
+      "reference": 0,
+      "textOnly": 19
+    },
+    "Mavala": {
+      "total": 25,
+      "barcode": 25,
+      "reference": 0,
+      "textOnly": 0
+    },
+    "Kure Bazaar": {
+      "total": 7,
+      "barcode": 7,
+      "reference": 0,
+      "textOnly": 0
+    },
+    "Nailberry": {
+      "total": 8,
+      "barcode": 8,
+      "reference": 0,
+      "textOnly": 0
+    }
+  }
+}
