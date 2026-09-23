@@ -62,20 +62,23 @@ export function catalogCandidate(match) {
   fields.finish = finishes[catalogText(p.finish)] || 'Autre';
   if (p.finish && !finishes[catalogText(p.finish)]) fields.finishDetail = p.finish;
   if(p.colorValidated === true && validHex(p.catalogColor)) fields.catalogColor=p.catalogColor;
-  return {fields,images:[],variants:[],method:'catalog',source:p.url || '',catalogId:p.catalogId,catalogVersion:'V1-2026-09-17',evidence:match.evidence,identity: Object.fromEntries(['brand','collection','reference','sku','name'].filter(k=>p[k]).map(k=>[k,p[k]])),score:match.score,confidence:match.confidence,reason:match.reason};
+  return {fields,images:[],variants:[],method:'catalog',source:p.url || '',catalogId:p.catalogId,catalogVersion:cachedVersion,evidence:match.evidence,identity: Object.fromEntries(['brand','collection','reference','sku','name'].filter(k=>p[k]).map(k=>[k,p[k]])),score:match.score,confidence:match.confidence,reason:match.reason};
 }
 export function catalogueProvenance(candidate) {
   return {kind:'nailmoods',verified:false,catalogId:candidate.catalogId,catalogVersion:candidate.catalogVersion,recognitionScore:candidate.score,recognitionEvidence:candidate.evidence,catalogIdentity:candidate.identity,confirmedAt:new Date().toISOString(),importMethod:'catalog'};
 }
-let cached;
+let cached, cachedVersion='V2-2026-09-23-scan';
 export async function loadCatalog(signal) {
   if(cached) return cached;
-  const response=await fetch(import.meta.env.BASE_URL + 'catalog-v1.json',{signal});
+  let response=await fetch(import.meta.env.BASE_URL + 'catalog-v2.json',{signal});
+  if(!response.ok) response=await fetch(import.meta.env.BASE_URL + 'catalog-v1.json',{signal});
   if(!response.ok) throw new Error('Le catalogue est indisponible. Tu peux ajouter ton produit manuellement.');
   const data=await response.json();
   if(!Array.isArray(data.products)) throw new Error('Catalogue illisible. La saisie manuelle reste disponible.');
+  cachedVersion=data.version || cachedVersion;
   cached=data.products;return cached;
 }
+export const loadedCatalogVersion = () => cachedVersion;
 
 // Future swatch import can refer to these stable groups without editing the catalogue.
 export function catalogCollections(products) {
