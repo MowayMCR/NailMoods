@@ -1,214 +1,258 @@
 {
-  "version": "V2-2026-09-23-scan",
+  "version": "V2-2026-09-23-scan-r2",
   "basedOn": "V1-2026-09-17",
   "v1Products": 1801,
   "v2Products": 1852,
-  "scannedRowsProvided": 51,
-  "mergedIntoV1": 0,
-  "newProductsAdded": 51,
-  "invalidBarcodesSkipped": 0,
-  "productsWithExactBarcode": 51,
+  "scanFlowReadyProducts": 1852,
+  "productsWithExactBarcode": 72,
   "productsWithReferenceIdentity": 664,
-  "productsTextOnly": 1137,
+  "productsTextOnly": 1116,
+  "exactBarcodeCoveragePercent": 3.89,
+  "scanFlowCoveragePercent": 100,
   "brands": 33,
+  "policySummary": {
+    "allProductsEnterScanFlow": true,
+    "exactLocalMatchRequiresKnownBarcode": true,
+    "unknownBarcodeUsesPublicLookup": true,
+    "fallback": [
+      "OCR étiquette",
+      "photo couleur assistée",
+      "saisie manuelle"
+    ],
+    "colorAloneNeverConfirmsIdentity": true
+  },
   "brandStats": {
     "Manucurist": {
       "total": 100,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 100
+      "textOnly": 100,
+      "scanFlowReady": 100
     },
     "KIKO Milano": {
       "total": 50,
       "barcode": 0,
       "reference": 50,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 50
     },
     "Peggy Sage": {
       "total": 38,
       "barcode": 0,
       "reference": 38,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 38
     },
     "essie": {
       "total": 102,
-      "barcode": 9,
+      "barcode": 10,
       "reference": 0,
-      "textOnly": 93
+      "textOnly": 92,
+      "scanFlowReady": 102
     },
     "CANNI": {
       "total": 192,
       "barcode": 0,
       "reference": 192,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 192
     },
     "Semilac": {
       "total": 158,
       "barcode": 0,
       "reference": 156,
-      "textOnly": 2
+      "textOnly": 2,
+      "scanFlowReady": 158
     },
     "Le Mini Macaron": {
       "total": 15,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 15
+      "textOnly": 15,
+      "scanFlowReady": 15
     },
     "OPI": {
       "total": 91,
-      "barcode": 0,
+      "barcode": 19,
       "reference": 0,
-      "textOnly": 91
+      "textOnly": 72,
+      "scanFlowReady": 91
     },
     "The GelBottle": {
       "total": 51,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 51
+      "textOnly": 51,
+      "scanFlowReady": 51
     },
     "Indigo Nails": {
       "total": 260,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 260
+      "textOnly": 260,
+      "scanFlowReady": 260
     },
     "NEONAIL": {
       "total": 68,
       "barcode": 0,
       "reference": 1,
-      "textOnly": 67
+      "textOnly": 67,
+      "scanFlowReady": 68
     },
     "Didier Lab": {
       "total": 65,
       "barcode": 0,
       "reference": 9,
-      "textOnly": 56
+      "textOnly": 56,
+      "scanFlowReady": 65
     },
     "Victoria Vynn": {
       "total": 24,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 24
+      "textOnly": 24,
+      "scanFlowReady": 24
     },
     "Gelish": {
       "total": 154,
       "barcode": 0,
       "reference": 154,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 154
     },
     "Claresa": {
       "total": 4,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 4
+      "textOnly": 4,
+      "scanFlowReady": 4
     },
     "Aprés Nail": {
       "total": 24,
       "barcode": 0,
       "reference": 24,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 24
     },
     "Bio Sculpture": {
       "total": 16,
       "barcode": 0,
       "reference": 16,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 16
     },
     "Light Elegance": {
       "total": 21,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 21
+      "textOnly": 21,
+      "scanFlowReady": 21
     },
     "Kiara Sky": {
       "total": 20,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 20
+      "textOnly": 20,
+      "scanFlowReady": 20
     },
     "DND Gel": {
       "total": 24,
       "barcode": 0,
       "reference": 24,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 24
     },
     "Madam Glam": {
       "total": 24,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 24
+      "textOnly": 24,
+      "scanFlowReady": 24
     },
     "ORLY": {
       "total": 26,
       "barcode": 1,
       "reference": 0,
-      "textOnly": 25
+      "textOnly": 25,
+      "scanFlowReady": 26
     },
     "CND": {
       "total": 31,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 31
+      "textOnly": 31,
+      "scanFlowReady": 31
     },
     "Bluesky": {
       "total": 24,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 24
+      "textOnly": 24,
+      "scanFlowReady": 24
     },
     "Akzentz Luxio": {
       "total": 36,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 36
+      "textOnly": 36,
+      "scanFlowReady": 36
     },
     "Artistic Nail Design": {
       "total": 30,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 30
+      "textOnly": 30,
+      "scanFlowReady": 30
     },
     "Sally Hansen": {
       "total": 39,
-      "barcode": 1,
+      "barcode": 2,
       "reference": 0,
-      "textOnly": 38
+      "textOnly": 37,
+      "scanFlowReady": 39
     },
     "China Glaze": {
       "total": 46,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 46
+      "textOnly": 46,
+      "scanFlowReady": 46
     },
     "Zoya": {
       "total": 60,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 60
+      "textOnly": 60,
+      "scanFlowReady": 60
     },
     "ILNP": {
       "total": 19,
       "barcode": 0,
       "reference": 0,
-      "textOnly": 19
+      "textOnly": 19,
+      "scanFlowReady": 19
     },
     "Mavala": {
       "total": 25,
       "barcode": 25,
       "reference": 0,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 25
     },
     "Kure Bazaar": {
       "total": 7,
       "barcode": 7,
       "reference": 0,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 7
     },
     "Nailberry": {
       "total": 8,
       "barcode": 8,
       "reference": 0,
-      "textOnly": 0
+      "textOnly": 0,
+      "scanFlowReady": 8
     }
-  }
+  },
+  "note": "Tous les produits V1 sont repris dans V2 et passent par le flux scan. Les EAN/UPC/GTIN locaux sont enrichis uniquement avec des identités vérifiées. Un code absent du catalogue local est recherché dans les bases publiques puis bascule vers OCR/confirmation."
 }
