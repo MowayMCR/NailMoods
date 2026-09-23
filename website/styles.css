@@ -34,3 +34,22 @@
 
 @media(max-width:900px){.float-clean{left:0;top:8%}.float-witchy{right:0;bottom:8%}.hero:before{inset:20px -24px 34px}.hero-social{justify-content:center}}
 @media(max-width:560px){.brand-logo{width:40px;height:40px}.brand-name{font-size:1.35rem}.hero:before{inset:8px -10px 24px;border-radius:34px}.float-card{width:142px;padding:11px 12px}.float-card b{font-size:.84rem}.float-clean{left:-2%;top:7%}.float-witchy{right:-2%;bottom:6%}.spark-a{right:0}.hero-social{font-size:.8rem;flex-wrap:wrap}.plan{min-height:auto}}
+
+
+/* V1.2 — final polish before domain connection */
+.hero{min-height:700px;padding:58px 0 70px;gap:56px}
+.phone-scene{min-height:540px}
+.phone{box-shadow:0 44px 100px rgba(68,39,54,.24),0 10px 26px rgba(143,47,93,.10)}
+.float-clean{left:1%;top:15%}.float-witchy{right:-2%;bottom:16%}
+.nail-card{padding:14px}.nails{height:132px;background:linear-gradient(160deg,#f8e8ed 0%,#edceda 100%);position:relative;overflow:hidden}
+.nails:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 24% 10%,rgba(255,255,255,.9),transparent 26%),linear-gradient(120deg,transparent 0 40%,rgba(255,255,255,.24) 48%,transparent 56%);pointer-events:none}
+.french-preview i{position:relative;background:linear-gradient(180deg,#fff8f6 0%,#efcbd4 62%,#df9fb3 100%);border:1px solid rgba(255,255,255,.72);box-shadow:0 6px 14px rgba(111,53,80,.12),inset 3px 0 9px rgba(255,255,255,.42);overflow:hidden}
+.french-preview i:before{content:"";position:absolute;left:0;right:0;top:0;height:11px;border-radius:16px 16px 45% 45%;background:rgba(255,255,255,.94);box-shadow:0 2px 4px rgba(116,72,90,.05)}
+.french-preview i:after{content:"";position:absolute;left:6px;top:8px;width:5px;height:30px;border-radius:99px;background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,0));transform:rotate(7deg)}
+.preview-note{display:inline-block;margin-top:7px;color:#a07488;font-size:.63rem;font-weight:700;letter-spacing:.03em}
+.section{padding:88px 0}.section-head{margin-bottom:36px}.steps{gap:14px}
+.feature,.card,.plan{box-shadow:0 12px 34px rgba(82,41,60,.055)}
+.plan-highlight{transform:translateY(-7px)}
+.footer{padding-top:46px}
+@media(max-width:900px){.hero{padding:46px 0 58px;gap:4px}.phone-scene{min-height:500px}.float-clean{left:0;top:9%}.float-witchy{right:0;bottom:10%}}
+@media(max-width:560px){.hero{padding-top:38px}.hero h1{font-size:3.2rem}.lead{font-size:1.03rem}.phone-scene{min-height:470px}.phone{width:274px}.float-card{display:none}.spark{opacity:.42}.section{padding:64px 0}}
