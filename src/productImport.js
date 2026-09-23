@@ -177,6 +177,49 @@ export async function lookupBarcode(code, signal, fetcher = fetch) {
   throw new Error('Aucune référence trouvée dans le catalogue Le Mini Macaron Europe consulté. Tu peux ajouter ce produit avec son lien, sa photo ou son nom.');
 }
 
+
+export async function lookupPublicBarcode(code, signal, fetcher = fetch) {
+  if (!validBarcode(code)) throw new Error('Vérifie les chiffres : ce code-barres est incomplet ou incorrect.');
+  const clean = String(code).replace(/[\\s-]/g, '');
+  const sources = [
+    { api: `https://world.openbeautyfacts.org/api/v2/product/${encodeURIComponent(clean)}.json?fields=code,product_name,brands,categories,quantity,image_front_url,image_url`, page: `https://world.openbeautyfacts.org/product/${encodeURIComponent(clean)}` },
+    { api: `https://world.openproductsfacts.org/api/v2/product/${encodeURIComponent(clean)}.json?fields=code,product_name,brands,categories,quantity,image_front_url,image_url`, page: `https://world.openproductsfacts.org/product/${encodeURIComponent(clean)}` },
+  ];
+  for (const source of sources) {
+    try {
+      const response = await fetcher(source.api, { signal, credentials: 'omit', referrerPolicy: 'no-referrer' });
+      if (!response.ok) continue;
+      const data = JSON.parse(await readResponse(response, 1_500_000));
+      const product = data?.product;
+      if (!product || !(data.status === 1 || product.product_name || product.brands)) continue;
+      const name = plainText(product.product_name);
+      const brand = plainText(product.brands);
+      if (!name && !brand) continue;
+      const image = imageURL(product.image_front_url || product.image_url, source.page);
+      const fields = {
+        ...(name ? { name } : {}),
+        ...(brand ? { brand } : {}),
+        barcode: clean,
+        ...inferTraits(name, product.categories || ''),
+      };
+      if (image) fields.photo = image;
+      return {
+        fields,
+        images: image ? [image] : [],
+        variants: [],
+        variantId: '',
+        needsVariant: false,
+        source: source.page,
+        method: 'barcode-public',
+        publicLookup: true,
+      };
+    } catch (err) {
+      if (signal?.aborted) throw err;
+    }
+  }
+  throw new Error('Code-barres lu mais référence absente des catalogues consultés. Tu peux photographier l’étiquette ou compléter le produit manuellement.');
+}
+
 export function textMatches(products, text) {
   const normalized = ` ${normalizeText(text)} `;
   // Require the complete distinctive shade name. No fuzzy substitution between
