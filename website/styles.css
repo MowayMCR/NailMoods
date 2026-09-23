@@ -113,3 +113,51 @@
   .french-preview i{width:31px}
   .french-preview i:nth-child(3){width:34px}
 }
+
+
+/* V1.4 — align mockup nails with NailMoods illustrated app style */
+.french-preview{
+  height:142px;
+  gap:12px;
+  padding:18px 18px 20px;
+  background:
+    radial-gradient(circle at 20% 14%,rgba(255,255,255,.94),transparent 27%),
+    linear-gradient(155deg,#f9edf2 0%,#efd7e0 100%);
+}
+.french-preview i{
+  width:36px;
+  height:74px;
+  border-radius:50% 50% 38% 38% / 30% 30% 16% 16%;
+  background:
+    linear-gradient(180deg,#fffdfc 0%,#fae9ed 18%,#f3ced7 66%,#e8b1c0 100%);
+  border:1px solid rgba(255,255,255,.84);
+  box-shadow:
+    inset 0 0 0 1px rgba(175,93,126,.05),
+    0 6px 12px rgba(111,53,80,.09);
+  filter:none;
+}
+.french-preview i:before{
+  top:0;
+  height:9px;
+  background:rgba(255,255,255,.96);
+  border-radius:50% 50% 60% 60% / 90% 90% 35% 35%;
+  box-shadow:none;
+}
+.french-preview i:after{
+  top:12px;
+  left:8px;
+  width:5px;
+  height:30px;
+  background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,0));
+  opacity:.75;
+}
+.french-preview i:nth-child(1){width:32px;height:64px;transform:translateY(8px) rotate(-4deg)}
+.french-preview i:nth-child(2){width:35px;height:72px;transform:translateY(2px) rotate(-1deg)}
+.french-preview i:nth-child(3){width:38px;height:80px;transform:translateY(-2px)}
+.french-preview i:nth-child(4){width:35px;height:72px;transform:translateY(2px) rotate(1deg)}
+.french-preview i:nth-child(5){width:32px;height:64px;transform:translateY(8px) rotate(4deg)}
+.nails:before{
+  background:
+    radial-gradient(circle at 24% 8%,rgba(255,255,255,.75),transparent 24%),
+    linear-gradient(120deg,transparent 0 42%,rgba(255,255,255,.16) 50%,transparent 58%);
+}
