@@ -161,3 +161,50 @@
     radial-gradient(circle at 24% 8%,rgba(255,255,255,.75),transparent 24%),
     linear-gradient(120deg,transparent 0 42%,rgba(255,255,255,.16) 50%,transparent 58%);
 }
+
+
+/* V1.5 — match the actual NailMoods illustrated nail cards */
+.french-preview{
+  height:150px;
+  gap:18px;
+  padding:22px 24px 20px;
+  background:linear-gradient(180deg,#fbf1f5 0%,#f7e5ec 100%);
+}
+.french-preview i{
+  position:relative;
+  width:42px;
+  height:82px;
+  border-radius:23px 23px 17px 17px;
+  background:linear-gradient(180deg,#f9e5e9 0%,#efcbd4 52%,#e5b5c3 100%);
+  border:none;
+  box-shadow:0 7px 14px rgba(111,53,80,.08);
+  overflow:hidden;
+}
+.french-preview i:before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:8px;
+  border-radius:23px 23px 10px 10px;
+  background:rgba(255,255,255,.9);
+  box-shadow:none;
+}
+.french-preview i:after{
+  content:"";
+  position:absolute;
+  top:15px;
+  left:8px;
+  width:5px;
+  height:32px;
+  border-radius:99px;
+  background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,.1));
+  transform:rotate(7deg);
+  opacity:.9;
+}
+.french-preview i:nth-child(1){width:38px;height:68px;transform:translateY(9px) rotate(-4deg)}
+.french-preview i:nth-child(2){width:41px;height:76px;transform:translateY(2px) rotate(-1deg)}
+.french-preview i:nth-child(3){width:43px;height:84px;transform:translateY(-4px)}
+.french-preview i:nth-child(4){width:41px;height:76px;transform:translateY(2px) rotate(1deg)}
+.french-preview i:nth-child(5){width:37px;height:66px;transform:translateY(10px) rotate(4deg)}
