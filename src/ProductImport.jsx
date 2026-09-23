@@ -2,7 +2,7 @@ import {recordRuntimeEvent} from './support/diagnostics';
 import { loadCatalog, catalogCandidate, catalogueProvenance } from './catalog';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, ScanLine, Camera, Image as ImageIcon, Check, X } from 'lucide-react';
-import { fetchProduct, lookupBarcode, shopifyCandidate, inferTraits, normalizeText } from './productImport';
+import { fetchProduct, lookupBarcode, lookupPublicBarcode, shopifyCandidate, inferTraits, normalizeText } from './productImport';
 import { readProductPhoto, readBarcodeDetails } from './recognition';
 import { imageCanvas } from './recognition';
 import { preparePhoto } from './ProductPhoto';
@@ -87,7 +87,13 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
   }
   async function lookupCode(code, signal, observation = barcodeObservation(code,'UNKNOWN','manual')) {
     onChange({...observation,barcode:observation.rawBarcode});
-    return analyzeEvidence({rawText:text || report?.rawText || '',ocrViews:report?.ocrViews || [],barcodes:[observation],barcodeAttempted:observation.barcodeSource==='scanner',ocr:false},signal);
+    const local = await analyzeEvidence({rawText:text || report?.rawText || '',ocrViews:report?.ocrViews || [],barcodes:[observation],barcodeAttempted:observation.barcodeSource==='scanner',ocr:false},signal);
+    if (signal.aborted || local?.recognition?.matches?.length) return local;
+    try {
+      return await lookupPublicBarcode(observation.rawBarcode, signal);
+    } catch {
+      return local;
+    }
   }
   async function barcodeFile(event) {
     const file=event.target.files?.[0];event.target.value='';if(!file)return;
@@ -123,13 +129,13 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
 
   return <div className="productImport">
     <input ref={secondView} hidden type="file" accept="image/*" capture="environment" aria-label="Deuxième vue du produit" onChange={secondViewFile}/>
-    <details className="catalogSearch" open={item.source === 'catalog' ? true : undefined}><summary>Rechercher dans le catalogue</summary><p className="fieldHelp">Catalogue NailMoods V1 · 1 801 références. Tu confirmes toujours le produit avant de l’ajouter.</p><label>Nom ou référence<input value={catalogQuery} onChange={event => setCatalogQuery(event.target.value)} placeholder="Nom de teinte, SKU, référence…" /></label><button type="button" className="importSecondary" disabled={Boolean(busy) || catalogQuery.trim().length < 2} onClick={() => run('Recherche dans le catalogue…', signal => analyzeEvidence({rawText:catalogQuery,barcodes:report?.barcodes || [],ocrViews:report?.ocrViews || [],barcodeAttempted:report?.barcodeAttempted,ocr:false},signal), 60000)}>Rechercher la référence</button></details>
+    <details className="catalogSearch" open={item.source === 'catalog' ? true : undefined}><summary>Rechercher dans le catalogue</summary><p className="fieldHelp">Catalogue NailMoods V2 · V1 conservée et enrichie pour le scan. Tu confirmes toujours le produit avant de l’ajouter.</p><label>Nom ou référence<input value={catalogQuery} onChange={event => setCatalogQuery(event.target.value)} placeholder="Nom de teinte, SKU, référence…" /></label><button type="button" className="importSecondary" disabled={Boolean(busy) || catalogQuery.trim().length < 2} onClick={() => run('Recherche dans le catalogue…', signal => analyzeEvidence({rawText:catalogQuery,barcodes:report?.barcodes || [],ocrViews:report?.ocrViews || [],barcodeAttempted:report?.barcodeAttempted,ocr:false},signal), 60000)}>Rechercher la référence</button></details>
     <label>Lien du produit (facultatif)<input type="url" value={item.url} onChange={event => onChange({ url: event.target.value })} placeholder="https://…" /></label>
     <button type="button" className="importPrimary" disabled={Boolean(busy) || photoBusy || !item.url.trim()} onClick={() => run('Lecture de la fiche produit…', signal => fetchProduct(item.url, signal))}><Link />Récupérer depuis le lien</button>
     <p className="fieldHelp">Le Mini Macaron et les boutiques autorisant la lecture de leurs fiches. Si un site bloque l’import, utilise une photo ou une capture.</p>
     <details className="barcodeImport" open={item.source === 'barcode' ? true : undefined}>
       <summary><ScanLine />Code-barres</summary>
-      <p className="fieldHelp">Recherche d’abord dans NailMoods. Un code lu mais inconnu reste conservé ; le numéro de teinte peut suffire.</p>
+      <p className="fieldHelp">Recherche d’abord dans NailMoods. Si le code est inconnu, NailMoods tente une recherche publique par code-barres uniquement, puis te demande toujours confirmation.</p>
       <label>Chiffres du code-barres<input inputMode="numeric" value={item.barcode || ''} onChange={event => { cancel(); setCandidate(null); setReport(null); onChange({ barcode: event.target.value, ...barcodeObservation(event.target.value,'UNKNOWN','manual') }); }} placeholder="Ex. 3760297541507" /></label>
       <button type="button" className="importSecondary" disabled={Boolean(busy) || !item.barcode} onClick={() => run('Recherche dans le catalogue…', signal => lookupCode(item.barcode, signal), 60000)}>Rechercher ce code</button>
       <input ref={barcodeCamera} hidden type="file" accept="image/*" capture="environment" aria-label="Photographier un code-barres" onChange={barcodeFile} />
