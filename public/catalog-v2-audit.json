@@ -1,13 +1,13 @@
 {
-  "version": "V2-2026-09-23-scan-r2",
+  "version": "V2-2026-09-23-scan-r5",
   "basedOn": "V1-2026-09-17",
   "v1Products": 1801,
   "v2Products": 1852,
   "scanFlowReadyProducts": 1852,
-  "productsWithExactBarcode": 72,
+  "productsWithExactBarcode": 87,
   "productsWithReferenceIdentity": 664,
-  "productsTextOnly": 1116,
-  "exactBarcodeCoveragePercent": 3.89,
+  "productsTextOnly": 1101,
+  "exactBarcodeCoveragePercent": 4.7,
   "scanFlowCoveragePercent": 100,
   "brands": 33,
   "policySummary": {
