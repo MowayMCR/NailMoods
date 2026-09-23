@@ -13,9 +13,14 @@ export function accountOfferService(client){
  return {
   state:()=>read(client.rpc('account_offer_state')),
   choose(tier){
-   const safe=normalizeAccountTier(tier);
-   if(safe!==tier)throw new Error('Niveau invalide.');
-   return read(client.rpc('choose_beta_account_tier',{p_tier:safe}));
+    const safe=normalizeAccountTier(tier);
+    if(safe!==tier)throw new Error('Niveau invalide.');
+    return read(client.rpc('choose_beta_account_tier',{p_tier:safe}));
+  },
+  redeem(code){
+   const safe=String(code||'').trim().toUpperCase();
+   if(!/^NM-[A-F0-9]{6}-[A-F0-9]{6}$/.test(safe))throw new Error('Code d’invitation invalide.');
+   return read(client.rpc('redeem_beta_invitation',{p_code:safe}));
   },
  };
 }
