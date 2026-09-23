@@ -108,6 +108,5 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
   return <div className="renderPreview">
     <div className="renderPreviewHead"><span><b>{rendering.label}</b><small>{rendering.finish} · relief {rendering.relief}</small></span><div className="illustratedModeBadge" aria-label="Mode illustré validé">Illustration NailMoods</div></div>
     {preview}
-    <p>Vue illustrée NailMoods · le rendu réaliste sera retravaillé dans un lot séparé.</p>
   </div>;
 }

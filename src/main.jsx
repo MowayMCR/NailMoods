@@ -9,7 +9,7 @@ import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf } fr
 import ContextHelp from './ContextHelp';
 import SupportPanel from './support/SupportPanel';
 import {setDiagnosticsStorage,recordRuntimeEvent} from './support/diagnostics';
-import { useStorage } from './StorageContext';
+import { StorageStatus, useStorage } from './StorageContext';
 import AccountRoot from './cloud/AccountRoot';
 import {tierCapabilities} from './cloud/betaTier';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
@@ -287,7 +287,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const colorCount = new Set(items.filter(item => item.type !== 'Matériel' && item.family).map(item => item.family)).size;
 
   return <div className="app phase2" style={{ '--a': th[0], '--b': th[1], '--soft': th[2], '--paper': th[3] }}>
-    <header><Brand /><NotificationButton /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
+    <header><Brand /><NotificationButton /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header><StorageStatus />
     {import.meta.env.VITE_DEPLOYMENT_ENV==='recette' && <aside role="status" style={{textAlign:'center',padding:'10px',background:'#f8e9ee',color:'#733451'}}>NailMoods-Recette · environnement de test séparé</aside>}
     <SocialGlobal />
     <main>
@@ -361,20 +361,22 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
       <section className="productSheet importSheet" role="dialog" aria-modal="true" aria-labelledby="import-title" onClick={event => event.stopPropagation()}>
         <div className="grab" />
         <div className="sheetTitle"><div><small>NOUVEAU PRODUIT</small><h2 id="import-title">Comment veux-tu l’ajouter ?</h2></div><button aria-label="Fermer" onClick={() => setImporter(false)}><X /></button></div>
-        <div className="importChoices">
-          <button onClick={() => start('manual', 'Matériel')}>
-            <span className="importIcon"><Package /></span><span className="importCopy"><b>Matériel & accessoires</b><small>Lampe, stickers, pinceaux, limes…</small></span><ChevronRight className="importArrow" />
+        <div className="importChoices importChoicesPrimary">
+          <button onClick={() => start('camera')}>
+            <span className="importIcon"><Camera /></span><span className="importCopy"><b>Scanner / prendre en photo</b><small>Photographie le produit ou son étiquette</small></span><ChevronRight className="importArrow" />
           </button>
-          {[
-            [Search, 'Rechercher dans NailMoods', '1 801 références · confirmation avant ajout', 'catalog'],
-            [Camera, 'Prendre une photo', 'Photographie le produit', 'camera'],
-            [Image, 'Importer une photo', 'Capture ou image de ta galerie', 'image'],
-            [Link, 'Coller une URL', 'Retrouve les photos et les informations', 'url'],
-            [PenLine, 'Saisie manuelle', 'Ajoute seulement ce que tu connais', 'manual'],
-          ].map(([Icon, title, subtitle, source]) => <button key={source} onClick={() => start(source)}>
-            <span className="importIcon"><Icon /></span><span className="importCopy"><b>{title}</b><small>{subtitle}</small></span><ChevronRight className="importArrow" />
-          </button>)}
-          <button onClick={() => start('barcode')}><span className="importIcon"><ScanLine /></span><span className="importCopy"><b>Scanner le produit</b><small>Photo du code-barres ou saisie des chiffres</small></span><ChevronRight className="importArrow" /></button>
+          <button onClick={() => start('catalog')}>
+            <span className="importIcon"><Search /></span><span className="importCopy"><b>Rechercher dans NailMoods</b><small>1 801 références · confirmation avant ajout</small></span><ChevronRight className="importArrow" />
+          </button>
+          <button onClick={() => start('manual')}>
+            <span className="importIcon"><PenLine /></span><span className="importCopy"><b>Ajouter manuellement</b><small>Ajoute seulement ce que tu connais</small></span><ChevronRight className="importArrow" />
+          </button>
+          <details className="importMore"><summary>Autres façons d’ajouter</summary><div>
+            <button onClick={() => start('image')}><Image /><span><b>Importer depuis la galerie</b><small>Utilise une capture ou une image existante</small></span></button>
+            <button onClick={() => start('url')}><Link /><span><b>Coller une URL</b><small>Retrouve les photos et les informations</small></span></button>
+            <button onClick={() => start('barcode')}><ScanLine /><span><b>Scanner le code-barres</b><small>Photo du code ou saisie des chiffres</small></span></button>
+            <button onClick={() => start('manual', 'Matériel')}><Package /><span><b>Matériel & accessoires</b><small>Lampe, stickers, pinceaux, limes…</small></span></button>
+          </div></details>
         </div>
 
       </section>

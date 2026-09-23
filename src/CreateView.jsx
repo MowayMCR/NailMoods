@@ -62,8 +62,8 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
   }, [state]);
 
   const selections = {
-    mood: { title: 'Quelle humeur ?', icon: Sun, label: 'Humeur', searchable: true, values: [...new Set(['Douce', 'Mystérieuse', 'Chic', 'Joyeuse', 'Audacieuse', 'Au calme', ...TAXONOMY.moods])], placeholder: 'Douce, glamour, sombre…' },
-    style: { title: 'Quel univers ?', icon: Palette, label: 'Univers', searchable: true, values: [...new Set(['Libre', ...(Array.isArray(profile.styles) ? profile.styles : []), ...TAXONOMY.aesthetics, ...TAXONOMY.themes])], placeholder: 'Witchy, clean girl, cottagecore…' },
+    mood: { title: 'Quelle ambiance ?', icon: Sun, label: 'Ambiance', searchable: true, values: [...new Set(['Douce', 'Mystérieuse', 'Chic', 'Joyeuse', 'Audacieuse', 'Au calme', ...TAXONOMY.moods])], placeholder: 'Douce, glamour, sombre…' },
+    style: { title: 'Quel style ?', icon: Palette, label: 'Style', searchable: true, values: [...new Set(['Libre', ...(Array.isArray(profile.styles) ? profile.styles : []), ...TAXONOMY.aesthetics, ...TAXONOMY.themes])], placeholder: 'Witchy, clean girl, cottagecore…' },
     technique: { title: 'Quelle technique ?', icon: Wand2, label: 'Technique', searchable: true, values: ['Libre', ...TAXONOMY.techniques], placeholder: 'French, micro French, cat-eye…' },
     occasion: { title: 'Pour quelle occasion ?', icon: CalendarDays, label: 'Occasion', values: ['Tous les jours', 'Travail', 'Soirée', 'Événement', 'Week-end'] },
     duration: { title: 'Combien de temps ?', icon: Clock3, label: 'Temps', values: [15, 30, 45, 60, 90], format: durationLabel },
@@ -133,17 +133,22 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
 
     <section className="creationSection">
       <div className="creationSectionTitle"><span>02</span><h2>Ajoute ta touche</h2></div>
-      <div className="creationTiles">{Object.entries(selections).map(([key, choice]) => <button key={key} data-choice={key} onClick={() => openPicker(key)}>
-        {['mood', 'style'].includes(key) ? <MoodGlyph value={options[key]} /> : <choice.icon />}{key === 'polishCount' && <span className="countPreview" aria-hidden="true">{Array.from({ length: options.polishCount === 'auto' ? 5 : Number(options.polishCount) }, (_, index) => <svg key={index} viewBox="0 0 16 30" fill="none" focusable="false"><rect x="5" y="1" width="6" height="10" rx="1.5" fill="currentColor" /><path d="M5 12h6l3 4v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V16z" fill="var(--soft)" stroke="currentColor" strokeWidth="1.2" /><path d="M5 19v6" stroke="currentColor" strokeOpacity=".35" strokeLinecap="round" /></svg>)}</span>}<small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key] || (key === 'technique' ? 'Libre' : '')}</b><ChevronRight className="tileArrow" />
-      </button>)}
-        <button className="creationDecorationsTile" onClick={() => setPicker('decorations')}><Sticker /><small>Décorations</small><b>{decorationLabel}</b><ChevronRight className="tileArrow" /></button>
-        <button className="creationLimitsTile" onClick={() => setPicker('constraints')}><SlidersHorizontal /><small>Mes limites</small><b>{options.constraints.length ? options.constraints.length + ' choix' : 'Aucune limite'}</b><ChevronRight className="tileArrow" /></button>
-      </div>
+      <div className="creationTiles creationPrimaryTiles">{['mood', 'style', 'duration', 'level'].map(key => { const choice = selections[key]; return <button key={key} data-choice={key} onClick={() => openPicker(key)}>
+        {['mood', 'style'].includes(key) ? <MoodGlyph value={options[key]} /> : <choice.icon />}<small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key]}</b><ChevronRight className="tileArrow" />
+      </button>; })}</div>
+      <details className="creationAdvanced"><summary><span><SlidersHorizontal />Personnaliser ma pose</span><small>Technique, teintes, décorations et limites</small></summary>
+        <div className="creationTiles">{['technique', 'occasion', 'polishCount'].map(key => { const choice = selections[key]; return <button key={key} data-choice={key} onClick={() => openPicker(key)}>
+          <choice.icon />{key === 'polishCount' && <span className="countPreview" aria-hidden="true">{Array.from({ length: options.polishCount === 'auto' ? 5 : Number(options.polishCount) }, (_, index) => <svg key={index} viewBox="0 0 16 30" fill="none" focusable="false"><rect x="5" y="1" width="6" height="10" rx="1.5" fill="currentColor" /><path d="M5 12h6l3 4v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V16z" fill="var(--soft)" stroke="currentColor" strokeWidth="1.2" /><path d="M5 19v6" stroke="currentColor" strokeOpacity=".35" strokeLinecap="round" /></svg>)}</span>}<small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key] || 'Libre'}</b><ChevronRight className="tileArrow" />
+        </button>; })}
+          <button className="creationDecorationsTile" onClick={() => setPicker('decorations')}><Sticker /><small>Décorations</small><b>{decorationLabel}</b><ChevronRight className="tileArrow" /></button>
+          <button className="creationLimitsTile" onClick={() => setPicker('constraints')}><SlidersHorizontal /><small>Mes limites</small><b>{options.constraints.length ? options.constraints.length + ' choix' : 'Aucune limite'}</b><ChevronRight className="tileArrow" /></button>
+        </div>
+        <button className="detailSecondary creationColorsButton" onClick={() => setPicker('colors')}>Choisir mes teintes{selectedColors.length ? ' · ' + selectedColors.length : ''}</button>
+        {selectedColors.length > 0 && <div className="ideaProducts creationSelectedColors">{selectedColors.map(item => <span key={item.id}><i style={{ background: productColor(item) }} />{item.name}</span>)}</div>}
+        {requiredIds.length > selectedColors.length && <p className="creationHint">Une teinte sélectionnée a été retirée. Les idées utilisent les couleurs encore disponibles.</p>}
+      </details>
       {options.constraints.length > 0 && <div className="creationLimits">{limits.filter(([key]) => options.constraints.includes(key)).map(([key, label]) => <span key={key}>{label}</span>)}</div>}
-
     </section>
-
-    <section className="creationSection"><button className="detailSecondary" onClick={() => setPicker('colors')}>Choisir mes teintes{selectedColors.length ? ' · ' + selectedColors.length : ''}</button>{selectedColors.length > 0 && <div className="ideaProducts">{selectedColors.map(item => <span key={item.id}><i style={{ background: productColor(item) }} />{item.name}</span>)}</div>}{requiredIds.length > selectedColors.length && <p className="creationHint">Une teinte sélectionnée a été retirée. Les idées utilisent les couleurs encore disponibles.</p>}</section>
     <section className="creationInventory">
       <Package /><div><b>{options.intent === 'collection' ? 'À partir de ta collection' : 'Ta personnalisation, quand tu veux'}</b><p>{report.inventoryColors} couleur{report.inventoryColors > 1 ? 's' : ''} · {report.tools.equipment.length} matériel{report.tools.equipment.length > 1 ? 's' : ''} & accessoires</p></div><button onClick={onCollection} aria-label="Ouvrir ma collection"><ChevronRight /></button>
     </section>
@@ -166,7 +171,7 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
       {report.results.length < 4 && <p className="creationNotice">Ta collection et tes choix permettent {report.results.length} proposition{report.results.length > 1 ? 's' : ''} distincte{report.results.length > 1 ? 's' : ''} pour le moment. Aucun produit n’a été ajouté à ta collection.</p>}
       <p className="creationHint">{report.intent === 'inspire' ? 'Couleurs d’inspiration, sans référence commerciale ni produit ajouté à ta collection.' : 'Aperçus avec tes teintes enregistrées.'} Le rendu bascule automatiquement vers le réalisme quand la matière, la lumière ou le relief le demandent. Vérifie le protocole des produits.</p>
       {chosen && <button className="chosenIdea" onClick={() => onOpen(chosen, chosen.options)}><BookmarkCheck /><span><b>Ton idée retenue</b><small>{chosen.title} · {chosen.palette.map(item => item.name).join(' + ')}</small></span><ChevronRight /></button>}
-      <div className="ideaList">{report.results.map((idea, index) => <article className={'ideaCard ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id}>
+      <div className="ideaList">{report.results.map((idea, index) => <article className={'ideaCard ideaCardOpenable ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id} onClick={() => onOpen(idea, idea.options)}>
         <div className="ideaTopline"><span><MoodGlyph value={idea.options?.mood || options.mood} /> ENVIE {String(index + 1).padStart(2, '0')}</span><span><Clock3 />≈ {idea.minutes} min</span></div>
         <NailPreview idea={idea} controls />
         <div className="ideaBody">{completedKeys.has(snapshotIdea(idea, idea.options).key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3>{idea.title}</h3><p>{idea.description}</p>
@@ -175,10 +180,7 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
           {idea.requirements?.length > 0 && <p className="creationNotice">Pour la réaliser : {idea.requirements.map(r => r.name).join(' · ')}</p>}
           {idea.resources.some(item => !isDecoration(item)) && <div className="ideaEquipment"><small>AVEC MON MATÉRIEL</small><p>{idea.resources.filter(item => !isDecoration(item)).map(item => item.name).join(' · ')}</p></div>}
           <ul className="ideaReasons">{idea.reasons.map(reason => <li key={reason}><Check />{reason}</li>)}</ul>
-          <button className="chooseIdea" aria-pressed={chosen?.id === idea.id} onClick={() => { const saved = snapshotIdea(idea, idea.options); const clear = chosen?.id === idea.id; if (onSelect(saved, clear)) setState(previous => ({ ...previous, selected: clear ? null : idea.id })); }}>{chosen?.id === idea.id ? <Check /> : <BookmarkCheck />}{chosen?.id === idea.id ? 'Idée retenue' : 'Je choisis cette idée'}</button>
-          <button className="detailSecondary" disabled={library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key)} onClick={() => onSaveIdea(snapshotIdea(idea, idea.options))}>{library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key) ? 'Pose sauvegardée dans mes favoris' : 'Sauvegarder cette pose'}</button>
-          {onShareToPro && <button className="detailSecondary ideaShareToPro" onClick={() => onShareToPro({ source: idea, type: 'inspiration' })}><Send />Envoyer à ma PO</button>}
-          <div className="ideaCardActions"><button className="detailPrimary" onClick={() => onOpen(idea, idea.options)}>Voir la fiche<ArrowRight /></button><button className="ideaHeart" aria-label={(library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key) ? 'Retirer des favoris : ' : 'Ajouter aux favoris : ') + idea.title} aria-pressed={library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key)} onClick={() => onFavorite(snapshotIdea(idea, idea.options))}><Heart fill={library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key) ? 'currentColor' : 'none'} /></button></div>
+          <div className="ideaCardActions"><button className="chooseIdea" aria-pressed={chosen?.id === idea.id} onClick={event => { event.stopPropagation(); const saved = snapshotIdea(idea, idea.options); const clear = chosen?.id === idea.id; if (onSelect(saved, clear)) setState(previous => ({ ...previous, selected: clear ? null : idea.id })); }}>{chosen?.id === idea.id ? <Check /> : <BookmarkCheck />}{chosen?.id === idea.id ? 'Idée retenue' : 'Choisir cette idée'}</button><button className="ideaHeart" aria-label={(library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key) ? 'Retirer des favoris : ' : 'Ajouter aux favoris : ') + idea.title} aria-pressed={library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key)} onClick={event => { event.stopPropagation(); onFavorite(snapshotIdea(idea, idea.options)); }}><Heart fill={library.favorites.some(saved => saved.key === snapshotIdea(idea, idea.options).key) ? 'currentColor' : 'none'} /></button></div>
         </div>
       </article>)}</div>
       {report.total > report.results.length && <button className="moreIdeas" onClick={generate}><RotateCcw />Proposer d’autres associations</button>}

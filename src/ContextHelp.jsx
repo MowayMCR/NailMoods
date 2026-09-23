@@ -9,7 +9,7 @@ const icons = { palette: Palette, package: Package, lamp: Lightbulb, sparkles: S
 const actions = { home: ['Ajouter mes produits', 'collection'], profile: ['Explorer mes couleurs', 'collection'], collection: ['Créer avec mes couleurs', 'create'], equipment: ['Créer avec mon matériel', 'create'], generator: ['Voir mon matériel', 'equipment'], moodboard: ['Créer une autre idée', 'create'], journal: ['Voir mes inspirations', 'favorites'] };
 export default function ContextHelp({ screen, step, onNavigate }) {
   const guide = guides[screen];
-  const [offer, setOffer] = useState(() => !helpSeen(screen));
+  const [offer, setOffer] = useState(() => screen === 'home' && !helpSeen('home'));
   const [feedback, setFeedback] = useState(false);
   const [opened, setOpened] = useState(false);
   const [slide, setSlide] = useState(0);
