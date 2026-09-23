@@ -33,6 +33,12 @@ test('account offer selection uses the protected RPC and validates the tier',asy
  assert.deepEqual(calls,[{name:'account_offer_state',args:undefined},{name:'choose_beta_account_tier',args:{p_tier:'plus'}}]);
  assert.throws(()=>service.choose('admin'),/invalide/);
 });
+test('beta invitation redemption sends only a normalized one-use code',async()=>{
+ const calls=[];const service=accountOfferService({rpc:async(name,args)=>{calls.push({name,args});return {data:{tier:'plus'},error:null};}});
+ await service.redeem('nm-a1b2c3-d4e5f6');
+ assert.deepEqual(calls,[{name:'redeem_beta_invitation',args:{p_code:'NM-A1B2C3-D4E5F6'}}]);
+ assert.throws(()=>service.redeem('not-a-code'),/Code d’invitation invalide/);
+});
 test('pending signup offer is bound to the new Auth user and stays small',()=>{
  const values=new Map(),storage={getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value),removeItem:key=>values.delete(key)};
  assert.equal(rememberPendingAccountOffer(storage,'user-a','pro'),true);
