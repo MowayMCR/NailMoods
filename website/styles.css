@@ -53,3 +53,63 @@
 .footer{padding-top:46px}
 @media(max-width:900px){.hero{padding:46px 0 58px;gap:4px}.phone-scene{min-height:500px}.float-clean{left:0;top:9%}.float-witchy{right:0;bottom:10%}}
 @media(max-width:560px){.hero{padding-top:38px}.hero h1{font-size:3.2rem}.lead{font-size:1.03rem}.phone-scene{min-height:470px}.phone{width:274px}.float-card{display:none}.spark{opacity:.42}.section{padding:64px 0}}
+
+
+/* V1.3 — manicure preview correction */
+.french-preview{
+  height:150px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:18px 20px 22px;
+  background:
+    radial-gradient(circle at 22% 14%,rgba(255,255,255,.95),transparent 28%),
+    linear-gradient(155deg,#faeef2 0%,#edd1dc 100%);
+}
+.french-preview i{
+  position:relative;
+  display:block;
+  width:38px;
+  height:78px;
+  border-radius:48% 48% 34% 34% / 31% 31% 16% 16%;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.56) 0 8%,transparent 18% 100%),
+    linear-gradient(180deg,#fff8f6 0%,#f7dfe4 24%,#efc3cf 72%,#e4a5b7 100%);
+  border:1px solid rgba(255,255,255,.8);
+  box-shadow:
+    0 8px 12px rgba(111,53,80,.11),
+    inset -5px -10px 14px rgba(155,75,108,.07),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  overflow:hidden;
+  flex:none;
+}
+.french-preview i:before{
+  content:"";
+  position:absolute;
+  left:-2px;right:-2px;top:-1px;
+  height:13px;
+  border-radius:48% 48% 55% 55% / 80% 80% 45% 45%;
+  background:linear-gradient(180deg,#fff,#fffaf8);
+  box-shadow:0 2px 4px rgba(119,68,91,.04);
+}
+.french-preview i:after{
+  content:"";
+  position:absolute;
+  top:12px;left:7px;
+  width:7px;height:40px;border-radius:99px;
+  background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(255,255,255,.08));
+  transform:rotate(8deg);
+}
+.french-preview i:nth-child(1){width:34px;height:68px;transform:translateY(10px) rotate(-6deg)}
+.french-preview i:nth-child(2){width:37px;height:78px;transform:translateY(3px) rotate(-2deg)}
+.french-preview i:nth-child(3){width:40px;height:85px;transform:translateY(-3px)}
+.french-preview i:nth-child(4){width:37px;height:78px;transform:translateY(3px) rotate(2deg)}
+.french-preview i:nth-child(5){width:34px;height:68px;transform:translateY(10px) rotate(6deg)}
+.preview-note{display:none!important}
+
+@media(max-width:560px){
+  .french-preview{height:132px;gap:8px;padding-inline:14px}
+  .french-preview i{width:31px}
+  .french-preview i:nth-child(3){width:34px}
+}
