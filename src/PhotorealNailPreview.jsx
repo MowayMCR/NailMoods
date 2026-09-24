@@ -51,10 +51,15 @@ function TopCoat({ strong = false }) {
 }
 
 function FrenchTip({ nail }) {
-  const fill = nail.drawingTechnique === 'tortoiseshell' ? '#c88137' : nail.drawingTechnique === 'leopard' ? '#d8aa60' : nail.accentColor || nail.color;
+  const technique = nail.drawingTechnique;
+  const fill = technique === 'tortoiseshell' ? '#c88137' : technique === 'leopard' ? '#d8aa60' : technique === 'chrome' ? '#c8ccd5' : nail.accentColor || nail.color;
   return <g><path d="M-28-50H28V-28C12-19-12-19-28-28Z" fill={fill} />
     {nail.drawingTechnique === 'leopard' && [[-15,-35,5],[2,-29,4],[16,-36,5]].map(([x,y,r],index)=><circle key={index} cx={x} cy={y} r={r} fill="none" stroke="#392218" strokeWidth="2.4" strokeDasharray="10 5" />)}
     {nail.drawingTechnique === 'tortoiseshell' && [[-15,-35,8],[5,-33,8],[18,-39,6]].map(([x,y,r],index)=><circle key={index} cx={x} cy={y} r={r} fill="#59301e" opacity=".72" />)}
+    {['crocodile','snake','zebra','cow'].includes(technique) && <path d={technique === 'zebra' ? 'M-24-47-13-23M-4-49 7-22M16-48 25-27' : technique === 'snake' ? 'M-25-42Q-14-51-3-42T19-42M-25-30Q-14-39-3-30T19-30' : technique === 'cow' ? 'M-23-40q7-7 14 1t-3 11q-12 0-11-12M5-47q10-4 17 5t-4 12q-13-4-13-17' : 'M-25-45H25M-25-35H25M-24-25H24'} fill="none" stroke={technique === 'zebra' || technique === 'cow' ? '#392218' : '#66432c'} strokeWidth={technique === 'crocodile' ? '2.4' : '3'} opacity=".9" />}
+    {technique === 'chrome' && <path d="M-22-43H22M-20-34H20M-17-26H17" stroke="#fff" strokeWidth="2" opacity=".76" />}
+    {['aura','blooming','ombre','babyboomer'].includes(technique) && <ellipse cx="0" cy="-35" rx="17" ry="10" fill={nail.color} opacity=".5" />}
+    {['glitter','flakes','foil'].includes(technique) && [[-15,-42],[-2,-31],[13,-40],[20,-28]].map(([x,y],index)=><circle key={index} cx={x} cy={y} r={index%2?2.2:1.45} fill="#fff4bd" />)}
   </g>;
 }
 
@@ -104,6 +109,7 @@ function MaterialDefs({ ids, color, accent }) {
 }
 
 function MaterialLayer({ technique, nail, index, ids }) {
+  technique = ({ crocodile: 'leopard', snake: 'leopard', cow: 'leopard', zebra: 'leopard', foil: 'glitter', flakes: 'glitter', encapsulated: 'glass-nails', milky: 'glazed', babyboomer: 'aura', ombre: 'aura', 'color-block': 'chrome', 'negative-space': 'jelly', 'half-moon': 'micro-french', ruffian: 'micro-french', outline: 'micro-french', 'one-stroke': 'gel-3d' })[technique] || technique;
   const color = nail.color || '#b88699';
   const accent = nail.accentColor || mix(color, '#fff1f5', .62);
   const light = mix(color, '#ffffff', .76), dark = mix(color, '#0a050b', .72);
