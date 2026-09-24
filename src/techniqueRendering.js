@@ -125,7 +125,7 @@ const byId = new Map(TECHNIQUE_CATALOG.map(item => [item.id, item]));
 function sourceText(idea = {}) {
   const products = [...(idea.palette || []), ...(idea.resources || [])];
   return normalize([
-    idea.technique, idea.rendering?.technique, idea.pattern, idea.title, idea.description,
+    idea.technique, ...(idea.techniques || []), idea.rendering?.technique, idea.pattern, idea.title, idea.description,
     ...products.flatMap(item => [item.name, item.finish, item.effect, item.usage, item.equipmentCategory, item.materialStyle, ...(item.decorationTags || [])]),
     ...(idea.nails || []).flatMap(nail => [nail.finish, nail.effect, nail.technique, nail.decoration?.motif]),
   ].filter(Boolean).join(' '));
