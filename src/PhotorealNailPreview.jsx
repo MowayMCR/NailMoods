@@ -50,6 +50,14 @@ function TopCoat({ strong = false }) {
   </>;
 }
 
+function FrenchTip({ nail }) {
+  const fill = nail.drawingTechnique === 'tortoiseshell' ? '#c88137' : nail.drawingTechnique === 'leopard' ? '#d8aa60' : nail.accentColor || nail.color;
+  return <g><path d="M-28-50H28V-28C12-19-12-19-28-28Z" fill={fill} />
+    {nail.drawingTechnique === 'leopard' && [[-15,-35,5],[2,-29,4],[16,-36,5]].map(([x,y,r],index)=><circle key={index} cx={x} cy={y} r={r} fill="none" stroke="#392218" strokeWidth="2.4" strokeDasharray="10 5" />)}
+    {nail.drawingTechnique === 'tortoiseshell' && [[-15,-35,8],[5,-33,8],[18,-39,6]].map(([x,y,r],index)=><circle key={index} cx={x} cy={y} r={r} fill="#59301e" opacity=".72" />)}
+  </g>;
+}
+
 function MaterialDefs({ ids, color, accent }) {
   const light = mix(color, '#ffffff', .72), dark = mix(color, '#09050b', .68);
   return <defs>
@@ -196,6 +204,16 @@ function MaterialLayer({ technique, nail, index, ids }) {
     <path d="M-24 18C-8 7 5 22 23 8" fill="none" stroke="#fff" strokeWidth="2" opacity=".58" />
     <TopCoat />
   </>;
+  if (technique === 'tortoiseshell') return <>
+    <path d={NAIL_PATH} fill="#d28a3c" opacity=".9" />
+    <g fill="#58301f" opacity=".76">{[[-14,-29,12],[12,-24,15],[-4,3,13],[16,22,11],[-17,29,9]].map(([x,y,r],at)=><circle key={at} cx={x} cy={y} r={r} />)}</g>
+    <TopCoat strong />
+  </>;
+  if (technique === 'leopard') return <>
+    <path d={NAIL_PATH} fill={mix(color, '#efc774', .56)} />
+    <g fill="none" stroke="#392218" strokeWidth="3.1">{[[-13,-28,8],[13,-19,9],[-12,4,8],[12,20,8],[-2,35,6]].map(([x,y,r],at)=><circle key={at} cx={x} cy={y} r={r} strokeDasharray="13 6" />)}</g>
+    <TopCoat strong />
+  </>;
   if (technique === 'stamping') return <>
     <BaseGel color={color} />
     <g fill="none" stroke={accent} strokeWidth="1.2" opacity=".88">{[-30,-10,10,30].map(y => <g key={y}><circle cx="-8" cy={y} r="7"/><circle cx="8" cy={y} r="7"/><path d={`M-19 ${y}H19`}/></g>)}</g>
@@ -219,7 +237,7 @@ function Nail({ placement, nail, index, technique, prefix, dimmed }) {
   const color = nail.color || '#b88699', accent = nail.accentColor || mix(color, '#ffffff', .62);
   return <g transform={`translate(${placement.x} ${placement.y}) rotate(${placement.rotate}) scale(${placement.sx} ${placement.sy})`} opacity={dimmed ? .16 : 1}>
     <MaterialDefs ids={ids} color={color} accent={accent} />
-    <g clipPath={`url(#${ids.clip})`}><MaterialLayer technique={technique} nail={nail} index={index} ids={ids} /></g>
+    <g clipPath={`url(#${ids.clip})`}><MaterialLayer technique={technique} nail={nail} index={index} ids={ids} />{nail.drawing === 'french' && <FrenchTip nail={nail} />}</g>
     <path d={NAIL_PATH} fill="none" stroke="#fff" strokeWidth="1.25" strokeOpacity=".32" />
   </g>;
 }
