@@ -29,14 +29,20 @@ function Gem({ x, y, color = '#d8f6ff', size = 6 }) {
 }
 
 function FrenchTip({ nail }) {
-  const fill = nail.drawingTechnique === 'tortoiseshell' ? '#c88235' : nail.drawingTechnique === 'leopard' ? '#d7aa5f' : nail.accentColor;
+  const technique = nail.drawingTechnique;
+  const fill = technique === 'tortoiseshell' ? '#c88235' : technique === 'leopard' ? '#d7aa5f' : technique === 'chrome' ? '#c8ccd5' : nail.accentColor;
   return <g><path d="M0 0H64V26Q32 40 0 26Z" fill={fill} />
     {nail.drawingTechnique === 'leopard' && [[15,14,5],[32,20,4],[49,14,5],[25,30,3]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} fill="none" stroke="#3a2418" strokeWidth="2" />)}
     {nail.drawingTechnique === 'tortoiseshell' && [[16,15,8],[38,16,9],[28,28,7]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} fill="#5b2d1c" opacity=".72" />)}
+    {['crocodile','snake','zebra','cow'].includes(technique) && <path d={technique === 'zebra' ? 'M5 3 18 33M22 1 34 36M42 2 56 31' : technique === 'snake' ? 'M4 12Q16 1 28 12T52 12M4 26Q16 15 28 26T52 26' : technique === 'cow' ? 'M7 13q7-9 15 0t-3 14q-12 1-12-14M35 6q10-5 18 5t-5 14q-14-4-13-19' : 'M5 6H58M4 17H59M5 28H58'} fill="none" stroke={technique === 'zebra' || technique === 'cow' ? '#3a2418' : '#66432c'} strokeWidth={technique === 'crocodile' ? '2.5' : '3'} opacity=".9" />}
+    {technique === 'chrome' && <path d="M5 9H59M7 17H57M10 26H54" stroke="#fff" strokeWidth="2" opacity=".75" />}
+    {['aura','blooming','ombre','babyboomer'].includes(technique) && <ellipse cx="32" cy="17" rx="18" ry="12" fill={nail.color} opacity=".48" />}
+    {['glitter','flakes','foil'].includes(technique) && [[13,11],[28,23],[44,13],[52,28]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i%2?2.3:1.5} fill="#fff4bd" />)}
   </g>;
 }
 
 function MaterialLayer({ technique, nail, index, ids }) {
+  technique = ({ crocodile: 'leopard', snake: 'leopard', cow: 'leopard', zebra: 'leopard', foil: 'glitter', flakes: 'glitter', encapsulated: 'glass-nails', milky: 'glazed', babyboomer: 'aura', ombre: 'aura', 'color-block': 'chrome', 'negative-space': 'jelly', 'half-moon': 'micro-french', ruffian: 'micro-french', outline: 'micro-french', 'one-stroke': 'gel-3d' })[technique] || technique;
   const color = nail.color || '#b88699';
   const light = mix(color, '#ffffff', .7), dark = mix(color, '#120914', .55);
   if (technique === 'cat-eye') return <>
