@@ -87,6 +87,8 @@ export function nailDetails(idea, index) {
   const sticker = nail.decoration && idea.resources.find(isDecoration);
   const details = [{ label: 'Couleur', item: base }];
   if (nail.drawing && accent) details.push({ label: { french: 'Pointes de la French', line: 'Ligne', dots: 'Pois' }[nail.drawing], item: accent });
+  if (nail.drawingTechnique) details.push({ label: 'Technique de la pointe · ' + String(nail.drawingTechnique).replace(/-/g, ' '), item: accent || base });
+  else if (nail.technique) details.push({ label: 'Technique · ' + String(nail.technique).replace(/-/g, ' '), item: base });
   if (sticker) details.push({ label: 'Décoration', item: sticker });
   return details;
 }
