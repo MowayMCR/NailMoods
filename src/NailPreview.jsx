@@ -28,6 +28,14 @@ function Gem({ x, y, color = '#d8f6ff', size = 6 }) {
   return <g><path d={`M${x} ${y-size} ${x+size} ${y} ${x} ${y+size} ${x-size} ${y}Z`} fill={color} stroke="#fff" strokeWidth=".8" /><path d={`M${x} ${y-size+2} ${x+size-2} ${y} ${x} ${y+1} ${x-size+2} ${y}Z`} fill="#fff" opacity=".55" /></g>;
 }
 
+function FrenchTip({ nail }) {
+  const fill = nail.drawingTechnique === 'tortoiseshell' ? '#c88235' : nail.drawingTechnique === 'leopard' ? '#d7aa5f' : nail.accentColor;
+  return <g><path d="M0 0H64V26Q32 40 0 26Z" fill={fill} />
+    {nail.drawingTechnique === 'leopard' && [[15,14,5],[32,20,4],[49,14,5],[25,30,3]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} fill="none" stroke="#3a2418" strokeWidth="2" />)}
+    {nail.drawingTechnique === 'tortoiseshell' && [[16,15,8],[38,16,9],[28,28,7]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} fill="#5b2d1c" opacity=".72" />)}
+  </g>;
+}
+
 function MaterialLayer({ technique, nail, index, ids }) {
   const color = nail.color || '#b88699';
   const light = mix(color, '#ffffff', .7), dark = mix(color, '#120914', .55);
@@ -46,6 +54,8 @@ function MaterialLayer({ technique, nail, index, ids }) {
   if (technique === 'aura') return <><rect width="64" height="104" fill={dark} /><ellipse cx="32" cy="50" rx="28" ry="38" fill={`url(#${ids.aura})`} /></>;
   if (technique === 'blooming') return <><rect width="64" height="104" fill={mix(color,'#ffffff',.42)} /><g filter={`url(#${ids.blur})`} opacity=".8"><circle cx="24" cy="38" r="16" fill={color}/><circle cx="42" cy="54" r="18" fill={light}/><circle cx="25" cy="72" r="15" fill={dark}/></g></>;
   if (technique === 'marble') return <><rect width="64" height="104" fill={mix(color,'#ffffff',.55)} /><path d="M7 24C26 30 18 42 49 47S37 67 58 80" fill="none" stroke={dark} strokeWidth="5" opacity=".3" filter={`url(#${ids.blur})`} /><path d="M5 23C26 30 17 41 50 47S38 67 59 79" fill="none" stroke={mix(color,'#ffffff',.1)} strokeWidth="1.6" /><path d="M11 67c18-12 25 4 41-8" fill="none" stroke="#fff" strokeWidth="2" opacity=".55" /></>;
+  if (technique === 'tortoiseshell') return <><rect width="64" height="104" fill="#d38b3c" opacity=".88" /><g fill="#59301e" opacity=".78">{[[18,31,13],[43,38,16],[26,61,15],[47,75,12],[14,82,10]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} />)}</g><path d="M18 30Q15 49 19 67" stroke="#fff3c2" opacity=".45" strokeWidth="4" fill="none" strokeLinecap="round" /></>;
+  if (technique === 'leopard') return <><rect width="64" height="104" fill={mix(color,'#f4cf85',.55)} /><g fill="none" stroke="#3a2418" strokeWidth="3">{[[20,30,8],[42,42,9],[23,63,8],[43,77,8],[34,89,5]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} strokeDasharray="12 6" />)}</g><g fill="#5a3020">{[[26,33],[36,48],[19,71],[47,69],[34,86]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r="2" />)}</g></>;
   if (technique === 'gel-3d') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><g filter={`url(#${ids.relief})`}><path d="M15 68C22 51 20 34 31 29c11 8 7 22 18 31-4 13-13 21-22 19-7-1-11-5-12-11Z" fill={light} opacity=".8" stroke="#fff" strokeOpacity=".55" strokeWidth="1.2" /><path d="M23 63c5-9 3-20 9-25 6 7 4 17 10 23" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" opacity=".7" /></g></>;
   if (technique === 'rhinestones') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><Gem x={32} y={42} size={7}/><Gem x={25} y={57} color="#ffd9f7" size={4}/><Gem x={39} y={62} color="#fff2ba" size={5}/></>;
   if (technique === 'charms') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><g filter={`url(#${ids.relief})`}><circle cx="32" cy="53" r="12" fill={`url(#${ids.gold})`} stroke="#fff3bf" strokeWidth="1"/><path d="m32 44 2.5 6 6.5.5-5 4 1.5 6.5-5.5-3.5-5.5 3.5 1.5-6.5-5-4 6.5-.5Z" fill="#fff1bd"/></g></>;
@@ -91,7 +101,7 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
             {/paillet|holograph|irise/.test(normalize(nail.finish + nail.effect)) && <g fill="#fff" opacity=".65">{[[27, 30], [43, 47], [22, 70], [38, 77], [32, 55]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="1.3" />)}</g>}
             {/cat.?eye|magnetique/.test(normalize(nail.finish + nail.effect)) && <path d="M8 80 60 20" stroke="#fff" opacity=".3" strokeWidth="6" />}
           </>}
-          {nail.drawing === 'french' && <path d="M0 0H64V26Q32 40 0 26Z" fill={nail.accentColor} />}
+          {nail.drawing === 'french' && <FrenchTip nail={nail} />}
           {nail.drawing === 'line' && <path d="M31 23Q25 54 35 81" stroke={nail.accentColor} strokeWidth="3" fill="none" />}
           {nail.drawing === 'dots' && <g fill={nail.accentColor}>{[[28, 34], [37, 46], [28, 60], [37, 74]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="3" />)}</g>}
           {nail.decoration && <Decor {...nail.decoration} />}
