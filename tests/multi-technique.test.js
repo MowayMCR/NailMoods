@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSuggestions, selectedTechniques } from '../src/creationEngine.js';
+import { snapshotIdea, validIdea } from '../src/inspirations.js';
 
 const stock = [
   { id: 'nude', name: 'Nude', type: 'Vernis', color: '#e6c4ad', family: 'Nude', finish: 'Brillant', usage: 'Couleur seule' },
@@ -16,4 +17,18 @@ test('multi-technique selection preserves French leopard and tortoise as a visib
   assert.ok(idea.nails.every(nail => nail.drawing === 'french'));
   assert.ok(idea.nails.some(nail => nail.drawingTechnique === 'leopard'));
   assert.ok(idea.nails.some(nail => nail.drawingTechnique === 'tortoiseshell'));
+});
+
+test('every visual family can be composed on a French tip and survives a favorite snapshot', () => {
+  const options = { techniques: ['French', 'Chrome powder', 'Aura nails', 'Blooming gel', 'Crocodile'], techniquePlacement: 'french', polishCount: 2, duration: 90, level: 2 };
+  const selected = selectedTechniques(options);
+  assert.deepEqual(selected, ['french', 'chrome', 'aura', 'blooming']);
+  const idea = createSuggestions(stock, { shape: 'Amande', length: 'Moyen' }, options, 3, 4).results[0];
+  assert.ok(idea.nails.every(nail => nail.drawing === 'french'));
+  assert.ok(idea.nails.some(nail => ['chrome', 'aura', 'blooming'].includes(nail.drawingTechnique)));
+  assert.deepEqual(idea.composition, { techniques: ['French', 'Chrome', 'Aura', 'Blooming'], placement: 'french' });
+  const favorite = snapshotIdea(idea, idea.options);
+  assert.ok(validIdea(favorite));
+  assert.deepEqual(favorite.composition, idea.composition);
+  assert.deepEqual(favorite.nails, JSON.parse(JSON.stringify(idea.nails)));
 });
