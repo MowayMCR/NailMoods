@@ -11,6 +11,8 @@ export function readCreationState(storage, profile = {}) {
     if (!saved || typeof saved.options !== 'object' || !saved.options || Array.isArray(saved.options)) return fallback;
     const options = { ...fallback.options, ...saved.options };
     if (Object.hasOwn(options, 'requiredColorIds')) options.requiredColorIds = Array.isArray(options.requiredColorIds) ? options.requiredColorIds.filter(id => ['string', 'number'].includes(typeof id)).map(String).slice(0, 5) : [];
+    if (Object.hasOwn(options, 'techniques')) options.techniques = Array.isArray(options.techniques) ? [...new Set(options.techniques.filter(value => typeof value === 'string' && value.trim() && value !== 'Libre'))].slice(0, 4) : [];
+    if (Object.hasOwn(options, 'techniquePlacement') && !['auto', 'all', 'accent', 'french', 'mix'].includes(options.techniquePlacement)) options.techniquePlacement = 'auto';
     if (!['usual', 'change', 'surprise'].includes(options.mode)) options.mode = 'usual';
     if (!Array.isArray(options.constraints)) options.constraints = [];
     if (options.constraints.includes('noStickers')) {
