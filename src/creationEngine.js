@@ -12,17 +12,18 @@ const needsLamp = item => ['Semi-permanent', 'Gel'].includes(item.type);
 const magnetic = item => /cat.?eye|magnetique|avec aimant/.test(normalize([item.finish, item.effect, item.usage].join(' ')));
 const drawing = new Set(['french', 'dots', 'line']);
 const techniqueAliases = {
-  french: 'french', 'micro french': 'french', 'reverse french': 'french', 'double french': 'french', 'side french': 'french', 'v french': 'french',
+  french: 'french', 'micro french': 'french', 'reverse french': 'french', 'double french': 'french', 'side french': 'french', 'deep french': 'french', 'v french': 'french',
   leopard: 'leopard', 'leopard print': 'leopard',
-  tortoiseshell: 'tortoiseshell', tortoise: 'tortoiseshell',
-  'blooming gel': 'blooming', blooming: 'blooming',
-  'chrome powder': 'chrome', chrome: 'chrome', 'glazed nails': 'glazed',
+  tortoiseshell: 'tortoiseshell', tortoise: 'tortoiseshell', crocodile: 'crocodile', 'snake print': 'snake', 'cow print': 'cow', zebra: 'zebra',
+  'blooming gel': 'blooming', blooming: 'blooming', watercolor: 'blooming', airbrush: 'aura',
+  'chrome powder': 'chrome', chrome: 'chrome', 'glazed nails': 'glazed', foil: 'foil', flakes: 'flakes',
   'cat eye magnetic': 'cat-eye', 'cat-eye magnetic': 'cat-eye', 'velvet nails': 'velvet-magnetic',
-  'aura nails': 'aura', aura: 'aura', '3d gel': 'gel-3d', 'gel 3d': 'gel-3d',
-  strass: 'rhinestones', charms: 'charms', 'jelly nails': 'jelly', 'glass nails': 'glass-nails',
-  'marble': 'marble', 'line art': 'line', 'dot art': 'dots', 'accent nail': 'accent', 'duo alterne': 'duo',
+  'aura nails': 'aura', aura: 'aura', '3d gel': 'gel-3d', 'gel 3d': 'gel-3d', encapsulated: 'encapsulated',
+  strass: 'rhinestones', charms: 'charms', 'jelly nails': 'jelly', 'syrup nails': 'jelly', 'glass nails': 'glass-nails', 'milky nails': 'milky', 'soap nails': 'milky',
+  marble: 'marble', 'line art': 'line', freehand: 'line', 'one stroke': 'one-stroke', 'dot art': 'dots', 'accent nail': 'accent', 'duo alterne': 'duo',
+  babyboomer: 'babyboomer', ombre: 'ombre', degrade: 'ombre', 'color block': 'color-block', 'negative space': 'negative-space', 'half moon': 'half-moon', ruffian: 'ruffian', 'outline nails': 'outline', 'skittle nails': 'skittle', 'mix & match': 'mix-match', monochrome: 'monochrome', 'ton sur ton': 'monochrome', 'gradient nails': 'ombre', stamping: 'stamping',
 };
-const techniqueLabel = { french: 'French', leopard: 'Léopard', tortoiseshell: 'Tortoise', blooming: 'Blooming', chrome: 'Chrome', glazed: 'Glazed', 'cat-eye': 'Cat Eye', 'velvet-magnetic': 'Velvet magnétique', aura: 'Aura', 'gel-3d': 'Gel 3D', rhinestones: 'Strass', charms: 'Charms', jelly: 'Jelly', 'glass-nails': 'Glass nails', marble: 'Marbré', line: 'Line art', dots: 'Dot art', accent: 'Accent nail', duo: 'Duo alterné' };
+const techniqueLabel = { french: 'French', leopard: 'Léopard', tortoiseshell: 'Tortoise', crocodile: 'Crocodile', snake: 'Snake print', cow: 'Cow print', zebra: 'Zèbre', blooming: 'Blooming', chrome: 'Chrome', glazed: 'Glazed', foil: 'Foil', flakes: 'Flakes', 'cat-eye': 'Cat Eye', 'velvet-magnetic': 'Velvet magnétique', aura: 'Aura', 'gel-3d': 'Gel 3D', encapsulated: 'Encapsulé', rhinestones: 'Strass', charms: 'Charms', jelly: 'Jelly', 'glass-nails': 'Glass nails', milky: 'Milky nails', marble: 'Marbré', line: 'Line art', 'one-stroke': 'One stroke', dots: 'Dot art', babyboomer: 'Babyboomer', ombre: 'Ombré', 'color-block': 'Color block', 'negative-space': 'Negative space', 'half-moon': 'Half moon', ruffian: 'Ruffian', outline: 'Outline nails', skittle: 'Skittle nails', 'mix-match': 'Mix & match', monochrome: 'Ton sur ton', accent: 'Accent nail', duo: 'Duo alterné' };
 
 export function selectedTechniques(options = {}) {
   const raw = Array.isArray(options.techniques) ? options.techniques : options.technique ? [options.technique] : [];
@@ -34,7 +35,7 @@ function applyTechniqueComposition(nails, options, pattern) {
   const selected = selectedTechniques(options);
   if (!selected.length) return { nails, selected, primary: '' };
   const french = selected.includes('french');
-  const effects = selected.filter(value => !['french', 'accent', 'duo', 'line', 'dots'].includes(value));
+  const effects = selected.filter(value => !['french', 'accent', 'duo', 'line', 'dots', 'skittle', 'mix-match', 'monochrome'].includes(value));
   const distribution = options.techniquePlacement || 'auto';
   const target = distribution === 'all' ? [0, 1, 2, 3, 4]
     : distribution === 'accent' ? [3]
@@ -43,6 +44,8 @@ function applyTechniqueComposition(nails, options, pattern) {
   const next = nails.map((nail, index) => {
     const effect = effects.length ? effects[target.indexOf(index) >= 0 ? target.indexOf(index) % effects.length : (distribution === 'all' ? index % effects.length : -1)] : '';
     const isFrench = french && (distribution !== 'accent' || index === 3);
+    // Any selected visual technique can live inside a French tip. The renderer
+    // receives the precise recipe rather than a generic “French” label.
     const drawingTechnique = isFrench && effects.length && (distribution === 'french' || distribution === 'all' || index === 3 || distribution === 'auto') ? effects[index % effects.length] : '';
     return {
       ...nail,
@@ -262,7 +265,8 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (composition.selected.length) reasons.push('Composition : ' + composition.selected.map(value => techniqueLabel[value] || value).join(' + '));
     if (!reasons.length) reasons.push('Avec les produits de ta collection');
     const personal = personalAdjustment({ pattern, palette, resources, nails }, options, personalModel);
-    candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score: score + personal.score, reasons: [...new Set([...personal.reasons, ...reasons])].slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte', techniques: composition.selected.map(value => techniqueLabel[value] || value), technique: composition.primary || undefined, techniquePlacement: options.techniquePlacement || 'auto' });
+    const compositionRecord = { techniques: composition.selected.map(value => techniqueLabel[value] || value), placement: options.techniquePlacement || 'auto' };
+    candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score: score + personal.score, reasons: [...new Set([...personal.reasons, ...reasons])].slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte', techniques: compositionRecord.techniques, technique: composition.primary || undefined, techniquePlacement: compositionRecord.placement, composition: compositionRecord, options: { ...options, techniques: [...(options.techniques || [])], techniquePlacement: compositionRecord.placement } });
   }
 
   for (const base of ordered) {
