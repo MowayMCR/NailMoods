@@ -7,7 +7,7 @@ import { generateInspirations } from './freeInspiration';
 import { useStorage } from './StorageContext';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker, Search, Wand2, Send } from 'lucide-react';
-import { createSuggestions, inventoryStamp, profileDefaults } from './creationEngine';
+import { createSuggestions, inventoryStamp, profileDefaults, selectedTechniques } from './creationEngine';
 import NailPreview from './NailPreview';
 import PhotoInspirationFlow from './PhotoInspirationFlow';
 import './creation.css';
@@ -26,7 +26,7 @@ const modes = [
   { id: 'change', title: 'Envie de changement', subtitle: 'Explorer d’autres associations', icon: Shuffle },
   { id: 'surprise', title: 'Surprends-moi', subtitle: 'Une association inattendue', icon: Sparkles },
 ];
-const levels = ['Très simple', 'Un peu de détail', 'À l’aise'];
+const levels = ['Très simple', 'Un peu de détail', 'Avancé'];
 const limits = [['noDrawing', 'Sans dessin', 'Pas de French, de lignes ou de pois dessinés.'], ['noLamp', 'Sans lampe', 'Uniquement les vernis classiques.'], ['favorites', 'Vernis favoris uniquement', 'Les couleurs marquées d’un cœur.']];
 const durationLabel = value => value === 90 ? '90 min max' : value + ' min max';
 const polishCountLabel = value => value === 'auto' ? 'Automatique' : value + ' vernis';
@@ -52,6 +52,9 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
   const requiredIds = Array.isArray(options.requiredColorIds) ? options.requiredColorIds.map(String) : [];
   const selectedColors = items.filter(item => requiredIds.includes(String(item.id)));
   const decorations = decorationChoice(options);
+  const chosenTechniques = selectedTechniques(options);
+  const canUseMixMatch = chosenTechniques.length > 1 && Number(options.level) >= 2;
+  const techniqueSummary = chosenTechniques.length ? chosenTechniques.map(value => ({ french: 'French', leopard: 'Léopard', tortoiseshell: 'Tortoise', blooming: 'Blooming', chrome: 'Chrome', glazed: 'Glazed', 'cat-eye': 'Cat Eye', 'velvet-magnetic': 'Velvet', aura: 'Aura', 'gel-3d': 'Gel 3D', rhinestones: 'Strass', charms: 'Charms', jelly: 'Jelly', 'glass-nails': 'Glass nails', marble: 'Marbré' })[value] || value).join(' · ') : 'Libre';
   const missingLamp = report.blocked.some(entry => entry.reason === 'Lampe UV / LED à renseigner dans le matériel.');
   const missingMagnet = report.blocked.some(entry => entry.reason === 'Aimant cat-eye à renseigner dans le matériel.');
   const selectedDecoration = report.tools.stickers.find(item => String(item.id) === decorations.id);
@@ -64,7 +67,8 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
   const selections = {
     mood: { title: 'Quelle ambiance ?', icon: Sun, label: 'Ambiance', searchable: true, values: [...new Set(['Douce', 'Mystérieuse', 'Chic', 'Joyeuse', 'Audacieuse', 'Au calme', ...TAXONOMY.moods])], placeholder: 'Douce, glamour, sombre…' },
     style: { title: 'Quel style ?', icon: Palette, label: 'Style', searchable: true, values: [...new Set(['Libre', ...(Array.isArray(profile.styles) ? profile.styles : []), ...TAXONOMY.aesthetics, ...TAXONOMY.themes])], placeholder: 'Witchy, clean girl, cottagecore…' },
-    technique: { title: 'Quelle technique ?', icon: Wand2, label: 'Technique', searchable: true, values: ['Libre', ...TAXONOMY.techniques], placeholder: 'French, micro French, cat-eye…' },
+    technique: { title: 'Quelles techniques ?', icon: Wand2, label: 'Techniques', searchable: true, multi: true, values: ['Libre', ...TAXONOMY.techniques], placeholder: 'French, léopard, tortoise…' },
+    techniquePlacement: { title: 'Comment les répartir ?', icon: Wand2, label: 'Répartition', values: ['auto', 'all', 'accent', 'french', ...(canUseMixMatch ? ['mix'] : [])], format: value => ({ auto: 'Suggestion NailMoods', all: 'Sur toute la pose', accent: 'Un accent nail', french: 'Dans la French', mix: 'Pose mix & match · 5 ongles' })[value] || 'Suggestion NailMoods' },
     occasion: { title: 'Pour quelle occasion ?', icon: CalendarDays, label: 'Occasion', values: ['Tous les jours', 'Travail', 'Soirée', 'Événement', 'Week-end'] },
     duration: { title: 'Combien de temps ?', icon: Clock3, label: 'Temps', values: [15, 30, 45, 60, 90], format: durationLabel },
     polishCount: { title: 'Combien de vernis ?', icon: Palette, label: 'Nombre de vernis', values: ['auto', 1, 2, 3, 4, 5], format: polishCountLabel },
@@ -82,7 +86,16 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
     if(patch.intent==='photos'&&(!browserStorage.accountScoped||!['plus','pro'].includes(browserStorage.accountTier)))track('feature_locked',{});
     if(patch.intent)track('create_mode_selected',{mode:patch.intent==='collection'?'my_collection':'inspire_me'},{screen:'create'});
     if (patch.intent === 'inspire') patch = { ...patch, requiredColorIds: [] };
-    setState(previous => ({ ...previous, options: { ...previous.options, ...patch }, generated: false, selected: null }));
+    setState(previous => {
+      const nextOptions = { ...previous.options, ...patch };
+      if (nextOptions.techniquePlacement === 'mix' && (selectedTechniques(nextOptions).length < 2 || Number(nextOptions.level) < 2)) nextOptions.techniquePlacement = 'auto';
+      return { ...previous, options: nextOptions, generated: false, selected: null };
+    });
+  }
+  function toggleTechnique(value) {
+    if (value === 'Libre') { change({ techniques: [], technique: undefined }); return; }
+    const active = (options.techniques || []).includes(value);
+    change({ techniques: active ? options.techniques.filter(item => item !== value) : [...(options.techniques || []), value].slice(0, 4), technique: undefined });
   }
   function generate() {
     recordRuntimeEvent('generation','ok');
@@ -137,8 +150,8 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
         {['mood', 'style'].includes(key) ? <MoodGlyph value={options[key]} /> : <choice.icon />}<small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key]}</b><ChevronRight className="tileArrow" />
       </button>; })}</div>
       <details className="creationAdvanced"><summary><span><SlidersHorizontal />Personnaliser ma pose</span><small>Technique, teintes, décorations et limites</small></summary>
-        <div className="creationTiles">{['technique', 'occasion', 'polishCount'].map(key => { const choice = selections[key]; return <button key={key} data-choice={key} onClick={() => openPicker(key)}>
-          <choice.icon />{key === 'polishCount' && <span className="countPreview" aria-hidden="true">{Array.from({ length: options.polishCount === 'auto' ? 5 : Number(options.polishCount) }, (_, index) => <svg key={index} viewBox="0 0 16 30" fill="none" focusable="false"><rect x="5" y="1" width="6" height="10" rx="1.5" fill="currentColor" /><path d="M5 12h6l3 4v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V16z" fill="var(--soft)" stroke="currentColor" strokeWidth="1.2" /><path d="M5 19v6" stroke="currentColor" strokeOpacity=".35" strokeLinecap="round" /></svg>)}</span>}<small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key] || 'Libre'}</b><ChevronRight className="tileArrow" />
+        <div className="creationTiles">{['technique', ...(chosenTechniques.length ? ['techniquePlacement'] : []), 'occasion', 'polishCount'].map(key => { const choice = selections[key]; return <button key={key} data-choice={key} onClick={() => openPicker(key)}>
+          <choice.icon />{key === 'polishCount' && <span className="countPreview" aria-hidden="true">{Array.from({ length: options.polishCount === 'auto' ? 5 : Number(options.polishCount) }, (_, index) => <svg key={index} viewBox="0 0 16 30" fill="none" focusable="false"><rect x="5" y="1" width="6" height="10" rx="1.5" fill="currentColor" /><path d="M5 12h6l3 4v11a2 2 0 0 1-2-2H4a2 2 0 0 1-2-2V16z" fill="var(--soft)" stroke="currentColor" strokeWidth="1.2" /><path d="M5 19v6" stroke="currentColor" strokeOpacity=".35" strokeLinecap="round" /></svg>)}</span>}<small>{choice.label}</small><b>{key === 'technique' ? techniqueSummary : choice.format ? choice.format(options[key]) : options[key] || 'Libre'}</b><ChevronRight className="tileArrow" />
         </button>; })}
           <button className="creationDecorationsTile" onClick={() => setPicker('decorations')}><Sticker /><small>Décorations</small><b>{decorationLabel}</b><ChevronRight className="tileArrow" /></button>
           <button className="creationLimitsTile" onClick={() => setPicker('constraints')}><SlidersHorizontal /><small>Mes limites</small><b>{options.constraints.length ? options.constraints.length + ' choix' : 'Aucune limite'}</b><ChevronRight className="tileArrow" /></button>
@@ -191,7 +204,12 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
     {picker && !['decorations', 'colors'].includes(picker) && <Sheet className="creationSheet" eyebrow="MON ENVIE DU JOUR" title={picker === 'constraints' ? 'Tes limites du jour' : selections[picker].title} onClose={() => setPicker(null)}>
       {picker === 'polishCount' && <p className="creationPickerHelp">Choisis un nombre exact de vernis colorés par proposition. Les stickers, bases et top coats ne sont pas comptés.</p>}
       {selections[picker]?.searchable && <label className="creationPickerSearch"><Search /><input autoFocus aria-label={'Rechercher ' + selections[picker].label.toLocaleLowerCase('fr')} value={pickerQuery} onChange={event => setPickerQuery(event.target.value)} placeholder={selections[picker].placeholder} /></label>}
-      <div className={'creationOptions ' + (selections[picker]?.searchable ? 'creationTagOptions' : '')}>{picker === 'constraints' ? limits.map(([key, label, detail]) => <button key={key} aria-pressed={options.constraints.includes(key)} className={options.constraints.includes(key) ? 'on' : ''} onClick={() => change({ constraints: options.constraints.includes(key) ? options.constraints.filter(value => value !== key) : [...options.constraints, key] })}><span><b>{label}</b><small>{detail}</small></span>{options.constraints.includes(key) && <Check />}</button>) : pickerValues.map(value => <button key={value} className={options[picker] === value ? 'on' : ''} aria-pressed={options[picker] === value} onClick={() => { change({ [picker]: value }); setPicker(null); }}>{['mood', 'style'].includes(picker) && <MoodGlyph value={value} />}<span>{selections[picker].format ? selections[picker].format(value) : value}{picker === 'polishCount' && <small>{polishCountHints[value]}</small>}</span>{options[picker] === value && <Check />}</button>)}{picker !== 'constraints' && selections[picker]?.searchable && !pickerValues.length && <p className="creationNoResults">Aucun tag correspondant.</p>}</div>
+      <div className={'creationOptions ' + (selections[picker]?.searchable ? 'creationTagOptions' : '')}>
+        {picker === 'constraints' && limits.map(([key, label, detail]) => <button key={key} aria-pressed={options.constraints.includes(key)} className={options.constraints.includes(key) ? 'on' : ''} onClick={() => change({ constraints: options.constraints.includes(key) ? options.constraints.filter(value => value !== key) : [...options.constraints, key] })}><span><b>{label}</b><small>{detail}</small></span>{options.constraints.includes(key) && <Check />}</button>)}
+        {picker === 'technique' && <><p className="creationPickerHelp">Choisis jusqu’à 4 techniques : la visualisation répartit réellement les effets sur la pose.</p>{pickerValues.map(value => <button key={value} className={value !== 'Libre' && (options.techniques || []).includes(value) ? 'on' : ''} aria-pressed={value !== 'Libre' && (options.techniques || []).includes(value)} onClick={() => toggleTechnique(value)}><span>{value}</span>{value !== 'Libre' && (options.techniques || []).includes(value) && <Check />}</button>)}<button className="creationGenerate" onClick={() => setPicker(null)}><Check />Garder ces techniques</button></>}
+        {picker !== 'constraints' && picker !== 'technique' && pickerValues.map(value => <button key={value} className={options[picker] === value ? 'on' : ''} aria-pressed={options[picker] === value} onClick={() => { change({ [picker]: value }); setPicker(null); }}>{['mood', 'style'].includes(picker) && <MoodGlyph value={value} />}<span>{selections[picker].format ? selections[picker].format(value) : value}{picker === 'polishCount' && <small>{polishCountHints[value]}</small>}</span>{options[picker] === value && <Check />}</button>)}
+        {picker !== 'constraints' && selections[picker]?.searchable && !pickerValues.length && <p className="creationNoResults">Aucun tag correspondant.</p>}
+      </div>
       {picker === 'constraints' && <button className="creationGenerate" onClick={() => setPicker(null)}><Check />Garder ces choix</button>}
     </Sheet>}
   </div>;

@@ -11,6 +11,81 @@ export const auxiliary = item => /\b(base\s*coat|top\s*coat|primer|cleaner|disso
 const needsLamp = item => ['Semi-permanent', 'Gel'].includes(item.type);
 const magnetic = item => /cat.?eye|magnetique|avec aimant/.test(normalize([item.finish, item.effect, item.usage].join(' ')));
 const drawing = new Set(['french', 'dots', 'line']);
+const techniqueAliases = {
+  french: 'french', 'micro french': 'french', 'reverse french': 'french', 'double french': 'french', 'side french': 'french', 'deep french': 'french', 'v french': 'french',
+  leopard: 'leopard', 'leopard print': 'leopard',
+  tortoiseshell: 'tortoiseshell', tortoise: 'tortoiseshell', crocodile: 'crocodile', 'snake print': 'snake', 'cow print': 'cow', zebra: 'zebra',
+  'blooming gel': 'blooming', blooming: 'blooming', watercolor: 'blooming', airbrush: 'aura',
+  'chrome powder': 'chrome', chrome: 'chrome', 'glazed nails': 'glazed', foil: 'foil', flakes: 'flakes',
+  'cat eye magnetic': 'cat-eye', 'cat-eye magnetic': 'cat-eye', 'velvet nails': 'velvet-magnetic',
+  'aura nails': 'aura', aura: 'aura', '3d gel': 'gel-3d', 'gel 3d': 'gel-3d', encapsulated: 'encapsulated',
+  strass: 'rhinestones', charms: 'charms', 'jelly nails': 'jelly', 'syrup nails': 'jelly', 'glass nails': 'glass-nails', 'milky nails': 'milky', 'soap nails': 'milky',
+  marble: 'marble', 'line art': 'line', freehand: 'line', 'one stroke': 'one-stroke', 'dot art': 'dots', 'accent nail': 'accent', 'duo alterne': 'duo',
+  babyboomer: 'babyboomer', ombre: 'ombre', degrade: 'ombre', 'color block': 'color-block', 'negative space': 'negative-space', 'half moon': 'half-moon', ruffian: 'ruffian', 'outline nails': 'outline', 'skittle nails': 'skittle', 'mix & match': 'mix-match', monochrome: 'monochrome', 'ton sur ton': 'monochrome', 'gradient nails': 'ombre', stamping: 'stamping',
+};
+const techniqueLabel = { french: 'French', leopard: 'Léopard', tortoiseshell: 'Tortoise', crocodile: 'Crocodile', snake: 'Snake print', cow: 'Cow print', zebra: 'Zèbre', blooming: 'Blooming', chrome: 'Chrome', glazed: 'Glazed', foil: 'Foil', flakes: 'Flakes', 'cat-eye': 'Cat Eye', 'velvet-magnetic': 'Velvet magnétique', aura: 'Aura', 'gel-3d': 'Gel 3D', encapsulated: 'Encapsulé', rhinestones: 'Strass', charms: 'Charms', jelly: 'Jelly', 'glass-nails': 'Glass nails', milky: 'Milky nails', marble: 'Marbré', line: 'Line art', 'one-stroke': 'One stroke', dots: 'Dot art', babyboomer: 'Babyboomer', ombre: 'Ombré', 'color-block': 'Color block', 'negative-space': 'Negative space', 'half-moon': 'Half moon', ruffian: 'Ruffian', outline: 'Outline nails', skittle: 'Skittle nails', 'mix-match': 'Mix & match', monochrome: 'Ton sur ton', accent: 'Accent nail', duo: 'Duo alterné' };
+
+export function selectedTechniques(options = {}) {
+  const raw = Array.isArray(options.techniques) ? options.techniques : options.technique ? [options.technique] : [];
+  return [...new Set(raw.map(value => techniqueAliases[normalize(value)] || normalize(value)).filter(value => value && value !== 'libre'))].slice(0, 4);
+}
+
+// A chosen technique is a visible composition rule, never a tag appended after generation.
+function applyTechniqueComposition(nails, options, pattern) {
+  const selected = selectedTechniques(options);
+  if (!selected.length) return { nails, selected, primary: '', placement: options.techniquePlacement === 'mix' ? 'auto' : options.techniquePlacement || 'auto' };
+  const french = selected.includes('french');
+  const effects = selected.filter(value => !['french', 'accent', 'duo', 'line', 'dots', 'skittle', 'mix-match', 'monochrome'].includes(value));
+  const requestedPlacement = options.techniquePlacement || 'auto';
+  // A varied five-nail pose is an advanced composition: it only makes sense
+  // after the user has deliberately chosen several techniques.
+  const canMixMatch = selected.length > 1 && Number(options.level) >= 2;
+  const distribution = !canMixMatch && requestedPlacement === 'mix' ? 'auto' : requestedPlacement;
+  // A mix & match pose is intentionally readable at card size: the five nails
+  // do not repeat the same recipe, while staying inside the selected palette.
+  if (canMixMatch && distribution === 'mix') {
+    const effectAt = index => effects.length ? effects[index % effects.length] : '';
+    const next = nails.map((nail, index) => {
+      const frenchIndex = french && [1, 3].includes(index);
+      const frenchEffect = frenchIndex ? effectAt(index === 1 ? 0 : 1) : '';
+      const fullEffect = [2, 4].includes(index) ? effectAt(index === 2 ? 0 : 1) : '';
+      const useAccentAsSolid = index === 4 && nail.accentProductId != null;
+      const techniques = [...new Set([
+        ...(Array.isArray(nail.techniques) ? nail.techniques : []),
+        ...(frenchEffect ? [frenchEffect] : []),
+        ...(fullEffect ? [fullEffect] : []),
+      ])];
+      return {
+        ...nail,
+        ...(useAccentAsSolid ? { productId: nail.accentProductId, color: nail.accentColor || nail.color, finish: nail.finish, effect: nail.effect } : {}),
+        drawing: frenchIndex ? 'french' : nail.drawing === 'french' ? null : nail.drawing,
+        drawingTechnique: frenchEffect || null,
+        technique: fullEffect || null,
+        techniques,
+      };
+    });
+    return { nails: next, selected, primary: french ? 'micro-french' : effects[0] || '', placement: distribution, mixMatch: true };
+  }
+  const target = distribution === 'all' ? [0, 1, 2, 3, 4]
+    : distribution === 'accent' ? [3]
+      : distribution === 'mix' ? [1, 3]
+        : french && effects.length ? [3] : effects.length > 1 ? [1, 3] : [3];
+  const next = nails.map((nail, index) => {
+    const effect = effects.length ? effects[target.indexOf(index) >= 0 ? target.indexOf(index) % effects.length : (distribution === 'all' ? index % effects.length : -1)] : '';
+    const isFrench = french && (distribution !== 'accent' || index === 3);
+    // Any selected visual technique can live inside a French tip. The renderer
+    // receives the precise recipe rather than a generic “French” label.
+    const drawingTechnique = isFrench && effects.length && (distribution === 'french' || distribution === 'all' || index === 3 || distribution === 'auto') ? effects[index % effects.length] : '';
+    return {
+      ...nail,
+      drawing: isFrench ? 'french' : nail.drawing,
+      drawingTechnique: drawingTechnique || nail.drawingTechnique || null,
+      technique: effect || nail.technique || null,
+      techniques: [...new Set([...(Array.isArray(nail.techniques) ? nail.techniques : []), ...(effect ? [effect] : []), ...(drawingTechnique ? [drawingTechnique] : [])])],
+    };
+  });
+  return { nails: next, selected, primary: french ? 'micro-french' : effects[0] || '', placement: distribution };
+}
 const styleFamilies = {
   witchy: ['Prune', 'Cassis', 'Violet', 'Noir', 'Bordeaux'], goth: ['Noir', 'Bordeaux', 'Prune', 'Cassis'],
   alternative: ['Noir', 'Violet', 'Vert', 'Prune'], celestial: ['Bleu', 'Violet', 'Argent', 'Noir'],
@@ -89,7 +164,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const duration = [15, 30, 45, 60, 90].includes(Number(options.duration)) ? Number(options.duration) : 45;
   const maxLevel = [0, 1, 2].includes(Number(options.level)) ? Number(options.level) : 0;
   const requestedPolishCount = normalizePolishCount(options.polishCount);
-  const requestedTechnique = normalize(options.technique);
+  const requestedTechniques = selectedTechniques(options);
   const tools = inventoryTools(items);
   const decoration = decorationChoice(options);
   const requestedDecorations = decoration.mode === 'with' && decoration.id ? tools.stickers.filter(item => String(item.id) === decoration.id) : tools.stickers;
@@ -131,13 +206,8 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const candidates = [];
   const seen = new Set();
   function add(pattern, base, second = null, sticker = null, variant = 0, multiPalette = null, arrangement = null) {
-    const matchesTechnique = !requestedTechnique || requestedTechnique === 'libre'
-      || /french/.test(requestedTechnique) && pattern === 'french'
-      || /duo alterne/.test(requestedTechnique) && pattern === 'duo'
-      || /accent nail/.test(requestedTechnique) && pattern === 'accent'
-      || /line art|outline nails/.test(requestedTechnique) && pattern === 'line'
-      || /dot art/.test(requestedTechnique) && pattern === 'dots'
-      || !/french|duo alterne|accent nail|line art|outline nails|dot art/.test(requestedTechnique);
+    const matchesTechnique = !requestedTechniques.length
+      || !requestedTechniques.includes('french') || pattern === 'french';
     if (!matchesTechnique) return;
     const palette = unique(multiPalette || [base, second]);
     if ([...requiredIds].some(id => !palette.some(item => String(item.id) === id))) return;
@@ -159,7 +229,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       ...(['french', 'line'].includes(pattern) ? [tools.fineBrush] : []),
       sticker,
     ]);
-    const nails = Array.from({ length: 5 }, (_, index) => {
+    let nails = Array.from({ length: 5 }, (_, index) => {
       const accented = pattern === 'accent' ? (variant === 1 ? [1, 3].includes(index) : index === 3) : pattern === 'duo' ? index % 2 === 1 : false;
       const polish = multiPalette ? palette[arrangement[index]] : accented ? second : base;
       return {
@@ -173,8 +243,10 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
         accentProductId: drawing.has(pattern) && (pattern === 'french' || index === 3) ? second?.id : null,
       };
     });
+    const composition = applyTechniqueComposition(nails, options, pattern);
+    nails = composition.nails;
     // Visually identical recipes are not counted as separate ideas.
-    const visual = JSON.stringify(nails.map(nail => [nail.productId, nail.drawing, nail.accentColor, nail.decoration])) + (sticker?.id || '');
+    const visual = JSON.stringify(nails.map(nail => [nail.productId, nail.drawing, nail.drawingTechnique, nail.technique, nail.accentColor, nail.decoration])) + (sticker?.id || '');
     if (seen.has(visual)) return;
     seen.add(visual);
     const id = multiPalette ? [pattern, ...palette.map(item => item.id), sticker?.id || '', variant].join(':') : [pattern, base.id, second?.id || '', sticker?.id || '', variant].join(':');
@@ -182,7 +254,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       solid: 'L’essentiel ' + (base.family || '').toLocaleLowerCase('fr'),
       accent: variant === 1 ? 'Deux touches de contraste' : 'Un ongle qui change tout',
       duo: 'Le duo alterné', sticker: variant === 1 ? 'Deux accents décorés' : 'Le petit détail',
-      dots: 'Quelques pois délicats', french: 'La French en couleurs', line: 'Une ligne légère',
+      dots: 'Quelques pois délicats', french: composition.selected.length > 1 ? 'French ' + composition.selected.filter(value => value !== 'french').map(value => techniqueLabel[value] || value).join(' · ') : 'La French en couleurs', line: 'Une ligne légère',
       palette: {
         3: ['Trio en progression', 'Trio en miroir', 'Trio en rythme', 'Un trio à deux accents'],
         4: ['Le quatuor en boucle', 'Quatre vernis en progression', 'Un quatuor à ta façon', 'Quatre vernis, autre sens'],
@@ -196,7 +268,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       duo: 'Une alternance de ' + base.name + ' et ' + second?.name + '.',
       sticker: base.name + ' et ' + sticker?.name + (variant === 1 ? ' sur deux ongles.' : ' sur l’annulaire.'),
       dots: base.name + ', quelques pois en ' + second?.name + ' sur l’annulaire.',
-      french: 'Une base ' + base.name + ' et des pointes ' + second?.name + '.',
+      french: 'Une base ' + base.name + ' et des pointes ' + (composition.selected.includes('leopard') ? 'léopard' : composition.selected.includes('tortoiseshell') ? 'tortoise' : second?.name) + '.',
       line: base.name + ', une ligne ' + second?.name + ' sur l’annulaire.',
       palette: 'Du pouce à l’auriculaire : ' + nails.map(nail => palette.find(item => item.id === nail.productId).name).join(', ') + '.',
       paletteSticker: palette.length + ' vernis répartis sur les cinq ongles, avec ' + sticker?.name + (variant === 1 ? ' sur l’index et l’annulaire.' : ' sur l’annulaire.'),
@@ -219,10 +291,11 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (options.mode === 'change' && !base.fav) reasons.push('Une couleur à redécouvrir');
     if (decorated) reasons.push('Avec ta décoration ' + sticker.name);
     if (drawing.has(pattern)) reasons.push('Avec ' + (pattern === 'dots' ? tools.dotting?.name || 'un outil à pois' : tools.fineBrush?.name || 'un pinceau fin'));
-    if (requestedTechnique && requestedTechnique !== 'libre') reasons.push('Inspirée par la technique « ' + options.technique + ' »');
+    if (composition.selected.length) reasons.push('Composition : ' + composition.selected.map(value => techniqueLabel[value] || value).join(' + '));
     if (!reasons.length) reasons.push('Avec les produits de ta collection');
     const personal = personalAdjustment({ pattern, palette, resources, nails }, options, personalModel);
-    candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score: score + personal.score, reasons: [...new Set([...personal.reasons, ...reasons])].slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte' });
+    const compositionRecord = { techniques: composition.selected.map(value => techniqueLabel[value] || value), placement: composition.placement || 'auto', ...(composition.mixMatch ? { mixMatch: true } : {}) };
+    candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score: score + personal.score, reasons: [...new Set([...personal.reasons, ...reasons])].slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte', techniques: compositionRecord.techniques, technique: composition.primary || undefined, techniquePlacement: compositionRecord.placement, composition: compositionRecord, options: { ...options, techniques: [...(options.techniques || [])], techniquePlacement: compositionRecord.placement } });
   }
 
   for (const base of ordered) {

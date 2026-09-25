@@ -122,10 +122,20 @@ export const TECHNIQUE_CATALOG = Object.freeze([
 
 const byId = new Map(TECHNIQUE_CATALOG.map(item => [item.id, item]));
 
+// Taxonomy entries that deliberately reuse a material shader still keep their
+// own canonical recipe in `idea.techniques` / `nail.technique`. This lookup only
+// chooses the closest physical rendering when a dedicated shader is unnecessary.
+const VISUAL_FALLBACKS = Object.freeze({
+  tortoiseshell: 'marble', leopard: 'stamping', crocodile: 'stamping', snake: 'stamping', cow: 'stamping', zebra: 'stamping',
+  foil: 'glitter', flakes: 'glitter', encapsulated: 'glass-nails', milky: 'glazed', babyboomer: 'aura', ombre: 'aura',
+  'color-block': 'chrome', 'negative-space': 'jelly', 'half-moon': 'micro-french', ruffian: 'micro-french', outline: 'micro-french',
+  'one-stroke': 'gel-3d', skittle: 'simple', 'mix-match': 'simple', monochrome: 'simple', french: 'micro-french',
+});
+
 function sourceText(idea = {}) {
   const products = [...(idea.palette || []), ...(idea.resources || [])];
   return normalize([
-    idea.technique, idea.rendering?.technique, idea.pattern, idea.title, idea.description,
+    idea.technique, ...(idea.techniques || []), idea.rendering?.technique, idea.pattern, idea.title, idea.description,
     ...products.flatMap(item => [item.name, item.finish, item.effect, item.usage, item.equipmentCategory, item.materialStyle, ...(item.decorationTags || [])]),
     ...(idea.nails || []).flatMap(nail => [nail.finish, nail.effect, nail.technique, nail.decoration?.motif]),
   ].filter(Boolean).join(' '));
@@ -133,7 +143,7 @@ function sourceText(idea = {}) {
 
 export function techniqueDefinition(value) {
   const normalized = normalize(value);
-  return byId.get(normalized) || TECHNIQUE_CATALOG.find(item => item.aliases.test(normalized)) || null;
+  return byId.get(normalized) || TECHNIQUE_CATALOG.find(item => item.aliases.test(normalized)) || byId.get(VISUAL_FALLBACKS[normalized]) || null;
 }
 
 export function detectTechnique(idea = {}) {
