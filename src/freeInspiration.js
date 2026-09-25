@@ -5,6 +5,7 @@ import { enrichIdeaRendering } from './techniqueRendering.js';
 export const stylePalette = [
   ['Cassis', '#813c60'], ['Nude', '#e9c6b5'], ['Or', '#cba358'], ['Vert', '#668878'],
   ['Rose', '#d39ca7'], ['Bleu', '#6674a2'], ['Prune', '#583b65'], ['Blanc', '#f4eee7'],
+  ['Brun', '#75462f'], ['Terracotta', '#b5644a'],
 ].map(([family, color], i) => ({ id: 'style-color-' + i, name: family + ' · couleur d’inspiration', family, color, type: 'Vernis', finish: family === 'Or' ? 'Métallique' : 'Brillant', usage: 'Couleur seule', conceptual: true }));
 
 export function generateInspirations(items = [], profile = {}, supplied = {}, seed = 1, limit = 4, learning = null) {
