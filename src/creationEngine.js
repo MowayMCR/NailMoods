@@ -37,6 +37,31 @@ function applyTechniqueComposition(nails, options, pattern) {
   const french = selected.includes('french');
   const effects = selected.filter(value => !['french', 'accent', 'duo', 'line', 'dots', 'skittle', 'mix-match', 'monochrome'].includes(value));
   const distribution = options.techniquePlacement || 'auto';
+  // A mix & match pose is intentionally readable at card size: the five nails
+  // do not repeat the same recipe, while staying inside the selected palette.
+  if (distribution === 'mix' || selected.includes('mix-match')) {
+    const effectAt = index => effects.length ? effects[index % effects.length] : '';
+    const next = nails.map((nail, index) => {
+      const frenchIndex = french && [1, 3].includes(index);
+      const frenchEffect = frenchIndex ? effectAt(index === 1 ? 0 : 1) : '';
+      const fullEffect = [2, 4].includes(index) ? effectAt(index === 2 ? 0 : 1) : '';
+      const useAccentAsSolid = index === 4 && nail.accentProductId != null;
+      const techniques = [...new Set([
+        ...(Array.isArray(nail.techniques) ? nail.techniques : []),
+        ...(frenchEffect ? [frenchEffect] : []),
+        ...(fullEffect ? [fullEffect] : []),
+      ])];
+      return {
+        ...nail,
+        ...(useAccentAsSolid ? { productId: nail.accentProductId, color: nail.accentColor || nail.color, finish: nail.finish, effect: nail.effect } : {}),
+        drawing: frenchIndex ? 'french' : nail.drawing === 'french' ? null : nail.drawing,
+        drawingTechnique: frenchEffect || null,
+        technique: fullEffect || null,
+        techniques,
+      };
+    });
+    return { nails: next, selected, primary: french ? 'micro-french' : effects[0] || '', mixMatch: true };
+  }
   const target = distribution === 'all' ? [0, 1, 2, 3, 4]
     : distribution === 'accent' ? [3]
       : distribution === 'mix' ? [1, 3]
@@ -265,7 +290,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (composition.selected.length) reasons.push('Composition : ' + composition.selected.map(value => techniqueLabel[value] || value).join(' + '));
     if (!reasons.length) reasons.push('Avec les produits de ta collection');
     const personal = personalAdjustment({ pattern, palette, resources, nails }, options, personalModel);
-    const compositionRecord = { techniques: composition.selected.map(value => techniqueLabel[value] || value), placement: options.techniquePlacement || 'auto' };
+    const compositionRecord = { techniques: composition.selected.map(value => techniqueLabel[value] || value), placement: options.techniquePlacement || 'auto', ...(composition.mixMatch ? { mixMatch: true } : {}) };
     candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score: score + personal.score, reasons: [...new Set([...personal.reasons, ...reasons])].slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte', techniques: compositionRecord.techniques, technique: composition.primary || undefined, techniquePlacement: compositionRecord.placement, composition: compositionRecord, options: { ...options, techniques: [...(options.techniques || [])], techniquePlacement: compositionRecord.placement } });
   }
 
