@@ -131,6 +131,14 @@ const VISUAL_FALLBACKS = Object.freeze({
   'color-block': 'chrome', 'negative-space': 'jelly', 'half-moon': 'micro-french', ruffian: 'micro-french', outline: 'micro-french',
   'one-stroke': 'gel-3d', skittle: 'simple', 'mix-match': 'simple', monochrome: 'simple', french: 'micro-french',
 });
+const DISPLAY_OVERRIDES = Object.freeze({
+  tortoiseshell: { label: 'Tortoise', finish: 'Tortoise brillant' },
+  leopard: { label: 'Léopard', finish: 'Motif léopard brillant' },
+  crocodile: { label: 'Crocodile', finish: 'Motif crocodile brillant' },
+  snake: { label: 'Snake print', finish: 'Motif serpent brillant' },
+  cow: { label: 'Cow print', finish: 'Motif cow print brillant' },
+  zebra: { label: 'Zèbre', finish: 'Motif zèbre brillant' },
+});
 
 function sourceText(idea = {}) {
   const products = [...(idea.palette || []), ...(idea.resources || [])];
@@ -159,6 +167,9 @@ export function detectTechnique(idea = {}) {
 
 export function renderingForIdea(idea = {}) {
   const technique = detectTechnique(idea);
+  const canonicalTechnique = normalize(idea.technique || idea.rendering?.technique);
+  const display = DISPLAY_OVERRIDES[canonicalTechnique];
+  const compositionLabel = Array.isArray(idea.techniques) && idea.techniques.length > 1 ? idea.techniques.join(' + ') : '';
   const photoProfile = realisticRenderProfile(technique.id);
   const realism = ['required', 'recommended', 'illustrated'].includes(idea.realismRequired)
     ? idea.realismRequired
@@ -167,9 +178,10 @@ export function renderingForIdea(idea = {}) {
     ? idea.renderMode
     : realism === 'illustrated' ? 'illustrated' : 'realistic';
   return {
-    technique: technique.id,
-    label: technique.label,
-    finish: idea.finish || technique.finish,
+    technique: canonicalTechnique || technique.id,
+    materialTechnique: technique.id,
+    label: compositionLabel || display?.label || technique.label,
+    finish: compositionLabel ? 'Composition multi-techniques' : idea.finish || display?.finish || technique.finish,
     relief: idea.relief || technique.relief,
     realism,
     defaultMode,
