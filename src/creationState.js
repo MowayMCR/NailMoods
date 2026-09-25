@@ -1,4 +1,4 @@
-import { profileDefaults, normalizePolishCount } from './creationEngine.js';
+import { profileDefaults, normalizePolishCount, selectedTechniques } from './creationEngine.js';
 import { validPersonalSnapshot } from './personalization.js';
 
 export const CREATION_KEY = 'nm-creation-v1';
@@ -20,6 +20,7 @@ export function readCreationState(storage, profile = {}) {
       options.constraints = options.constraints.filter(value => value !== 'noStickers');
     }
     if (![0, 1, 2].includes(options.level)) options.level = fallback.options.level;
+    if (options.techniquePlacement === 'mix' && (selectedTechniques(options).length < 2 || Number(options.level) < 2)) options.techniquePlacement = 'auto';
     if (![15, 30, 45, 60, 90].includes(options.duration)) options.duration = fallback.options.duration;
     options.polishCount = normalizePolishCount(options.polishCount);
     const learning = validPersonalSnapshot(saved.learning) ? saved.learning : null;
