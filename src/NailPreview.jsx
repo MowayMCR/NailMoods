@@ -30,8 +30,13 @@ function Gem({ x, y, color = '#d8f6ff', size = 6 }) {
 
 function FrenchTip({ nail }) {
   const technique = nail.drawingTechnique;
+  const variant = nail.drawing || 'french';
   const fill = technique === 'tortoiseshell' ? '#c88235' : technique === 'leopard' ? '#d7aa5f' : technique === 'chrome' ? '#c8ccd5' : nail.accentColor;
-  return <g><path d="M0 0H64V26Q32 40 0 26Z" fill={fill} />
+  const tip = variant === 'reverse-french' ? <path d="M0 104H64V82Q32 68 0 82Z" fill={fill} />
+    : variant === 'side-french' ? <path d="M0 0H64V34Q38 44 0 26Z" fill={fill} />
+      : variant === 'v-french' ? <path d="M0 0H64V19L32 39 0 19Z" fill={fill} />
+        : <path d={variant === 'deep-french' ? 'M0 0H64V38Q32 55 0 38Z' : 'M0 0H64V26Q32 40 0 26Z'} fill={fill} />;
+  return <g>{tip}{variant === 'double-french' && <path d="M4 31Q32 46 60 31" fill="none" stroke={fill} strokeWidth="4" />}
     {nail.drawingTechnique === 'leopard' && [[15,14,5],[32,20,4],[49,14,5],[25,30,3]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} fill="none" stroke="#3a2418" strokeWidth="2" />)}
     {nail.drawingTechnique === 'tortoiseshell' && [[16,15,8],[38,16,9],[28,28,7]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} fill="#5b2d1c" opacity=".72" />)}
     {['crocodile','snake','zebra','cow'].includes(technique) && <path d={technique === 'zebra' ? 'M5 3 18 33M22 1 34 36M42 2 56 31' : technique === 'snake' ? 'M4 12Q16 1 28 12T52 12M4 26Q16 15 28 26T52 26' : technique === 'cow' ? 'M7 13q7-9 15 0t-3 14q-12 1-12-14M35 6q10-5 18 5t-5 14q-14-4-13-19' : 'M5 6H58M4 17H59M5 28H58'} fill="none" stroke={technique === 'zebra' || technique === 'cow' ? '#3a2418' : '#66432c'} strokeWidth={technique === 'crocodile' ? '2.5' : '3'} opacity=".9" />}
@@ -39,6 +44,20 @@ function FrenchTip({ nail }) {
     {['aura','blooming','ombre','babyboomer'].includes(technique) && <ellipse cx="32" cy="17" rx="18" ry="12" fill={nail.color} opacity=".48" />}
     {['glitter','flakes','foil'].includes(technique) && [[13,11],[28,23],[44,13],[52,28]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i%2?2.3:1.5} fill="#fff4bd" />)}
   </g>;
+}
+
+// The ambience owns the palette. The style is a small, repeatable graphic
+// language laid over it, so choosing “Graphique” never forces unrelated
+// colours into the pose.
+function StyleLayer({ style, index, color }) {
+  const accent = mix(color, '#ffffff', .68);
+  if (style === 'graphique') return <g fill="none" stroke={accent} strokeWidth="2.1" opacity=".84"><path d={index % 2 ? 'M12 73 51 31M12 49 38 22' : 'M10 30 53 75M30 18 54 43'} /></g>;
+  if (['witchy', 'celestial'].includes(style)) return index % 2 === 0 ? <Decor motif={style === 'witchy' ? 'moon' : 'star'} color={accent} /> : null;
+  if (['girly', 'coquette', 'romantique'].includes(style)) return index === 2 ? <Decor motif="heart" color={accent} /> : null;
+  if (['floral', 'nature', 'cottagecore'].includes(style)) return index === 2 ? <Decor motif={style === 'floral' ? 'flower' : 'leaf'} color={accent} /> : null;
+  if (['goth', 'alternative'].includes(style)) return <path d={index % 2 ? 'M9 76 53 25' : 'M10 28 54 78'} stroke="#351d2a" strokeWidth="4" opacity=".72" />;
+  if (style === 'y2k') return <g fill={accent} opacity=".82"><circle cx="21" cy="36" r="3"/><circle cx="42" cy="56" r="4"/><circle cx="25" cy="76" r="2.5"/></g>;
+  return null;
 }
 
 // Kept deliberately graphic: this is the NailMoods illustrated preview, not
@@ -49,15 +68,34 @@ function IllustratedTechniqueLayer({ technique, nail }) {
   const accent = nail.accentColor || mix(color, '#ffffff', .55);
   if (!technique) return null;
   if (['tortoiseshell'].includes(technique)) return <g><rect width="64" height="104" fill="#cf8539" opacity=".9" /><g fill="#58301f" opacity=".72">{[[18,28,12],[43,42,15],[24,67,14],[47,81,9]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r}/>)}</g></g>;
-  if (['leopard','crocodile','snake','cow','zebra'].includes(technique)) return <g fill="none" stroke="#3a2418" strokeWidth="3">{[[20,30,8],[42,42,9],[23,64,8],[43,78,7]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} strokeDasharray="11 6"/>)}</g>;
-  if (['aura','ombre','babyboomer','blooming'].includes(technique)) return <ellipse cx="32" cy="54" rx="25" ry="34" fill={accent} opacity=".64" />;
-  if (['chrome','glazed','milky'].includes(technique)) return <><path d="M13 82Q49 56 50 25" fill="none" stroke="#fff" strokeWidth="5" opacity=".55"/><path d="M17 80Q47 54 48 27" fill="none" stroke="#b9bdc7" strokeWidth="1.5" opacity=".9"/></>;
+  if (technique === 'leopard') return <g fill="none" stroke="#3a2418" strokeWidth="3">{[[20,30,8],[42,42,9],[23,64,8],[43,78,7]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} strokeDasharray="11 6"/>)}</g>;
+  if (technique === 'crocodile') return <g fill="none" stroke="#503424" strokeWidth="2.2" opacity=".9">{[24,40,56,72].map(y=><path key={y} d={`M5 ${y}Q18 ${y-10} 32 ${y}T59 ${y}`}/>)}</g>;
+  if (technique === 'snake') return <g fill="none" stroke="#503424" strokeWidth="2">{[25,43,61,79].map(y=><path key={y} d={`M7 ${y}l12-9 13 9 13-9 12 9`}/>)}</g>;
+  if (technique === 'cow') return <g fill="#4b3025" opacity=".88">{[[17,31,9],[43,42,12],[24,67,8],[47,80,9]].map(([x,y,r],i)=><path key={i} d={`M${x-r} ${y}q${r} -${r} ${r*2} 0t-${r/2} ${r*1.4}q-${r*1.6} ${r*.4}-${r*1.5}-${r*1.4}Z`}/>)}</g>;
+  if (technique === 'zebra') return <g stroke="#2f2528" strokeWidth="4">{[8,21,35,49,62].map((x,i)=><path key={i} d={`M${x} 20Q${x+9} 48 ${x-2} 88`}/>)}</g>;
+  if (technique === 'aura') return <ellipse cx="32" cy="54" rx="25" ry="34" fill={accent} opacity=".64" />;
+  if (technique === 'blooming') return <g fill={accent} opacity=".62"><circle cx="23" cy="39" r="15"/><circle cx="41" cy="56" r="17"/><circle cx="25" cy="71" r="12"/></g>;
+  if (technique === 'ombre') return <path d="M0 100V46Q32 66 64 22V100Z" fill={accent} opacity=".72"/>;
+  if (technique === 'babyboomer') return <path d="M0 18Q32 48 64 18V0H0Z" fill="#fff9f3" opacity=".75"/>;
+  if (technique === 'chrome') return <><path d="M13 82Q49 56 50 25" fill="none" stroke="#fff" strokeWidth="5" opacity=".7"/><path d="M17 80Q47 54 48 27" fill="none" stroke="#b9bdc7" strokeWidth="1.5" opacity=".9"/></>;
+  if (technique === 'glazed') return <><path d="M13 82Q49 56 50 25" fill="none" stroke="#fff" strokeWidth="5" opacity=".55"/><path d="M17 80Q47 54 48 27" fill="none" stroke="#e6c9ef" strokeWidth="2" opacity=".85"/></>;
+  if (technique === 'milky') return <rect width="64" height="104" fill="#fff8f1" opacity=".52"/>;
+  if (technique === 'jelly') return <rect width="64" height="104" fill={color} opacity=".38"/>;
+  if (technique === 'glass-nails') return <path d="M15 80V36Q17 16 32 16T49 36V80" fill="none" stroke="#fff" strokeWidth="3" opacity=".72"/>;
   if (['velvet-magnetic','cat-eye'].includes(technique)) return <><ellipse cx="32" cy="54" rx="24" ry="37" fill={accent} opacity=".42"/><path d="M12 82 53 24" stroke="#fff" opacity=".58" strokeWidth="4"/></>;
   if (['marble'].includes(technique)) return <path d="M8 28C29 35 19 48 50 56S37 75 57 83" fill="none" stroke={accent} strokeWidth="2.5" opacity=".86"/>;
   if (['foil','flakes','glitter'].includes(technique)) return <g fill="#fff1ad">{[[20,31],[40,39],[24,60],[43,74],[33,86]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i%2?2.3:1.5}/>)}</g>;
   if (technique === 'rhinestones') return <g><Gem x={32} y={48} size={7}/><Gem x={24} y={62} size={4} color="#ffd9f7"/></g>;
   if (technique === 'charms') return <Decor motif="star" color="#d0aa58"/>;
   if (technique === 'gel-3d') return <path d="M20 67C25 43 37 42 44 63" fill="none" stroke="#fff" strokeWidth="5" opacity=".7"/>;
+  if (technique === 'color-block') return <path d="M0 27 64 8V72L0 92Z" fill={accent} opacity=".72"/>;
+  if (technique === 'negative-space') return <path d="M20 29Q32 47 44 29V76Q32 58 20 76Z" fill="#fff8f3" opacity=".8"/>;
+  if (technique === 'half-moon') return <path d="M12 21Q32 45 52 21V10H12Z" fill={accent} opacity=".84"/>;
+  if (technique === 'ruffian') return <path d="M10 22Q32 38 54 22V32Q32 48 10 32Z" fill={accent} opacity=".84"/>;
+  if (technique === 'outline') return <path d="M15 82V38C15 12 49 12 49 38V82" fill="none" stroke={accent} strokeWidth="3"/>;
+  if (technique === 'dots') return <g fill={accent}>{[[21,34],[42,45],[25,62],[43,76]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r="4"/>)}</g>;
+  if (technique === 'line') return <path d="M20 78Q42 53 30 24" fill="none" stroke={accent} strokeWidth="3"/>;
+  if (technique === 'one-stroke') return <path d="M19 68Q32 32 46 68Q32 78 19 68" fill={accent} opacity=".75"/>;
   return null;
 }
 
@@ -124,11 +162,12 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
         <g clipPath={'url(#' + ids.clip + ')'}>
           {mode === 'realistic' ? <MaterialLayer technique={nail.technique || rendering.technique} nail={nail} index={index} ids={ids} /> : <>
             <IllustratedTechniqueLayer technique={nail.technique} nail={nail} />
+            <StyleLayer style={nail.visualStyle} index={index} color={color} />
             {nail.finish !== 'Mat' && <><path d="M20 31Q16 46 19 64" stroke="#fff" opacity=".52" strokeWidth="4.2" fill="none" strokeLinecap="round" /><path d="M23 27Q20 36 21 43" stroke="#fff" opacity=".75" strokeWidth="1.4" fill="none" strokeLinecap="round" /></>}
             {/paillet|holograph|irise/.test(normalize(nail.finish + nail.effect)) && <g fill="#fff" opacity=".65">{[[27, 30], [43, 47], [22, 70], [38, 77], [32, 55]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="1.3" />)}</g>}
             {/cat.?eye|magnetique/.test(normalize(nail.finish + nail.effect)) && <path d="M8 80 60 20" stroke="#fff" opacity=".3" strokeWidth="6" />}
           </>}
-          {nail.drawing === 'french' && <FrenchTip nail={nail} />}
+          {['french','micro-french','reverse-french','double-french','side-french','deep-french','v-french'].includes(nail.drawing) && <FrenchTip nail={nail} />}
           {nail.drawing === 'line' && <path d="M31 23Q25 54 35 81" stroke={nail.accentColor} strokeWidth="3" fill="none" />}
           {nail.drawing === 'dots' && <g fill={nail.accentColor}>{[[28, 34], [37, 46], [28, 60], [37, 74]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="3" />)}</g>}
           {nail.decoration && <Decor {...nail.decoration} />}
