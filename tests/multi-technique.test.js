@@ -32,3 +32,15 @@ test('every visual family can be composed on a French tip and survives a favorit
   assert.deepEqual(favorite.composition, idea.composition);
   assert.deepEqual(favorite.nails, JSON.parse(JSON.stringify(idea.nails)));
 });
+
+test('mix & match produces five visibly different nail roles while preserving one palette', () => {
+  const options = { techniques: ['French', 'Leopard', 'Tortoiseshell'], techniquePlacement: 'mix', polishCount: 2, duration: 90, level: 2 };
+  const idea = createSuggestions(stock, { shape: 'Amande', length: 'Moyen' }, options, 5, 4).results[0];
+  assert.deepEqual(idea.composition, { techniques: ['French', 'Léopard', 'Tortoise'], placement: 'mix', mixMatch: true });
+  assert.equal(idea.nails.filter(nail => nail.drawing === 'french').length, 2);
+  assert.ok(idea.nails.some(nail => nail.drawingTechnique === 'leopard'));
+  assert.ok(idea.nails.some(nail => nail.drawingTechnique === 'tortoiseshell'));
+  assert.ok(idea.nails.some(nail => nail.technique === 'leopard'));
+  assert.ok(idea.nails.some(nail => nail.technique === 'tortoiseshell'));
+  assert.equal(new Set(idea.nails.map(nail => nail.productId)).size, 2);
+});
