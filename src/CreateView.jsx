@@ -26,7 +26,7 @@ const modes = [
   { id: 'change', title: 'Envie de changement', subtitle: 'Explorer d’autres associations', icon: Shuffle },
   { id: 'surprise', title: 'Surprends-moi', subtitle: 'Une association inattendue', icon: Sparkles },
 ];
-const levels = ['Très simple', 'Un peu de détail', 'À l’aise'];
+const levels = ['Très simple', 'Un peu de détail', 'Avancé'];
 const limits = [['noDrawing', 'Sans dessin', 'Pas de French, de lignes ou de pois dessinés.'], ['noLamp', 'Sans lampe', 'Uniquement les vernis classiques.'], ['favorites', 'Vernis favoris uniquement', 'Les couleurs marquées d’un cœur.']];
 const durationLabel = value => value === 90 ? '90 min max' : value + ' min max';
 const polishCountLabel = value => value === 'auto' ? 'Automatique' : value + ' vernis';
@@ -53,6 +53,7 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
   const selectedColors = items.filter(item => requiredIds.includes(String(item.id)));
   const decorations = decorationChoice(options);
   const chosenTechniques = selectedTechniques(options);
+  const canUseMixMatch = chosenTechniques.length > 1 && Number(options.level) >= 2;
   const techniqueSummary = chosenTechniques.length ? chosenTechniques.map(value => ({ french: 'French', leopard: 'Léopard', tortoiseshell: 'Tortoise', blooming: 'Blooming', chrome: 'Chrome', glazed: 'Glazed', 'cat-eye': 'Cat Eye', 'velvet-magnetic': 'Velvet', aura: 'Aura', 'gel-3d': 'Gel 3D', rhinestones: 'Strass', charms: 'Charms', jelly: 'Jelly', 'glass-nails': 'Glass nails', marble: 'Marbré' })[value] || value).join(' · ') : 'Libre';
   const missingLamp = report.blocked.some(entry => entry.reason === 'Lampe UV / LED à renseigner dans le matériel.');
   const missingMagnet = report.blocked.some(entry => entry.reason === 'Aimant cat-eye à renseigner dans le matériel.');
@@ -67,7 +68,7 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
     mood: { title: 'Quelle ambiance ?', icon: Sun, label: 'Ambiance', searchable: true, values: [...new Set(['Douce', 'Mystérieuse', 'Chic', 'Joyeuse', 'Audacieuse', 'Au calme', ...TAXONOMY.moods])], placeholder: 'Douce, glamour, sombre…' },
     style: { title: 'Quel style ?', icon: Palette, label: 'Style', searchable: true, values: [...new Set(['Libre', ...(Array.isArray(profile.styles) ? profile.styles : []), ...TAXONOMY.aesthetics, ...TAXONOMY.themes])], placeholder: 'Witchy, clean girl, cottagecore…' },
     technique: { title: 'Quelles techniques ?', icon: Wand2, label: 'Techniques', searchable: true, multi: true, values: ['Libre', ...TAXONOMY.techniques], placeholder: 'French, léopard, tortoise…' },
-    techniquePlacement: { title: 'Comment les répartir ?', icon: Wand2, label: 'Répartition', values: ['auto', 'all', 'accent', 'french', 'mix'], format: value => ({ auto: 'Suggestion NailMoods', all: 'Sur toute la pose', accent: 'Un accent nail', french: 'Dans la French', mix: 'Pose mix & match · 5 ongles' })[value] || 'Suggestion NailMoods' },
+    techniquePlacement: { title: 'Comment les répartir ?', icon: Wand2, label: 'Répartition', values: ['auto', 'all', 'accent', 'french', ...(canUseMixMatch ? ['mix'] : [])], format: value => ({ auto: 'Suggestion NailMoods', all: 'Sur toute la pose', accent: 'Un accent nail', french: 'Dans la French', mix: 'Pose mix & match · 5 ongles' })[value] || 'Suggestion NailMoods' },
     occasion: { title: 'Pour quelle occasion ?', icon: CalendarDays, label: 'Occasion', values: ['Tous les jours', 'Travail', 'Soirée', 'Événement', 'Week-end'] },
     duration: { title: 'Combien de temps ?', icon: Clock3, label: 'Temps', values: [15, 30, 45, 60, 90], format: durationLabel },
     polishCount: { title: 'Combien de vernis ?', icon: Palette, label: 'Nombre de vernis', values: ['auto', 1, 2, 3, 4, 5], format: polishCountLabel },
@@ -85,7 +86,11 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
     if(patch.intent==='photos'&&(!browserStorage.accountScoped||!['plus','pro'].includes(browserStorage.accountTier)))track('feature_locked',{});
     if(patch.intent)track('create_mode_selected',{mode:patch.intent==='collection'?'my_collection':'inspire_me'},{screen:'create'});
     if (patch.intent === 'inspire') patch = { ...patch, requiredColorIds: [] };
-    setState(previous => ({ ...previous, options: { ...previous.options, ...patch }, generated: false, selected: null }));
+    setState(previous => {
+      const nextOptions = { ...previous.options, ...patch };
+      if (nextOptions.techniquePlacement === 'mix' && (selectedTechniques(nextOptions).length < 2 || Number(nextOptions.level) < 2)) nextOptions.techniquePlacement = 'auto';
+      return { ...previous, options: nextOptions, generated: false, selected: null };
+    });
   }
   function toggleTechnique(value) {
     if (value === 'Libre') { change({ techniques: [], technique: undefined }); return; }
