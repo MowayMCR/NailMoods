@@ -1,12 +1,12 @@
 {
-  "version": "V2-2026-09-25-scan-enriched-2",
+  "version": "V2-2026-09-25-scan-enriched-4",
   "basedOn": "V1-2026-09-17",
   "v1Products": 1801,
-  "v2Products": 1852,
+  "v2Products": 1857,
   "scanFlowReadyProducts": 1852,
-  "productsWithExactBarcode": 66,
+  "productsWithExactBarcode": 77,
   "productsWithReferenceIdentity": 664,
-  "productsTextOnly": 1122,
+  "productsTextOnly": 1116,
   "exactBarcodeCoveragePercent": 4.7,
   "scanFlowCoveragePercent": 100,
   "brands": 33,
@@ -41,10 +41,10 @@
       "textOnly": 0
     },
     "essie": {
-      "total": 102,
-      "barcode": 14,
+      "total": 104,
+      "barcode": 18,
       "reference": 0,
-      "textOnly": 88
+      "textOnly": 86
     },
     "CANNI": {
       "total": 192,
@@ -65,10 +65,10 @@
       "textOnly": 15
     },
     "OPI": {
-      "total": 91,
-      "barcode": 5,
+      "total": 94,
+      "barcode": 12,
       "reference": 0,
-      "textOnly": 86
+      "textOnly": 82
     },
     "The GelBottle": {
       "total": 51,
