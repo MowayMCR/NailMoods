@@ -98,7 +98,25 @@ const styleFamilies = {
 const moodFamilies = {
   Douce: ['Rose', 'Nude', 'Beige'], Mystérieuse: ['Prune', 'Cassis', 'Noir', 'Violet'],
   Chic: ['Nude', 'Bordeaux', 'Brun', 'Rouge'], Joyeuse: ['Jaune', 'Orange', 'Rose', 'Vert'],
-  Audacieuse: ['Rouge', 'Noir', 'Violet', 'Bleu'], 'Au calme': ['Beige', 'Nude', 'Vert', 'Bleu'],
+  Audacieuse: ['Cassis', 'Prune', 'Rose', 'Nude', 'Or', 'Brun', 'Terracotta'], 'Au calme': ['Beige', 'Nude', 'Vert', 'Bleu'],
+};
+// A palette must read as one intention at card size. These schemes prevent
+// unrelated shades from being assembled as a single style proposal.
+const paletteSchemes = {
+  audacieuse: [
+    ['Cassis', 'Prune', 'Rose', 'Nude', 'Or'],
+    ['Brun', 'Terracotta', 'Nude', 'Blanc', 'Or'],
+  ],
+  graphique: [
+    ['Cassis', 'Prune', 'Rose', 'Nude', 'Or'],
+    ['Brun', 'Terracotta', 'Nude', 'Blanc', 'Or'],
+    ['Bleu', 'Blanc', 'Or'],
+  ],
+};
+const coherentPalette = (palette, options) => {
+  if (palette.length < 2) return true;
+  const schemes = [normalize(options.mood), normalize(options.style)].flatMap(key => paletteSchemes[key] || []);
+  return !schemes.length || schemes.some(scheme => palette.every(item => scheme.includes(item.family)));
 };
 
 export function profileDefaults(profile = {}) {
@@ -210,6 +228,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       || !requestedTechniques.includes('french') || pattern === 'french';
     if (!matchesTechnique) return;
     const palette = unique(multiPalette || [base, second]);
+    if (!coherentPalette(palette, options)) return;
     if ([...requiredIds].some(id => !palette.some(item => String(item.id) === id))) return;
     if (requestedPolishCount !== 'auto' && palette.length !== requestedPolishCount) return;
     const decorated = pattern === 'sticker' || pattern === 'paletteSticker';
