@@ -132,6 +132,13 @@ const VISUAL_FALLBACKS = Object.freeze({
   'one-stroke': 'gel-3d', skittle: 'simple', 'mix-match': 'simple', monochrome: 'simple', french: 'micro-french',
 });
 const DISPLAY_OVERRIDES = Object.freeze({
+  french: { label: 'French', finish: 'French brillante' },
+  'micro-french': { label: 'Micro French', finish: 'Micro French brillante' },
+  'reverse-french': { label: 'Reverse French', finish: 'French inversée brillante' },
+  'double-french': { label: 'Double French', finish: 'Double French brillante' },
+  'side-french': { label: 'Side French', finish: 'French latérale brillante' },
+  'deep-french': { label: 'Deep French', finish: 'French profonde brillante' },
+  'v-french': { label: 'V-French', finish: 'French en V brillante' },
   tortoiseshell: { label: 'Tortoise', finish: 'Tortoise brillant' },
   leopard: { label: 'Léopard', finish: 'Motif léopard brillant' },
   crocodile: { label: 'Crocodile', finish: 'Motif crocodile brillant' },
