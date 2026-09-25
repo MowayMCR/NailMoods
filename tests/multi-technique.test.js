@@ -44,3 +44,13 @@ test('mix & match produces five visibly different nail roles while preserving on
   assert.ok(idea.nails.some(nail => nail.technique === 'tortoiseshell'));
   assert.equal(new Set(idea.nails.map(nail => nail.productId)).size, 2);
 });
+
+test('mix & match is reserved for advanced multi-technique choices', () => {
+  const intermediate = createSuggestions(stock, { shape: 'Amande', length: 'Moyen' }, { techniques: ['French', 'Leopard'], techniquePlacement: 'mix', polishCount: 2, duration: 90, level: 1 }, 6, 4).results[0];
+  const singleTechnique = createSuggestions(stock, { shape: 'Amande', length: 'Moyen' }, { techniques: ['Leopard'], techniquePlacement: 'mix', polishCount: 2, duration: 90, level: 2 }, 7, 4).results[0];
+
+  for (const idea of [intermediate, singleTechnique]) {
+    assert.equal(idea.composition.placement, 'auto');
+    assert.equal(idea.composition.mixMatch, undefined);
+  }
+});
