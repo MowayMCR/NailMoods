@@ -33,13 +33,17 @@ export function selectedTechniques(options = {}) {
 // A chosen technique is a visible composition rule, never a tag appended after generation.
 function applyTechniqueComposition(nails, options, pattern) {
   const selected = selectedTechniques(options);
-  if (!selected.length) return { nails, selected, primary: '' };
+  if (!selected.length) return { nails, selected, primary: '', placement: options.techniquePlacement === 'mix' ? 'auto' : options.techniquePlacement || 'auto' };
   const french = selected.includes('french');
   const effects = selected.filter(value => !['french', 'accent', 'duo', 'line', 'dots', 'skittle', 'mix-match', 'monochrome'].includes(value));
-  const distribution = options.techniquePlacement || 'auto';
+  const requestedPlacement = options.techniquePlacement || 'auto';
+  // A varied five-nail pose is an advanced composition: it only makes sense
+  // after the user has deliberately chosen several techniques.
+  const canMixMatch = selected.length > 1 && Number(options.level) >= 2;
+  const distribution = !canMixMatch && requestedPlacement === 'mix' ? 'auto' : requestedPlacement;
   // A mix & match pose is intentionally readable at card size: the five nails
   // do not repeat the same recipe, while staying inside the selected palette.
-  if (distribution === 'mix' || selected.includes('mix-match')) {
+  if (canMixMatch && distribution === 'mix') {
     const effectAt = index => effects.length ? effects[index % effects.length] : '';
     const next = nails.map((nail, index) => {
       const frenchIndex = french && [1, 3].includes(index);
@@ -60,7 +64,7 @@ function applyTechniqueComposition(nails, options, pattern) {
         techniques,
       };
     });
-    return { nails: next, selected, primary: french ? 'micro-french' : effects[0] || '', mixMatch: true };
+    return { nails: next, selected, primary: french ? 'micro-french' : effects[0] || '', placement: distribution, mixMatch: true };
   }
   const target = distribution === 'all' ? [0, 1, 2, 3, 4]
     : distribution === 'accent' ? [3]
@@ -80,7 +84,7 @@ function applyTechniqueComposition(nails, options, pattern) {
       techniques: [...new Set([...(Array.isArray(nail.techniques) ? nail.techniques : []), ...(effect ? [effect] : []), ...(drawingTechnique ? [drawingTechnique] : [])])],
     };
   });
-  return { nails: next, selected, primary: french ? 'micro-french' : effects[0] || '' };
+  return { nails: next, selected, primary: french ? 'micro-french' : effects[0] || '', placement: distribution };
 }
 const styleFamilies = {
   witchy: ['Prune', 'Cassis', 'Violet', 'Noir', 'Bordeaux'], goth: ['Noir', 'Bordeaux', 'Prune', 'Cassis'],
@@ -290,7 +294,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (composition.selected.length) reasons.push('Composition : ' + composition.selected.map(value => techniqueLabel[value] || value).join(' + '));
     if (!reasons.length) reasons.push('Avec les produits de ta collection');
     const personal = personalAdjustment({ pattern, palette, resources, nails }, options, personalModel);
-    const compositionRecord = { techniques: composition.selected.map(value => techniqueLabel[value] || value), placement: options.techniquePlacement || 'auto', ...(composition.mixMatch ? { mixMatch: true } : {}) };
+    const compositionRecord = { techniques: composition.selected.map(value => techniqueLabel[value] || value), placement: composition.placement || 'auto', ...(composition.mixMatch ? { mixMatch: true } : {}) };
     candidates.push({ id, pattern, title: titles[pattern], description: descriptions[pattern], palette, polishCount: palette.length, resources, nails, minutes, rank, score: score + personal.score, reasons: [...new Set([...personal.reasons, ...reasons])].slice(0, 2), shape: profile.shape || 'Ronde', length: profile.length || 'Courte', techniques: compositionRecord.techniques, technique: composition.primary || undefined, techniquePlacement: compositionRecord.placement, composition: compositionRecord, options: { ...options, techniques: [...(options.techniques || [])], techniquePlacement: compositionRecord.placement } });
   }
 
