@@ -41,6 +41,26 @@ function FrenchTip({ nail }) {
   </g>;
 }
 
+// Kept deliberately graphic: this is the NailMoods illustrated preview, not
+// the photo-material renderer. Every selected technique still has a legible
+// signature on its own nail.
+function IllustratedTechniqueLayer({ technique, nail }) {
+  const color = nail.color || '#b88699';
+  const accent = nail.accentColor || mix(color, '#ffffff', .55);
+  if (!technique) return null;
+  if (['tortoiseshell'].includes(technique)) return <g><rect width="64" height="104" fill="#cf8539" opacity=".9" /><g fill="#58301f" opacity=".72">{[[18,28,12],[43,42,15],[24,67,14],[47,81,9]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r}/>)}</g></g>;
+  if (['leopard','crocodile','snake','cow','zebra'].includes(technique)) return <g fill="none" stroke="#3a2418" strokeWidth="3">{[[20,30,8],[42,42,9],[23,64,8],[43,78,7]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} strokeDasharray="11 6"/>)}</g>;
+  if (['aura','ombre','babyboomer','blooming'].includes(technique)) return <ellipse cx="32" cy="54" rx="25" ry="34" fill={accent} opacity=".64" />;
+  if (['chrome','glazed','milky'].includes(technique)) return <><path d="M13 82Q49 56 50 25" fill="none" stroke="#fff" strokeWidth="5" opacity=".55"/><path d="M17 80Q47 54 48 27" fill="none" stroke="#b9bdc7" strokeWidth="1.5" opacity=".9"/></>;
+  if (['velvet-magnetic','cat-eye'].includes(technique)) return <><ellipse cx="32" cy="54" rx="24" ry="37" fill={accent} opacity=".42"/><path d="M12 82 53 24" stroke="#fff" opacity=".58" strokeWidth="4"/></>;
+  if (['marble'].includes(technique)) return <path d="M8 28C29 35 19 48 50 56S37 75 57 83" fill="none" stroke={accent} strokeWidth="2.5" opacity=".86"/>;
+  if (['foil','flakes','glitter'].includes(technique)) return <g fill="#fff1ad">{[[20,31],[40,39],[24,60],[43,74],[33,86]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i%2?2.3:1.5}/>)}</g>;
+  if (technique === 'rhinestones') return <g><Gem x={32} y={48} size={7}/><Gem x={24} y={62} size={4} color="#ffd9f7"/></g>;
+  if (technique === 'charms') return <Decor motif="star" color="#d0aa58"/>;
+  if (technique === 'gel-3d') return <path d="M20 67C25 43 37 42 44 63" fill="none" stroke="#fff" strokeWidth="5" opacity=".7"/>;
+  return null;
+}
+
 function MaterialLayer({ technique, nail, index, ids }) {
   technique = ({ crocodile: 'leopard', snake: 'leopard', cow: 'leopard', zebra: 'leopard', foil: 'glitter', flakes: 'glitter', encapsulated: 'glass-nails', milky: 'glazed', babyboomer: 'aura', ombre: 'aura', 'color-block': 'chrome', 'negative-space': 'jelly', 'half-moon': 'micro-french', ruffian: 'micro-french', outline: 'micro-french', 'one-stroke': 'gel-3d' })[technique] || technique;
   const color = nail.color || '#b88699';
@@ -103,6 +123,7 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
         <path d={path} fill={mode === 'realistic' ? dark : `url(#${ids.depth})`} stroke={mix(color, '#381728', .42)} strokeOpacity=".38" strokeWidth=".9" />
         <g clipPath={'url(#' + ids.clip + ')'}>
           {mode === 'realistic' ? <MaterialLayer technique={nail.technique || rendering.technique} nail={nail} index={index} ids={ids} /> : <>
+            <IllustratedTechniqueLayer technique={nail.technique} nail={nail} />
             {nail.finish !== 'Mat' && <><path d="M20 31Q16 46 19 64" stroke="#fff" opacity=".52" strokeWidth="4.2" fill="none" strokeLinecap="round" /><path d="M23 27Q20 36 21 43" stroke="#fff" opacity=".75" strokeWidth="1.4" fill="none" strokeLinecap="round" /></>}
             {/paillet|holograph|irise/.test(normalize(nail.finish + nail.effect)) && <g fill="#fff" opacity=".65">{[[27, 30], [43, 47], [22, 70], [38, 77], [32, 55]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="1.3" />)}</g>}
             {/cat.?eye|magnetique/.test(normalize(nail.finish + nail.effect)) && <path d="M8 80 60 20" stroke="#fff" opacity=".3" strokeWidth="6" />}
