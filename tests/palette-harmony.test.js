@@ -10,6 +10,13 @@ test('audacieuse graphique proposals keep a coherent colour story', () => {
   assert.ok(report.results.every(idea => idea.palette.every(colour => allowed.has(colour.family))));
 });
 
+test('a Chic automatic palette does not mix unrelated calm colours', () => {
+  const report = generateInspirations([], {}, { intent: 'inspire', mood: 'Chic', polishCount: 3, duration: 90, level: 2 }, 1, 12);
+  const allowed = new Set(['Nude', 'Beige', 'Blanc', 'Brun', 'Bordeaux', 'Rouge', 'Or']);
+  assert.ok(report.results.length > 0);
+  assert.ok(report.results.every(idea => idea.palette.every(colour => allowed.has(colour.family))));
+});
+
 test('explicitly selected colours override an ambience suggestion', () => {
   const inspirationPalette = [
     ['blue', 'Bleu', '#5579a6'], ['green', 'Vert', '#668878'], ['white', 'Blanc', '#f4eee7'],
