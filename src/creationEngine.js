@@ -49,7 +49,13 @@ function applyTechniqueComposition(nails, options, pattern) {
     const next = nails.map((nail, index) => {
       const frenchIndex = french && [1, 3].includes(index);
       const frenchEffect = frenchIndex ? effectAt(index === 1 ? 0 : 1) : '';
-      const fullEffect = [2, 4].includes(index) ? effectAt(index === 2 ? 0 : 1) : '';
+      // A card may name several techniques only when every one of them is
+      // actually visible. French tips occupy their own nails; the remaining
+      // nails cycle through every selected material. Without French, the five
+      // nails simply alternate the selected materials.
+      const fullEffect = french
+        ? (!frenchIndex && [0, 2, 4].includes(index) ? effectAt(index === 0 ? 0 : index === 2 ? 1 : 2) : '')
+        : effectAt(index);
       const useAccentAsSolid = index === 4 && nail.accentProductId != null;
       const techniques = [...new Set([
         ...(Array.isArray(nail.techniques) ? nail.techniques : []),
@@ -104,6 +110,21 @@ const moodFamilies = {
 // A palette must read as one intention at card size. These schemes prevent
 // unrelated shades from being assembled as a single style proposal.
 const paletteSchemes = {
+  douce: [
+    ['Rose', 'Nude', 'Beige', 'Blanc'],
+  ],
+  mysterieuse: [
+    ['Prune', 'Cassis', 'Noir', 'Violet', 'Bleu', 'Argent'],
+  ],
+  chic: [
+    ['Nude', 'Beige', 'Blanc', 'Brun', 'Bordeaux', 'Rouge', 'Or'],
+  ],
+  joyeuse: [
+    ['Rose', 'Jaune', 'Orange', 'Vert', 'Bleu', 'Blanc'],
+  ],
+  'au calme': [
+    ['Beige', 'Nude', 'Vert', 'Bleu', 'Blanc'],
+  ],
   audacieuse: [
     ['Cassis', 'Prune', 'Rose', 'Nude', 'Or'],
     ['Brun', 'Terracotta', 'Nude', 'Blanc', 'Or'],
@@ -115,8 +136,13 @@ const paletteSchemes = {
   ],
 };
 const coherentPalette = (palette, options) => {
+  const mood = normalize(options.mood);
+  // Audacieuse has a deliberately curated colour direction even for duos.
+  // For the other moods, constrain the freely suggested (conceptual) 3+ colour
+  // boards but never make a real, limited collection impossible to use.
+  if (mood !== 'audacieuse' && (palette.length < 3 || !palette.every(item => item.conceptual))) return true;
   if (palette.length < 2) return true;
-  const schemes = paletteSchemes[normalize(options.mood)] || [];
+  const schemes = paletteSchemes[mood] || [];
   return !schemes.length || schemes.some(scheme => palette.every(item => scheme.includes(item.family)));
 };
 
