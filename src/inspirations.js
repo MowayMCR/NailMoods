@@ -29,7 +29,7 @@ export function snapshotIdea(idea, options = idea.options || {}) {
 
 export function validIdea(idea) {
   return Boolean(idea && typeof idea.key === 'string' && typeof idea.title === 'string'
-    && Array.isArray(idea.palette) && idea.palette.length >= 1 && idea.palette.length <= 5
+    && Array.isArray(idea.palette) && idea.palette.length >= 1 && idea.palette.length <= (idea.options?.manualSet ? 10 : 5)
     && idea.palette.every(item => item && item.id != null && typeof item.name === 'string')
     && Array.isArray(idea.resources) && idea.resources.every(item => item && item.id != null)
     && Array.isArray(idea.nails) && idea.nails.length === 5
@@ -87,6 +87,7 @@ export function nailDetails(idea, index) {
   const sticker = nail.decoration && idea.resources.find(isDecoration);
   const details = [{ label: 'Couleur', item: base }];
   if (nail.drawing && accent) details.push({ label: { french: 'Pointes de la French', line: 'Ligne', dots: 'Pois' }[nail.drawing], item: accent });
+  else if (nail.technique && accent) details.push({ label: nail.technique === 'marble' ? 'Veines du marbré' : nail.technique === 'leopard' ? 'Taches du léopard' : 'Couleur du décor', item: accent });
   if (nail.drawingTechnique) details.push({ label: 'Technique de la pointe · ' + String(nail.drawingTechnique).replace(/-/g, ' '), item: accent || base });
   else if (nail.technique) details.push({ label: 'Technique · ' + String(nail.technique).replace(/-/g, ' '), item: base });
   if (sticker) details.push({ label: 'Décoration', item: sticker });

@@ -21,6 +21,8 @@ import { CREATION_KEY as KEY, readCreationState } from './creationState';
 import { track } from './analytics/analytics';
 import { TAXONOMY, querySuggestions } from './social/tagTaxonomy';
 import NailSetBuilder from './NailSetBuilder';
+import ProCreationsPanel from './workspaces/ProCreationsPanel';
+import './workspaces/professional.css';
 import { useSocial } from './social/SocialContext';
 import { applyProCreationConstraint, listVisibleProCreations, proCreationModes } from './workspaces/proCreationGeneration.js';
 
@@ -44,6 +46,8 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
   const [pickerQuery, setPickerQuery] = useState('');
   const [storageError, setStorageError] = useState(false);
   const [setBuilder, setSetBuilder] = useState(false);
+  const [proDrawing, setProDrawing] = useState(null);
+  const canDrawPro = social?.tier === 'pro' && Boolean(social?.userId && browserStorage.workspaceId);
   const [proCreationsOpen, setProCreationsOpen] = useState(false);
   const [proCreations, setProCreations] = useState([]);
   const [proCreationLoading, setProCreationLoading] = useState(false);
@@ -133,11 +137,15 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
   if (opened) return <InspirationView onPublish={patch=>onPublish(opened,patch)} onShareToPro={onShareToPro} onSaveIdea={() => onSaveIdea(opened)} onRename={title => onRename(opened.key, title)} learning={liveLearning} key={opened.key} idea={opened} items={items} profile={profile} favorite={library.favorites.some(idea => idea.key === opened.key)} selected={library.selected?.key === opened.key} onFavorite={() => onFavorite(opened)} onSelect={() => { const clear = library.selected?.key === opened.key; if (onSelect(opened, clear)) setState(previous => ({ ...previous, selected: clear ? null : opened.id })); }} onOpen={onOpen} onBack={() => onRoute('create')} onFavorites={() => onRoute('favorites')} onCollection={onCollection} onTutorial={() => onTutorial(opened)} onDone={() => onDone(opened)} completed={completedKeys.has(opened.key)} tutorialExists={tutorials.some(session => session.idea.key === opened.key && session.status !== 'completed')} />;
   if (openedKey) return <section className="creationEmpty"><h1>Cette fiche n’est plus disponible</h1><p>Retrouve tes favoris ou compose une nouvelle inspiration.</p><button onClick={() => onRoute('favorites')}>Mes favoris</button><button onClick={() => onRoute('create')}>Créer une inspiration</button></section>;
 
+  if (proDrawing && canDrawPro) return <div className="creationPage proDrawingPage"><button type="button" className="quietButton" onClick={()=>setProDrawing(null)}>Revenir à Créer</button><h1>Mon atelier de dessin</h1><p>Dessine sur un ongle, puis retrouve tes nail arts dans ta bibliothèque Pro.</p><ProCreationsPanel client={social.client} userId={social.userId} workspaceId={browserStorage.workspaceId} startDrawing={proDrawing==='draw'}/></div>;
+  const drawingAction = canDrawPro && <button type="button" className="manualSetAction proDrawAction" onClick={()=>setProDrawing('draw')}><Brush/><span><b>Dessiner sur un ongle · Pro</b><small>Pinceau, gomme et couleurs au choix</small></span><ChevronRight/></button>;
+
   if (options.intent === 'photos' && (!browserStorage.accountScoped || !['plus','pro'].includes(browserStorage.accountTier))) return <section className="creationEmpty"><h1>Créer depuis mes photos · Plus</h1><p>Compose tes projets depuis 1 à 4 inspirations avec Plus ou Pro. Tes projets déjà enregistrés restent consultables.</p><button onClick={()=>onRoute('profile')}>Mon compte</button><button onClick={()=>change({intent:'inspire'})}>Créer une inspiration illustrée</button></section>;
   if (options.intent === 'photos') return <div className="creationPage photoCreationPage">
     <section className="creationHero photoCreationHero"><div className="inspirationIntent" aria-label="Mon intention"><button aria-pressed={false} onClick={() => change({ intent: 'inspire' })}>Inspire-moi</button><button aria-pressed={false} onClick={() => change({ intent: 'collection' })}>Avec ma collection</button><button aria-pressed={true} onClick={() => change({ intent: 'photos' })}>🖼️ À partir de photos</button></div>
       <span className="creationEyebrow"><Sparkles /> CRÉER DEPUIS MES INSPIRATIONS</span><h1>Des références,<br /><em>une idée nouvelle.</em></h1><p>Analyse la palette et la matière, puis recompose sans recopier.</p>
     </section>
+    {drawingAction}
     <PhotoInspirationFlow onShareToPro={onShareToPro} items={items} profile={profile} onSaveProject={onSaveProject} onJournalIdea={onJournalIdea} onOpen={onOpen} onProjects={() => onRoute('projects')} />
   </div>;
 
@@ -146,11 +154,12 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
       <span className="creationEyebrow"><Sparkles /> L’ENVIE DU JOUR</span>
       <h1>Et si on créait<br /><em>ta prochaine pose ?</em></h1>
       <p>Des idées tout de suite, avec ou sans collection.</p>
-      <button className="profileApply" onClick={() => change(profileDefaults(profile))}>Utiliser les préférences de mon profil</button><button className="homePrimary quickGenerate" onClick={generate}><Sparkles />Générer une idée<ArrowRight /></button><button className="manualSetAction" onClick={()=>setSetBuilder(true)}><Brush/>Composer doigt par doigt<ChevronRight/></button><div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
+      <button className="profileApply" onClick={() => change(profileDefaults(profile))}>Utiliser les préférences de mon profil</button><button className="homePrimary quickGenerate" onClick={generate}><Sparkles />Générer une idée<ArrowRight /></button><button className="manualSetAction" onClick={()=>setSetBuilder(true)}><Brush/>Composer doigt par doigt<ChevronRight/></button>{drawingAction}<div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
     </section>
 
     <button className="creationSaved" onClick={() => onRoute('favorites')}><span><Heart />Mes inspirations favorites</span><small>{library.favorites.length} idée{library.favorites.length > 1 ? 's' : ''}</small><ChevronRight /></button>
     <button className="creationSaved" onClick={() => onRoute('projects')}><span><BookmarkCheck />Mes projets</span><small>{(library.projects || []).length} projet{(library.projects || []).length > 1 ? 's' : ''}</small><ChevronRight /></button>
+    {canDrawPro && <button type="button" className="creationSaved" onClick={()=>setProDrawing('library')}><span><Brush/>Mes nail arts Pro</span><ChevronRight/></button>}
     <PersonalizationSummary model={personalModel} settings={personalSettings} onOpen={onPersonalization} />
     <section className="creationSection">
       <div className="creationSectionTitle"><span>01</span><h2>De quoi as-tu envie ?</h2></div>

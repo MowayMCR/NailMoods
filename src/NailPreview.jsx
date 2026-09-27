@@ -63,18 +63,18 @@ function StyleLayer({ style, index, color }) {
 // Kept deliberately graphic: this is the NailMoods illustrated preview, not
 // the photo-material renderer. Every selected technique still has a legible
 // signature on its own nail.
-function IllustratedTechniqueLayer({ technique, nail }) {
+function IllustratedTechniqueLayer({ technique, nail, ids }) {
   const color = nail.color || '#b88699';
   const accent = nail.accentColor || mix(color, '#ffffff', .55);
   if (!technique) return null;
-  if (['tortoiseshell'].includes(technique)) return <g><rect width="64" height="104" fill="#cf8539" opacity=".9" /><g fill="#58301f" opacity=".72">{[[18,28,12],[43,42,15],[24,67,14],[47,81,9]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r}/>)}</g></g>;
-  if (technique === 'leopard') return <g fill="none" stroke="#3a2418" strokeWidth="3">{[[20,30,8],[42,42,9],[23,64,8],[43,78,7]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} strokeDasharray="11 6"/>)}</g>;
+  if (technique === 'tortoiseshell') return <g fill={accent}>{[[18,28,12],[43,42,15],[24,67,14],[47,81,9]].map(([x,y,r],i)=><g key={i}><ellipse cx={x} cy={y} rx={r+3} ry={r} opacity=".3"/><ellipse cx={x+2} cy={y} rx={r-2} ry={r-3} opacity=".85"/></g>)}</g>;
+  if (technique === 'leopard') return <g stroke={accent} strokeWidth="3.2" strokeLinecap="round">{[[20,30,8],[42,42,9],[23,64,8],[43,78,7]].map(([x,y,r],i)=><g key={i} transform={`rotate(${i%2?22:-18} ${x} ${y})`}><ellipse cx={x} cy={y} rx={r} ry={r*.75} fill={accent} fillOpacity=".2" strokeDasharray="12 6 8 5"/></g>)}<path d="M31 49l1 2M16 80l2 1M47 23l1 2"/></g>;
   if (technique === 'crocodile') return <g fill="none" stroke="#503424" strokeWidth="2.2" opacity=".9">{[24,40,56,72].map(y=><path key={y} d={`M5 ${y}Q18 ${y-10} 32 ${y}T59 ${y}`}/>)}</g>;
   if (technique === 'snake') return <g fill="none" stroke="#503424" strokeWidth="2">{[25,43,61,79].map(y=><path key={y} d={`M7 ${y}l12-9 13 9 13-9 12 9`}/>)}</g>;
   if (technique === 'cow') return <g fill="#4b3025" opacity=".88">{[[17,31,9],[43,42,12],[24,67,8],[47,80,9]].map(([x,y,r],i)=><path key={i} d={`M${x-r} ${y}q${r} -${r} ${r*2} 0t-${r/2} ${r*1.4}q-${r*1.6} ${r*.4}-${r*1.5}-${r*1.4}Z`}/>)}</g>;
   if (technique === 'zebra') return <g stroke="#2f2528" strokeWidth="4">{[8,21,35,49,62].map((x,i)=><path key={i} d={`M${x} 20Q${x+9} 48 ${x-2} 88`}/>)}</g>;
-  if (technique === 'aura') return <ellipse cx="32" cy="54" rx="25" ry="34" fill={accent} opacity=".64" />;
-  if (technique === 'blooming') return <g fill={accent} opacity=".62"><circle cx="23" cy="39" r="15"/><circle cx="41" cy="56" r="17"/><circle cx="25" cy="71" r="12"/></g>;
+  if (technique === 'aura') return <ellipse cx="32" cy="54" rx="25" ry="35" fill={`url(#${ids.decorHalo})`} />;
+  if (technique === 'blooming') return <g fill={`url(#${ids.decorHalo})`}><circle cx="23" cy="36" r="17"/><circle cx="42" cy="55" r="19"/><circle cx="24" cy="75" r="16"/></g>;
   if (technique === 'ombre') return <path d="M0 100V46Q32 66 64 22V100Z" fill={accent} opacity=".72"/>;
   if (technique === 'babyboomer') return <path d="M0 18Q32 48 64 18V0H0Z" fill="#fff9f3" opacity=".75"/>;
   if (technique === 'chrome') return <><path d="M13 82Q49 56 50 25" fill="none" stroke="#fff" strokeWidth="5" opacity=".7"/><path d="M17 80Q47 54 48 27" fill="none" stroke="#b9bdc7" strokeWidth="1.5" opacity=".9"/></>;
@@ -83,11 +83,11 @@ function IllustratedTechniqueLayer({ technique, nail }) {
   if (technique === 'jelly') return <rect width="64" height="104" fill={color} opacity=".38"/>;
   if (technique === 'glass-nails') return <path d="M15 80V36Q17 16 32 16T49 36V80" fill="none" stroke="#fff" strokeWidth="3" opacity=".72"/>;
   if (['velvet-magnetic','cat-eye'].includes(technique)) return <><ellipse cx="32" cy="54" rx="24" ry="37" fill={accent} opacity=".42"/><path d="M12 82 53 24" stroke="#fff" opacity=".58" strokeWidth="4"/></>;
-  if (['marble'].includes(technique)) return <path d="M8 28C29 35 19 48 50 56S37 75 57 83" fill="none" stroke={accent} strokeWidth="2.5" opacity=".86"/>;
+  if (technique === 'marble') return <g fill="none" stroke={accent} strokeLinecap="round"><path d="M8 28C29 35 19 48 50 56S37 75 57 83" strokeWidth="8" opacity=".2"/><path d="M8 28C29 35 19 48 50 56S37 75 57 83" strokeWidth="2.7"/><path d="M5 60Q20 44 34 51M29 43Q37 35 53 38M37 73Q23 69 14 88" strokeWidth="1.4" opacity=".8"/></g>;
   if (['foil','flakes','glitter'].includes(technique)) return <g fill="#fff1ad">{[[20,31],[40,39],[24,60],[43,74],[33,86]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i%2?2.3:1.5}/>)}</g>;
   if (technique === 'rhinestones') return <g><Gem x={32} y={48} size={7}/><Gem x={24} y={62} size={4} color="#ffd9f7"/></g>;
   if (technique === 'charms') return <Decor motif="star" color="#d0aa58"/>;
-  if (technique === 'gel-3d') return <path d="M20 67C25 43 37 42 44 63" fill="none" stroke="#fff" strokeWidth="5" opacity=".7"/>;
+  if (technique === 'gel-3d') return <g fill="none" strokeLinecap="round"><path d="M20 67C25 43 37 42 44 63" stroke={accent} strokeWidth="7"/><path d="M19 65C25 43 36 42 43 61" stroke="#fff" strokeWidth="1.5" opacity=".7"/></g>;
   if (technique === 'color-block') return <path d="M0 27 64 8V72L0 92Z" fill={accent} opacity=".72"/>;
   if (technique === 'negative-space') return <path d="M20 29Q32 47 44 29V76Q32 58 20 76Z" fill="#fff8f3" opacity=".8"/>;
   if (technique === 'half-moon') return <path d="M12 21Q32 45 52 21V10H12Z" fill={accent} opacity=".84"/>;
@@ -142,10 +142,11 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
   const illustratedPreview = <div className={'nailPreview illustratedNails ' + (/courte/.test(normalize(idea.length)) ? 'shortNails ' : '') + (compact ? 'compactNails ' : '') + (onSelect ? 'interactiveNails ' : '')} role={onSelect ? 'group' : 'img'} aria-label={onSelect ? 'Choisir un ongle' : 'Inspiration illustrée : ' + idea.description}>
     {idea.nails.map((nail, index) => {
       const color = nail.color || '#b88699', light = mix(color, '#ffffff', .45), dark = mix(color, '#100711', .18);
-      const ids = { clip: id+'clip'+index, depth:id+'depth'+index, halo:id+'halo'+index, velvet:id+'velvet'+index, chrome:id+'chrome'+index, natural:id+'natural'+index, pearl:id+'pearl'+index, holo:id+'holo'+index, aura:id+'aura'+index, gold:id+'gold'+index, blur:id+'blur'+index, relief:id+'relief'+index };
+      const ids = { clip: id+'clip'+index, depth:id+'depth'+index, halo:id+'halo'+index, velvet:id+'velvet'+index, chrome:id+'chrome'+index, natural:id+'natural'+index, pearl:id+'pearl'+index, holo:id+'holo'+index, aura:id+'aura'+index, gold:id+'gold'+index, blur:id+'blur'+index, relief:id+'relief'+index, decorHalo:id+'decorHalo'+index };
       const nailSvg = <svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={highlightedIndices ? { opacity: highlightedIndices.includes(index) ? 1 : 0.16 } : undefined}>
         <defs>
           <clipPath id={ids.clip}><path d={path} /></clipPath>
+          <radialGradient id={ids.decorHalo}><stop stopColor={nail.accentColor||light}/><stop offset=".4" stopColor={nail.accentColor||light} stopOpacity=".9"/><stop offset="1" stopColor={nail.accentColor||light} stopOpacity="0"/></radialGradient>
           <linearGradient id={ids.depth} x1="0" y1="0" x2="1" y2="1"><stop stopColor={light}/><stop offset=".22" stopColor={color}/><stop offset=".65" stopColor={color}/><stop offset=".9" stopColor={dark}/><stop offset="1" stopColor={mix(color,'#ffffff',.25)}/></linearGradient>
           <radialGradient id={ids.halo}><stop stopColor="#fff" stopOpacity=".78"/><stop offset=".2" stopColor={light} stopOpacity=".65"/><stop offset=".58" stopColor={color} stopOpacity=".2"/><stop offset="1" stopColor={dark} stopOpacity="0"/></radialGradient>
           <radialGradient id={ids.velvet}><stop stopColor="#fff" stopOpacity=".72"/><stop offset=".35" stopColor={light} stopOpacity=".48"/><stop offset="1" stopColor={color} stopOpacity="0"/></radialGradient>
@@ -161,7 +162,7 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
         <path d={path} fill={mode === 'realistic' ? dark : `url(#${ids.depth})`} stroke={mix(color, '#381728', .42)} strokeOpacity=".38" strokeWidth=".9" />
         <g clipPath={'url(#' + ids.clip + ')'}>
           {mode === 'realistic' ? <MaterialLayer technique={nail.technique || rendering.technique} nail={nail} index={index} ids={ids} /> : <>
-            <IllustratedTechniqueLayer technique={nail.technique} nail={nail} />
+            <IllustratedTechniqueLayer technique={nail.technique} nail={nail} ids={ids} />
             <StyleLayer style={nail.visualStyle} index={index} color={color} />
             {nail.finish !== 'Mat' && <><path d="M20 31Q16 46 19 64" stroke="#fff" opacity=".52" strokeWidth="4.2" fill="none" strokeLinecap="round" /><path d="M23 27Q20 36 21 43" stroke="#fff" opacity=".75" strokeWidth="1.4" fill="none" strokeLinecap="round" /></>}
             {/paillet|holograph|irise/.test(normalize(nail.finish + nail.effect)) && <g fill="#fff" opacity=".65">{[[27, 30], [43, 47], [22, 70], [38, 77], [32, 55]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="1.3" />)}</g>}
