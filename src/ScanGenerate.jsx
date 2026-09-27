@@ -9,12 +9,12 @@ import { loadCatalog, catalogCandidate, catalogueProvenance } from './catalog';
 import RecognitionStatus from './RecognitionStatus';
 import { recognizeEvidence, recognitionPatch, pendingBarcodeReport, interruptedRecognition } from './recognitionReport';
 import { mergeRecognitionEvidence } from './productIdentity';
-import { useStorage } from './StorageContext';
 import { snapshotIdea } from './inspirations';
 import NailPreview from './NailPreview';
 import RecipeSummary from './RecipeSummary';
 import Sheet from './Sheet';
-import { confirmedScanProduct, generateScannedIdeas, scanEffects, toggleScanEffect, trackScan } from './scanGenerate';
+import { confirmedScanProduct, generateScannedIdeas, scanEffects, toggleScanEffect } from './scanGenerate';
+import { track as trackAnalytics } from './analytics/analytics';
 import './scanGenerate.css';
 
 export function ScanBottles() {
@@ -24,7 +24,6 @@ export function ScanBottles() {
 // Paid actions require explicit capabilities supplied by a real entitlement adapter.
 // No plan is inferred from localStorage, the profile or a query parameter.
 export default function ScanGenerate({ profile = {}, items = [], onBack, capabilities = {}, onAddProducts, onSaveJournal }) {
-  const browserStorage=useStorage();
   const [stage,setStage] = useState('capture'), [products,setProducts] = useState([]), [draft,setDraft] = useState(null);
   const [recognition,setRecognition] = useState(null);
   const secondView = useRef(null);
@@ -34,7 +33,19 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
   const [correct,setCorrect] = useState(false), [sampling,setSampling] = useState(false), [camera,setCamera] = useState(false), [cameraPending,setCameraPending] = useState(false);
   const [added,setAdded] = useState(false), [saved,setSaved] = useState([]), [saving,setSaving] = useState('');
   const video = useRef(null), fileInput = useRef(null), stream = useRef(null), cameraRequest = useRef(0), task = useRef(null), seed = useRef(1), heading = useRef(null), mounted = useRef(true);
-  const track = (event,data) => trackScan(browserStorage,event,data);
+  // The scan journey uses the same consent-gated server transport as the rest
+  // of the app.  It never sends a photo, OCR result, colour or product name.
+  const track = (event, data = {}) => {
+    const fields = { screen: 'scan' };
+    if (event === 'scan_generate_opened' || event === 'first_product_scanned') return trackAnalytics('scan_started', { source: 'scan' }, fields);
+    if (event === 'first_product_recognized') return trackAnalytics('scan_succeeded', { source: 'scan', recognition_success: true }, fields);
+    if (event === 'first_product_unrecognized') return trackAnalytics('scan_succeeded', { source: 'scan', recognition_success: false }, fields);
+    if (event === 'second_product_added') return trackAnalytics('scan_succeeded', { source: 'scan', recognition_success: true }, fields);
+    if (event === 'product_added_to_collection') return trackAnalytics('product_added', { source: 'scan', category: 'Vernis', item_count: Math.min(2, Math.max(1, Number(data.count) || 1)) }, fields);
+    if (event === 'generated_idea_saved') return trackAnalytics('generation_saved', { technique: 'scan', render_mode: 'illustrated', used_collection: true }, fields);
+    // Camera-permission and effect-choice diagnostics remain local-only: they
+    // are not required for a beta KPI and should not create noisy events.
+  };
   const stopCamera = () => { cameraRequest.current++; stream.current?.getTracks().forEach(t=>t.stop()); stream.current=null; setCamera(false); setCameraPending(false); };
   useEffect(()=>{ mounted.current=true; track('scan_generate_opened'); return ()=>{ mounted.current=false; task.current?.abort(); cameraRequest.current++; stream.current?.getTracks().forEach(t=>t.stop()); }; },[]);
   useEffect(()=>{ if(camera && video.current) video.current.srcObject=stream.current; },[camera]);
@@ -122,8 +133,11 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, capabil
     } catch(err){setError(err.message);}
   }
   function generate() {
-    try { const result=generateScannedIdeas(products,effects,profile,items,seed.current++);if(!result.length)throw new Error('Corrige une couleur pour réessayer.');setIdeas(result);setStage('results');setDetail(null);setError('');track('scan_generate_completed',{count:result.length}); }
-    catch(err){setError(err.message);}
+    const started=performance.now();
+    const technique=effects.length ? effects.map(value=>String(value).toLowerCase()).sort().join('+') : 'scan';
+    trackAnalytics('generation_started',{difficulty:'0',number_of_colors:products.length,technique,mode:'scan',render_mode:'illustrated',used_collection:true},{screen:'scan'});
+    try { const result=generateScannedIdeas(products,effects,profile,items,seed.current++);if(!result.length)throw new Error('Corrige une couleur pour réessayer.');setIdeas(result);setStage('results');setDetail(null);setError('');trackAnalytics('generation_succeeded',{difficulty:'0',number_of_colors:products.length,technique,mode:'scan',render_mode:'illustrated',used_collection:true},{screen:'scan',duration_ms:Math.round(performance.now()-started),success:true}); }
+    catch(err){trackAnalytics('generation_failed',{difficulty:'0',number_of_colors:products.length,technique,mode:'scan',render_mode:'illustrated',used_collection:true},{screen:'scan',success:false,error_code:'scan_generation_failed'});setError(err.message);}
   }
   async function save(kind,idea) {
     if(saving)return;

@@ -20,6 +20,9 @@ import { PersonalizationSummary } from './PersonalizationView';
 import { CREATION_KEY as KEY, readCreationState } from './creationState';
 import { track } from './analytics/analytics';
 import { TAXONOMY, querySuggestions } from './social/tagTaxonomy';
+import NailSetBuilder from './NailSetBuilder';
+import { useSocial } from './social/SocialContext';
+import { applyProCreationConstraint, listVisibleProCreations, proCreationModes } from './workspaces/proCreationGeneration.js';
 
 const modes = [
   { id: 'usual', title: 'Comme d’habitude', subtitle: 'Mes favoris, mon univers', icon: Heart },
@@ -34,11 +37,17 @@ const polishCountHints = { auto: 'Des associations de 1 à 5 couleurs.', 1: 'Un 
 
 export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSaveProject, onJournalIdea, entryOptions, onEntryConsumed, onRename, onEquipment, items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
   const browserStorage=useStorage();
+  const social=useSocial();
   const [state, setState] = useState(() => { const saved = readCreationState(browserStorage, profile); return entryOptions ? { ...saved, options: { ...saved.options, ...entryOptions, ...(entryOptions.intent === 'inspire' ? { requiredColorIds: [] } : {}) }, generated: false, selected: null } : saved; });
   useEffect(() => { if (entryOptions) onEntryConsumed(); }, []);
   const [picker, setPicker] = useState(null);
   const [pickerQuery, setPickerQuery] = useState('');
   const [storageError, setStorageError] = useState(false);
+  const [setBuilder, setSetBuilder] = useState(false);
+  const [proCreationsOpen, setProCreationsOpen] = useState(false);
+  const [proCreations, setProCreations] = useState([]);
+  const [proCreationLoading, setProCreationLoading] = useState(false);
+  const [proCreationError, setProCreationError] = useState('');
   const resultAnchor = useRef(null);
   const options = useMemo(() => ({ ...state.options, intent: state.options.intent || (items.some(i => ['Vernis', 'Semi-permanent', 'Gel'].includes(i.type)) ? 'collection' : 'inspire') }), [state.options, items]);
   const stamp = useMemo(() => inventoryStamp(items), [items]);
@@ -47,8 +56,9 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
   const liveStamp = personalSettings.enabled ? personalModel.stamp : 'off';
   const learning = activeRun ? state.learning : liveLearning;
   const report = useMemo(() => generateInspirations(items, profile, options, state.seed || 1, 4, learning), [items, profile, options, state.seed, learning]);
+  const generatedIdeas = useMemo(() => applyProCreationConstraint(report.results, options.proCreation, options), [report.results, options]);
   const pendingLearning = activeRun && state.learningStamp !== liveStamp && (state.learning || liveLearning);
-  const chosen = activeRun && report.results.find(idea => idea.id === state.selected);
+  const chosen = activeRun && generatedIdeas.find(idea => idea.id === state.selected);
   const requiredIds = Array.isArray(options.requiredColorIds) ? options.requiredColorIds.map(String) : [];
   const selectedColors = items.filter(item => requiredIds.includes(String(item.id)));
   const decorations = decorationChoice(options);
@@ -63,6 +73,14 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
     try { browserStorage.setItem(KEY, JSON.stringify(state)); setStorageError(false); }
     catch { setStorageError(true); }
   }, [state]);
+  const connectedPros = useMemo(() => (social?.rows || []).filter(row => row.status === 'accepted' && row.account_tier === 'pro'), [social?.rows]);
+  async function openProCreations() {
+    if (!social?.client || !connectedPros.length) { setProCreationsOpen(true); return; }
+    setProCreationsOpen(true); setProCreationLoading(true); setProCreationError('');
+    try { setProCreations(await listVisibleProCreations(social.client, connectedPros.map(row => row.user_id))); }
+    catch { setProCreationError('Les créations de tes PO ne sont pas disponibles pour le moment.'); }
+    finally { setProCreationLoading(false); }
+  }
 
   const selections = {
     mood: { title: 'Quelle ambiance ?', icon: Sun, label: 'Ambiance', searchable: true, values: [...new Set(['Douce', 'Mystérieuse', 'Chic', 'Joyeuse', 'Audacieuse', 'Au calme', ...TAXONOMY.moods])], placeholder: 'Douce, glamour, sombre…' },
@@ -100,9 +118,10 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
   function generate() {
     recordRuntimeEvent('generation','ok');
     const started=performance.now();
-    track(state.generated?'generation_regenerated':'generation_started',{difficulty:String(options.level),number_of_colors:options.polishCount==='auto'?0:Number(options.polishCount),render_mode:'illustrated',used_collection:options.intent==='collection'},{screen:'create'});
+    const generationMetadata={difficulty:String(options.level),number_of_colors:options.polishCount==='auto'?0:Number(options.polishCount),technique:chosenTechniques.join('+') || 'none',technique_count:chosenTechniques.length,technique_placement:options.techniquePlacement || 'auto',render_mode:'illustrated',used_collection:options.intent==='collection'};
+    track(state.generated?'generation_regenerated':'generation_started',generationMetadata,{screen:'create'});
     setState(previous => ({ ...previous, generated: true, inventory: stamp, seed: (Number(previous.seed) || 0) + 1, selected: null, learning: liveLearning, learningStamp: liveStamp }));
-    track('generation_succeeded',{difficulty:String(options.level),number_of_colors:report.results.length,render_mode:'illustrated',used_collection:options.intent==='collection'},{screen:'create',duration_ms:Math.round(performance.now()-started),success:true});
+    track('generation_succeeded',{...generationMetadata,number_of_colors:report.results.length},{screen:'create',duration_ms:Math.round(performance.now()-started),success:true});
     requestAnimationFrame(() => resultAnchor.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
@@ -127,7 +146,7 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
       <span className="creationEyebrow"><Sparkles /> L’ENVIE DU JOUR</span>
       <h1>Et si on créait<br /><em>ta prochaine pose ?</em></h1>
       <p>Des idées tout de suite, avec ou sans collection.</p>
-      <button className="profileApply" onClick={() => change(profileDefaults(profile))}>Utiliser les préférences de mon profil</button><button className="homePrimary quickGenerate" onClick={generate}><Sparkles />Générer une idée<ArrowRight /></button><div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
+      <button className="profileApply" onClick={() => change(profileDefaults(profile))}>Utiliser les préférences de mon profil</button><button className="homePrimary quickGenerate" onClick={generate}><Sparkles />Générer une idée<ArrowRight /></button><button className="manualSetAction" onClick={()=>setSetBuilder(true)}><Brush/>Composer doigt par doigt<ChevronRight/></button><div className="creationProfile">{[profile.shape, profile.length, profile.level].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
     </section>
 
     <button className="creationSaved" onClick={() => onRoute('favorites')}><span><Heart />Mes inspirations favorites</span><small>{library.favorites.length} idée{library.favorites.length > 1 ? 's' : ''}</small><ChevronRight /></button>
@@ -150,6 +169,7 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
         {['mood', 'style'].includes(key) ? <MoodGlyph value={options[key]} /> : <choice.icon />}<small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key]}</b><ChevronRight className="tileArrow" />
       </button>; })}</div>
       {Number(options.level) >= 2 && <button className="creationTechniqueShortcut" onClick={() => openPicker('technique')}><Wand2 /><span><small>NAIL ART AVANCÉ</small><b>{chosenTechniques.length ? techniqueSummary : 'Choisir une ou plusieurs techniques'}</b><em>Jusqu’à 4 techniques peuvent être combinées.</em></span><ChevronRight /></button>}
+      {social?.userId && ['plus','pro'].includes(social.tier) && <button className="creationTechniqueShortcut" onClick={openProCreations}><Brush /><span><small>CRÉATIONS DE MA PO</small><b>{options.proCreation?.creation?.title || 'Utiliser une création de ma PO'}</b><em>{options.proCreation?.creation ? 'Elle guidera une nouvelle composition NailMoods.' : 'Choisis une création rendue visible par ta PO.'}</em></span><ChevronRight /></button>}
       <details className="creationAdvanced"><summary><span><SlidersHorizontal />Personnaliser ma pose</span><small>Technique, teintes, décorations et limites</small></summary>
         <div className="creationTiles">{['technique', ...(chosenTechniques.length ? ['techniquePlacement'] : []), 'occasion', 'polishCount'].map(key => { const choice = selections[key]; return <button key={key} data-choice={key} onClick={() => openPicker(key)}>
           <choice.icon />{key === 'polishCount' && <span className="countPreview" aria-hidden="true">{Array.from({ length: options.polishCount === 'auto' ? 5 : Number(options.polishCount) }, (_, index) => <svg key={index} viewBox="0 0 16 30" fill="none" focusable="false"><rect x="5" y="1" width="6" height="10" rx="1.5" fill="currentColor" /><path d="M5 12h6l3 4v11a2 2 0 0 1-2-2H4a2 2 0 0 1-2-2V16z" fill="var(--soft)" stroke="currentColor" strokeWidth="1.2" /><path d="M5 19v6" stroke="currentColor" strokeOpacity=".35" strokeLinecap="round" /></svg>)}</span>}<small>{choice.label}</small><b>{key === 'technique' ? techniqueSummary : choice.format ? choice.format(options[key]) : options[key] || 'Libre'}</b><ChevronRight className="tileArrow" />
@@ -185,7 +205,7 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
       {report.results.length < 4 && <p className="creationNotice">Ta collection et tes choix permettent {report.results.length} proposition{report.results.length > 1 ? 's' : ''} distincte{report.results.length > 1 ? 's' : ''} pour le moment. Aucun produit n’a été ajouté à ta collection.</p>}
       <p className="creationHint">{report.intent === 'inspire' ? 'Couleurs d’inspiration, sans référence commerciale ni produit ajouté à ta collection.' : 'Aperçus avec tes teintes enregistrées.'} Le rendu bascule automatiquement vers le réalisme quand la matière, la lumière ou le relief le demandent. Vérifie le protocole des produits.</p>
       {chosen && <button className="chosenIdea" onClick={() => onOpen(chosen, chosen.options)}><BookmarkCheck /><span><b>Ton idée retenue</b><small>{chosen.title} · {chosen.palette.map(item => item.name).join(' + ')}</small></span><ChevronRight /></button>}
-      <div className="ideaList">{report.results.map((idea, index) => <article className={'ideaCard ideaCardOpenable ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id} onClick={() => onOpen(idea, idea.options)}>
+      <div className="ideaList">{generatedIdeas.map((idea, index) => <article className={'ideaCard ideaCardOpenable ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id} onClick={() => onOpen(idea, idea.options)}>
         <div className="ideaTopline"><span><MoodGlyph value={idea.options?.mood || options.mood} /> ENVIE {String(index + 1).padStart(2, '0')}</span><span><Clock3 />≈ {idea.minutes} min</span></div>
         <NailPreview idea={idea} controls />
         <div className="ideaBody">{completedKeys.has(snapshotIdea(idea, idea.options).key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3>{idea.title}</h3><p>{idea.description}</p>
@@ -201,6 +221,15 @@ export default function CreateView({ onPublish, onShareToPro, onSaveIdea, onSave
     </section>}
 
     {picker === 'colors' && <ColorSelection items={items} selected={requiredIds} onClose={() => setPicker(null)} onChange={ids => change({ requiredColorIds: ids, intent: ids.length ? 'collection' : options.intent, polishCount: 'auto' })} />}
+    {setBuilder&&<Sheet className="nailSetSheet" eyebrow="CRÉER À MA FAÇON" title="Ma composition" onClose={()=>setSetBuilder(false)}><NailSetBuilder items={items} profile={profile} options={options} onClose={()=>setSetBuilder(false)} onSave={idea=>{if(onSaveProject(idea)){setSetBuilder(false);onOpen(idea,idea.options);}}}/></Sheet>}
+    {proCreationsOpen && <Sheet className="creationSheet" eyebrow="CRÉATIONS DE MA PO" title="Une création, une nouvelle pose" onClose={() => setProCreationsOpen(false)}>
+      {!connectedPros.length && <p className="creationPickerHelp">Connecte-toi à une PO pour voir les créations qu’elle choisit de partager avec toi.</p>}
+      {proCreationLoading && <p className="creationPickerHelp">Préparation des créations…</p>}
+      {proCreationError && <p className="formError">{proCreationError}</p>}
+      {!proCreationLoading && connectedPros.length > 0 && !proCreations.length && !proCreationError && <p className="creationPickerHelp">Tes PO n’ont pas encore partagé de création avec toi.</p>}
+      <div className="creationOptions creationTagOptions">{proCreations.map(creation => <button key={creation.id} onClick={() => change({ proCreation: { creation, mode: options.proCreation?.creation?.id === creation.id ? options.proCreation.mode : 'inspire' } })}><span><b>{creation.title}</b><small>{[...(creation.techniques || []), ...(creation.motifs || [])].slice(0, 3).join(' · ') || 'Création personnalisée'}</small></span><ChevronRight /></button>)}</div>
+      {options.proCreation?.creation && <><p className="creationPickerHelp">Comment l’intégrer ? NailMoods compose toujours une pose entière ; le dessin brut n’est jamais collé dans le rendu.</p><div className="creationOptions">{proCreationModes.map(([id, title, detail]) => <button key={id} className={options.proCreation.mode === id ? 'on' : ''} aria-pressed={options.proCreation.mode === id} onClick={() => change({ proCreation: { ...options.proCreation, mode: id } })}><span><b>{title}</b><small>{detail}</small></span>{options.proCreation.mode === id && <Check />}</button>)}</div><button className="creationGenerate" onClick={() => setProCreationsOpen(false)}><Check />Utiliser cette création</button><button className="detailSecondary" onClick={() => change({ proCreation: null })}>Retirer cette création</button></>}
+    </Sheet>}
     {picker === 'decorations' && <DecorationPicker decorations={report.tools.stickers} choice={decorations} onClose={() => setPicker(null)} onCollection={() => { setPicker(null); onCollection(); }} onChange={(mode, id = '') => change({ decorations: mode, decorationId: id, constraints: options.constraints.filter(value => value !== 'noStickers') })} />}
     {picker && !['decorations', 'colors'].includes(picker) && <Sheet className="creationSheet" eyebrow="MON ENVIE DU JOUR" title={picker === 'constraints' ? 'Tes limites du jour' : selections[picker].title} onClose={() => setPicker(null)}>
       {picker === 'polishCount' && <p className="creationPickerHelp">Choisis un nombre exact de vernis colorés par proposition. Les stickers, bases et top coats ne sont pas comptés.</p>}

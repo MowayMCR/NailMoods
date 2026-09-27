@@ -1,0 +1,70 @@
+-- Recette-only regression test. Uses existing isolated fixture accounts.
+-- All writes, including social messages, are rolled back.
+begin;
+create temp table phase13_checks (name text, passed boolean);
+grant all on phase13_checks to authenticated;
+delete from private.social_connections where least(requester,recipient)=least('42623ae8-1f1b-475f-bf0f-0e08114a4462'::uuid,'108100ff-e8e5-4a91-bb5d-d3a3b8f208e1'::uuid) and greatest(requester,recipient)=greatest('42623ae8-1f1b-475f-bf0f-0e08114a4462'::uuid,'108100ff-e8e5-4a91-bb5d-d3a3b8f208e1'::uuid);
+select set_config('request.jwt.claim.sub','42623ae8-1f1b-475f-bf0f-0e08114a4462',true);
+set local role authenticated;
+select public.set_nailmoods_identity('social.fixture.b','everyone','Social fixture B');
+with created as (insert into public.pro_creations(owner_id,workspace_id,title,design,color_roles,techniques) values(auth.uid(),'50d68b83-bfad-4849-a373-33f595e93dc0','Phase13 release test','{"version":1,"strokes":[{"points":[{"x":20,"y":40},{"x":60,"y":70}],"color":"#813c60","size":4}]}','[{"role":"base","color":"#f4d8d0"}]',array['French']) returning id) select set_config('test.creation_id',id::text,true) from created;
+insert into phase13_checks select 'Pro creation persisted',count(*)=1 from public.pro_creations where id=current_setting('test.creation_id')::uuid;
+select set_config('test.connection_id',(public.nm_social('request','{"handle":"social.fixture.a"}'::jsonb)->>'id'),true);
+reset role;
+select set_config('request.jwt.claim.sub','108100ff-e8e5-4a91-bb5d-d3a3b8f208e1',true);
+set local role authenticated;
+insert into phase13_checks select 'Private creation hidden before share',count(*)=0 from public.pro_creations where id=current_setting('test.creation_id')::uuid;
+select public.nm_social('accept',jsonb_build_object('id',current_setting('test.connection_id')));
+insert into phase13_checks select 'Profile search resolves',count(*)>0 from public.search_nailmoods('social.fixture.b',null,null);
+insert into phase13_checks select 'Public profile opens',public.get_public_profile('social.fixture.b') is not null;
+reset role;
+select set_config('request.jwt.claim.sub','42623ae8-1f1b-475f-bf0f-0e08114a4462',true);
+set local role authenticated;
+select public.send_pro_creation_to_client('108100ff-e8e5-4a91-bb5d-d3a3b8f208e1',current_setting('test.creation_id')::uuid);
+select public.send_pro_creation_to_client('108100ff-e8e5-4a91-bb5d-d3a3b8f208e1',current_setting('test.creation_id')::uuid);
+insert into phase13_checks select 'Sender can read share',count(*)=1 from public.pro_creation_shares where creation_id=current_setting('test.creation_id')::uuid;
+reset role;
+insert into phase13_checks select 'Share retry sends one message',count(*)=1 from public.messages where client_id in (select id from public.pro_creation_shares where creation_id=current_setting('test.creation_id')::uuid);
+select set_config('request.jwt.claim.sub','108100ff-e8e5-4a91-bb5d-d3a3b8f208e1',true);
+set local role authenticated;
+insert into phase13_checks select 'Recipient reads shared creation',count(*)=1 from public.pro_creations where id=current_setting('test.creation_id')::uuid;
+insert into phase13_checks select 'Recipient reads share',count(*)=1 from public.pro_creation_shares where creation_id=current_setting('test.creation_id')::uuid;
+with changed as (update public.pro_creations set title='Forbidden' where id=current_setting('test.creation_id')::uuid returning id) insert into phase13_checks select 'Recipient cannot edit author creation',count(*)=0 from changed;
+reset role;
+select set_config('request.jwt.claim.sub','2b837609-eb42-4035-be02-5d3f4ec4bb73',true);
+set local role authenticated;
+insert into phase13_checks select 'Third account cannot read',count(*)=0 from public.pro_creations where id=current_setting('test.creation_id')::uuid;
+do $$begin
+  begin
+    insert into public.pro_creations(owner_id,workspace_id,title) values(auth.uid(),'9d129cd5-5cfd-4f35-aece-4c693e100916','Forbidden free');
+    raise exception 'Free author unexpectedly allowed';
+  exception when insufficient_privilege then insert into phase13_checks values('Free cannot author',true); end;
+end$$;
+reset role;
+insert into private.social_blocks(blocker,blocked) values('108100ff-e8e5-4a91-bb5d-d3a3b8f208e1','42623ae8-1f1b-475f-bf0f-0e08114a4462') on conflict do nothing;
+select set_config('request.jwt.claim.sub','108100ff-e8e5-4a91-bb5d-d3a3b8f208e1',true);
+set local role authenticated;
+insert into phase13_checks select 'Blocked creation hidden',count(*)=0 from public.pro_creations where id=current_setting('test.creation_id')::uuid;
+insert into phase13_checks select 'Blocked share hidden',count(*)=0 from public.pro_creation_shares where creation_id=current_setting('test.creation_id')::uuid;
+reset role;
+select set_config('request.jwt.claim.sub','42623ae8-1f1b-475f-bf0f-0e08114a4462',true);
+set local role authenticated;
+do $$begin
+  begin
+    perform public.send_pro_creation_to_client('108100ff-e8e5-4a91-bb5d-d3a3b8f208e1',current_setting('test.creation_id')::uuid);
+    raise exception 'Blocked recipient unexpectedly allowed';
+  exception when insufficient_privilege then insert into phase13_checks values('Blocked send denied',true); end;
+end$$;
+reset role;
+delete from private.social_blocks where blocker='108100ff-e8e5-4a91-bb5d-d3a3b8f208e1' and blocked='42623ae8-1f1b-475f-bf0f-0e08114a4462';
+set local role authenticated;
+select public.nm_social('remove',jsonb_build_object('id',current_setting('test.connection_id')));
+reset role;
+select set_config('request.jwt.claim.sub','108100ff-e8e5-4a91-bb5d-d3a3b8f208e1',true);
+set local role authenticated;
+insert into phase13_checks select 'Removed connection revokes creation',count(*)=0 from public.pro_creations where id=current_setting('test.creation_id')::uuid;
+insert into phase13_checks select 'Removed connection revokes share',count(*)=0 from public.pro_creation_shares where creation_id=current_setting('test.creation_id')::uuid;
+reset role;
+do $$begin if exists(select 1 from phase13_checks where not passed) then raise exception 'Phase 13 test failed: %',(select string_agg(name,', ') from phase13_checks where not passed);end if;end$$;
+select jsonb_agg(to_jsonb(c)) as checks from phase13_checks c;
+rollback;

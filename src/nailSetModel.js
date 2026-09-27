@@ -1,0 +1,8 @@
+import {productColor} from './colorAnalysis.js';
+
+const fallback=['#f4d8d0','#813c60','#c99073','#d7ae58','#718d82'];
+const colorItem=(item,index)=>({id:item?.id||`color-${index}`,name:item?.name||'Couleur d’inspiration',color:item?productColor(item):fallback[index%fallback.length],productId:item?.id||null});
+
+export function initialNailSet(items=[]){const colors=items.filter(item=>item.type!=='Matériel'&&productColor(item)).slice(0,5).map(colorItem);const palette=colors.length?colors:fallback.map((color,index)=>({id:`inspiration-${index}`,name:'Couleur d’inspiration',color,productId:null}));return Array.from({length:5},(_,index)=>{const item=palette[index%palette.length];return {id:index,color:item.color,productId:item.productId,technique:'',drawing:null,accentColor:item.color,finish:'Brillant',techniques:[]};});}
+export function setIdea(nails,profile={},options={}){const palette=[...new Map(nails.map((nail,index)=>[nail.color,{id:nail.productId||`inspiration-${index}`,name:nail.productId?'Couleur de ma collection':'Couleur d’inspiration',color:nail.color}])).values()];return {id:`set-${crypto.randomUUID()}`,title:'Ma composition doigt par doigt',description:'Composition manuelle, à adapter selon tes produits et ton matériel.',shape:profile.shape||'Amande',length:profile.length||'Courte',rank:2,minutes:Number(options.duration)||45,polishCount:palette.length,palette,nails:nails.map(nail=>({...nail,drawing:nail.technique==='french'?'french':nail.drawing,techniques:nail.technique?[nail.technique]:[]})),resources:[],requirements:[],reasons:['Composition créée doigt par doigt','Couleurs et techniques modifiables'],options:{...options,intent:options.intent||'collection',manualSet:true},intent:'manual'};}
+export {colorItem,fallback};

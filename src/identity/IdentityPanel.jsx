@@ -7,6 +7,7 @@ import PublicProfile from './PublicProfile';
 import {identityService} from './service';
 import {suggestHandle,normalizeHandle,handleError,rankProfiles} from './handles';
 import {professionalLabel} from '../workspaces/professionalProfile';
+import './identity-search.css';
 
 export default function IdentityPanel({client,userId,onSaved}){
  const social=useSocial();
@@ -41,7 +42,7 @@ export default function IdentityPanel({client,userId,onSaved}){
  </form>
  {!busy&&!searched&&<div className="searchEmpty"><Search/><b>Retrouve un profil</b><p>Saisis un nom ou un NailMoods ID. Seuls les profils qui ont choisi d’être trouvables apparaissent.</p></div>}
  {!busy&&searched&&!results.length&&<div className="searchEmpty"><Search/><b>Aucun résultat</b><p>Vérifie l’identifiant ou essaie un autre filtre.</p></div>}
- <div className="identityResults">{results.map(row=><article key={row.entity_type+row.entity_id} className="identityResultCard"><div className="resultAvatar"><span>{row.display_name?.[0]||'N'}</span>{row.avatar_url&&<ContentImage client={client} kind="avatar" id={row.handle} title="Avatar"/>}</div><div><span className="profileTypePill">{professionalLabel(row.kind)}</span><h3>{row.display_name}</h3><p>@{row.handle}</p>{row.city&&<small>{row.city}</small>}{row.bio&&<p>{row.bio}</p>}{row.styles?.length>0&&<small>{row.styles.join(' · ')}</small>}</div>{import.meta.env.VITE_DEPLOYMENT_ENV==='recette'&&<button onClick={()=>setPublicHandle(row.handle)}>Voir le profil<ChevronRight/></button>}</article>)}</div>{notice&&<p className="formError" role="status">{notice}</p>}
+ <div className="identityResults">{results.map(row=><button type="button" key={row.entity_type+row.entity_id} className="identityResultCard" onClick={()=>setPublicHandle(row.handle)} aria-label={`Ouvrir le profil de ${row.display_name || '@'+row.handle}`}><div className="resultAvatar"><span>{row.display_name?.[0]||'N'}</span>{row.avatar_url&&<ContentImage client={client} kind="avatar" id={row.handle} title="Avatar"/>}</div><div><span className="profileTypePill">{professionalLabel(row.kind)}</span><h3>{row.display_name}</h3><p>@{row.handle}</p>{row.city&&<small>{row.city}</small>}{row.bio&&<p>{row.bio}</p>}{row.styles?.length>0&&<small>{row.styles.join(' · ')}</small>}</div><ChevronRight className="identityResultChevron" aria-hidden="true"/></button>)}</div>{notice&&<p className="formError" role="status">{notice}</p>}
  </Sheet>}
  {publicHandle&&<PublicProfile client={client} handle={publicHandle} onClose={()=>setPublicHandle(null)}/>} </section>;
 }
