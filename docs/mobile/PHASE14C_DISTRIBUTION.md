@@ -2,7 +2,8 @@
 
 Le code applicatif reste le commit 14B `793f2d56f4b83e0eb341346943f7f007e8f497d8`.
 Cette branche ajoute des outils de signature et cette procédure ; elle ne modifie
-ni le web, ni les ressources OCR, ni les backends. Aucun workflow de publication.
+ni le web, ni les ressources OCR. Aucun workflow de publication. Seule la liste
+des redirections Auth a été complétée dans les backends existants, comme décrit ci-dessous.
 
 ## Binaire initial
 
@@ -52,9 +53,18 @@ des secrets ; la branche actuelle n'ajoute pas de secrets ni de job de publicati
 
 ## Supabase et tests restant à attester
 
-Les projets existants sont accessibles, mais le connecteur de cette session ne
-fournit aucune action Auth URL Configuration. Aucune redirection distante n'a été
-modifiée ou déclarée vérifiée. Conserver Site URL et toutes les URL web.
+Le 28 septembre 2026, après accord de Marie, les deux callbacks ci-dessous ont
+été ajoutés dans chaque projet via le tableau de bord Supabase. Vérification
+après enregistrement et retour sur la page : quatre URL par projet, dont les
+deux URL web préexistantes conservées. Aucun wildcard et aucune modification
+de Site URL, SQL, RLS ou Storage.
+
+- Production (`rvqmtnqvzzxzwfxfyjcg`) : Site URL `https://mowaymcr.github.io/NailMoods/`.
+- Recette (`pueqkbwfwxgqzmkauxoz`) : Site URL `https://nailmoods-recette-phase12.m-cr.chatgpt.site/`.
+- URL web conservées dans chaque projet : Site URL suivie de `?auth=callback`
+  et de `?auth=recovery`.
+- Les pages Emails indiquent des modèles par défaut dans les deux projets ;
+  aucun modèle, réglage SMTP ou envoi d'e-mail modifié. Le retour réel reste à tester.
 
 Production :
 
