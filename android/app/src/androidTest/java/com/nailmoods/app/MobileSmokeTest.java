@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.KeyEvent;
+import android.view.InputDevice;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -109,21 +110,29 @@ public class MobileSmokeTest {
       waitFor(scenario,"Boolean(document.querySelector('.app') && !document.getElementById('nm-boot'))");
       js(scenario,"location.hash='profil/preferences'");
       waitFor(scenario,"Boolean(document.querySelector('.nameField input'))");
-      js(scenario,"document.querySelector('.nameField input').scrollIntoView({block:'center'})");
-      SystemClock.sleep(500);
+      js(scenario,"document.querySelector('.nameField input').scrollIntoView({block:'center',behavior:'instant'})");
+      waitFor(scenario,"(()=>{const r=document.querySelector('.nameField input').getBoundingClientRect();return document.hasFocus()&&r.top>=0&&r.bottom<=(visualViewport?.height||innerHeight)})()");
       String center=js(scenario,"(()=>{const r=document.querySelector('.nameField input').getBoundingClientRect();return [r.x+r.width/2,r.y+r.height/2,devicePixelRatio]})()");
       org.json.JSONArray point=new org.json.JSONArray(center);int[] origin=new int[2];
       scenario.onActivity(activity->activity.getBridge().getWebView().getLocationOnScreen(origin));
       float x=origin[0]+(float)(point.getDouble(0)*point.getDouble(2)),y=origin[1]+(float)(point.getDouble(1)*point.getDouble(2));
       long now=SystemClock.uptimeMillis();
-      InstrumentationRegistry.getInstrumentation().sendPointerSync(MotionEvent.obtain(now,now,MotionEvent.ACTION_DOWN,x,y,0));
-      InstrumentationRegistry.getInstrumentation().sendPointerSync(MotionEvent.obtain(now,now+50,MotionEvent.ACTION_UP,x,y,0));
+      MotionEvent down=MotionEvent.obtain(now,now,MotionEvent.ACTION_DOWN,x,y,0),up=MotionEvent.obtain(now,now+50,MotionEvent.ACTION_UP,x,y,0);
+      down.setSource(InputDevice.SOURCE_TOUCHSCREEN);up.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+      // The IME can acquire its own window between down/up; use the system UI test API.
+      assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(down,true));
+      assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(up,true));
+      down.recycle();up.recycle();
       AtomicReference<Boolean> visible=new AtomicReference<>(false);long end=SystemClock.elapsedRealtime()+15000;
       while(!visible.get()&&SystemClock.elapsedRealtime()<end){scenario.onActivity(activity->{WindowInsetsCompat insets=ViewCompat.getRootWindowInsets(activity.getWindow().getDecorView());visible.set(insets!=null&&insets.isVisible(WindowInsetsCompat.Type.ime()));});SystemClock.sleep(200);}
       assertTrue("Android keyboard opened",visible.get());
       assertEquals("true",js(scenario,"document.querySelector('.nameField input').getBoundingClientRect().bottom<=(visualViewport?.height||innerHeight)"));
-      InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
-      waitFor(scenario,"location.hash==='#profil/preferences'");
+      assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK),true));
+      assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK),true));
+      end=SystemClock.elapsedRealtime()+15000;
+      while(visible.get()&&SystemClock.elapsedRealtime()<end){scenario.onActivity(activity->{WindowInsetsCompat insets=ViewCompat.getRootWindowInsets(activity.getWindow().getDecorView());visible.set(insets!=null&&insets.isVisible(WindowInsetsCompat.Type.ime()));});SystemClock.sleep(200);}
+      assertFalse("Android keyboard closed",visible.get());
+      assertEquals("\"#profil/preferences\"",js(scenario,"location.hash"));
       assertEquals("true",js(scenario,"Boolean(document.querySelector('.nameField input'))"));
     }
   }
