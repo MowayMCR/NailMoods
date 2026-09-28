@@ -1,3 +1,4 @@
+import MoodGlyph from './MoodGlyph';
 import React,{useMemo,useState} from 'react';
 import {Copy,Layers3,Shuffle,Sparkles} from 'lucide-react';
 import NailPreview from './NailPreview';
@@ -28,7 +29,7 @@ export default function NailSetBuilder({items,profile,options,onSave,onClose}){
   <div className="nailSetFingers">{fingers.map((name,index)=><button type="button" key={name} className={index===active?'selected':''} aria-pressed={index===active} onClick={()=>setActive(index)}>{name}</button>)}</div>
   <section className="nailSetEditor"><h3>{fingers[active]}</h3>
    <ColorChoices label="Couleur de base" colors={colors} value={nail.color} onChange={chooseBase}/>
-   <b>Technique <small>facultatif</small></b><div className="nailSetTechniques">{manualTechniques.map(value=><button type="button" key={value||'none'} className={nail.technique===value?'selected':''} aria-pressed={nail.technique===value} onClick={()=>patch({technique:value})}>{techniqueLabels[value]||'Uni'}</button>)}</div>
+   <b>Technique <small>facultatif</small></b><div className="nailSetTechniques">{manualTechniques.map(value=><button type="button" key={value||'none'} className={nail.technique===value?'selected':''} aria-pressed={nail.technique===value} onClick={()=>patch({technique:value})}><MoodGlyph value={value || 'Uni'} />{techniqueLabels[value]||'Uni'}</button>)}</div>
    {hasDecorColor(nail.technique)&&<ColorChoices label={decorColorLabel(nail.technique)} colors={colors} value={nail.accentColor} onChange={chooseDecor}/>}
    {lowContrast&&<p className="nailSetContrast" role="status">La base et le décor ont la même couleur. <button type="button" onClick={()=>chooseDecor(contrastingColor(nail.color,colors))}>Choisir un décor contrasté</button></p>}
   </section>

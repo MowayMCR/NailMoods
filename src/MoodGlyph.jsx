@@ -1,22 +1,22 @@
-import React from 'react';
-import { MoonStar, Flower2, Orbit, Leaf, Sparkles, Sun, Flame, Waves, Gem, Circle } from 'lucide-react';
+import React, { useId } from 'react';
+import { Sparkles } from 'lucide-react';
+import { ICON_BOARDS } from './iconAtlas';
+import { resolveIcon } from './iconRegistry';
 
-function Bow({ size, strokeWidth, ...props }) {
-  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M11 11C3 2 1 8 4 12c2 2 5 1 7-1Zm2 0c8-9 10-3 7 1-2 2-5 1-7-1ZM10 13l-3 7m7-7 3 7" /><circle cx="12" cy="12" r="1.5" /></svg>;
-}
-
-// Decorative only: the adjacent label remains the accessible name.
-export default function MoodGlyph({ value = '', className = '' }) {
-  const text = value.toLocaleLowerCase('fr');
-  const Icon = /witch|myst|goth|dark|halloween/.test(text) ? MoonStar
-    : /celestial|galaxy|cosmi/.test(text) ? Orbit
-    : /girly|coquette|kawaii/.test(text) ? Bow
-    : /roman|floral|fleur|printemps|valentin|douce/.test(text) ? Flower2
-    : /nature|cottage|fairy|automne/.test(text) ? Leaf
-    : /minimal|clean|calme/.test(text) ? Circle
-    : /chic|old money|vintage/.test(text) ? Gem
-    : /joy|fruit/.test(text) ? Sun
-    : /audac|punk|rock|grunge/.test(text) ? Flame
-    : /océan|marbr/.test(text) ? Waves : Sparkles;
-  return <Icon className={'moodGlyph ' + className} size={20} strokeWidth={1.35} aria-hidden="true" focusable="false" />;
+// Decorative: the adjacent text remains the accessible name. Source PNGs stay
+// unchanged; viewports omit captions and the filter clears the board background.
+export default function MoodGlyph({ value = '', className = '', fallback = true }) {
+  const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  const icon = resolveIcon(value);
+  if (!icon) return fallback ? <Sparkles className={'moodGlyph ' + className} size={20} strokeWidth={1.35} aria-hidden="true" focusable="false" /> : null;
+  const [board, x, y, width, height] = icon;
+  return <svg className={'moodGlyph illustratedGlyph ' + className} viewBox={`${x} ${y} ${width} ${height}`} width="32" height="32" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" data-pictogram={value}>
+    <defs>
+      <clipPath id={id+'clip'}><rect x={x} y={y} width={width} height={height}/></clipPath>
+      <filter id={id+'background'} filterUnits="userSpaceOnUse" x={x} y={y} width={width} height={height} colorInterpolationFilters="sRGB">
+        <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  4 4 4 0 -0.5"/>
+      </filter>
+    </defs>
+    <g clipPath={`url(#${id}clip)`}><image href={`${import.meta.env.BASE_URL}icons/${ICON_BOARDS[board]}`} width="1229" height="1536" filter={`url(#${id}background)`}/></g>
+  </svg>;
 }
