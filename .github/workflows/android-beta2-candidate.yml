@@ -2,6 +2,7 @@ name: Android beta.2 candidate (no distribution)
 on:
   push:
     branches: [feat/phase14d-beta2]
+    paths: ["src/**", "public/**", "android/**", "scripts/**", "capacitor.config.*", "vite.mobile.config.js", "package*.json"]
   workflow_dispatch:
 permissions:
   contents: read

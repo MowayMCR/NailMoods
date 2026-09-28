@@ -1,0 +1,38 @@
+name: Transfer existing beta.2 artifact (no rebuild)
+on:
+  push:
+    branches: [feat/phase14d-beta2]
+    paths: [.github/workflows/android-beta2-transfer.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  split-existing-artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 36481380255
+          name: nailmoods-0.3.0-beta.2-production-aab-release-unsigned
+          path: source
+      - name: Split transport only; preserve exact AAB bytes
+        run: |
+          sha256sum source/app-release.aab > source-sha256.txt
+          mkdir -p parts/00 parts/01
+          split -b 20M -d source/app-release.aab chunk-
+          mv chunk-00 parts/00/
+          mv chunk-01 parts/01/
+          cp source-sha256.txt parts/00/
+          cp source-sha256.txt parts/01/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: beta2-transport-00
+          path: parts/00/
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: beta2-transport-01
+          path: parts/01/
+          retention-days: 7
