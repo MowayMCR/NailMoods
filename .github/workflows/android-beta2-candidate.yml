@@ -1,0 +1,38 @@
+name: Android beta.2 candidate (no distribution)
+on:
+  push:
+    branches: [feat/phase14d-beta2]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  production-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - name: Embed Production and existing official assets
+        env:
+          NAILMOODS_MOBILE_ENV: production
+        run: |
+          node scripts/build-mobile.mjs production
+          npx cap sync android
+          npm run mobile:assets
+      - name: Compile unsigned release only
+        run: |
+          chmod +x android/gradlew
+          ./android/gradlew -p android -PnailmoodsEnvironment=production bundleRelease --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nailmoods-0.3.0-beta.2-production-aab-release-unsigned
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30

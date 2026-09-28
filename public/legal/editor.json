@@ -1,15 +1,15 @@
 {
-  "editorType": "project_in_creation",
-  "publicLegalName": "NailMoods — projet en cours de création",
-  "companyLegalForm": "SASU NailMoods prévue, non immatriculée",
-  "companyRegistrationNumber": "À compléter / À valider lors de l’immatriculation",
+  "editorType": "individual_creation_pending",
+  "publicLegalName": "NailMoods — projet porté par Marie Chatelain",
+  "companyLegalForm": "Personne physique ; micro-entreprise prévue, immatriculation à confirmer",
+  "companyRegistrationNumber": "Non attribué dans le justificatif disponible",
   "privacyContactEmail": "contact@nailmoods.com",
-  "publishedProfessionalAddress": "Non publiée à ce stade",
-  "retentionPolicy": "Compte actif : durée nécessaire au service. Suppression : nettoyage technique résiduel au plus tard sous 30 jours, sauf obligation légale, sécurité ou litige. Support : 3 mois en base active. Signalements et décisions : 12 mois. Analytics pseudonymisés : 24 mois.",
-  "accountDeletionProcedure": "Profil → Confidentialité → Supprimer mon compte. La suppression nettoie les médias associés avant de retirer le compte.",
+  "supportContactEmail": "contact@nailmoods.com",
+  "publishedProfessionalAddress": "À renseigner avant ouverture de la bêta externe",
+  "retentionPolicy": "Analytics : 13 mois détaillés, 25 mois agrégés. Support clos : objectif 3 mois ; signalements traités : objectif 12 mois ; contrôle opérationnel de purge à finaliser.",
+  "accountDeletionProcedure": "Dans le compte ou depuis la page publique legal/suppression-compte.html. Les messages texte déjà reçus peuvent subsister sous Compte supprimé.",
   "termsVersion": "0.3-beta",
   "privacyVersion": "0.4-beta",
-  "effectiveDate": "22 septembre 2026",
-  "notice": "Société en cours de création. Les champs d’immatriculation, siège, capital, RCS, directeur de publication, hébergeur et autres mentions obligatoires restent à compléter et valider avant ouverture externe.",
-  "supportContactEmail": "contact@nailmoods.com"
+  "effectiveDate": "28 septembre 2026",
+  "notice": "Coordonnées professionnelles, immatriculation et procédure de conservation à finaliser avant ouverture de la bêta externe."
 }
