@@ -34,3 +34,34 @@ beta.1, package/version/environnement, comparaison de tous les OCR et différenc
 de contenu avec beta.1. Conserver les validations téléphone PASS de Marie.
 
 Arrêt absolu : aucun import Play, envoi en revue, lancement ou invitation.
+
+## Vérifications du candidat livré le 28 septembre 2026
+
+Build CI : https://github.com/MowayMCR/NailMoods/actions/runs/36481380255
+Commit compilé : a14262b7dbf2b0b9ecc2f966f2536d388fa82e0f.
+AAB signé : NailMoods-Production-0.3.0-beta.2-release-SIGNE.aab.
+38 052 120 octets ; SHA-256 :
+e08f9c032a61957c43d62ac55c29d23d02d0f47d6dd4e7044a0b19183995056a.
+
+Signature stricte et bundletool 1.18.3 : PASS.
+Certificat identique à beta.1 :
+58:4D:C4:C3:F4:77:C8:63:7C:CF:AF:FA:95:72:13:D8:41:25:07:34:B6:D6:67:70:D0:36:67:EE:4D:AE:08:C0.
+
+16 fichiers OCR inchangés, 51 279 577 octets décompressés,
+20 479 279 octets compressés. Aucun changement des sources fonctionnelles
+ou dépendances. Les chunks JS sont identiques après normalisation du numéro
+de version et des noms de chunks. Seul le manifest natif change de version.
+
+Les 6 compositions Store existantes correspondent aux sources communes de
+beta.2. Elles sont conservées, y compris la vue de recherche communautaire.
+Les tests Android réels et PKCE restent acquis, sans nouvelle exécution.
+
+Les réserves légales/coordonnées, conservation opérationnelle et prestataires,
+comptes de revue effectifs et ciblage d'âge ne sont pas déclarés fermés.
+Recommandation de distribution : NO GO jusqu'à résolution, puis validation de Marie.
+Aucun import, envoi en revue, test fermé ou invitation effectué.
+
+Le second workflow ne fait que transférer le même artefact en deux morceaux
+compatibles avec la limite de téléchargement de l'environnement ; il ne
+recompile ni ne modifie le bundle. Les SHA-256 des morceaux et de l'AAB
+reconstitué ont été contrôlés. Le candidat de référence reste celui du run ci-dessus.
