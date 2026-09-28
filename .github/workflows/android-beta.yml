@@ -87,7 +87,7 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          script: ./android/gradlew -p android -PnailmoodsEnvironment=recette connectedDebugAndroidTest --console=plain
+          script: ./android/gradlew -p android -PnailmoodsEnvironment=recette :app:connectedDebugAndroidTest --console=plain
       - uses: actions/upload-artifact@v4
         if: always() && matrix.environment == 'recette'
         with:
