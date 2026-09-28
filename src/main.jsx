@@ -49,7 +49,7 @@ function readStored(browserStorage, key, fallback) {
 
 const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, reference: '', materialStyle: '', notes: '', photo: '' };
 const tabRoutes = { scan: 'scan', home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris', projects: 'projets', tutorials: 'tutoriel' };
-const tabFromHash = () => window.location.hash.startsWith('#journal/') ? 'journal' : window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || ['#favoris', '#projets'].includes(window.location.hash) ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
+const tabFromHash = () => window.location.hash.startsWith('#journal/') ? 'journal' : window.location.hash.startsWith('#creer/') || window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || ['#favoris', '#projets'].includes(window.location.hash) ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
 const themeBackupKey = storage => `nm-theme-v1:${storage.userId || 'guest'}:${storage.workspaceId || 'personal'}`;
 const readThemeBackup = storage => { try { return window.localStorage.getItem(themeBackupKey(storage)) || ''; } catch { return ''; } };
 const saveThemeBackup = (storage, theme) => { try { window.localStorage.setItem(themeBackupKey(storage), theme); } catch { /* The account profile remains the source of truth. */ } };

@@ -31,7 +31,7 @@ export function creationPayload(values = {}) {
 export function proCreationsService(client, userId, workspaceId) {
   const base = client.from('pro_creations');
   return {
-    list: () => checked(base.select('id,title,description,visibility,design,color_roles,techniques,effects,motifs,styles,moods,tags,level,recommended_fingers,recommended_nail_count,version,created_at,updated_at').eq('owner_id', userId).order('updated_at', { ascending: false })),
+    list: () => checked(base.select('id,owner_id,title,description,visibility,design,color_roles,techniques,effects,motifs,styles,moods,tags,level,recommended_fingers,recommended_nail_count,version,created_at,updated_at').eq('owner_id', userId).order('updated_at', { ascending: false })),
     palette: () => checked(client.from('user_products').select('id,shade_name,hex').eq('workspace_id', workspaceId).not('hex','is',null).order('created_at', { ascending: false }).limit(16)),
     create: values => checked(base.insert({ ...creationPayload(values), owner_id: userId, workspace_id: workspaceId }).select().single()),
     update: (id, values) => checked(base.update(creationPayload(values)).eq('id', id).eq('owner_id', userId).select().single()),

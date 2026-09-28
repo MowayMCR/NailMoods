@@ -2,6 +2,7 @@ import React, { useEffect, useId, useState } from 'react';
 import { normalize } from './creationEngine';
 import { renderingForIdea } from './techniqueRendering';
 import PhotorealNailPreview from './PhotorealNailPreview';
+import {ProNailArtwork} from './workspaces/ProNailArtwork';
 
 function Decor({ motif, color }) {
   if (motif === 'star') return <path d="m32 42 3 8 9 1-7 6 2 9-7-5-8 5 3-9-7-6 9-1Z" fill={color} />;
@@ -143,7 +144,7 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
     {idea.nails.map((nail, index) => {
       const color = nail.color || '#b88699', light = mix(color, '#ffffff', .45), dark = mix(color, '#100711', .18);
       const ids = { clip: id+'clip'+index, depth:id+'depth'+index, halo:id+'halo'+index, velvet:id+'velvet'+index, chrome:id+'chrome'+index, natural:id+'natural'+index, pearl:id+'pearl'+index, holo:id+'holo'+index, aura:id+'aura'+index, gold:id+'gold'+index, blur:id+'blur'+index, relief:id+'relief'+index, decorHalo:id+'decorHalo'+index };
-      const nailSvg = <svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={highlightedIndices ? { opacity: highlightedIndices.includes(index) ? 1 : 0.16 } : undefined}>
+      const nailSvg = nail.proDesign ? <svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={highlightedIndices ? {opacity:highlightedIndices.includes(index)?1:.16}:undefined}><g transform="scale(.64 .57777778)"><ProNailArtwork nail={nail.proDesign} shape={idea.shape} length={idea.length}/></g></svg> : <svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={highlightedIndices ? { opacity: highlightedIndices.includes(index) ? 1 : 0.16 } : undefined}>
         <defs>
           <clipPath id={ids.clip}><path d={path} /></clipPath>
           <radialGradient id={ids.decorHalo}><stop stopColor={nail.accentColor||light}/><stop offset=".4" stopColor={nail.accentColor||light} stopOpacity=".9"/><stop offset="1" stopColor={nail.accentColor||light} stopOpacity="0"/></radialGradient>
@@ -183,7 +184,7 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
     : illustratedPreview;
   if (!controls) return preview;
   return <div className="renderPreview">
-    <div className="renderPreviewHead"><span><b>{rendering.label}</b><small>{rendering.finish} · relief {rendering.relief}</small></span><div className="illustratedModeBadge" aria-label="Mode illustré validé">Illustration NailMoods</div></div>
+    <div className="renderPreviewHead"><span><b>{idea.options?.proDrawing?'Dessin · '+idea.proCreation.title:rendering.label}</b><small>{idea.options?.proDrawing?'Composition personnalisée':rendering.finish} · relief {rendering.relief}</small></span><div className="illustratedModeBadge" aria-label="Mode illustré validé">Illustration NailMoods</div></div>
     {preview}
   </div>;
 }
