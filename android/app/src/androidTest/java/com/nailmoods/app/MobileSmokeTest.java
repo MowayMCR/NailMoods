@@ -3,7 +3,6 @@ package com.nailmoods.app;
 import static org.junit.Assert.*;
 import android.os.SystemClock;
 import android.view.MotionEvent;
-import android.view.KeyEvent;
 import android.view.InputDevice;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -132,8 +131,8 @@ public class MobileSmokeTest {
       assertTrue("Android keyboard opened; touch="+js(scenario,"JSON.stringify({active:document.activeElement?.outerHTML?.slice(0,300),tap:window.__nmTap,viewport:[innerWidth,innerHeight,devicePixelRatio,visualViewport?.height],rect:document.querySelector('.nameField input').getBoundingClientRect().toJSON()})")+"; native="+x+","+y,visible.get());
       waitFor(scenario,"document.documentElement.classList.contains('nm-keyboard')");
       assertEquals("true",js(scenario,"document.querySelector('.nameField input').getBoundingClientRect().bottom<=(visualViewport?.height||innerHeight)"));
-      assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK),true));
-      assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK),true));
+      // The shell input command supplies a complete system key sequence to the IME window.
+      try(InputStream command=new android.os.ParcelFileDescriptor.AutoCloseInputStream(InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("input keyevent 4"))){byte[] output=new byte[256];while(command.read(output)!=-1){}}
       end=SystemClock.elapsedRealtime()+15000;
       while(visible.get()&&SystemClock.elapsedRealtime()<end){scenario.onActivity(activity->{WindowInsetsCompat insets=ViewCompat.getRootWindowInsets(activity.getWindow().getDecorView());visible.set(insets!=null&&insets.isVisible(WindowInsetsCompat.Type.ime()));});SystemClock.sleep(200);}
       assertFalse("Android keyboard closed",visible.get());
