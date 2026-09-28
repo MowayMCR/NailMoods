@@ -108,6 +108,9 @@ public class MobileSmokeTest {
   @Test public void keyboardOpensAndBackKeepsTheForm() throws Exception {
     try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)){
       waitFor(scenario,"Boolean(document.querySelector('.app') && !document.getElementById('nm-boot'))");
+      // Other tests deliberately leave a recoverable photo. Dismiss its banner before testing a field.
+      js(scenario,"[...document.querySelectorAll('.mobileStatus button')].find(b=>b.textContent==='Retirer la copie')?.click()");
+      waitFor(scenario,"![...document.querySelectorAll('.mobileStatus button')].some(b=>b.textContent==='Retirer la copie')");
       js(scenario,"location.hash='profil/preferences'");
       waitFor(scenario,"Boolean(document.querySelector('.nameField input'))");
       js(scenario,"document.querySelector('.nameField input').scrollIntoView({block:'center',behavior:'instant'})");
@@ -120,12 +123,13 @@ public class MobileSmokeTest {
       MotionEvent down=MotionEvent.obtain(now,now,MotionEvent.ACTION_DOWN,x,y,0),up=MotionEvent.obtain(now,now+50,MotionEvent.ACTION_UP,x,y,0);
       down.setSource(InputDevice.SOURCE_TOUCHSCREEN);up.setSource(InputDevice.SOURCE_TOUCHSCREEN);
       // The IME can acquire its own window between down/up; use the system UI test API.
-      assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(down,true));
+      js(scenario,"window.__nmTap=null;document.addEventListener('click',e=>window.__nmTap={tag:e.target.tagName,text:e.target.textContent?.slice(0,100)},{once:true,capture:true})");
+      assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(down,false));
       assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(up,true));
       down.recycle();up.recycle();
       AtomicReference<Boolean> visible=new AtomicReference<>(false);long end=SystemClock.elapsedRealtime()+15000;
       while(!visible.get()&&SystemClock.elapsedRealtime()<end){scenario.onActivity(activity->{WindowInsetsCompat insets=ViewCompat.getRootWindowInsets(activity.getWindow().getDecorView());visible.set(insets!=null&&insets.isVisible(WindowInsetsCompat.Type.ime()));});SystemClock.sleep(200);}
-      assertTrue("Android keyboard opened",visible.get());
+      assertTrue("Android keyboard opened; touch="+js(scenario,"JSON.stringify({active:document.activeElement?.outerHTML?.slice(0,300),tap:window.__nmTap,viewport:[innerWidth,innerHeight,devicePixelRatio,visualViewport?.height],rect:document.querySelector('.nameField input').getBoundingClientRect().toJSON()})")+"; native="+x+","+y,visible.get());
       assertEquals("true",js(scenario,"document.querySelector('.nameField input').getBoundingClientRect().bottom<=(visualViewport?.height||innerHeight)"));
       assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK),true));
       assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK),true));
