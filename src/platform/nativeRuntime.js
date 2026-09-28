@@ -3,6 +3,7 @@ import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { Network } from '@capacitor/network';
 import { Keyboard } from '@capacitor/keyboard';
+import { Preferences } from '@capacitor/preferences';
 import { createNativeStorage } from './nativeStorage.js';
 import { setNativeServices, nativeServices, nativeNotice } from './state.js';
 import { queueAuthUrl } from './authLinks.js';
@@ -15,6 +16,13 @@ export async function initializeNative(){
   setNativeServices({...persistent,cache:await createNativeCache(),purgeAccountMedia,principal:'boot',checkpoint:null});
   document.documentElement.classList.add('nm-native');
   await installNativeMedia();
+  nativeServices().purgeAccount=async id=>{
+    await Preferences.set({key:'pending-account-cleanup',value:id});
+    await Promise.all([purgeAccountMedia(id),nativeServices().cache.purgeAccount(id),persistent.storage.purgeAccount(id)]);
+    await Preferences.remove({key:'pending-account-cleanup'});
+  };
+  const cleanup=(await Preferences.get({key:'pending-account-cleanup'})).value;
+  if(cleanup)await nativeServices().purgeAccount(cleanup);
   await App.addListener('appRestoredResult',result=>{void acceptRestoredCamera(result).catch(()=>nativeNotice('La photo reste en attente de récupération. Réessaie.'));});
   const environment=import.meta.env.VITE_DEPLOYMENT_ENV;
   await App.addListener('appUrlOpen',({url})=>{queueAuthUrl(url,environment);});
@@ -36,7 +44,8 @@ export async function initializeNative(){
     const action=backAction({keyboard:keyboard||Boolean(focused?.matches('input:not([type=file]),textarea,[contenteditable]')),dialog:document.querySelector('.nmDialogHost:not([hidden])'),canGoBack,hash:location.hash});
     if(action==='keyboard'){focused?.blur();try{await Keyboard.hide();}catch{}return;}
     if(action==='dialog'){document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));return;}
-    await persistent.storage.flush();await nativeServices().checkpoint?.();
+    try{if(!await persistent.storage.flush())return;await nativeServices().checkpoint?.();}
+    catch{nativeNotice('La sauvegarde locale reste à reprendre. Reste sur cet écran et réessaie avant de fermer.');return;}
     if(action==='history')history.back();else if(action==='home')location.hash='accueil';else await App.minimizeApp();
   });
   document.addEventListener('click',event=>{

@@ -39,6 +39,8 @@ export async function readPhotoText(source, signal, onProgress) {
     const work = (async () => {
       worker = await createWorker(['fra', 'eng'], 1, {
         workerPath: base + 'worker.min.js', corePath: base, langPath: base.slice(0, -1), workerBlobURL: false,
+        // Android's asset packager expands .gz language files and removes that suffix.
+        gzip: !import.meta.env.VITE_NATIVE_BUILD,
         logger: event => { if (!finished && event.status === 'recognizing text') onProgress(Math.round(event.progress * 100)); },
         errorHandler: () => rejectTask(new Error('La lecture de l’étiquette est indisponible. Vérifie ta connexion ou réessaie avec une photo plus nette.')),
       });

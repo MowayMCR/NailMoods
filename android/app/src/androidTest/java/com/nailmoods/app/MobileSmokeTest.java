@@ -2,6 +2,11 @@ package com.nailmoods.app;
 
 import static org.junit.Assert.*;
 import android.os.SystemClock;
+import android.view.MotionEvent;
+import android.view.KeyEvent;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.lifecycle.Lifecycle;
 import com.getcapacitor.PluginResult;
 import com.getcapacitor.JSObject;
@@ -25,7 +30,10 @@ public class MobileSmokeTest {
     assertTrue("WebView response",done.await(10,TimeUnit.SECONDS));return result.get();
   }
   private void waitFor(ActivityScenario<MainActivity> scenario,String condition) throws Exception {
-    long end=SystemClock.elapsedRealtime()+30000;
+    waitFor(scenario,condition,30000);
+  }
+  private void waitFor(ActivityScenario<MainActivity> scenario,String condition,long timeout) throws Exception {
+    long end=SystemClock.elapsedRealtime()+timeout;
     while(SystemClock.elapsedRealtime()<end){if("true".equals(js(scenario,condition)))return;SystemClock.sleep(200);}
     fail("Timed out: "+condition+"; UI="+js(scenario,"document.body.innerText.slice(0,1200)"));
   }
@@ -86,6 +94,37 @@ public class MobileSmokeTest {
       js(scenario,"[...document.querySelectorAll('.mobileStatus button')].find(b=>b.textContent==='Réutiliser').click()");
       waitFor(scenario,"Boolean(JSON.parse(localStorage.getItem('nm-scan-draft-v1'))?.draft?.photo)");
       assertEquals("true",js(scenario,"Boolean(document.querySelector('.scanDetected img'))"));
+      waitFor(scenario,"JSON.parse(localStorage.getItem('nm-scan-draft-v1'))?.draft?.recognitionInfo?.ocrViews?.length===1",100000);
+      assertEquals("\"\"",js(scenario,"JSON.parse(localStorage.getItem('nm-scan-draft-v1')).draft.recognitionInfo.ocrError"));
+      // Verify that the latest photo/OCR update reached the native copy, not only localStorage.
+      js(scenario,"window.__nmDurable=false;crypto.subtle.digest('SHA-256',new TextEncoder().encode('nm-scan-draft-v1')).then(hash=>{const path='nailmoods-v1/'+[...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('')+'.json';const probe=()=>Capacitor.nativePromise('Filesystem','readFile',{path,directory:'DATA',encoding:'utf8'}).then(r=>{window.__nmDurable=JSON.parse(JSON.parse(r.data).value)?.draft?.recognitionInfo?.ocrViews?.length===1;if(!window.__nmDurable)setTimeout(probe,200)});return probe()})");
+      waitFor(scenario,"window.__nmDurable===true");
+      js(scenario,"localStorage.removeItem('nm-scan-draft-v1')");
+      scenario.recreate();
+      waitFor(scenario,"JSON.parse(localStorage.getItem('nm-scan-draft-v1'))?.draft?.recognitionInfo?.ocrViews?.length===1");
+    }
+  }
+  @Test public void keyboardOpensAndBackKeepsTheForm() throws Exception {
+    try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)){
+      waitFor(scenario,"Boolean(document.querySelector('.app') && !document.getElementById('nm-boot'))");
+      js(scenario,"location.hash='profil/preferences'");
+      waitFor(scenario,"Boolean(document.querySelector('.nameField input'))");
+      js(scenario,"document.querySelector('.nameField input').scrollIntoView({block:'center'})");
+      SystemClock.sleep(500);
+      String center=js(scenario,"(()=>{const r=document.querySelector('.nameField input').getBoundingClientRect();return [r.x+r.width/2,r.y+r.height/2,devicePixelRatio]})()");
+      org.json.JSONArray point=new org.json.JSONArray(center);int[] origin=new int[2];
+      scenario.onActivity(activity->activity.getBridge().getWebView().getLocationOnScreen(origin));
+      float x=origin[0]+(float)(point.getDouble(0)*point.getDouble(2)),y=origin[1]+(float)(point.getDouble(1)*point.getDouble(2));
+      long now=SystemClock.uptimeMillis();
+      InstrumentationRegistry.getInstrumentation().sendPointerSync(MotionEvent.obtain(now,now,MotionEvent.ACTION_DOWN,x,y,0));
+      InstrumentationRegistry.getInstrumentation().sendPointerSync(MotionEvent.obtain(now,now+50,MotionEvent.ACTION_UP,x,y,0));
+      AtomicReference<Boolean> visible=new AtomicReference<>(false);long end=SystemClock.elapsedRealtime()+15000;
+      while(!visible.get()&&SystemClock.elapsedRealtime()<end){scenario.onActivity(activity->{WindowInsetsCompat insets=ViewCompat.getRootWindowInsets(activity.getWindow().getDecorView());visible.set(insets!=null&&insets.isVisible(WindowInsetsCompat.Type.ime()));});SystemClock.sleep(200);}
+      assertTrue("Android keyboard opened",visible.get());
+      assertEquals("true",js(scenario,"document.querySelector('.nameField input').getBoundingClientRect().bottom<=(visualViewport?.height||innerHeight)"));
+      InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+      waitFor(scenario,"location.hash==='#profil/preferences'");
+      assertEquals("true",js(scenario,"Boolean(document.querySelector('.nameField input'))"));
     }
   }
 }

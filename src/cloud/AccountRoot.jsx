@@ -185,7 +185,7 @@ export default function AccountRoot({App}){
     active.current?.close();active.current=null;setLoaded(null);
     clearAccountCache(window.localStorage,id);
     try{
-      if(isNative())await Promise.all([nativeServices().purgeAccountMedia(id),nativeServices().cache.purgeAccount(id),nativeServices().storage.purgeAccount(id)]);
+      if(isNative())await nativeServices().purgeAccount(id);
     }finally{
       try{await service.signOut();}finally{setSession(null);setGuestOverride(false);setOpen(false);window.location.reload();}
     }
