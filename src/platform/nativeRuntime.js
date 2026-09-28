@@ -1,0 +1,47 @@
+import { createNativeCache } from './nativeCache.js';
+import { App } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
+import { Network } from '@capacitor/network';
+import { Keyboard } from '@capacitor/keyboard';
+import { createNativeStorage } from './nativeStorage.js';
+import { setNativeServices, nativeServices, nativeNotice } from './state.js';
+import { queueAuthUrl } from './authLinks.js';
+import { installNativeMedia, acceptRestoredCamera } from './nativeMedia.js';
+import { backAction } from './back.js';
+import './native.css';
+
+export async function initializeNative(){
+  const persistent=await createNativeStorage();
+  setNativeServices({...persistent,cache:await createNativeCache(),principal:'boot',checkpoint:null});
+  document.documentElement.classList.add('nm-native');
+  await installNativeMedia();
+  await App.addListener('appRestoredResult',result=>{void acceptRestoredCamera(result).catch(()=>nativeNotice('La photo reste en attente de récupération. Réessaie.'));});
+  const environment=import.meta.env.VITE_DEPLOYMENT_ENV;
+  await App.addListener('appUrlOpen',({url})=>{queueAuthUrl(url,environment);});
+  const launch=await App.getLaunchUrl();if(launch?.url)queueAuthUrl(launch.url,environment);
+  const connectivity=({connected})=>{document.documentElement.classList.toggle('nm-offline',!connected);window.dispatchEvent(new Event(connected?'online':'offline'));window.dispatchEvent(new CustomEvent('nm-native-connectivity',{detail:connected}));};
+  const current=await Network.getStatus();connectivity(current);
+  await Network.addListener('networkStatusChange',connectivity);
+  await App.addListener('appStateChange',({isActive})=>{
+    if(!isActive){void persistent.storage.flush();void nativeServices().checkpoint?.();}
+    window.dispatchEvent(new CustomEvent('nm-native-state',{detail:{isActive}}));
+    if(isActive){void persistent.storage.flush();void Network.getStatus().then(connectivity);}
+  });
+  let keyboard=false;
+  const visible=()=>{const height=window.visualViewport?.height||innerHeight;document.documentElement.style.setProperty('--nm-visible-height',height+'px');keyboard=innerHeight-height>130;document.documentElement.classList.toggle('nm-keyboard',keyboard);};
+  window.visualViewport?.addEventListener('resize',visible);visible();
+  document.addEventListener('focusin',event=>{if(event.target.matches('input,textarea,[contenteditable]'))setTimeout(()=>event.target.scrollIntoView({block:'nearest',behavior:'smooth'}),300);});
+  await App.addListener('backButton',async({canGoBack})=>{
+    const focused=document.activeElement;
+    const action=backAction({keyboard:keyboard||Boolean(focused?.matches('input:not([type=file]),textarea,[contenteditable]')),dialog:document.querySelector('.nmDialogHost:not([hidden])'),canGoBack,hash:location.hash});
+    if(action==='keyboard'){focused?.blur();try{await Keyboard.hide();}catch{}return;}
+    if(action==='dialog'){document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));return;}
+    await persistent.storage.flush();await nativeServices().checkpoint?.();
+    if(action==='history')history.back();else if(action==='home')location.hash='accueil';else await App.minimizeApp();
+  });
+  document.addEventListener('click',event=>{
+    const anchor=event.target.closest?.('a[href]');if(!anchor||anchor.download)return;
+    const url=new URL(anchor.href,location.href);
+    if(['https:','http:'].includes(url.protocol)&&url.origin!==location.origin){event.preventDefault();void Browser.open({url:url.href}).catch(()=>nativeNotice('Le lien ne peut pas être ouvert.'));}
+  });
+}

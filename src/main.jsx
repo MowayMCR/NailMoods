@@ -1,3 +1,5 @@
+import { isNative } from './platform/state.js';
+const MobileStatus = import.meta.env.VITE_NATIVE_BUILD ? React.lazy(()=>import('./platform/MobileStatus.jsx')) : null;
 import Discovery, {DiscoveryShortcut} from './social/Discovery';
 import {messageId} from './social/messageState';
 import Sheet from './Sheet';
@@ -433,6 +435,6 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   </div>;
 }
 
-createRoot(document.getElementById('root')).render(<RenderBoundary><AccountRoot App={App} /></RenderBoundary>);
+createRoot(document.getElementById('root')).render(<RenderBoundary><AccountRoot App={App} />{isNative()&&MobileStatus&&<React.Suspense fallback={null}><MobileStatus/></React.Suspense>}</RenderBoundary>);
 
 // Keep the selected visual theme available before account synchronisation completes.

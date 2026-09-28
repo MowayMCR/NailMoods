@@ -1,0 +1,73 @@
+name: Android beta artifacts (no deployment)
+on:
+  push:
+    branches: [feat/phase14b-android-beta]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [recette, production]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm test
+      - name: Embed the existing application
+        env:
+          NAILMOODS_MOBILE_ENV: ${{ matrix.environment }}
+        run: |
+          node scripts/build-mobile.mjs "$NAILMOODS_MOBILE_ENV"
+          npx cap sync android
+          npm run mobile:assets
+      - name: Build debug APK and AAB; unsigned release AAB
+        env:
+          NAILMOODS_MOBILE_ENV: ${{ matrix.environment }}
+        run: |
+          chmod +x android/gradlew
+          ./android/gradlew -p android -PnailmoodsEnvironment="$NAILMOODS_MOBILE_ENV" assembleDebug bundleDebug bundleRelease --console=plain
+      - name: Measure packages and verify every OCR resource
+        run: python3 scripts/measure-android.py '${{ matrix.environment }}'
+      - name: Package metadata and permissions
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" manifest print android/app/build/outputs/apk/debug/app-debug.apk > artifacts/${{ matrix.environment }}/android-manifest.xml
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs android/app/build/outputs/apk/debug/app-debug.apk > artifacts/${{ matrix.environment }}/debug-signature.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nailmoods-0.3.0-beta.1-${{ matrix.environment }}
+          path: artifacts/${{ matrix.environment }}/
+          retention-days: 30
+      - name: Enable emulator acceleration
+        if: matrix.environment == 'recette'
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Android emulator smoke tests
+        if: matrix.environment == 'recette'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: ./android/gradlew -p android -PnailmoodsEnvironment=recette connectedDebugAndroidTest --console=plain
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.environment == 'recette'
+        with:
+          name: android-emulator-results
+          path: |
+            android/app/build/reports/androidTests/
+            android/app/build/outputs/androidTest-results/

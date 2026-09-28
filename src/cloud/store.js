@@ -206,6 +206,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
     get hasCache(){return Boolean(state);},
     close(){closed=true;},
     initialize,
+    async checkpoint(){check();if(state)await persistCache(state);},
     async ensureDurable(){
       if(running)await running;
       check();if(state)await cache.setCachedWorkspace(key,state);

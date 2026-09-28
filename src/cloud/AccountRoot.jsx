@@ -1,3 +1,6 @@
+import { isTransientNetworkError } from '../platform/network.js';
+import { isNative,nativeServices } from '../platform/state.js';
+import { mobileAuthReturnUrl,validateMobileAuthUrl,takeAuthUrl } from '../platform/authLinks.js';
 import { createAnalytics, setActiveAnalytics, track } from '../analytics/analytics';
 import { PRIVACY_VERSION } from '../privacy/policy';
 import Discovery from '../social/Discovery';
@@ -29,7 +32,7 @@ import {accountOfferService,clearPendingAccountOffer,pendingAccountOffer} from '
 
 let client=null,configurationError=false;
 try{client=getCloudClient();}catch{configurationError=true;}
-const service=client?createAuthService(client,window.location.href):null;
+const service=client?createAuthService(client,window.location.href,isNative()?{returnUrl:recovery=>mobileAuthReturnUrl(import.meta.env.VITE_DEPLOYMENT_ENV,recovery),validateCallback:url=>validateMobileAuthUrl(url,import.meta.env.VITE_DEPLOYMENT_ENV)}:{}):null;
 function authMessage(error){
   const code=error?.code;
   if(error?.message?.includes('accessible à partir de 15 ans'))return error.message;
@@ -67,44 +70,77 @@ export default function AccountRoot({App}){
     });
     (async()=>{
       try{
-        const callback=await service.completeCallback(window.location.href);
+        const callback=await service.completeCallback(takeAuthUrl()||window.location.href);
         if(cancelled)return;
-        if(callback){window.history.replaceState(null,'',callback.cleanUrl);if(callback.recovery){setMode('password');setOpen(true);}}
+        if(callback){window.history.replaceState(null,'',isNative()?location.pathname+'#profil':callback.cleanUrl);if(callback.recovery){setMode('password');setOpen(true);}}
         const restored=await service.restore();if(!cancelled)setSession(restored.session);
-      }catch(error){if(!cancelled){setSession(null);setAuthError(authMessage(error));setOpen(true);}}
+      }catch(error){if(!cancelled){
+        let retained=null;
+        if(isNative()&&isTransientNetworkError(error,navigator.onLine)){try{retained=JSON.parse(await nativeServices().authStorage.getItem('nailmoods-auth-v1'));}catch{}}
+        if(retained?.user?.id){setSession(retained);setAuthError('Connexion impossible. La copie de ce compte reste disponible sur cet appareil.');}
+        else {setSession(null);setAuthError(authMessage(error));setOpen(true);}
+      }}
       finally{booting=false;}
     })();
     return ()=>{cancelled=true;mounted.current=false;unsubscribe();active.current?.close();};
   },[]);
+  useEffect(()=>{
+    if(!isNative()||!service)return;
+    let alive=true,processing=false;
+    const callback=async()=>{if(processing)return;const url=takeAuthUrl();if(!url)return;processing=true;
+      try{const result=await service.completeCallback(url);if(alive&&result){setSession(result.session);setGuestOverride(false);if(result.recovery){setMode('password');setOpen(true);}}}
+      catch{if(alive){setAuthError('Ce lien ne peut pas être utilisé. Relance la demande depuis cette application et ouvre le nouveau mail sur ce téléphone.');setOpen(true);}}
+      finally{processing=false;}
+    };
+    const lifecycle=({detail})=>{if(detail.isActive){void client.auth.startAutoRefresh();void callback();}else void client.auth.stopAutoRefresh();};
+    window.addEventListener('nm-native-auth-url',callback);window.addEventListener('nm-native-state',lifecycle);
+    return()=>{alive=false;window.removeEventListener('nm-native-auth-url',callback);window.removeEventListener('nm-native-state',lifecycle);};
+  },[]);
+  useEffect(()=>{
+    const native=nativeServices();if(!native)return;
+    native.principal=session===undefined?'boot':userId||'guest';
+    native.checkpoint=()=>active.current?.checkpoint?.();
+    window.dispatchEvent(new Event('nm-native-media'));
+    return()=>{native.checkpoint=null;};
+  },[session,userId]);
   useEffect(()=>{
     let cancelled=false,store;
     active.current?.close();active.current=null;setLoaded(null);setLoadError('');setMediaMigration(null);setSuspension(false);
     if(!userId || guestOverride)return;
     (async()=>{
       try{
-        const {data,error}=await client.auth.getUser();
-        if(error || data.user?.id!==userId)throw new Error('La session n’a pas pu être vérifiée. Réessaie ou reconnecte-toi.');
-        const access=await client.rpc('nm_account_access');
-        if(access.error)throw access.error;
-        if(access.data?.suspended){if(!cancelled)setSuspension(true);return;}
-        const workspace=await personalWorkspace(client,userId);if(cancelled)return;
+        let workspace,offline=false;
+        try {
+          const {data,error}=await client.auth.getUser();
+          if(error)throw error;
+          if(data.user?.id!==userId)throw Object.assign(new Error('Reconnecte-toi à ton compte.'),{status:401});
+          const access=await client.rpc('nm_account_access');if(access.error)throw access.error;
+          if(access.data?.suspended){if(!cancelled)setSuspension(true);return;}
+          workspace=await personalWorkspace(client,userId);
+          if(isNative())browserStorage.setItem('nm-native-workspace:'+userId,JSON.stringify(workspace));
+        }catch(error){
+          if(!isNative()||!isTransientNetworkError(error,navigator.onLine))throw error;
+          try{workspace=JSON.parse(browserStorage.getItem('nm-native-workspace:'+userId));}catch{}
+          if(!workspace?.id)throw error;offline=true;
+        }
+        if(cancelled)return;
         const media=createMediaStorage(client,{userId});
-        store=createAccountStore({storage:browserStorage,repo:repository(client,userId,workspace.id),userId,workspaceId:workspace.id,media,onStatus:next=>{if(!cancelled){setStatus(next);if(next.kind==='error'||next.kind==='saved')recordCloudEvent(browserStorage,'sync',next.kind==='saved');}}});
+        store=createAccountStore({...(isNative()?{cache:nativeServices().cache}:{}),storage:browserStorage,repo:repository(client,userId,workspace.id),userId,workspaceId:workspace.id,media,onStatus:next=>{if(!cancelled){setStatus(next);if(next.kind==='error'||next.kind==='saved')recordCloudEvent(browserStorage,'sync',next.kind==='saved');}}});
         active.current=store;
-        try{await store.load();const mediaStats=await store.migrateMedia();if(!cancelled)setMediaMigration(mediaStats);}catch(error){
+        try{if(offline){await store.initialize();throw new Error('Réseau indisponible');}await store.load();const mediaStats=await store.migrateMedia();if(!cancelled)setMediaMigration(mediaStats);}catch(error){
           if(!store.hasCache)throw error;
           setStatus({kind:'error',pending:store.pending,message:'Les données distantes ne sont pas accessibles. Voici la copie de ce compte sur cet appareil. Réessaie pour synchroniser.'});
         }
         if(cancelled){store.close();return;}
         setLoaded({store,workspace,userId,media});
-        if(store.pending)void store.flush();
+        if(store.pending&&!offline)void store.flush();
       }catch(error){if(!cancelled)setLoadError(error.message || 'Ton espace n’a pas pu être chargé. Réessaie.');}
     })();
     return ()=>{cancelled=true;store?.close();};
   },[userId,retry,guestOverride]);
   useEffect(()=>{
     if(!loaded)return;
-    const online=()=>void loaded.store.flush();window.addEventListener('online',online);
+    const online=()=>{void loaded.store.flush();if(isNative()&&loadError)setRetry(v=>v+1);};window.addEventListener('online',online);
     return ()=>window.removeEventListener('online',online);
   },[loaded]);
   function changeMode(next){setTermsAccepted(false);setMode(next);setMessage('');setAuthError('');setPassword('');}
@@ -114,7 +150,7 @@ export default function AccountRoot({App}){
       if(mode==='signup'){
         const data=await service.signUp(email,password,termsAccepted,readGuestConsent(browserStorage) || {});setPassword('');
         if(data.session){setSession(data.session);setGuestOverride(false);setOpen(false);}
-        else {setMode('confirm');setMessage('Email de confirmation demandé. Vérifie ta boîte de réception et les courriers indésirables, puis ouvre le lien dans ce navigateur.');}
+        else {setMode('confirm');setMessage('Email de confirmation demandé. Vérifie ta boîte de réception et les courriers indésirables, puis ouvre le lien sur ce téléphone.');}
       }else if(mode==='confirm'){
         await service.resendSignupConfirmation(email);setMessage('Un nouveau mail de confirmation a été demandé. Vérifie ta boîte de réception et les courriers indésirables.');
       }else if(mode==='recovery'){
@@ -149,6 +185,7 @@ export default function AccountRoot({App}){
   async function accountDeleted(id){
     active.current?.close();active.current=null;setLoaded(null);
     clearAccountCache(window.localStorage,id);
+    if(isNative()){await nativeServices().cache.purgeAccount(id);await nativeServices().storage.purgeAccount(id);}
     try{await service.signOut();}finally{setSession(null);setGuestOverride(false);setOpen(false);window.location.reload();}
   }
   let count=0,guestInvalid=false;try{count=guestCount(readGuest(browserStorage));}catch{guestInvalid=true;}

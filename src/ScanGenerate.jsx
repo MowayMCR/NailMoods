@@ -1,3 +1,4 @@
+import { isNative } from './platform/state.js';
 import MoodGlyph from './MoodGlyph';
 import {useStorage} from './StorageContext';
 import {readScanDraft,SCAN_DRAFT_KEY} from './scanDraft';
@@ -67,6 +68,7 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, onOpen,
     return ()=>{clearTimeout(timer);controller.abort();};
   },[query,stage]);
   async function openCamera() {
+    if(isNative()){fileInput.current.setAttribute('capture','environment');fileInput.current.click();fileInput.current.removeAttribute('capture');return;}
     setError(''); const request=++cameraRequest.current; setCameraPending(true);
     try {
       if(!navigator.mediaDevices?.getUserMedia) throw new Error('La caméra directe n’est pas disponible ici. Choisis une photo ou une couleur.');
