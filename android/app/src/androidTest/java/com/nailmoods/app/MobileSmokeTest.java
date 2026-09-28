@@ -130,12 +130,14 @@ public class MobileSmokeTest {
       AtomicReference<Boolean> visible=new AtomicReference<>(false);long end=SystemClock.elapsedRealtime()+15000;
       while(!visible.get()&&SystemClock.elapsedRealtime()<end){scenario.onActivity(activity->{WindowInsetsCompat insets=ViewCompat.getRootWindowInsets(activity.getWindow().getDecorView());visible.set(insets!=null&&insets.isVisible(WindowInsetsCompat.Type.ime()));});SystemClock.sleep(200);}
       assertTrue("Android keyboard opened; touch="+js(scenario,"JSON.stringify({active:document.activeElement?.outerHTML?.slice(0,300),tap:window.__nmTap,viewport:[innerWidth,innerHeight,devicePixelRatio,visualViewport?.height],rect:document.querySelector('.nameField input').getBoundingClientRect().toJSON()})")+"; native="+x+","+y,visible.get());
+      waitFor(scenario,"document.documentElement.classList.contains('nm-keyboard')");
       assertEquals("true",js(scenario,"document.querySelector('.nameField input').getBoundingClientRect().bottom<=(visualViewport?.height||innerHeight)"));
       assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK),true));
       assertTrue(InstrumentationRegistry.getInstrumentation().getUiAutomation().injectInputEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK),true));
       end=SystemClock.elapsedRealtime()+15000;
       while(visible.get()&&SystemClock.elapsedRealtime()<end){scenario.onActivity(activity->{WindowInsetsCompat insets=ViewCompat.getRootWindowInsets(activity.getWindow().getDecorView());visible.set(insets!=null&&insets.isVisible(WindowInsetsCompat.Type.ime()));});SystemClock.sleep(200);}
       assertFalse("Android keyboard closed",visible.get());
+      waitFor(scenario,"!document.documentElement.classList.contains('nm-keyboard')");
       assertEquals("\"#profil/preferences\"",js(scenario,"location.hash"));
       assertEquals("true",js(scenario,"Boolean(document.querySelector('.nameField input'))"));
     }

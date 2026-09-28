@@ -35,8 +35,12 @@ export async function initializeNative(){
     window.dispatchEvent(new CustomEvent('nm-native-state',{detail:{isActive}}));
     if(isActive){void persistent.storage.flush();void Network.getStatus().then(connectivity);}
   });
-  let keyboard=false;
-  const visible=()=>{const height=window.visualViewport?.height||innerHeight;document.documentElement.style.setProperty('--nm-visible-height',height+'px');keyboard=innerHeight-height>130;document.documentElement.classList.toggle('nm-keyboard',keyboard);};
+  let keyboard=false,nativeKeyboard=false;
+  // adjustResize can shrink innerHeight and visualViewport together on Android.
+  // Native events remain authoritative when their difference is therefore zero.
+  const visible=()=>{const height=window.visualViewport?.height||innerHeight;document.documentElement.style.setProperty('--nm-visible-height',height+'px');keyboard=nativeKeyboard||innerHeight-height>130;document.documentElement.classList.toggle('nm-keyboard',keyboard);};
+  await Keyboard.addListener('keyboardWillShow',()=>{nativeKeyboard=true;visible();});
+  await Keyboard.addListener('keyboardDidHide',()=>{nativeKeyboard=false;visible();});
   window.visualViewport?.addEventListener('resize',visible);visible();
   document.addEventListener('focusin',event=>{if(event.target.matches('input,textarea,[contenteditable]'))setTimeout(()=>event.target.scrollIntoView({block:'nearest',behavior:'smooth'}),300);});
   await App.addListener('backButton',async({canGoBack})=>{
