@@ -33,6 +33,7 @@ jobs:
           npx cap sync android
           npm run mobile:assets
       - name: Build debug APK and AAB; unsigned release AAB
+        id: android
         env:
           NAILMOODS_MOBILE_ENV: ${{ matrix.environment }}
         run: |
@@ -41,22 +42,45 @@ jobs:
       - name: Measure packages and verify every OCR resource
         run: python3 scripts/measure-android.py '${{ matrix.environment }}'
       - name: Package metadata and permissions
+        if: always() && steps.android.outcome == 'success'
         run: |
           "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" manifest print android/app/build/outputs/apk/debug/app-debug.apk > artifacts/${{ matrix.environment }}/android-manifest.xml
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs android/app/build/outputs/apk/debug/app-debug.apk > artifacts/${{ matrix.environment }}/debug-signature.txt
       - uses: actions/upload-artifact@v4
+        if: always() && steps.android.outcome == 'success'
         with:
-          name: nailmoods-0.3.0-beta.1-${{ matrix.environment }}
-          path: artifacts/${{ matrix.environment }}/
+          name: nailmoods-0.3.0-beta.1-${{ matrix.environment }}-apk-debug
+          path: artifacts/${{ matrix.environment }}/*.apk
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.android.outcome == 'success'
+        with:
+          name: nailmoods-0.3.0-beta.1-${{ matrix.environment }}-aab-debug
+          path: artifacts/${{ matrix.environment }}/*-debug.aab
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.android.outcome == 'success'
+        with:
+          name: nailmoods-0.3.0-beta.1-${{ matrix.environment }}-aab-release-unsigned
+          path: artifacts/${{ matrix.environment }}/*-release.aab
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.android.outcome == 'success'
+        with:
+          name: nailmoods-0.3.0-beta.1-${{ matrix.environment }}-measurements
+          path: |
+            artifacts/${{ matrix.environment }}/*.json
+            artifacts/${{ matrix.environment }}/*.xml
+            artifacts/${{ matrix.environment }}/*.txt
           retention-days: 30
       - name: Enable emulator acceleration
-        if: matrix.environment == 'recette'
+        if: always() && steps.android.outcome == 'success' && matrix.environment == 'recette'
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Android emulator smoke tests
-        if: matrix.environment == 'recette'
+        if: always() && steps.android.outcome == 'success' && matrix.environment == 'recette'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35

@@ -1,5 +1,6 @@
 export function isTransientNetworkError(error,online=true){
- return error?.name==='AuthRetryableFetchError' || error?.name==='AbortError' || error?.name==='TimeoutError' || error?.status===0 || error?.code==='network_timeout' || (online===false && ![400,401,403].includes(error?.status));
+ if([400,401,403].includes(error?.status))return false;
+ return error?.name==='AuthRetryableFetchError' || error?.name==='AbortError' || error?.name==='TimeoutError' || error?.status===0 || error?.code==='network_timeout' || /Failed to fetch|NetworkError|network request failed|fetch failed/i.test(error?.message||'') || online===false;
 }
 export function withTimeout(fetcher,timeout=20000){return async(input,options={})=>{
  const controller=new AbortController(),abort=()=>controller.abort(options.signal?.reason);

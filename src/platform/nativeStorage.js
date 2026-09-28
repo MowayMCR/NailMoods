@@ -26,7 +26,12 @@ export async function createNativeStorage() {
     setItem(key,value){localStorage.setItem(key,value);queue.put(key,String(value));},
     removeItem(key){localStorage.removeItem(key);queue.put(key,null);},
     flush:()=>queue.flush(),
-    async purgeAccount(userId){for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k?.includes(userId))storage.removeItem(k);}await queue.flush();},
+    async purgeAccount(userId){
+      for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k?.includes(userId))storage.removeItem(k);}
+      const listing=await Filesystem.readdir({path:root,directory:Directory.Data});
+      for(const file of listing.files.filter(f=>f.name.endsWith('.json'))){const {data}=await Filesystem.readFile({path:root+'/'+file.name,directory:Directory.Data,encoding:Encoding.UTF8});const row=JSON.parse(data);if(row.key?.includes(userId))storage.removeItem(row.key);}
+      if(!await queue.flush())throw new Error('Nettoyage local à reprendre.');
+    },
   };
   const authStorage={getItem:async key=>(await Preferences.get({key:'auth:'+key})).value,setItem:async(key,value)=>{await Preferences.set({key:'auth:'+key,value});},removeItem:async key=>{await Preferences.remove({key:'auth:'+key});}};
   return {storage,authStorage};

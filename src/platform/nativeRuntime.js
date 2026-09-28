@@ -6,13 +6,13 @@ import { Keyboard } from '@capacitor/keyboard';
 import { createNativeStorage } from './nativeStorage.js';
 import { setNativeServices, nativeServices, nativeNotice } from './state.js';
 import { queueAuthUrl } from './authLinks.js';
-import { installNativeMedia, acceptRestoredCamera } from './nativeMedia.js';
+import { installNativeMedia, acceptRestoredCamera, purgeAccountMedia } from './nativeMedia.js';
 import { backAction } from './back.js';
 import './native.css';
 
 export async function initializeNative(){
   const persistent=await createNativeStorage();
-  setNativeServices({...persistent,cache:await createNativeCache(),principal:'boot',checkpoint:null});
+  setNativeServices({...persistent,cache:await createNativeCache(),purgeAccountMedia,principal:'boot',checkpoint:null});
   document.documentElement.classList.add('nm-native');
   await installNativeMedia();
   await App.addListener('appRestoredResult',result=>{void acceptRestoredCamera(result).catch(()=>nativeNotice('La photo reste en attente de récupération. Réessaie.'));});

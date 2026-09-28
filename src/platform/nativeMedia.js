@@ -12,6 +12,7 @@ const descriptor=input=>({route:location.hash,label:input.getAttribute('aria-lab
 const announce=()=>window.dispatchEvent(new Event('nm-native-media'));
 async function keep(value){await Preferences.set({key:KEY,value:JSON.stringify(value)});pending=value;announce();}
 export const recoveredMedia=()=>pending?.files?.length ? pending : null;
+export async function purgeAccountMedia(principal){if(pending?.principal===principal)await discardRecoveredMedia();}
 export async function discardRecoveredMedia(){const old=pending;await Preferences.remove({key:KEY});pending=null;announce();for(const file of old?.files||[])try{await Filesystem.deleteFile({path:file.path,directory:Directory.Data});}catch{}}
 async function retainResults(method,data){
   if(!pending)return;

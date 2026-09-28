@@ -90,7 +90,7 @@ export default function AccountRoot({App}){
     const callback=async()=>{if(processing)return;const url=takeAuthUrl();if(!url)return;processing=true;
       try{const result=await service.completeCallback(url);if(alive&&result){setSession(result.session);setGuestOverride(false);if(result.recovery){setMode('password');setOpen(true);}}}
       catch{if(alive){setAuthError('Ce lien ne peut pas être utilisé. Relance la demande depuis cette application et ouvre le nouveau mail sur ce téléphone.');setOpen(true);}}
-      finally{processing=false;}
+      finally{processing=false;if(alive)void callback();}
     };
     const lifecycle=({detail})=>{if(detail.isActive){void client.auth.startAutoRefresh();void callback();}else void client.auth.stopAutoRefresh();};
     window.addEventListener('nm-native-auth-url',callback);window.addEventListener('nm-native-state',lifecycle);
@@ -98,11 +98,11 @@ export default function AccountRoot({App}){
   },[]);
   useEffect(()=>{
     const native=nativeServices();if(!native)return;
-    native.principal=session===undefined?'boot':userId||'guest';
+    native.principal=session===undefined?'boot':guestOverride?'guest':userId||'guest';
     native.checkpoint=()=>active.current?.checkpoint?.();
     window.dispatchEvent(new Event('nm-native-media'));
     return()=>{native.checkpoint=null;};
-  },[session,userId]);
+  },[session,userId,guestOverride]);
   useEffect(()=>{
     let cancelled=false,store;
     active.current?.close();active.current=null;setLoaded(null);setLoadError('');setMediaMigration(null);setSuspension(false);
@@ -139,10 +139,9 @@ export default function AccountRoot({App}){
     return ()=>{cancelled=true;store?.close();};
   },[userId,retry,guestOverride]);
   useEffect(()=>{
-    if(!loaded)return;
-    const online=()=>{void loaded.store.flush();if(isNative()&&loadError)setRetry(v=>v+1);};window.addEventListener('online',online);
+    const online=()=>{if(loaded)void loaded.store.flush();if(isNative()&&loadError&&userId)setRetry(v=>v+1);};window.addEventListener('online',online);
     return ()=>window.removeEventListener('online',online);
-  },[loaded]);
+  },[loaded,loadError,userId]);
   function changeMode(next){setTermsAccepted(false);setMode(next);setMessage('');setAuthError('');setPassword('');}
   async function submit(event){
     event.preventDefault();setBusy(true);setMessage('');setAuthError('');
@@ -185,8 +184,11 @@ export default function AccountRoot({App}){
   async function accountDeleted(id){
     active.current?.close();active.current=null;setLoaded(null);
     clearAccountCache(window.localStorage,id);
-    if(isNative()){await nativeServices().cache.purgeAccount(id);await nativeServices().storage.purgeAccount(id);}
-    try{await service.signOut();}finally{setSession(null);setGuestOverride(false);setOpen(false);window.location.reload();}
+    try{
+      if(isNative())await Promise.all([nativeServices().purgeAccountMedia(id),nativeServices().cache.purgeAccount(id),nativeServices().storage.purgeAccount(id)]);
+    }finally{
+      try{await service.signOut();}finally{setSession(null);setGuestOverride(false);setOpen(false);window.location.reload();}
+    }
   }
   let count=0,guestInvalid=false;try{count=guestCount(readGuest(browserStorage));}catch{guestInvalid=true;}
   const ready=loaded?.userId===userId && !guestOverride;
