@@ -1,0 +1,147 @@
+/* Profile dialogs are portalled outside .profilePage. Keep their layout self-contained. */
+.app .productSheet.profileSheet {
+  padding: 10px 16px 20px;
+  scroll-padding-top: 120px;
+}
+.app .profileSheet .sheetTitle {
+  position: sticky;
+  top: -10px;
+  z-index: 2;
+  padding: 12px 0 16px;
+  margin-bottom: 4px;
+  background: var(--paper);
+}
+.app .profileSheet .sheetTitle > div { min-width: 0; }
+.app .profileSheet .sheetTitle h2 {
+  margin: 4px 0 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  overflow-wrap: normal;
+}
+.app .profileSheet .sheetTitle > button { flex: 0 0 44px; }
+.app .profileSheet button { font: inherit; cursor: pointer; }
+.app .profileSheet button:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; }
+.app .profileSheet :is(.optionList, .visualOptions) { display: grid; gap: 10px !important; }
+.app .profileSheet .optionList > button {
+  appearance: none;
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px;
+  border: 1px solid var(--nm-line, #e8dce2);
+  border-radius: 16px;
+  background: var(--surface, #fff);
+  color: var(--ink);
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+.app .profileSheet .optionList > button.selected {
+  background: var(--surface-selected, var(--soft));
+  border-color: var(--accent-text);
+  color: var(--accent-text);
+  font-weight: 650;
+}
+.app .profileSheet .optionList > button > svg { flex: 0 0 20px; width: 20px; height: 20px; }
+.app .profileSheet .visualOptions { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0; }
+.app .profileSheet .visualOptions > button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 8px 14px !important;
+  color: var(--ink);
+  text-align: center;
+  box-shadow: inset 0 0 0 1px var(--nm-line, #e8dce2);
+}
+.app .profileSheet .visualOptions > button.selected {
+  color: var(--accent-text);
+  box-shadow: inset 0 0 0 2px var(--accent-text);
+}
+.app .profileSheet .visualOptions .profileNailArt {
+  display: block;
+  flex: 0 0 auto;
+  width: 60px;
+  height: 84px;
+  margin: 0 0 6px;
+}
+.app .profileSheet .visualOptions b {
+  display: block;
+  margin: 0;
+  font-family: inherit;
+  font-size: 1rem !important;
+  font-weight: 650 !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere;
+}
+.app .profileSheet .visualOptions span {
+  display: block;
+  margin-top: 4px !important;
+  max-width: 100%;
+  color: var(--muted, #75656e);
+  font-size: .875rem !important;
+  font-weight: 400;
+  line-height: 1.35 !important;
+}
+.app .profileSheet :is(.visualOptions, .themeGrid) em {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-text);
+  color: #fff;
+}
+.app .profileSheet :is(.visualOptions, .themeGrid) em svg { width: 14px; height: 14px; fill: none; }
+
+/* The same portal also hosts appearance and universe choices. */
+.app .profileSheet .appearance > button {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 20px;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  min-height: 64px;
+  padding: 14px 0;
+  border: 0;
+  border-bottom: 1px solid var(--nm-line, #e8dce2);
+  background: transparent;
+  text-align: left;
+  color: var(--ink);
+}
+.app .profileSheet .appearance span { display: grid; gap: 4px; }
+.app .profileSheet .appearance small { color: var(--accent-text); font-size: .875rem; }
+.app .profileSheet :is(.themeGrid, .avatarModes, .avatarGrid) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.app .profileSheet :is(.themeGrid, .avatarModes, .avatarGrid) > button {
+  position: relative;
+  min-width: 0;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+  border: 1px solid var(--nm-line, #e8dce2);
+  border-radius: 16px;
+  background: var(--surface, #fff);
+  color: var(--ink);
+  text-align: center;
+}
+.app .profileSheet :is(.themeGrid, .avatarModes, .avatarGrid) > button.selected { border-color: var(--accent-text); background: var(--surface-selected, var(--soft)); }
+.app .profileSheet :is(.themeGrid, .avatarModes, .avatarGrid) :is(span, small) { font-size: .875rem; line-height: 1.35; }
+.app .profileSheet .themePreview { height: 58px; display: grid; place-items: center; border-radius: 10px; color: #fff; }
+.app .profileSheet .swatches { display: flex; justify-content: center; gap: 4px; }
+.app .profileSheet .swatches i { width: 16px; height: 16px; border-radius: 50%; }
+.app .profileSheet :is(.avatarModes, .avatarGrid) .avatar { justify-self: center; }
+.app .profileSheet .universeGroup { margin: 20px 0; }
+.app .profileSheet .universeGroup h3 { font-size: 1.125rem; }
+.app .profileSheet .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.app .profileSheet .chips button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 10px 12px; border: 1px solid var(--nm-line, #e8dce2); border-radius: 24px; background: var(--surface, #fff); color: var(--ink); font-size: .875rem; }
+.app .profileSheet .chips button.on { background: var(--accent-text); color: #fff; }
+.app .profileSheet .primarySticky.inSheet { position: sticky; bottom: -20px; width: 100%; margin-top: 16px; padding: 14px; border: 0; border-radius: 16px; background: var(--accent-text); color: #fff; font-weight: 650; }
