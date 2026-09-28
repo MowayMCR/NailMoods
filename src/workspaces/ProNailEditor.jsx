@@ -1,4 +1,4 @@
-import React,{useMemo,useRef,useState} from 'react';
+import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {Brush,Check,ChevronLeft,Copy,Delete,Eraser,Redo2,Undo2} from 'lucide-react';
 import {addStroke,editableProNailDesign,normaliseProNailDesign,PRO_FINGERS,PRO_NAIL_LENGTHS,PRO_NAIL_SHAPES,updateDesignNail} from './proNailEditorModel.js';
 import ProDesignPreview,{ProNailArtwork} from './ProNailArtwork';
@@ -7,11 +7,13 @@ function colorsFrom(roles,collection){
  const source=[...(collection||[]).map(item=>({color:item.hex,label:item.shade_name||'Ma collection'})),...(roles||[]).map(item=>({color:item.color,label:item.role})),...fallbackColors.map(color=>({color,label:'Couleur NailMoods'}))];
  const colors=new Map();for(const item of source)if(/^#[0-9a-f]{6}$/i.test(item.color||'')&&!colors.has(item.color.toLowerCase()))colors.set(item.color.toLowerCase(),{...item,color:item.color.toLowerCase()});return [...colors.values()].slice(0,24);
 }
-export default function ProNailEditor({design,colorRoles,collectionColors,defaultShape,defaultLength,onSave,onClose}){
+export default function ProNailEditor({design,colorRoles,collectionColors,defaultShape,defaultLength,onSave,onDraft,onClose}){
  const initial=useMemo(()=>editableProNailDesign(design,{shape:defaultShape,length:defaultLength,base:colorRoles?.find(item=>item.role==='base')?.color}),[]);
  const [history,setHistory]=useState([initial]),[cursor,setCursor]=useState(0),[tool,setTool]=useState('brush'),[color,setColor]=useState(colorRoles?.find(item=>item.role==='principale')?.color||'#813c60'),[size,setSize]=useState(4),[active,setActive]=useState(null),[selected,setSelected]=useState(initial.focalFinger),[view,setView]=useState('single');
  const svg=useRef(null),surface=useRef(null),strokeRef=useRef(null);
+ const draftCallback=useRef(onDraft);draftCallback.current=onDraft;
  const current=history[cursor],nail=current.nails[selected],palette=colorsFrom(colorRoles,collectionColors);
+ useEffect(()=>{draftCallback.current?.(normaliseProNailDesign(current));},[current]);
  function commit(next){const clean=normaliseProNailDesign(next);setHistory(value=>[...value.slice(0,cursor+1),clean].slice(-31));setCursor(value=>Math.min(value+1,30));}
  function location(event){const matrix=surface.current?.getScreenCTM();if(!matrix||!svg.current)return null;const p=svg.current.createSVGPoint();p.x=event.clientX;p.y=event.clientY;const local=p.matrixTransform(matrix.inverse());return {x:Math.max(0,Math.min(100,local.x)),y:Math.max(0,Math.min(160,local.y))};}
  function begin(event){if(event.pointerType==='mouse'&&event.button!==0||strokeRef.current)return;const p=location(event);if(!p)return;event.currentTarget.setPointerCapture?.(event.pointerId);strokeRef.current={pointerId:event.pointerId,points:[p],color:tool==='erase'?nail.base:color,size:tool==='erase'?Math.max(10,size*2):size,mode:tool==='erase'?'erase':'draw'};setActive(strokeRef.current);}

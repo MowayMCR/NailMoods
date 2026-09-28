@@ -14,7 +14,10 @@ const universeGroups = [
   ['Styles', 'style'], ['Envies', 'envie'], ['Ambiances', 'ambiance'], ['Techniques', 'technique'], ['Effets', 'finish'], ['Thèmes', 'theme'],
 ].map(([label, category]) => [label, TAGS.filter(tag => tag.category === category).map(tag => tag.label)]);
 
-export default function ProfileView({ accountAccess, identityExtras, extras, appearanceExtras, onCreate, onEquipment, onFavorites, profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
+export default function ProfileView({ route, onHelp, accountAccess, identityExtras, extras, appearanceExtras, onCreate, onEquipment, onFavorites, profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
+  const section = route?.split('/')[1] || '';
+  const titles = {preferences:'Mes préférences',account:'Mon compte',offer:'Mon offre',privacy:'Confidentialité & données',social:'Connexions et comptes bloqués',pro:'Espace Pro',staff:'Journal staff'};
+  const openSection = key => { window.location.hash = 'profil' + (key ? '/' + key : ''); window.scrollTo({top:0}); };
   const [picker, setPicker] = useState(null);
   const [panel, setPanel] = useState(null);
   const [universes, setUniverses] = useState(false);
@@ -25,19 +28,21 @@ export default function ProfileView({ accountAccess, identityExtras, extras, app
   const avatar = big => <div className={'avatar ' + (big ? 'big ' : '') + (profile.avatarMode === 'avatar' ? 'avatarArt' : '')}>{profile.avatarMode === 'avatar' ? av?.[2] : (profile.name || 'M')[0]}</div>;
   const tile = (key, label) => <button key={key} className="settingTile" onClick={() => setPicker(key)}><small>{label}</small><b>{profile[key]}</b><ChevronRight /></button>;
   return <div className="profilePage">
-    <section className="profileHero"><button className="profileAvatarButton" aria-label="Modifier mon avatar et le thème" aria-haspopup="dialog" onClick={() => setPanel('appearance')}>{avatar(true)}<span className="avatarEditHint" aria-hidden="true"><Pencil size={12} /></span></button><div><small>MON UNIVERS</small><h1>{profile.name || 'Mon profil'}</h1><ProfileIdentity /><p>Ton profil guide tes inspirations.</p></div></section>
+    {!section ? <>    <section className="profileHero"><button className="profileAvatarButton" aria-label="Modifier mon avatar et le thème" aria-haspopup="dialog" onClick={() => setPanel('appearance')}>{avatar(true)}<span className="avatarEditHint" aria-hidden="true"><Pencil size={12} /></span></button><div><small>MON UNIVERS</small><h1>{profile.name || 'Mon profil'}</h1><ProfileIdentity /><p>Ton profil guide tes inspirations.</p></div></section>
+<div className="profileDestinations">{Object.entries(titles).filter(([key])=>!['offer','social','pro','staff'].includes(key)||extras?.[key]).map(([key,label])=><button className="nmShortcut" key={key} onClick={()=>openSection(key)}><span>{label}</span><ChevronRight/></button>)}<button className="nmShortcut" onClick={onHelp}><span>Aide & support</span><ChevronRight/></button></div></> : <><button className="nmQuiet" onClick={()=>openSection('')}>← Mon profil</button><h1>{titles[section] || 'Mon profil'}</h1></>}
+    {section==='preferences' && <>
     <section className="card"><h2>À propos de moi</h2><p>Quelques informations pour des idées qui te ressemblent. Tu peux aussi créer une idée sans compléter ton profil.</p><label className="nameField">Prénom<input value={profile.name} onChange={event => onChange({ ...profile, name: event.target.value })} /></label>
       <div className="profileGrid">{tile('shape', 'FORME')}{tile('length', 'LONGUEUR')}{tile('level', 'NIVEAU')}{tile('duration', 'TEMPS')}<div className="wide">{tile('technique', 'TYPE DE POSE')}</div></div>
     </section>
-    {identityExtras}
     <section className="card"><div className="titleRow"><div><h2>Mes univers</h2><p>Ce que tu aimes aujourd’hui.</p></div><button className="explore" onClick={() => setUniverses(true)}>Explorer</button></div>
       {!profile.styles.length && <p>Choisis les univers qui te ressemblent, ou explore librement.</p>}<div className="favoriteStyles">{profile.styles.map(style => <button key={style} aria-label={'Retirer ' + style} onClick={() => toggleStyle(style)}><MoodGlyph value={style} />{style}<X /></button>)}</div><button className="outline" onClick={() => setUniverses(true)}>+ Ajouter des univers</button>
     </section>
     <section className="card"><h2>Mes techniques</h2><div className="techList">{[['stickers', 'Stickers & décos'], ['french', 'French & lignes'], ['freehand', 'Dessin à main levée'], ['effects', 'Effets / poudres / chrome']].map(([key, label]) => <button key={key} onClick={() => setPicker(key)}><span>{label}</span><b>{profile[key]}</b><ChevronRight /></button>)}</div></section>
     <section className="profileShortcuts" aria-label="Mon NailMoods"><button onClick={onCollection}><Palette /><span>Ma collection<small>Mes couleurs et produits</small></span><ChevronRight /></button><button onClick={onEquipment}><Sparkles /><span>Mon matériel<small>Mes outils et stickers</small></span><ChevronRight /></button><button onClick={onFavorites}><Palette /><span>Mes inspirations<small>Mes idées sauvegardées</small></span><ChevronRight /></button><button onClick={onCreate}><Sparkles /><span>Créer une idée avec mes préférences<small>À adapter selon mon envie</small></span><ArrowRight /></button></section>
     <PersonalizationSummary model={personalModel} settings={personalSettings} onOpen={onPersonalization} />
-    {accountAccess}
-    {extras}
+    </>}
+    {section==='account' && <>{identityExtras}{accountAccess}</>}
+    {['offer','privacy','social','pro','staff'].includes(section) && extras?.[section]}
     {picker && <Sheet title={choices[picker].title} eyebrow="MON NAILMOODS" onClose={() => setPicker(null)} className="profileSheet">
       {choices[picker].visual ? <div className="visualOptions">{choices[picker].values.map(([value, description, shape]) => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><ProfileNail variant={shape} /><b>{value}</b><span>{description}</span>{profile[picker] === value && <em><Check /></em>}</button>)}</div> : <div className="optionList">{choices[picker].values.map(value => <button key={value} className={profile[picker] === value ? 'selected' : ''} aria-pressed={profile[picker] === value} onClick={() => choose(picker, value)}><span>{value}</span>{profile[picker] === value && <Check />}</button>)}</div>}
     </Sheet>}

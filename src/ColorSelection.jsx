@@ -3,12 +3,12 @@ import Sheet from './Sheet';
 import { productColor } from './colorAnalysis';
 import { auxiliary, normalize } from './creationEngine';
 
-export default function ColorSelection({ items, selected, onChange, onClose }) {
+export default function ColorSelection({ conceptual=false, items, selected, onChange, onClose }) {
   const [query, setQuery] = useState('');
   const colors = items.filter(item => ['Vernis', 'Semi-permanent', 'Gel'].includes(item.type) && !auxiliary(item) && Number(item.quantity ?? 1) > 0);
   const first = colors.find(item => selected.includes(String(item.id)));
   return <Sheet title="Mes couleurs pour cette idée" onClose={onClose} className="creationSheet">
-    <p className="creationPickerHelp">Choisis jusqu’à cinq teintes d’un même type de pose. Elles seront présentes dans chaque idée ; NailMoods peut les compléter.</p>
+    <p className="creationPickerHelp">{conceptual?'Choisis jusqu’à cinq couleurs d’inspiration. Aucun produit n’est ajouté à ta collection.':'Choisis jusqu’à cinq teintes d’un même type de pose. Elles seront présentes dans chaque idée ; NailMoods peut les compléter.'}</p>
     <input className="colorSelectionSearch" aria-label="Rechercher une teinte" placeholder="Une marque, une référence, une couleur…" value={query} onChange={e => setQuery(e.target.value)} />
     <div className="creationOptions">{colors.filter(item => normalize([item.name, item.brand, item.reference].join(' ')).includes(normalize(query))).map(item => {
       const chosen = selected.includes(String(item.id));

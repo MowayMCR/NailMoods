@@ -6,6 +6,7 @@ import { renderingForIdea, techniqueDefinition, TECHNIQUE_CATALOG } from '../src
 import { PHOTO_MATERIAL_ENGINE_VERSION, REALISTIC_RENDER_PROFILES, realisticRenderProfile } from '../src/realisticRendering.js';
 import { readInspirations, saveProject, snapshotIdea, validIdea } from '../src/inspirations.js';
 import { newJournalEntryFromIdea, putJournalEntry, readJournal } from '../src/journal.js';
+import { photoDraftSnapshot, restorePhotoDraftResult } from '../src/photoDraft.js';
 
 function pixels(width = 20, height = 20) {
   const data = new Uint8ClampedArray(width * height * 4);
@@ -197,4 +198,16 @@ test('photo analytics allow only bounded non-content metadata', () => {
   assert.ok(PHOTO_ANALYTICS_EVENTS.includes('nail_art_choice'));
   assert.ok(PHOTO_ANALYTICS_EVENTS.includes('nail_art_level_selected'));
   assert.deepEqual(photoAnalyticsMetadata({ nail_art: true, level: 'pro', image_count: 4, mode: 'open_possibilities', image: 'secret', prompt: 'private', colors: ['#fff'] }), { nail_art: true, level: 'pro', image_count: 4, mode: 'open_possibilities' });
+});
+
+
+test('photo draft keeps a generated composition when Create is unmounted and restores its source references', () => {
+  const photos=[{id:'photo-1',name:'reference.jpg',src:'data:image/jpeg;base64,abc',projectSrc:'data:image/jpeg;base64,small',fileKey:'reference.jpg:12:1',analysis:{colors:['#735060']}}];
+  const result={technique:{id:'glazed'},ideas:[{id:'idea-1',title:'Glazed',photoSources:[{src:'data:image/jpeg;base64,small'}]}]};
+  const draft=photoDraftSnapshot({photos,overrides:{mood:'Witchy'},nailArt:true,level:'intermediate',sourceMode:'open',technique:'glazed',seed:3,result,saved:new Set(['idea-1'])});
+  assert.equal(draft.result.ideas[0].photoSources,undefined);
+  assert.deepEqual(draft.saved,['idea-1']);
+  const restored=restorePhotoDraftResult(draft.result,draft.photos);
+  assert.equal(restored.ideas[0].photoSources[0].src,'data:image/jpeg;base64,small');
+  assert.equal(restored.ideas[0].photoSources[0].name,'reference.jpg');
 });

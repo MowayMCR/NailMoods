@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { comparePoShare, shareSnapshot } from '../src/social/poShareService.js';
+import {receivedShareIdea} from '../src/social/receivedShare.js';
+import {validIdea,saveProject} from '../src/inspirations.js';
 
 test('PO share contains only the useful palette and requirements, never private journal content', () => {
   const snapshot = shareSnapshot({
@@ -54,4 +56,12 @@ test('PO comparison never equates color similarity with product identity',()=>{
 test('sharing does not serialize arbitrary private keys inside the preview',()=>{
  const s=shareSnapshot({nails:[{color:'#aabbcc',notes:'SECRET',photo:'SECRET',decoration:{motif:'star',color:'#aaaaaa',note:'SECRET'}}],palette:[],notes:'SECRET'});
  assert.equal(JSON.stringify(s).includes('SECRET'),false);
+});
+
+test('a received request can become a private PO project without copying notes or images',()=>{
+ const request={title:'Demande cliente',mood:'Clean girl',notes:'PRIVATE',images:[{src:'PRIVATE/IMAGE'}],colors:['#aa4488'],preview:{shape:'Amande',length:'Moyen',nails:Array.from({length:5},()=>({color:'#aa4488',finish:'Brillant'}))}};
+ const idea=receivedShareIdea(request,'request-1');
+ assert.ok(validIdea(idea));assert.equal(idea.isPublic,false);
+ assert.equal(JSON.stringify(idea).includes('PRIVATE'),false);
+ assert.equal(saveProject({favorites:[],recent:[],projects:[]},idea).projects.length,1);
 });

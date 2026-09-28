@@ -6,7 +6,7 @@ import { guides, helpSeen, markHelpSeen, trackHelp } from './help';
 import './help.css';
 
 const icons = { palette: Palette, package: Package, lamp: Lightbulb, sparkles: Sparkles, heart: Heart, sticker: Sticker, book: BookHeart };
-const actions = { home: ['Ajouter mes produits', 'collection'], profile: ['Explorer mes couleurs', 'collection'], collection: ['Créer avec mes couleurs', 'create'], equipment: ['Créer avec mon matériel', 'create'], generator: ['Voir mon matériel', 'equipment'], moodboard: ['Créer une autre idée', 'create'], journal: ['Voir mes inspirations', 'favorites'] };
+const actions = { home: ['Créer ma première idée', 'create'], profile: ['Explorer mes couleurs', 'collection'], collection: ['Créer avec mes couleurs', 'create'], equipment: ['Créer avec mon matériel', 'create'], generator: ['Voir mon matériel', 'equipment'], moodboard: ['Créer une autre idée', 'create'], journal: ['Voir mes inspirations', 'favorites'] };
 export default function ContextHelp({ screen, step, onNavigate }) {
   const guide = guides[screen];
   const [offer, setOffer] = useState(() => screen === 'home' && !helpSeen('home'));

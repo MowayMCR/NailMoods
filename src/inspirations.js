@@ -1,3 +1,4 @@
+import {generateScannedIdeas} from './scanGenerate.js';
 import { generateInspirations, stylePalette } from './freeInspiration.js';
 import { auxiliary, createSuggestions, normalize, profileDefaults } from './creationEngine.js';
 import { productColor } from './colorAnalysis.js';
@@ -67,8 +68,10 @@ export function toggleFavorite(library, idea) {
 }
 
 export function productStatus(saved, items) {
+  if(saved.unpainted)return {state:'conceptual',label:'Ongle naturel · sans vernis supplémentaire',current:null};
   if (saved.conceptual) return { state: 'conceptual', label: 'Couleur de style · à choisir dans tes produits', current: null };
   const current = items.find(item => sameId(item.id, saved.id));
+  if(!current&&saved.colorSource==='scan-confirmed')return {state:'scanned',label:'Couleur confirmée lors du scan · hors Collection',current:null};
   if (!current || Number(current.quantity ?? 1) <= 0) return { state: 'missing', label: 'Absent de ta collection', current };
   const fields = ['name', 'brand', 'type', 'finish', 'effect', 'usage', 'equipmentCategory', 'materialStyle', 'reference'];
   const changedColor = current.type !== 'Matériel' && productColor(current) !== productColor(saved);
@@ -110,6 +113,11 @@ export function safeProductUrl(value) {
 }
 
 export function createVariants(idea, items, profile, seed = 1, learning = null) {
+  if (idea.intent === 'scan') {
+    const products=idea.palette.filter(p=>!p.unpainted);
+    try { return generateScannedIdeas(products,idea.scanEffects?.filter(e=>e!=='Pas de préférence')||[],{...profile,shape:idea.shape,length:idea.length},items,seed).filter(candidate=>compositionKey(candidate)!==compositionKey(idea)).slice(0,3).map(candidate=>({...snapshotIdea(candidate),variantLabel:'Avec les couleurs du scan'})); }
+    catch { return []; }
+  }
   const options = { ...profileDefaults(profile), ...idea.options, polishCount: idea.palette.length, ...(idea.intent === 'inspire' ? { inspirationPalette: idea.options?.inspirationPalette || idea.palette.filter(p => p.conceptual) } : {}) };
   const shapeProfile = { ...profile, shape: idea.shape, length: idea.length };
   const paletteIds = new Set(idea.palette.map(item => String(item.id)));

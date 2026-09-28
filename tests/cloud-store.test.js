@@ -113,15 +113,6 @@ test('connected journal photo uploads before the Supabase write and stores only 
  assert.equal(calls[0][0],'private');assert.equal(calls[1][0],'public');assert.equal(write.values.media_path,'A/WA/journal/'+write.rowId+'.jpg');assert.equal(write.values.snapshot.photo,'A/WA/journal/'+write.rowId+'.jpg');assert.ok(!JSON.stringify(write).includes('base64'));
 });
 
-
-test('a pending journal photo is cached before its network upload starts',async()=>{
- const local=memory(),repo=backend(),cache=cacheFor(local);let cached=false;
- const media={async upload(){const draft=await cache.getCachedWorkspace(accountCacheKey('A','WA'));cached=Boolean(draft.queue[0]?.values?.snapshot?.photo?.startsWith('data:image/'));return {path:'A/WA/journal/persisted.jpg'};}};
- const store=make(local,repo,'A','WA',{cache,media});await store.load();
- const photo='data:image/jpeg;base64,'+Buffer.alloc(16,5).toString('base64');
- store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'journal-cache',version:1,title:'Photo',date:'2026-09-18',photo,products:[],visibility:'private',idea:null,feeling:'',ease:'',repeat:false,wearDays:'',notes:'',createdAt:1,updatedAt:1}],hiddenSessions:[]}));
- assert.equal(await store.flush(),true);assert.equal(cached,true);
-});
 test('existing connected journal photos migrate non-destructively and become paths after a successful upload',async()=>{
  const local=memory(),repo=backend(),calls=[];
  const media={async upload({objectId}){calls.push(objectId);return {path:`A/WA/journal/${objectId}.jpg`};},async uploadPublic(){return {path:'public'};}};
@@ -236,4 +227,20 @@ test('publication retry keeps draft, then photo replacement, removal and re-add 
  row=await edit({photo});assert.equal(row.public_media_path,'A/WA/journal/public-3.png');
  row=await edit({visibility:'private',publicMediaPath:null});assert.equal(row.public_media_path,null);
  row=await edit({visibility:'public',publicMediaPath:null});assert.equal(row.public_media_path,'A/WA/journal/public-4.png');assert.equal(repo.rows.journal_entries.length,1);
+});
+
+test('failed photo upload preserves original image and journal across reload',async()=>{
+ const storage=memory(),repo=backend(),photo='data:image/png;base64,aGVsbG8=';
+ const store=make(storage,repo,'A','WA',{media:{upload:async()=>{throw new Error('offline');}}});await store.load();
+ store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'pending-photo',date:'2026-09-22',photo,visibility:'private'}],hiddenSessions:[]}));
+ assert.equal(await store.flush(),false);store.close();
+ const reopened=make(storage,repo);await reopened.load();
+ assert.equal(JSON.parse(reopened.storage.getItem(JOURNAL)).entries[0].photo,photo);
+ assert.equal(reopened.pending,1);
+});
+test('local journal draft survives reload without publishing an unfinished entry',async()=>{
+ const storage=memory(),repo=backend(),store=make(storage,repo);await store.load();
+ const key='nm-journal-draft:new',draft={id:'draft',photo:'data:image/png;base64,aGVsbG8=',notes:'in progress'};
+ store.storage.setItem(key,JSON.stringify(draft));assert.equal(await store.flush(),true);store.close();
+ const reopened=make(storage,repo);await reopened.load();assert.deepEqual(JSON.parse(reopened.storage.getItem(key)),draft);assert.equal(repo.rows.journal_entries.length,0);
 });

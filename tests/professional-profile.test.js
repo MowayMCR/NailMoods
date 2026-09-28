@@ -65,16 +65,17 @@ test('professional and institute foreign keys keep covering indexes',()=>{
 });
 
 test('targeted mobile polish keeps sheets inside the viewport and labels above fields',async()=>{
- const [css,identity,professional]=await Promise.all([
+ const [css,identity,professional,people]=await Promise.all([
   readFile(new URL('../src/finish.css',import.meta.url),'utf8'),
   readFile(new URL('../src/identity/IdentityPanel.jsx',import.meta.url),'utf8'),
   readFile(new URL('../src/workspaces/ProfessionalProfilePanel.jsx',import.meta.url),'utf8'),
+  readFile(new URL('../src/identity/PeopleSearch.jsx',import.meta.url),'utf8'),
  ]);
  assert.match(css,/width:min\(400px,calc\(100vw - 28px\)\)/);
  assert.match(css,/max-height:calc\(100dvh - 32px\)/);
  assert.match(css,/\.homeShortcuts>button::before/);
  assert.match(identity,/<label><span>Nom affiché<\/span><input/);
- assert.match(identity,/<ContentImage client=\{client\} kind="avatar"/);
+ assert.match(people,/<ContentImage client=\{client\} kind="avatar"/);
  assert.match(professional,/Quel type de profil Pro êtes-vous \?/);
  assert.match(professional,/Voir mon profil comme les autres/);
 });

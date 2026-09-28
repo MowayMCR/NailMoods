@@ -6,7 +6,7 @@ import InstitutePanel from './InstitutePanel';
 import WorkspaceAvatar from './WorkspaceAvatar';
 import {PROFESSIONAL_STATUSES,professionalStatus} from './professionalProfile';
 import {professionalError,professionalService} from './professionalService';
-import ProCreationsPanel from './ProCreationsPanel';
+
 import './professional.css';
 
 const emptyForm={name:'',handle:'',bio:'',city:'',isPublic:false,avatarUrl:null};
@@ -38,7 +38,7 @@ export default function ProfessionalProfilePanel({client,userId,tier}){
        {workspace.profile?.is_public&&workspace.public_handle&&<button className="secondaryAction proPreviewButton" type="button" onClick={()=>setPreviewHandle(workspace.public_handle)}><Eye/>Voir mon profil comme les autres</button>}</form>
        {status==='institute_owner'&&<><div className="formSectionHeading"><span>B</span><div><h4>Mon espace Institut</h4><p>Les memberships et les rôles définissent les droits réels.</p></div></div><InstitutePanel client={client} userId={userId} mode={status} onChanged={load}/><button className="dangerText closeInstitute" type="button" onClick={()=>setCloseOpen(true)}>Fermer cet Institut</button></>}
        {status==='independent'&&<div className="independentNote"><Scissors/><span><b>Tu exerces en indépendante.</b><small>Aucun espace Institut ni aucune gestion d’équipe ne t’est imposé.</small></span></div>}
-       <ProCreationsPanel client={client} userId={userId} workspaceId={workspace.id}/>
+       <button type="button" className="primaryAction" onClick={()=>{window.location.hash='creer/atelier';}}>Ouvrir mon Atelier</button>
      </>:<div className="createProSpace"><p>{status==='institute_owner'?'Crée ton espace Institut pour inviter ton équipe et définir les rôles.':'Crée un espace Pro personnel pour séparer ton activité de ton espace NailMoods personnel.'}</p><label><span>{status==='institute_owner'?'Nom de l’institut':'Nom professionnel'}</span><input value={createName} maxLength={80} placeholder={status==='institute_owner'?'Institut Cassis':'Studio Marie'} onChange={event=>setCreateName(event.target.value)}/></label><button className="primaryAction" type="button" disabled={busy||createName.trim().length<2} onClick={createSpace}>{status==='institute_owner'?'Créer mon institut':'Créer mon espace Pro'}</button></div>}
    </section>}
    {notice&&<p className="proNotice" role="status">{notice}</p>}

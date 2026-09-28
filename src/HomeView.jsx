@@ -1,3 +1,4 @@
+import {DiscoveryShortcut} from './social/Discovery';
 import { useStorage } from './StorageContext';
 import React, { useEffect, useMemo, useState } from 'react';
 import { UserRound, Library, Palette, Heart, ArrowRight, ChevronRight, BookHeart, ListChecks, Play, BookmarkCheck, Sparkles, RotateCcw, Clock3, Check, Leaf } from 'lucide-react';
@@ -51,14 +52,10 @@ export default function HomeView({ profile, items, library, journal, tutorials, 
   const nextTitle = home.priority === 'resume' ? resume.idea.title : home.priority === 'retained' ? retained.title : readiness ? readiness.title : 'On crée ta prochaine pose ?';
 
   return <div className="homePage smartHome">
-    <section className="homeGreeting"><small>{profile.name ? 'BONJOUR, ' + profile.name.toLocaleUpperCase('fr') : 'TON NAILMOODS, À TON RYTHME'}</small><Leaf className="homeBotanical" aria-hidden="true"/><h1>Inspire-moi</h1><p>Des idées de manucure selon ton mood, tes envies et tes couleurs. Avec ou sans collection.</p>
+    <section className="homeGreeting"><small>{profile.name ? 'BONJOUR, ' + profile.name.toLocaleUpperCase('fr') : 'TON NAILMOODS, À TON RYTHME'}</small><Leaf className="homeBotanical" aria-hidden="true"/><h1>Ta prochaine idée</h1><p>Trouve une idée, adapte-la, garde-la pour plus tard. Avec ou sans collection.</p>
       <button className="homePrimary" onClick={create}><Sparkles />Créer une idée<ArrowRight /></button>
 
     </section>
-
-    <section className="scanHomeCard" aria-labelledby="scan-home-title"><div><small><Sparkles size={14}/>UNE IDÉE SOUS LA MAIN</small><h2 id="scan-home-title">Scan &amp; Génère</h2><p>Montre-moi tes couleurs, je te propose une pose.</p></div><ScanBottles/><button className="homePrimary" onClick={onScan}>Scanner mes vernis<ArrowRight/></button></section>
-
-    {!items.length && <section className="homeCollectionInvite"><Library /><div><b>Ta collection, à ton rythme</b><p>Ajoute tes produits pour personnaliser tes idées.</p><button className="homeTextButton" onClick={() => onNavigate('collection')}>Ajouter mes premiers produits<ChevronRight /></button><button className="homeTextButton" onClick={create}>Continuer sans collection<ArrowRight /></button></div></section>}
 
     {(resume || retained) && <section className="homeNext" aria-labelledby="home-next-title">
       <small>{home.priority === 'resume' ? 'ON REPREND ?' : home.priority === 'retained' ? 'MON IDÉE RETENUE' : readiness ? 'POUR COMMENCER' : 'MON PROCHAIN MOMENT'}</small><h2 id="home-next-title">{nextTitle}</h2>
@@ -68,16 +65,17 @@ export default function HomeView({ profile, items, library, journal, tutorials, 
             : <><p>Retrouve ton envie, ton nombre de vernis et tes décorations. Tu peux tout adapter au moment de créer.</p><button className="homePrimary" onClick={create}><Palette />Créer ma prochaine pose<ArrowRight /></button></>}
     </section>}
 
-    {home.pending ? <section className="homeMemory" aria-labelledby="home-memory-title"><BookHeart /><div><small>UN SOUVENIR, SI TU EN AS ENVIE</small><h2 id="home-memory-title">Comment était ta pose ?</h2><p>{home.pending.idea.title}</p><NailPreview idea={home.pending.idea} compact /><small>Photo et ressenti restent facultatifs.</small><button className="homeTextButton" onClick={() => onJournalSession(home.pending)}>Ajouter au journal<ArrowRight /></button></div></section>
-      : home.latest && <section className="homeMemory" aria-labelledby="home-memory-title">{home.latest.photo ? <img src={home.latest.photo} alt={'Photo de ta pose « ' + home.latest.title + ' »'} loading="lazy" /> : <BookHeart />}<div><small>MON DERNIER SOUVENIR · {journalDate(home.latest.date)}</small><h2 id="home-memory-title">{home.latest.title}</h2>{!home.latest.photo && home.latest.idea && <NailPreview idea={home.latest.idea} compact />}<button className="homeTextButton" onClick={() => onJournal(home.latest.id)}>Revoir mon souvenir<ArrowRight /></button></div></section>}
+    <section className="scanHomeCard" aria-labelledby="scan-home-title"><div><small><Sparkles size={14}/>UNE IDÉE SOUS LA MAIN</small><h2 id="scan-home-title">Scan &amp; Génère</h2><p>Montre-moi tes couleurs, je te propose une pose.</p></div><ScanBottles/><button className="homePrimary" onClick={onScan}>Scanner mes vernis<ArrowRight/></button></section>
 
+    <DiscoveryShortcut featured/>
     {inspiration && <section className="homeInspiration" aria-labelledby="home-inspiration-title"><div className="homeSectionTitle"><div><small>MON INSPIRATION DU JOUR</small><h2 id="home-inspiration-title">Une inspiration pour toi</h2></div>{(home.alternativeCount > 1 || pendingLearning) && <button onClick={regenerate} aria-label={pendingLearning ? 'Actualiser mon inspiration' : 'Proposer une autre inspiration'}><RotateCcw /></button>}</div>
-      <p className="homeHint">{modeLabel} · {options.duration} min max · {difficultyLabels[options.level]}. Avec tes derniers choix dans Créer.</p>
-      {pendingLearning && <p className="homeNotice">Tes nouveaux retours seront utilisés pour la prochaine inspiration.</p>}
-      <article className="homeIdea"><NailPreview idea={inspiration} /><div className="homeIdeaBody"><div className="homeIdeaMeta"><span><Clock3 />≈ {inspiration.minutes} min</span><span>{inspiration.palette.length} vernis</span><span>{difficultyLabels[inspiration.rank]}</span></div><h3>{inspiration.title}</h3><div className="homePalette">{inspiration.palette.map(item => <span key={item.id}><i style={{ background: item.color }} />{item.name}</span>)}</div>
-        {inspiration.resources.filter(isDecoration).map(item => <div className="homeDecoration" key={item.id}><DecorationPhoto item={item} /><span><small>MA DÉCORATION</small><b>{item.name}</b></span></div>)}
-        <ul className="homeReasons">{inspiration.reasons.map(reason => <li key={reason}><Check />{reason}</li>)}</ul><button className="homePrimary" onClick={() => onOpen(inspiration, options)}>Découvrir cette idée<ArrowRight /></button><p className="homeHint">{inspiration.intent === 'inspire' ? 'Couleurs de style, à adapter avec tes produits.' : 'Tes teintes enregistrées, avec des reflets et motifs schématiques.'} Temps hors préparation, dépose et séchage.</p></div></article>
+      <button className="homeCompactIdea" onClick={() => onOpen(inspiration, options)}><NailPreview idea={inspiration} compact /><span><b>{inspiration.title}</b><small>Voir l’idée et sa recette</small></span><ChevronRight/></button>
     </section>}
+    <details className="nmDisclosure"><summary>Mes raccourcis et mon activité</summary>    {!items.length && <section className="homeCollectionInvite"><span className="homeCollectionGlyph"><Library /></span><div><small>MA COLLECTION</small><b>Ta collection, à ton rythme</b><p>Ajoute tes produits pour personnaliser tes idées — ou commence tout de suite.</p><div className="homeCollectionActions"><button className="homeCollectionPrimary" onClick={() => onNavigate('collection')}>Ajouter mes produits<ChevronRight /></button><button className="homeCollectionQuiet" onClick={create}>Créer sans collection<ArrowRight /></button></div></div></section>}
+
+    {home.pending ? <section className="homeMemory" aria-labelledby="home-memory-title"><BookHeart /><div><small>UN SOUVENIR, SI TU EN AS ENVIE</small><h2 id="home-memory-title">Comment était ta pose ?</h2><p>{home.pending.idea.title}</p><NailPreview idea={home.pending.idea} compact /><small>Photo et ressenti restent facultatifs.</small><button className="homeTextButton" onClick={() => onJournalSession(home.pending)}>Ajouter au journal<ArrowRight /></button></div></section>
+      : home.latest && <section className="homeMemory" aria-labelledby="home-memory-title"><span className="homeMemoryVisual">{home.latest.photo ? <img src={home.latest.photo} alt={'Photo de ta pose « ' + home.latest.title + ' »'} loading="lazy" /> : <BookHeart />}</span><div><small>MON DERNIER SOUVENIR · {journalDate(home.latest.date)}</small><h2 id="home-memory-title">{home.latest.title}</h2>{!home.latest.photo && home.latest.idea && <NailPreview idea={home.latest.idea} compact />}<button className="homeTextButton" onClick={() => onJournal(home.latest.id)}>Revoir mon souvenir<ArrowRight /></button></div></section>}
+
     {resume && retained && <button className="homeKept" onClick={() => onOpen(retained)}><BookmarkCheck /><span><small>MON IDÉE RETENUE POUR PLUS TARD</small><b>{retained.title}</b><NailPreview idea={retained} compact />{home.retainedChanges.length > 0 && <small>Collection modifiée · références à vérifier</small>}</span><ChevronRight /></button>}
     {readiness && ['resume', 'retained'].includes(home.priority) && <section className="homeReadiness"><h2>{readiness.title}</h2><p>{readiness.text}</p><button className="homeTextButton" onClick={() => onNavigate(readiness.route)}>{readiness.action}<ArrowRight /></button></section>}
     {discover && <button className="homeDiscovery" onClick={() => onCollection(discover.id)}><i style={{ background: productColor(discover) }} /><span><small><Leaf />UNE COULEUR À EXPLORER</small><b>{discover.name}</b><small>Pas encore dans tes poses enregistrées</small></span><ChevronRight /></button>}
@@ -91,5 +89,6 @@ export default function HomeView({ profile, items, library, journal, tutorials, 
       ['favorites', Heart, 'Mes inspirations favorites', library.favorites.length + ' idée' + (library.favorites.length > 1 ? 's' : '') + ' conservée' + (library.favorites.length > 1 ? 's' : '')],
       ['profile', UserRound, 'Mon profil', 'Mes habitudes et mon univers'],
     ].map(([route, Icon, title, subtitle]) => <button key={route} data-content={route} onClick={() => route === 'create' ? create() : onNavigate(route)}><Icon /><b>{title}</b><small>{subtitle}</small>{route === 'collection' && home.report.inventoryColors > 0 && <span className="tileSwatches" aria-label="Quelques couleurs de ma collection">{items.filter(item => ['Vernis', 'Semi-permanent', 'Gel'].includes(item.type)).slice(0, 5).map(item => <i key={item.id} style={{ background: productColor(item) }} />)}</span>}<ChevronRight /></button>)}</div></section>
+    </details>
   </div>;
 }

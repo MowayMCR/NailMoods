@@ -1,0 +1,63 @@
+/* Creative entry points: the existing NailMoods palette, with a clearer hierarchy. */
+.app .creativeSources{padding:22px 16px 28px;color:var(--ink)}
+.sourceHeading{position:relative;margin-bottom:22px}
+.sourceHeading>small,.sourceSectionLabel{font-size:.75rem;font-weight:650;letter-spacing:.1em;color:var(--accent-text)}
+.app .sourceHeading h1{font-size:2rem;line-height:1.14;margin:10px 0}
+.sourceHeading p{margin:0;color:var(--nm-muted,#766570);font-size:.9375rem;line-height:1.55}
+.sourceFree{width:100%;display:flex;align-items:center;gap:16px;border:0;border-radius:24px 24px 24px 8px;padding:22px 18px;background:linear-gradient(125deg,var(--soft),color-mix(in srgb,var(--a) 8%,white));color:var(--b);text-align:left}
+.sourceFreeIcon{width:64px;height:76px;flex-shrink:0;display:grid;place-items:center;border-radius:46% 54% 60% 40%;background:color-mix(in srgb,var(--a) 16%,white)}
+.sourceFreeIcon svg{width:32px;height:32px;stroke-width:1.35}
+.sourceFreeCopy{display:grid;gap:7px;min-width:0}
+.sourceFreeCopy>b{font-family:var(--nm-serif,Georgia,serif);font-size:1.5rem;font-weight:400;line-height:1.15}
+.sourceFreeCopy>small{font-size:.875rem;line-height:1.45;color:var(--accent-text)}
+.sourceFreeCopy>span{display:flex;align-items:center;gap:7px;font-size:.875rem;font-weight:650;margin-top:4px}
+.sourceFreeCopy>span svg{width:18px;height:18px}
+.sourceSectionLabel{margin:24px 0 12px;letter-spacing:.07em}
+.sourceCardGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sourceCard{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0;padding:16px 14px 18px;border:1px solid color-mix(in srgb,var(--a) 12%,white);border-radius:20px;background:var(--surface);color:var(--ink);text-align:left}
+.sourceCardIcon{display:grid;place-items:center;width:39px;height:39px;margin-bottom:3px;border-radius:13px;background:var(--surface-selected);color:var(--accent-text)}
+.sourceCard--collection .sourceCardIcon{background:#e6ece2;color:#526049}
+.sourceCard--photos .sourceCardIcon{background:#eee4f0;color:#77577d}
+.sourceCard--scan .sourceCardIcon{background:#f2e4da;color:#865d46}
+.sourceCardIcon svg{width:21px;height:21px;stroke-width:1.5}
+.sourceCard>b{font-size:.9375rem;line-height:1.3;font-weight:650;overflow-wrap:anywhere}
+.sourceCard>small{font-size:.8125rem;line-height:1.45;color:var(--nm-muted,#766570)}
+.sourceCardArrow{position:absolute;top:27px;right:13px;width:16px;height:16px;color:var(--accent-text)}
+.sourceAtelier{display:flex;align-items:center;gap:13px;width:100%;text-align:left;padding:17px 15px;margin-top:12px;border:1px solid color-mix(in srgb,var(--a) 20%,white);border-radius:20px;background:color-mix(in srgb,var(--soft) 65%,white);color:var(--ink)}
+.sourceAtelierIcon{display:grid;place-items:center;flex:0 0 45px;width:45px;height:58px;border:1px solid color-mix(in srgb,var(--a) 22%,white);border-radius:50% 50% 38% 38%;background:var(--paper);color:var(--accent-text)}
+.sourceAtelierIcon svg{width:22px;height:22px;stroke-width:1.4}
+.sourceAtelier>span:nth-child(2){display:grid;gap:7px;min-width:0}
+.sourceAtelierTitle{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.sourceAtelierTitle b{font-size:.9375rem;font-weight:650}
+.sourceAtelierTitle em{font-size:.75rem;letter-spacing:.05em;font-style:normal;padding:3px 7px;border-radius:20px;background:var(--surface-selected);color:var(--accent-text)}
+.sourceAtelier small{font-size:.8125rem;line-height:1.45;color:var(--nm-muted,#766570)}
+.sourceAtelier>svg{width:17px;flex-shrink:0;color:var(--accent-text)}
+.app .communityEntry{position:relative;display:flex;align-items:flex-start;gap:17px;width:100%;margin:22px 0 0;padding:22px 18px;text-align:left;border:0;border-radius:22px;background:linear-gradient(115deg,#eef0e9,var(--paper));color:var(--ink)}
+.app .smartHome>.communityEntry{margin:0}
+.communityEntryIcon{width:48px;height:48px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;background:#e0e7da;color:#526049}
+.communityEntryIcon svg{width:25px;height:25px;stroke-width:1.3}
+.communityEntryCopy{display:grid;gap:7px;min-width:0}
+.communityEntryCopy>small{font-size:.75rem;letter-spacing:.06em;font-weight:650;color:#58634e}
+.communityEntryCopy>b{font-family:var(--nm-serif,Georgia,serif);font-size:1.5rem;line-height:1.2;font-weight:400}
+.communityEntryCopy>span{font-size:.875rem;line-height:1.5;color:var(--nm-muted,#766570)}
+.communityEntryCopy>strong{display:flex;align-items:center;gap:8px;color:var(--accent-text);font-size:.875rem;margin-top:5px}
+.communityEntryCopy>strong svg{width:18px;height:18px}
+.sourceJournalLink{display:flex;gap:8px;align-items:center;justify-content:center;width:100%;padding:15px 2px;min-height:48px;margin-top:10px;background:transparent;border:0;font-size:.8125rem;color:var(--accent-text);line-height:1.5}
+.sourceJournalLink svg{width:17px;height:17px;flex-shrink:0}
+.app header .discoveryHeader{display:flex;flex-direction:column;gap:0;justify-content:center;width:44px;height:44px;flex:0 0 44px;border-radius:14px;font-size:.75rem}
+.discoveryHeader svg{width:19px;height:19px;stroke-width:1.6}
+.discoveryPublicNote{display:flex;align-items:center;gap:10px;padding:14px 0;margin:0;font-size:.875rem;line-height:1.5;color:var(--nm-muted,#766570)}
+.discoveryPublicNote svg{width:20px;height:20px;flex-shrink:0;color:#58634e}
+.discoveryScope{display:flex;gap:8px;flex-wrap:wrap}
+.discoveryScope button{display:flex;align-items:center;gap:6px;min-height:44px;border:0;border-radius:999px;padding:9px 14px;font-size:.875rem;background:var(--surface);color:var(--accent-text)}
+.discoveryScope svg{width:16px;height:16px}
+.discoveryCaption{display:grid;gap:4px;padding:12px 12px 4px}
+.discoveryCaption small{font-size:.75rem;color:var(--nm-muted,#766570)}
+.discoveryCaption b{font-size:.875rem;line-height:1.4;overflow-wrap:anywhere;color:var(--ink)}
+.discoveryAccess{padding:16px 6px 10px;font-size:1rem;line-height:1.6}
+.discoveryAccess>svg{width:42px;height:42px;padding:8px;background:#e6ece2;color:#526049;border-radius:50%}
+.app .discoveryAccess h3{font-size:1.65rem;margin:12px 0}
+.discoveryAccess .detailPrimary{width:100%;padding:12px;margin:8px 0 18px}
+.discoveryAccess>small{display:block;font-size:.8125rem;color:var(--nm-muted,#766570)}
+@media(max-width:360px){.app .creativeSources{padding:18px 12px 24px}.sourceFree{padding:18px 14px;gap:12px}.sourceFreeIcon{width:48px;height:65px}.sourceCard{padding:14px 12px}.sourceAtelier{gap:10px;padding:15px 12px}.app .communityEntry{gap:12px;padding:19px 14px}}
+@media(max-width:300px){.sourceCardGrid{grid-template-columns:1fr}.sourceFreeIcon,.communityEntryIcon{display:none}.sourceAtelierTitle{align-items:flex-start}}

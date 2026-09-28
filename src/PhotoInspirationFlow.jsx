@@ -1,4 +1,6 @@
+import ResultActions from './ResultActions';
 import {messageId} from './social/messageState';
+import {photoDraftSnapshot,restorePhotoDraftResult} from './photoDraft';
 import {useStorage} from './StorageContext';
 import {ReferenceImage} from './PhotoReferences';
 import taxonomy from './social/taxonomy.json';
@@ -25,7 +27,7 @@ function ProductMatch({ entry, label }) {
   return <li><i style={{ background: entry.targetColor || productColor(item) }} /><span><small>{precision}</small><b>{item.name}</b>{(item.brand || item.reference) && <em>{[item.brand, item.reference && 'réf. ' + item.reference].filter(Boolean).join(' · ')}</em>}{label === 'À explorer' && (shoppingUrl ? <a href={shoppingUrl} target="_blank" rel="noopener noreferrer">Voir cette teinte<ExternalLink /></a> : <em>Lien précis à vérifier</em>)}</span></li>;
 }
 
-export default function PhotoInspirationFlow({ items, profile, onSaveProject, onJournalIdea, onOpen, onProjects, onShareToPro }) {
+export default function PhotoInspirationFlow({ items, profile, onSaveProject, onSaveIdea, onJournalIdea, onOpen, onProjects, onShareToPro }) {
   const storage=useStorage();
   const [draft]=useState(()=>{try{return JSON.parse(storage.getItem('nm-photo-draft-v1')||'{}');}catch{return {};}});
   const [overrides,setOverrides]=useState(draft.overrides||{});
@@ -37,11 +39,13 @@ export default function PhotoInspirationFlow({ items, profile, onSaveProject, on
   const [nailArt, setNailArt] = useState(draft.nailArt??null);
   const [level, setLevel] = useState(draft.level||null);
   const [sourceMode, setSourceMode] = useState(draft.sourceMode||'collection');
-  const [technique, setTechnique] = useState('');
-  const [seed, setSeed] = useState(1);
-  const [result, setResult] = useState(null);
-  const [saved, setSaved] = useState(new Set());
+  const [technique, setTechnique] = useState(draft.technique||'');
+  const [seed, setSeed] = useState(Number.isFinite(draft.seed)?draft.seed:1);
+  const [result, setResult] = useState(()=>restorePhotoDraftResult(draft.result,draft.photos||[]));
+  const [editing,setEditing]=useState(false),[projectNotice,setProjectNotice]=useState('');
+  const [saved, setSaved] = useState(()=>new Set(Array.isArray(draft.saved)?draft.saved:[]));
   const [catalogItems, setCatalogItems] = useState([]);
+  const restored=useRef(false);
   useEffect(() => {mounted.current=true;return () => { mounted.current = false; };}, []);
   useEffect(() => {
     const controller = new AbortController();
@@ -50,13 +54,13 @@ export default function PhotoInspirationFlow({ items, profile, onSaveProject, on
   }, []);
   const detected = useMemo(() => combinePhotoAnalyses(photos.map(photo => photo.analysis).filter(Boolean)), [photos]);
   const analysis=useMemo(()=>detected?{...detected,...overrides}:null,[detected,overrides]);
-  useEffect(()=>{if(busy||photos.some(p=>p.status))return;try{storage.setItem('nm-photo-draft-v1',JSON.stringify({photos:photos.map(({id,src,projectSrc,fileKey,analysis})=>({id,src:projectSrc||src,fileKey,analysis})),overrides,nailArt,level,sourceMode}));}catch{setError('Le brouillon n’a pas pu être conservé. Réessaie.');}},[photos,overrides,nailArt,level,sourceMode,busy]);
+  useEffect(()=>{if(busy||photos.some(p=>p.status))return;try{storage.setItem('nm-photo-draft-v1',JSON.stringify(photoDraftSnapshot({photos,overrides,nailArt,level,sourceMode,technique,seed,result,saved})));}catch{setError('Le brouillon n’a pas pu être conservé. Réessaie.');}},[photos,overrides,nailArt,level,sourceMode,technique,seed,result,saved,busy]);
   const compatibleTechniques = useMemo(() => nailArt === null ? [] : compatiblePhotoTechniques({ nailArt, level: level || 'simple', items, suggestedIds: analysis?.probableTechniques?.map(item => item.id) || [] }), [analysis, items, nailArt, level]);
   useEffect(() => {
     if (!compatibleTechniques.length) { setTechnique(''); return; }
     if (!compatibleTechniques.some(choice => choice.id === technique)) setTechnique(compatibleTechniques[0].id);
   }, [compatibleTechniques, technique]);
-  useEffect(() => setResult(null), [nailArt, level, sourceMode, technique, photos.length]);
+  useEffect(() => { if(!restored.current){restored.current=true;return;} setResult(null); }, [nailArt, level, sourceMode, technique, photos.length, overrides]);
 
   async function prepareEntry(file, id, previous=null) {
     const temporary = URL.createObjectURL(file);
@@ -144,20 +148,25 @@ export default function PhotoInspirationFlow({ items, profile, onSaveProject, on
       trackPhotoEvent('generation_started', metadata);
       const generated = generatePhotoIdeas({ analysis, items, catalogItems, profile, sourceMode, difficulty, technique, nailArt, nailArtLevel: level || 'simple', sourceImages: photos.map(photo => ({ name: photo.name, src: photo.projectSrc||photo.src })).filter(source => source.src), seed });
       generated.ideas=generated.ideas.map(i=>({...i,options:{...i.options,mood:overrides.mood||i.options?.mood},photoAnalysis:compactPhotoAnalysis(analysis)}));
-      setResult(generated); setSeed(value => value + 1); setError('');
+      setResult(generated); setEditing(false); setSeed(value => value + 1); setError('');
       trackPhotoEvent('generation_succeeded', metadata);
       requestAnimationFrame(() => document.querySelector('.photoResults')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     } catch (reason) { setError(reason.message); trackPhotoEvent('generation_failed', { nail_art: nailArt === true, ...(level ? { level } : {}), image_count: photos.length, mode: sourceMode === 'collection' ? 'collection_only' : 'open_possibilities' }); }
   }
 
   function saveProject(idea) {
-    if (onSaveProject(idea)) {
+    const ok=(onSaveIdea||onSaveProject)(idea);
+    if (ok) {
       setSaved(current => new Set([...current, idea.id]));
-      trackPhotoEvent('inspiration_project_created', { nail_art: nailArt === true, ...(level ? { level } : {}), image_count: photos.length, mode: sourceMode === 'collection' ? 'collection_only' : 'open_possibilities' });
+      if(!onSaveIdea)trackPhotoEvent('inspiration_project_created', { nail_art: nailArt === true, ...(level ? { level } : {}), image_count: photos.length, mode: sourceMode === 'collection' ? 'collection_only' : 'open_possibilities' });
     }
+    return ok;
   }
 
   return <div className="photoFlow">
+    {result&&<section className="choicesSummary"><div><b>Tes choix</b><p>{photos.length} photo{photos.length>1?'s':''} · {nailArt?'Avec nail art':'Sans nail art'} · {sourceMode==='collection'?'Ma collection en priorité':'Palette d’inspiration'}</p></div><button onClick={()=>setEditing(value=>!value)}>{editing?'Voir les résultats':'Modifier'}</button></section>}
+    {error && <p className="formError photoError" role="alert">{error}</p>}{projectNotice&&<p role="status">{projectNotice}</p>}
+    <div className="photoConfiguration" hidden={Boolean(result)&&!editing}>
     <section className="photoIntro">
       <div><span>01</span><h2>Ajoute tes inspirations</h2></div>
       <p>Importe de 1 à 4 photos. Elles servent à repérer une palette et des indices visuels, puis à composer une idée différente.</p>
@@ -173,8 +182,6 @@ export default function PhotoInspirationFlow({ items, profile, onSaveProject, on
         <div><button disabled={busy||index===0} aria-label={'Avancer l’inspiration '+(index+1)} onClick={()=>setPhotos(current=>{const next=[...current];[next[index-1],next[index]]=[next[index],next[index-1]];return next;})}>←</button><label>Remplacer<input hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={event => { replaceFile(photo.id, event.target.files?.[0]); event.target.value = ''; }} /></label><button aria-label={'Supprimer l’inspiration ' + (index + 1)} onClick={() => removePhoto(photo.id)}><Trash2 /></button></div>
       </article>)}
     </section>}
-    {error && <p className="formError photoError" role="alert">{error}</p>}
-
     {analysis && <section className="photoAnalysis">
       <div className="photoSectionTitle"><span>02</span><div><small>LECTURE INDICATIVE · À CONFIRMER</small><h2>Ce que je repère</h2></div></div>
       <div className="photoPalette">{analysis.colors.map((color,index) => <label key={index}>Couleur {index+1}<input type="color" value={color} onChange={e=>setOverrides(current=>({...current,colors:analysis.colors.map((c,i)=>i===index?e.target.value:c)}))}/></label>)}</div><label>Mood confirmé<select value={overrides.mood||''} onChange={e=>setOverrides(current=>({...current,mood:e.target.value}))}><option value="">À choisir</option>{taxonomy.moods.map(m=><option key={m}>{m}</option>)}</select></label>
@@ -204,26 +211,30 @@ export default function PhotoInspirationFlow({ items, profile, onSaveProject, on
       <button className="photoPrimary photoGenerate" disabled={busy || nailArt === null || (nailArt && !level) || !compatibleTechniques.length} onClick={generate}><Sparkles />{result ? 'Générer une autre composition' : 'Générer ma composition'}<ArrowRight /></button>
     </section>}
 
-    {result && <section className="photoResults">
+    </div>
+    {result && !editing && <section className="photoResults">
       <div className="photoSectionTitle"><span>04</span><div><small>CRÉÉE À PARTIR DE TES INSPIRATIONS</small><h2>Ta composition</h2></div></div>
       <div className="photoResultPalette"><b>Palette détectée</b><div>{analysis.colors.map(color => <i key={color} style={{ background: color }} title={color.toUpperCase()} />)}</div><span>{result.usedCollection ? 'Adaptée avec les teintes les plus proches de ta collection.' : 'Une harmonie nouvelle créée depuis tes couleurs.'}</span></div>
       {result.collectionFallback && <p className="photoDecision"><Check />Aucune teinte assez proche dans ta collection : la composition a tout de même été créée avec la palette détectée.</p>}
-      <div className="photoProductGuide">
+      <details className="nmDisclosure"><summary>Couleurs et produits à utiliser</summary><div className="photoProductGuide">
         <div><h3>Dans ma collection</h3>{result.guidance.owned.length ? <ul>{result.guidance.owned.map(entry => <ProductMatch key={entry.item.id} entry={entry} label="Teinte utilisable" />)}</ul> : <p>Aucune teinte enregistrée n’est assez proche pour le moment.</p>}</div>
         <div><h3>Alternatives proches</h3>{result.guidance.alternatives.length ? <ul>{result.guidance.alternatives.map(entry => <ProductMatch key={entry.item.id} entry={entry} label="Alternative" />)}</ul> : <p>Pas d’alternative distincte dans ta collection.</p>}</div>
         <div><h3>Références proches à acheter</h3>{result.guidance.toBuy.length ? <ul>{result.guidance.toBuy.map(entry => <ProductMatch key={entry.item.id} entry={entry} label="À explorer" />)}</ul> : <p>Aucune référence documentée assez fiable dans le catalogue pour ces teintes.</p>}</div>
       </div>
+      </details>
       <div className="photoIdeaList">{result.ideas.map(idea => <article key={idea.id} className="photoIdea">
         <NailPreview idea={idea} controls />
         <div className="photoIdeaBody"><div className="photoIdeaBadges"><span>{idea.nailArt ? difficultyLabels[idea.rank] : 'Sans nail art complexe'}</span><span>{idea.rendering.label}</span><span>{idea.realismRequired === 'required' ? 'Réaliste prioritaire' : idea.realismRequired === 'recommended' ? 'Réaliste recommandé' : 'Illustré accepté'}</span></div>
           <h3>{idea.title}</h3><p>{idea.description}</p>
-          <dl><div><dt>Technique</dt><dd>{idea.rendering.label}</dd></div><div><dt>Finition</dt><dd>{idea.finish}</dd></div><div><dt>Relief</dt><dd>{idea.relief}</dd></div><div><dt>Niveau de réalisme requis</dt><dd>{idea.realismRequired === 'required' ? 'Prioritaire / obligatoire' : idea.realismRequired === 'recommended' ? 'Recommandé' : 'Illustré acceptable'}</dd></div></dl>
+          <details className="nmDisclosure"><summary>Détails de la composition</summary><dl><div><dt>Technique</dt><dd>{idea.rendering.label}</dd></div><div><dt>Finition</dt><dd>{idea.finish}</dd></div><div><dt>Relief</dt><dd>{idea.relief}</dd></div><div><dt>Niveau de réalisme requis</dt><dd>{idea.realismRequired === 'required' ? 'Prioritaire / obligatoire' : idea.realismRequired === 'recommended' ? 'Recommandé' : 'Illustré acceptable'}</dd></div></dl>
           <div className="photoReference"><b>Repères visuels attendus</b><p>{idea.rendering.cues.join(' · ')}</p>{idea.rendering.references.map(reference => <a key={reference.url} href={reference.url} target="_blank" rel="noopener noreferrer">{reference.label}<ExternalLink /></a>)}</div>
           {idea.requirements?.length > 0 && <p className="photoRequirements"><b>À prévoir :</b> {idea.requirements.map(entry => entry.name).join(' · ')}</p>}
-          <div className="photoActions"><button className="photoPrimary" disabled={saved.has(idea.id)} onClick={() => saveProject(idea)}><FolderHeart />{saved.has(idea.id) ? 'Enregistré dans Mes projets' : 'Enregistrer dans Mes projets'}</button><button className="photoSecondary" onClick={() => onJournalIdea(idea)}><BookHeart />J’ai fait cette pose</button><button className="photoSecondary" onClick={() => onOpen(idea)}>Voir la fiche<ArrowRight /></button>{onShareToPro && <button className="photoSecondary photoPoPath" onClick={() => onShareToPro({ source: idea, type: 'inspiration' })}>Envoyer à ma PO</button>}</div>
+          <button className="nmQuiet" onClick={()=>{const ok=onSaveProject(idea);setProjectNotice(ok?"Projet enregistré dans Mes poses → En cours.":"Le projet n’a pas pu être enregistré.");if(ok)trackPhotoEvent('inspiration_project_created',{nail_art:nailArt===true,...(level?{level}:{}),image_count:photos.length,mode:sourceMode==='collection'?'collection_only':'open_possibilities'});}}>Préparer un projet avec cette idée</button></details>
+          <ResultActions saved={saved.has(idea.id)} onSave={()=>saveProject(idea)} onDone={()=>onJournalIdea(idea)} onVariant={()=>onOpen(idea,undefined,"variant")} onOpen={()=>onOpen(idea)} onShare={onShareToPro?()=>onShareToPro({source:idea,type:'inspiration'}):null}/>
+
         </div>
       </article>)}</div>
-      <button className="photoProjectsLink" onClick={onProjects}><FolderHeart />Voir Mes projets<ArrowRight /></button>
+      <button className="photoProjectsLink" onClick={()=>{window.location.hash="journal/a-essayer";}}><FolderHeart />Retrouver dans Mes poses<ArrowRight /></button>
       <button className="photoRegenerate" onClick={generate}><RefreshCw />Recomposer sans copier</button>
       <details className="photoData"><summary>Données de l’analyse enregistrables</summary><pre>{JSON.stringify(compactPhotoAnalysis(analysis), null, 2)}</pre></details>
     </section>}

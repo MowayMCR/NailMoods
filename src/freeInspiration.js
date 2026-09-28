@@ -33,7 +33,11 @@ export function generateInspirations(items = [], profile = {}, supplied = {}, se
     const swatches = source.map(item => item.type === 'Matériel' ? item : { ...item, usage: 'Couleur seule' });
     report = createSuggestions(swatches, profile, options, seed, limit, learning);
   }
-  if (!report.results.length) return generateInspirations([], profile, { ...supplied, intent: 'inspire', polishCount: 'auto', duration: 90 }, seed, limit, null);
+  // An incompatible technique/level is a normal empty result. Never retry the
+  // same constraints recursively: the three attempts above are the full budget.
+  const unavailable = !report.results.length
+    ? 'Aucune idée ne correspond à ces choix pour le moment. Essaie un autre niveau ou une autre technique. Tes choix sont conservés.'
+    : '';
   const tools = inventoryTools(items);
   const results = report.results.map(idea => {
     // Restore real product metadata; the preview never overwrites a user's product.
@@ -47,5 +51,5 @@ export function generateInspirations(items = [], profile = {}, supplied = {}, se
     if (palette.some(p => p.usage !== 'Couleur seule' && p.usage !== 'Avec aimant')) add('Base / finition et protocole à vérifier sur la notice', false, true);
     return enrichIdeaRendering({ ...idea, palette, intent, requirements, options: { ...options, intent }, reasons: intent === 'inspire' ? ['Une proposition de style à adapter avec tes produits', ...idea.reasons.filter(r => !/collection|matériel|favorite/.test(r))].slice(0,2) : idea.reasons });
   });
-  return { ...report, results, intent, requestedIntent, adjusted, tools: inventoryTools(items), inventoryColors: ownedColors.length };
+  return { ...report, results, intent, requestedIntent, adjusted, unavailable, tools: inventoryTools(items), inventoryColors: ownedColors.length };
 }

@@ -1,5 +1,5 @@
 import React,{useState}from'react';import{createRoot}from'react-dom/client';import PhotoInspirationFlow from'../../../src/PhotoInspirationFlow';import{ShareToPoSheet}from'../../../src/social/PoShare';import{StorageContext}from'../../../src/StorageContext';import{describeVisualAnalysis,generatePhotoIdeas}from'../../../src/photoInspiration';import{SocialProvider}from'../../../src/social/SocialContext';
-import'../../../src/style.css';import'../../../src/design-system.css';import'../../../src/ux-polish.css';import'../../../src/inspiration.css';import'../../../src/photo-inspiration.css';
+import'../../../src/creation.css';import'../../../src/style.css';import'../../../src/design-system.css';import'../../../src/ux-polish.css';import'../../../src/inspiration.css';import'../../../src/photo-inspiration.css';
 const src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==';
 const analysis=describeVisualAnalysis({colors:['#ac6489','#ece1da'],metrics:{saturation:.5},count:1});
 const initial={photos:[{id:'one',src,analysis,fileKey:'one'},{id:'two',src,analysis,fileKey:'two'}],nailArt:null,overrides:{mood:'Witchy'}};
