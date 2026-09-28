@@ -4,6 +4,10 @@ dist-mobile/
 artifacts/
 *.jks
 *.keystore
+*.p12
+*.pfx
+*.password
+*.password.txt
 keystore.properties
 android/local.properties
 .DS_Store
