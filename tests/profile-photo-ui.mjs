@@ -1,0 +1,46 @@
+const {chromium}=await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {spawn} from 'node:child_process';
+const vite=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','4179'],{stdio:'ignore'});
+process.on('exit',()=>vite.kill());
+for(let i=0;i<50;i++){try{await fetch('http://127.0.0.1:4179/');break;}catch{await new Promise(r=>setTimeout(r,100));}}
+await fs.mkdir('artifacts/profile-photo',{recursive:true});
+const browser=await chromium.launch({executablePath:process.env.CHROME_EXECUTABLE || undefined,headless:true,args:['--no-sandbox']});
+const page=await browser.newPage({viewport:{width:393,height:852},deviceScaleFactor:1});
+const errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error('PAGE ERROR',e.message)});
+await page.goto('http://127.0.0.1:4179/tests/fixtures/profile-photo/');
+const image=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=160;c.height=200;const x=c.getContext('2d');x.fillStyle='#f8dce7';x.fillRect(0,0,160,200);x.fillStyle='#803553';x.beginPath();x.arc(80,75,42,0,2*Math.PI);x.fill();return c.toDataURL('image/png').split(',')[1];});
+const input=()=>page.getByLabel('Choisir ma photo de profil');
+const hero=()=>page.locator('.profileAvatarButton img');
+async function open(){await page.getByRole('button',{name:'Modifier mon avatar et le thème'}).click();await page.getByRole('button',{name:/Photo \/ Avatar/}).click();}
+async function assertImage(){await hero().waitFor();await page.waitForFunction(()=>document.querySelector('.profileAvatarButton img')?.naturalWidth>0);}
+await open();
+await input().setInputFiles({name:'test.png',mimeType:'image/png',buffer:Buffer.from(image,'base64')});
+await page.getByText('Photo enregistrée.',{exact:true}).waitFor();
+await page.getByRole('button',{name:'Terminer',exact:true}).click();
+await assertImage();
+await page.getByRole('button',{name:'Autre onglet'}).click();
+await page.getByRole('button',{name:'Retour profil'}).click();await assertImage();
+await page.reload();await assertImage();
+await page.screenshot({path:'artifacts/profile-photo/profile.png'});
+await open();assert.equal(await page.getByText('Bientôt disponible',{exact:true}).count(),0);
+assert.deepEqual(await page.locator('.avatarModes .avatar').last().evaluate(e=>({width:e.offsetWidth,height:e.offsetHeight,round:getComputedStyle(e).borderRadius})),{width:52,height:52,round:'50%'});
+await page.screenshot({path:'artifacts/profile-photo/picker.png'});
+await page.getByRole('button',{name:'Utiliser mes initiales',exact:true}).click();
+await page.getByRole('button',{name:'Terminer',exact:true}).click();
+await page.reload();assert.equal(await hero().count(),0);
+await open();await page.getByRole('button',{name:'Utiliser ma photo',exact:true}).click();await page.getByRole('button',{name:'Terminer',exact:true}).click();await assertImage();
+await open();await page.evaluate(()=>window.qaOffline=true);
+await input().setInputFiles({name:'retry.png',mimeType:'image/png',buffer:Buffer.from(image,'base64')});
+await page.getByRole('button',{name:'Réessayer l’enregistrement'}).waitFor();
+await page.reload();await assertImage();await open();
+await page.getByRole('button',{name:'Réessayer l’enregistrement'}).click();
+await page.getByText('Photo enregistrée.',{exact:true}).waitFor();
+await page.getByRole('button',{name:'Supprimer',exact:true}).click();
+await page.getByText('Photo supprimée du profil.',{exact:true}).waitFor();
+await page.getByRole('button',{name:'Terminer',exact:true}).click();await page.reload();assert.equal(await hero().count(),0);
+assert.deepEqual(errors,[]);
+await fs.writeFile('artifacts/profile-photo/ui-result.json',JSON.stringify({status:'PASS',viewport:'393x852',checks:['import','avatar visible','navigation','reload','explicit initials','photo reselected','offline interrupted draft','retry after reopening','removal','no obsolete placeholder','no JS errors'],backend:'local simulated; actual React components'},null,2));
+console.log('PASS: mobile profile photo UI, reload, offline draft, retry, choice and removal.');
+await browser.close();vite.kill();

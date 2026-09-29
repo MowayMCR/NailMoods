@@ -244,3 +244,18 @@ test('local journal draft survives reload without publishing an unfinished entry
  store.storage.setItem(key,JSON.stringify(draft));assert.equal(await store.flush(),true);store.close();
  const reopened=make(storage,repo);await reopened.load();assert.deepEqual(JSON.parse(reopened.storage.getItem(key)),draft);assert.equal(repo.rows.journal_entries.length,0);
 });
+
+test('confirmed avatar and interrupted photo draft survive account cache reopening without entering preferences',async()=>{
+ const storage=memory(),repo=backend(),preview='data:image/png;base64,iVBORw0KGgo=';
+ let store=make(storage,repo);await store.load();
+ const photo={path:'A/WA/avatar/one.png',preview,draft:{id:'pending',preview,previous:'A/WA/avatar/one.png'}};
+ await store.cacheProfilePhoto(photo);assert.equal(repo.writes.length,0);store.close();
+ store=make(storage,repo);await store.initialize();
+  assert.deepEqual(store.profilePhoto,photo);assert.equal(store.profile.avatar_url,photo.path);
+  assert.deepEqual(store.exportDraft().profilePhoto,photo);
+  await assert.rejects(()=>store.clearCache(),/synchroniser/);
+ repo.profile.avatar_url=photo.path;await store.load();assert.deepEqual(store.profilePhoto,photo);
+ assert.equal(JSON.parse(store.storage.getItem(PROFILE)).preview,undefined);
+ const other=make(storage,backend(),'B','WB');await other.load();assert.equal(other.profilePhoto,null);
+ repo.profile.avatar_url=null;await store.load();assert.equal(store.profilePhoto.preview,'');assert.ok(store.profilePhoto.draft);
+});

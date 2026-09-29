@@ -203,6 +203,18 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
     get pending(){return state?.queue.length || 0;},
     get migrationDone(){return Boolean(state?.migrationDone);},
     get profile(){return state?.profile;},
+    get profilePhoto(){return state?.profilePhoto || null;},
+    async cacheProfilePhoto(photo){
+      check();
+      const next=fork(state);
+      next.profilePhoto=photo;
+      // The path is updated only after the server has confirmed the profile row.
+      // This local preview/draft never becomes a profile preference or analytics data.
+      next.profile.avatar_url=photo.path;
+      save(next);
+      if(running)await running;
+      check();await persistCache(state);
+    },
     get hasCache(){return Boolean(state);},
     close(){closed=true;},
     initialize,
@@ -212,17 +224,19 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
       check();if(state)await cache.setCachedWorkspace(key,state);
     },
     async clearCache(){
-      check();await initialize();if(state?.queue.length)throw new Error('Des modifications restent à synchroniser. Télécharge ta copie avant de nettoyer le cache.');
+      check();await initialize();if(state?.queue.length || state?.profilePhoto?.draft)throw new Error('Des modifications restent à synchroniser. Télécharge ta copie avant de nettoyer le cache.');
       await cache.clearAccountCache(key);cacheFailure=null;
       // Only a reconstructible account cache is removed. No guest data, queued drafts or backups.
       if(storage.getItem(key)){const old=JSON.parse(storage.getItem(key));if(!old.queue?.length)storage.removeItem?.(key);}
       onStatus({kind:'saved',pending:0});
     },
     flush,
-    exportDraft(){return clone({userId,workspaceId,views:state.views,pending:state.queue});},
+    exportDraft(){return clone({userId,workspaceId,views:state.views,pending:state.queue,...(state.profilePhoto?{profilePhoto:state.profilePhoto}:{})});},
     async load({useRemote=false}={}){
       await initialize();if(running)await running;check();const data=await repo.load();check();
       const next={version:2,userId,workspaceId,views:viewsFromRemote(data.profile,data.rows,data.favorites),ids:{},bases:{},queue:[],profile:data.profile,migrationDone:state?.migrationDone || false,migrationRequested:state?.migrationRequested || false};
+      const photo=state?.profilePhoto;
+      if(photo)next.profilePhoto={path:data.profile.avatar_url || null,preview:photo.path===(data.profile.avatar_url || null)?photo.preview:'',draft:photo.draft || null};
       for(const table of TABLES)for(const row of data.rows[table]){
         const localId=table==='inspirations'?row.snapshot?.key:table==='journal_entries'?row.snapshot?.id:productFromRow(row,table).id;
         if(localId!=null)next.ids[token(table,localId)]=row.id;
@@ -235,7 +249,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
         // Do not replace pending drafts or their conflict baseline on reload.
         next.views=state.views;next.ids={...next.ids,...state.ids};next.queue=state.queue;
         for(const op of state.queue){const t=token(op.table,op.rowId);if(state.bases[t])next.bases[t]=state.bases[t];else delete next.bases[t];}
-        next.profile={...state.profile,account_tier:data.profile.account_tier};
+        next.profile={...state.profile,account_tier:data.profile.account_tier,avatar_url:data.profile.avatar_url};
       } else if(state){for(const k of Object.keys(state.views))if(![COLLECTION,LIBRARY,JOURNAL,PROFILE,...EXTRAS].includes(k))next.views[k]=state.views[k];}
       save(next);
       try{await cache.setCachedWorkspace(key,next);cacheFailure=null;onStatus({kind:next.queue.length?'pending':'saved',pending:next.queue.length});}
