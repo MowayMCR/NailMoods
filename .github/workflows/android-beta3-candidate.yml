@@ -1,4 +1,4 @@
-name: Android beta.3 candidate (no distribution)
+name: Android beta.4 candidate (no distribution)
 on:
   push:
     branches: [feat/phase14d-final-18]
@@ -34,6 +34,6 @@ jobs:
           ./android/gradlew -p android -PnailmoodsEnvironment=production bundleRelease --console=plain
       - uses: actions/upload-artifact@v4
         with:
-          name: nailmoods-0.3.0-beta.3-production-aab-release-unsigned
+          name: nailmoods-0.3.0-beta.4-production-aab-release-unsigned
           path: android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 30

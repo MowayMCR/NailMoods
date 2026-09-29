@@ -7,11 +7,11 @@ for (const args of [['scripts/prepare-recognition.mjs'], ['node_modules/vite/bin
   const result = spawnSync(process.execPath, args, {env, stdio:'inherit'});
   if (result.status !== 0) process.exit(result.status || 1);
 }
-writeFileSync('dist-mobile/mobile-build.json', JSON.stringify({environment, version:'0.3.0-beta.3', versionCode:3, appId:environment==='production'?'com.nailmoods.app':'com.nailmoods.app.recette'}, null, 2));
+writeFileSync('dist-mobile/mobile-build.json', JSON.stringify({environment, version:'0.3.0-beta.4', versionCode:4, appId:environment==='production'?'com.nailmoods.app':'com.nailmoods.app.recette'}, null, 2));
 
 // Historical texts remain on the public website; only active texts ship offline.
 rmSync('dist-mobile/legal/archives', {recursive:true, force:true});
-for (const name of ['conditions-0.1-beta.html','confidentialite-0.1-beta.html','conditions-0.3-beta.html','confidentialite-0.4-beta.html','informations-0.3-beta.html']) {
+for (const name of ['confidentialite-0.5-beta.html','conditions-0.1-beta.html','confidentialite-0.1-beta.html','conditions-0.3-beta.html','confidentialite-0.4-beta.html','informations-0.3-beta.html']) {
   rmSync('dist-mobile/legal/'+name, {force:true});
 }
 for (const name of readdirSync('dist-mobile/legal')) {
