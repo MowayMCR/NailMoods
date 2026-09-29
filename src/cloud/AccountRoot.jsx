@@ -35,7 +35,7 @@ try{client=getCloudClient();}catch{configurationError=true;}
 const service=client?createAuthService(client,window.location.href,isNative()?{returnUrl:recovery=>mobileAuthReturnUrl(import.meta.env.VITE_DEPLOYMENT_ENV,recovery),validateCallback:url=>validateMobileAuthUrl(url,import.meta.env.VITE_DEPLOYMENT_ENV)}:{}):null;
 function authMessage(error){
   const code=error?.code;
-  if(error?.message?.includes('accessible à partir de 15 ans'))return error.message;
+  if(error?.message?.includes('18 ans'))return error.message;
   if(code==='invalid_credentials')return 'Email ou mot de passe incorrect.';
   if(code==='email_not_confirmed')return 'Confirme ton adresse avec le lien reçu par email, puis connecte-toi.';
   if(code==='weak_password')return 'Choisis un mot de passe plus long et moins courant.';
@@ -256,7 +256,7 @@ export default function AccountRoot({App}){
         {!['recovery','confirm'].includes(mode) && <label>Mot de passe<input type="password" autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?1:8} required value={password} onChange={e=>setPassword(e.target.value)} disabled={busy}/></label>}
         {mode==='signup'&&<p className="accountHelp">Ton compte démarre en Free. Tu pourras choisir Plus ou Pro plus tard dans Profil → Mon offre, après confirmation de ton statut d’âge. Aucun paiement n’est demandé pendant la bêta.</p>}
         <LegalLinks/>
-        {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>J’accepte les Conditions d’utilisation</label><small>Les comptes Plus et Pro sont réservés aux personnes de 18 ans ou plus. Aucun paiement n’est actif pendant cette bêta.</small></>}
+        {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>Je confirme avoir 18 ans ou plus et j’accepte les Conditions d’utilisation</label><small>La bêta Free, Plus et Pro est réservée aux adultes. Aucun paiement n’est actif pendant cette bêta.</small></>}
         <button className="accountPrimary" disabled={busy || (mode==='signup' && !termsAccepted)}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='confirm'?'Renvoyer le mail de confirmation':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
         {mode==='login' && <><button type="button" disabled={busy} onClick={()=>changeMode('signup')}>Créer mon compte</button><button type="button" disabled={busy} onClick={()=>changeMode('recovery')}>Mot de passe oublié</button></>}
         {['signup','recovery','confirm'].includes(mode) && <button type="button" disabled={busy} onClick={()=>changeMode('login')}>J’ai déjà un compte</button>}

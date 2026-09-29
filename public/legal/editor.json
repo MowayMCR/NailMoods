@@ -8,8 +8,11 @@
   "publishedProfessionalAddress": "À renseigner avant ouverture de la bêta externe",
   "retentionPolicy": "Analytics : 13 mois détaillés, 25 mois agrégés. Support clos : objectif 3 mois ; signalements traités : objectif 12 mois ; contrôle opérationnel de purge à finaliser.",
   "accountDeletionProcedure": "Dans le compte ou depuis la page publique legal/suppression-compte.html. Les messages texte déjà reçus peuvent subsister sous Compte supprimé.",
-  "termsVersion": "0.3-beta",
-  "privacyVersion": "0.4-beta",
-  "effectiveDate": "28 septembre 2026",
-  "notice": "Coordonnées professionnelles, immatriculation et procédure de conservation à finaliser avant ouverture de la bêta externe."
+  "termsVersion": "0.4-beta",
+  "privacyVersion": "0.5-beta",
+  "effectiveDate": "29 septembre 2026",
+  "notice": "Coordonnées professionnelles, immatriculation et procédure de conservation à finaliser avant ouverture de la bêta externe.",
+  "moderationContactEmail": "contact@nailmoods.com",
+  "betaResponsible": "Marie",
+  "betaAudience": "18 ans et plus uniquement"
 }

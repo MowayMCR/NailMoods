@@ -1,6 +1,6 @@
 // Bump versions only alongside archived documents and the server policy migration.
-export const TERMS_VERSION = '0.3-beta';
-export const PRIVACY_VERSION = '0.4-beta';
+export const TERMS_VERSION = '0.4-beta';
+export const PRIVACY_VERSION = '0.5-beta';
 export const GUEST_CONSENT_KEY = 'nm-privacy-guest-v1';
 // No vendor is selected. No optional SDK, pixel or advertisement is loaded.
 export const TECHNOLOGIES = Object.freeze({ analytics: true, ads: false, personalizedAds: false });
@@ -37,7 +37,7 @@ export function readGuestConsent(storage) {
 }
 export function signupConsent(accepted, guestChoices) {
   if (accepted !== true) throw new Error('Accepte les Conditions d’utilisation pour créer ton compte.');
-  // A new account starts as Free. Age is confirmed later, only when choosing
-  // an offer that requires it; it is never taken from Auth metadata to authorise.
-  return { terms_accepted: true, terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, ...availableChoices(guestChoices) };
+  // The signup checkbox explicitly confirms 18+ and the current terms.
+  // The server records the declaration once; mutable Auth metadata is not an entitlement.
+  return { adult_confirmed: true, terms_accepted: true, terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION, ...availableChoices(guestChoices) };
 }

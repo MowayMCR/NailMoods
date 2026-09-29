@@ -9,7 +9,7 @@ test('signup rejects absent or non-boolean terms before making any Auth call',()
  let calls=0;const auth=createAuthService({auth:{signUp(){calls++;}}},'https://example.test');
  for(const acceptance of [undefined,false,'true',1])assert.throws(()=>auth.signUp('test@example.test','password',acceptance));
  assert.equal(calls,0);
- assert.deepEqual(signupConsent(true,yes),{terms_accepted:true,terms_version:'0.3-beta',privacy_version:'0.4-beta',analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
+ assert.deepEqual(signupConsent(true,yes),{adult_confirmed:true,terms_accepted:true,terms_version:'0.4-beta',privacy_version:'0.5-beta',analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
 });
 test('no unselected provider gets anticipatory permission',()=>{
  assert.deepEqual(availableChoices(yes),{analytics_consent:true,ads_consent:false,personalized_ads_consent:false});
@@ -74,8 +74,8 @@ test('privacy confirmation records an explicit age band independently from terms
  assert.equal(args.value.p_accept_terms,false);
  assert.equal(args.value.p_age_band,null);
 });
-test('signup starts Free and reserves age confirmation for an offer change',()=>{
- assert.deepEqual(signupConsent(true,{}),{terms_accepted:true,terms_version:'0.3-beta',privacy_version:'0.4-beta',analytics_consent:false,ads_consent:false,personalized_ads_consent:false});
+test('signup records the explicit 18+ declaration without optional tracking',()=>{
+ assert.deepEqual(signupConsent(true,{}),{adult_confirmed:true,terms_accepted:true,terms_version:'0.4-beta',privacy_version:'0.5-beta',analytics_consent:false,ads_consent:false,personalized_ads_consent:false});
  assert.throws(()=>signupConsent(false,{}),/Conditions/);
 });
 test('deleted message authors never expose cached profile identity',async()=>{
