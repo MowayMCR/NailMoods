@@ -4,7 +4,7 @@ import Sheet from '../Sheet';
 import { TERMS_VERSION, PRIVACY_VERSION, TECHNOLOGIES, DENIED, availableChoices, readGuestConsent, GUEST_CONSENT_KEY } from './policy';
 import { privacyService, downloadJSON } from './service';
 import './privacy.css';
-const legal = { conditions: 'conditions-0.4-beta.html', confidentialite: 'confidentialite-0.5-beta.html', informations: 'informations-0.4-beta.html' };
+const legal = { conditions: 'conditions-0.4-beta.html', confidentialite: 'confidentialite-0.6-beta.html', informations: 'informations-0.4-beta.html' };
 export function LegalLinks() { return <p className="legalLinks"><a href={`${import.meta.env.BASE_URL}legal/${legal.conditions}`} target="_blank" rel="noopener">Conditions d’utilisation · {TERMS_VERSION}</a><a href={`${import.meta.env.BASE_URL}legal/${legal.confidentialite}`} target="_blank" rel="noopener">Politique de confidentialité · {PRIVACY_VERSION}</a><a href={`${import.meta.env.BASE_URL}legal/${legal.informations}`} target="_blank" rel="noopener">Mentions légales et conservation</a></p>; }
 export default function PrivacyPanel({ client, userId, tier, guestStorage, onDeleted, localDraft, embedded = false, onBack }) {
   const [panel, setPanel] = useState(null), [choices, setChoices] = useState(DENIED), [record, setRecord] = useState(null);
