@@ -1,4 +1,5 @@
 import { barcodeObservation } from './productIdentity.js';
+import { releaseCanvas, withTemporaryCanvas } from './imageResources.js';
 export async function imageCanvas(source, signal, maxSize = 1400) {
   const image = new window.Image();
   image.crossOrigin = 'anonymous';
@@ -19,14 +20,18 @@ export async function imageCanvas(source, signal, maxSize = 1400) {
   canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
   canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
   const context = canvas.getContext('2d', { willReadFrequently: true });
-  if (!context) throw new Error('Cette image ne peut pas être analysée sur cet appareil.');
-  context.fillStyle = '#ffffff'; context.fillRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(image, 0, 0, canvas.width, canvas.height);
-  return canvas;
+  try {
+    if (!context) throw new Error('Cette image ne peut pas être analysée sur cet appareil.');
+    context.fillStyle = '#ffffff'; context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    return canvas;
+  } catch (error) { releaseCanvas(canvas); throw error; }
+  finally { image.src = ''; }
 }
 
 export async function readPhotoText(source, signal, onProgress) {
   const canvas = await imageCanvas(source, signal, 1800);
+  return withTemporaryCanvas(canvas, async () => {
   const { createWorker } = await import('tesseract.js');
   if (signal.aborted) throw new DOMException('Annulé', 'AbortError');
   let worker, finished = false, rejectTask;
@@ -51,10 +56,12 @@ export async function readPhotoText(source, signal, onProgress) {
     })();
     return await Promise.race([work, stopped]);
   } finally { finished = true; clearTimeout(timeout); signal.removeEventListener('abort', abort); if (worker) await worker.terminate(); }
+  });
 }
 
 export async function readBarcodeSource(source, signal) {
   const canvas = await imageCanvas(source, signal, 2400);
+  return withTemporaryCanvas(canvas, async () => {
   const [{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }] = await Promise.all([import('@zxing/browser'), import('@zxing/library')]);
   if (signal.aborted) throw new DOMException('Annulé', 'AbortError');
   const hints = new Map([[DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E, BarcodeFormat.ITF, BarcodeFormat.CODE_128, BarcodeFormat.CODE_39]], [DecodeHintType.TRY_HARDER, true]]);
@@ -67,8 +74,10 @@ export async function readBarcodeSource(source, signal) {
       const result=reader.decodeFromCanvas(image);
       return barcodeObservation(result.getText(),BarcodeFormat[result.getBarcodeFormat()] || 'UNKNOWN','scanner');
     } catch { /* Try the second orientation; no confidence is fabricated. */ }
+    finally { if (rotation) releaseCanvas(image); }
   }
   const error=new Error('Code-barres non lu. Cadre le code entier, bien à plat, ou photographie l’étiquette dessous / au dos.');error.code='BARCODE_UNREAD';throw error;
+  });
 }
 export async function readBarcodeDetails(file, signal) {
   if (!file.type.startsWith('image/') || file.size > 20 * 1024 * 1024) throw new Error('Choisis une photo de moins de 20 Mo.');

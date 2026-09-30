@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Camera, Image as ImageIcon, Trash2 } from 'lucide-react';
+import { releaseCanvas } from './imageResources.js';
 
 export async function preparePhoto(file, maxSize = 800) {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
@@ -9,12 +10,13 @@ export async function preparePhoto(file, maxSize = 800) {
     throw new Error('Cette photo est trop volumineuse. Choisis une image de moins de 20 Mo.');
   }
   const url = URL.createObjectURL(file);
+  let image, canvas;
   try {
-    const image = new window.Image();
+    image = new window.Image();
     image.src = url;
     await image.decode();
     const scale = Math.min(1, maxSize / Math.max(image.naturalWidth, image.naturalHeight));
-    const canvas = document.createElement('canvas');
+    canvas = document.createElement('canvas');
     canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
     canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
     const context = canvas.getContext('2d');
@@ -26,6 +28,8 @@ export async function preparePhoto(file, maxSize = 800) {
   } catch (error) {
     throw new Error('Cette image ne peut pas être lue. Essaie une photo JPG, PNG ou WebP.');
   } finally {
+    releaseCanvas(canvas);
+    if (image) image.src = '';
     URL.revokeObjectURL(url);
   }
 }
