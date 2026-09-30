@@ -2,13 +2,15 @@
 -- Manual/admin entitlements remain authoritative over Google Play.
 begin;
 
+create extension if not exists pgcrypto;
+
 create table if not exists private.google_play_subscriptions (
   id bigint generated always as identity primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
   product_id text not null check (product_id in ('nailmoods_plus','nailmoods_pro')),
   base_plan_id text,
   purchase_token text not null,
-  purchase_token_sha256 text generated always as (encode(sha256(convert_to(purchase_token,'UTF8')),'hex')) stored,
+  purchase_token_sha256 text generated always as (encode(digest(convert_to(purchase_token,'UTF8'),'sha256'),'hex')) stored,
   status text not null check (status in ('active','pending','grace','on_hold','canceled','expired','revoked')),
   starts_at timestamptz,
   expires_at timestamptz,
