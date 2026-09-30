@@ -8,6 +8,7 @@ import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.QueryProductDetailsResult;
 import com.android.billingclient.api.QueryPurchasesParams;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -21,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 @CapacitorPlugin(name = "NailMoodsBilling")
-public class NailMoodsBillingPlugin extends Plugin implements BillingClient.ProductDetailsResponseListener {
+public class NailMoodsBillingPlugin extends Plugin {
     private static final String PLUS = "nailmoods_plus";
     private static final String PRO = "nailmoods_pro";
     private BillingClient billingClient;
