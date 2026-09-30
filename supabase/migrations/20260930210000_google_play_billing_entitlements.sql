@@ -7,7 +7,7 @@ create extension if not exists pgcrypto;
 create table if not exists private.google_play_subscriptions (
   id bigint generated always as identity primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
-  product_id text not null check (product_id in ('nailmoods_plus','nailmoods_pro')),
+  product_id text not null check (product_id in ('nailmoods_plus','nailmoods_pro')),\n  subscription_source text not null default 'google_play' check (subscription_source = 'google_play'),
   base_plan_id text,
   purchase_token text not null,
   purchase_token_sha256 text generated always as (encode(digest(convert_to(purchase_token,'UTF8'),'sha256'),'hex')) stored,
@@ -23,7 +23,7 @@ create table if not exists private.google_play_subscriptions (
   unique (purchase_token_sha256)
 );
 
-create index if not exists google_play_subscriptions_user_idx
+alter table private.account_entitlements add column if not exists subscription_source text;\nalter table private.account_entitlements drop constraint if exists account_entitlements_subscription_source_check;\nalter table private.account_entitlements add constraint account_entitlements_subscription_source_check check (subscription_source is null or subscription_source in ('manual','google_play'));\nupdate private.account_entitlements set subscription_source=case when source='subscription' then 'google_play' else 'manual' end where subscription_source is null;\n\ncreate index if not exists google_play_subscriptions_user_idx
 on private.google_play_subscriptions(user_id, status, expires_at desc);
 
 alter table private.google_play_subscriptions enable row level security;
