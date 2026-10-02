@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-02",
+  "intentionalQuotaProtection": "Private RLS deny-by-default; authenticated RPC with auth.uid() ownership and empty search_path. Other warnings predate this change.",
+  "lints": [
+    {
+      "name": "rls_enabled_no_policy",
+      "level": "INFO",
+      "count": 30,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+      "newFindings": [
+        {
+          "detail": "Table \\`private.product_import_quota\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "product_import_quota",
+            "type": "table",
+            "schema": "private"
+          },
+          "observed_at": "2026-10-02T19:20:13.984Z"
+        }
+      ]
+    },
+    {
+      "name": "extension_in_public",
+      "level": "WARN",
+      "count": 1,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0014_extension_in_public",
+      "newFindings": []
+    },
+    {
+      "name": "authenticated_security_definer_function_executable",
+      "level": "WARN",
+      "count": 3,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable",
+      "newFindings": [
+        {
+          "detail": "Function `public.nm_product_import_quota()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/nm_product_import_quota`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "nm_product_import_quota",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-10-02T19:20:13.984Z"
+        }
+      ]
+    },
+    {
+      "name": "auth_leaked_password_protection",
+      "level": "WARN",
+      "count": 1,
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+      "newFindings": []
+    }
+  ]
+}

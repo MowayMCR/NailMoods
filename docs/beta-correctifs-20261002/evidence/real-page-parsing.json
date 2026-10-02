@@ -1,0 +1,132 @@
+{
+  "scope": "Current official product pages retrieved via HTTPS proxy; shared server parser executed on actual HTML. Pinned transport blocked by workspace egress.",
+  "results": [
+    {
+      "brand": "Manucurist",
+      "url": "https://www.manucurist.com/products/greenflash-milky-peach",
+      "http": "200",
+      "fetch_exit": 0,
+      "at": "2026-10-02T18:27:39.457546+00:00",
+      "status": "found",
+      "candidate": {
+        "fields": {
+          "name": "Milky Peach",
+          "brand": "Manucurist",
+          "reference": "51114",
+          "sku": "51114",
+          "photo": "https://www.manucurist.com/cdn/shop/files/2026-GrandCanyon-GF-MilkyPeach-Fondaplat-Vdef.jpg?v=1783589896"
+        },
+        "images": [
+          "https://www.manucurist.com/cdn/shop/files/2026-GrandCanyon-GF-MilkyPeach-Fondaplat-Vdef.jpg?v=1783589896"
+        ],
+        "variants": [],
+        "source": "https://www.manucurist.com/products/greenflash-milky-peach",
+        "method": "url",
+        "needsVariant": false
+      },
+      "evidence": "schema.org/Product"
+    },
+    {
+      "brand": "KIKO Milano",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/new-power-pro-nail-lacquer-18-45994/",
+      "http": "200",
+      "fetch_exit": 0,
+      "at": "2026-10-02T18:27:47.077268+00:00",
+      "status": "found",
+      "candidate": {
+        "fields": {
+          "name": "Power Pro Nail Lacquer 18",
+          "type": "Vernis",
+          "photo": "https://assets.joqhl8w6.on-eva.io/blob/a4e19133-2037-45ec-b856-0d1f5591aed6"
+        },
+        "images": [
+          "https://assets.joqhl8w6.on-eva.io/blob/a4e19133-2037-45ec-b856-0d1f5591aed6"
+        ],
+        "variants": [],
+        "source": "https://www.kikocosmetics.com/fr-fr/p/new-power-pro-nail-lacquer-18-45994/",
+        "method": "url",
+        "needsVariant": false
+      },
+      "evidence": "schema.org/Product"
+    },
+    {
+      "brand": "OPI",
+      "url": "https://www.opi.com/products/nail-lacquer-tiramisu-for-two",
+      "http": "200",
+      "fetch_exit": 0,
+      "at": "2026-10-02T18:27:52.793347+00:00",
+      "status": "found",
+      "candidate": {
+        "fields": {
+          "name": "Tiramisu for Two",
+          "brand": "OPI",
+          "reference": "22995154028",
+          "sku": "22995154028",
+          "photo": "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/tiramisu-for-two-nlv28-nail-lacquer-22995154028_8c51ab81-0221-4c9d-9c21-4a3f1f219893.jpg?v=1668735129"
+        },
+        "images": [
+          "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/tiramisu-for-two-nlv28-nail-lacquer-22995154028_8c51ab81-0221-4c9d-9c21-4a3f1f219893.jpg?v=1668735129",
+          "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/tiramisu-for-two-mani_b27652af-35c6-4c0d-8209-e5f6e51d6deb.jpg?v=1668735132",
+          "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/tiramisu-for-two-brush-swatch_abec1a5d-cfea-46f5-a535-43a4d38740b1.jpg?v=1668735132",
+          "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/tiramisu-for-two-gif_70b746f6-9e3c-41ee-bd4b-00befb4d3f08.gif?v=1668735136",
+          "https://cdn.shopify.com/s/files/1/0649/4879/7673/files/tiramisu-for-two-nlv28-nail-lacquer-22995154028_394f4bd8-f539-4968-9d24-57254de801e4.png?v=1686184399"
+        ],
+        "variants": [],
+        "source": "https://www.opi.com/products/nail-lacquer-tiramisu-for-two",
+        "method": "url",
+        "needsVariant": false
+      },
+      "evidence": "schema.org/Product"
+    },
+    {
+      "brand": "CANNI",
+      "url": "https://www.canni.com/products/hema-free-color-nail-gel-9ml",
+      "http": "200",
+      "fetch_exit": 0,
+      "at": "2026-10-02T18:27:59.825193+00:00",
+      "status": "manual",
+      "candidate": {
+        "fields": {
+          "name": "Classic Color Gel Nail Polish Collection | CANNI",
+          "photo": "http://www.canni.com/cdn/shop/files/hema-free-color-nail-gel-9ml-cc1-986679.jpg?v=1719891210"
+        },
+        "images": [
+          "http://www.canni.com/cdn/shop/files/hema-free-color-nail-gel-9ml-cc1-986679.jpg?v=1719891210"
+        ],
+        "variants": [],
+        "source": "https://www.canni.com/products/hema-free-color-nail-gel-9ml",
+        "method": "url",
+        "needsVariant": false
+      },
+      "evidence": "metadata_only",
+      "message": "Impossible de lire automatiquement cette fiche"
+    },
+    {
+      "brand": "Le Mini Macaron",
+      "url": "https://leminimacaron.eu/products/blush-gel-polish",
+      "http": "200",
+      "fetch_exit": 0,
+      "at": "2026-10-02T18:28:05.596056+00:00",
+      "status": "found",
+      "candidate": {
+        "fields": {
+          "name": "Blush - Gel Polish",
+          "type": "Semi-permanent",
+          "brand": "Le Mini Macaron Europe",
+          "reference": "3760297542757",
+          "sku": "3760297542757",
+          "barcode": "3760297542757",
+          "photo": "https://leminimacaron.eu/cdn/shop/files/blush-gel-polish-8163820.jpg?v=1763569737&width=1024"
+        },
+        "images": [
+          "https://leminimacaron.eu/cdn/shop/files/blush-gel-polish-8163820.jpg?v=1763569737&width=1024"
+        ],
+        "variants": [],
+        "source": "https://leminimacaron.eu/products/blush-gel-polish",
+        "method": "url",
+        "needsVariant": false
+      },
+      "evidence": "schema.org/Product"
+    }
+  ]
+}

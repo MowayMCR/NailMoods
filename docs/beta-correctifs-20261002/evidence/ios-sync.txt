@@ -1,0 +1,81 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nailmoods@0.1.0 ios:recette
+> node scripts/build-ios.mjs recette
+
+Recognition assets ready (loaded only when requested).
+vite v8.3.0 building client environment for production...
+transforming...
+✓ 2144 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-mobile/index.html                               1.54 kB │ gzip:   0.79 kB
+dist-mobile/assets/nativeRuntime-B2mTRHT3.css        1.47 kB │ gzip:   0.60 kB
+dist-mobile/assets/main-1TE_a7Mr.css               250.95 kB │ gzip:  46.18 kB
+dist-mobile/assets/dist-DHjwEL3R.js                  0.06 kB │ gzip:   0.07 kB
+dist-mobile/assets/esm-BXnREEUW.js                   0.14 kB │ gzip:   0.12 kB
+dist-mobile/assets/state-Bb0N3oXV.js                 0.26 kB │ gzip:   0.20 kB
+dist-mobile/assets/esm-Bb2s1iIy.js                   0.35 kB │ gzip:   0.25 kB
+dist-mobile/assets/definitions-DlpntO5o.js           0.35 kB │ gzip:   0.25 kB
+dist-mobile/assets/web-D2BZOLca.js                   0.36 kB │ gzip:   0.24 kB
+dist-mobile/assets/web-CnILfZoc.js                   0.36 kB │ gzip:   0.24 kB
+dist-mobile/assets/authLinks-xRYUMsY4.js             0.74 kB │ gzip:   0.44 kB
+dist-mobile/assets/entry-Badf9vCZ.js                 0.81 kB │ gzip:   0.46 kB
+dist-mobile/assets/web-CKbW2vyR.js                   0.84 kB │ gzip:   0.40 kB
+dist-mobile/assets/index-BX4i4JQA.js                 0.96 kB │ gzip:   0.55 kB
+dist-mobile/assets/esm-Cf7A9ymq.js                   1.03 kB │ gzip:   0.53 kB
+dist-mobile/assets/web-C7foVr7q.js                   1.10 kB │ gzip:   0.54 kB
+dist-mobile/assets/web-Bh-0cxpW.js                   1.19 kB │ gzip:   0.54 kB
+dist-mobile/assets/preload-helper-uBIymjUX.js        1.23 kB │ gzip:   0.68 kB
+dist-mobile/assets/rolldown-runtime-C0FnF6B9.js      1.29 kB │ gzip:   0.71 kB
+dist-mobile/assets/MobileStatus-DxkDTnC8.js          1.74 kB │ gzip:   0.81 kB
+dist-mobile/assets/dist-BUaBGHqH.js                  7.78 kB │ gzip:   3.11 kB
+dist-mobile/assets/nativeRuntime-Dqdpm2ls.js         7.80 kB │ gzip:   3.12 kB
+dist-mobile/assets/jsx-runtime-D3F0h15I.js           8.24 kB │ gzip:   3.11 kB
+dist-mobile/assets/web-j2e5Lili.js                   8.47 kB │ gzip:   2.82 kB
+dist-mobile/assets/nativeMedia-R8iTpFXf.js          14.31 kB │ gzip:   5.20 kB
+dist-mobile/assets/src-SuYvKHvm.js                  17.24 kB │ gzip:   7.31 kB
+dist-mobile/assets/reader-Cx5cFgjW.js               36.38 kB │ gzip:  12.92 kB
+dist-mobile/assets/main-DnVLHg_s.js              1,131.98 kB │ gzip: 334.56 kB
+
+✓ built in 427ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[log] xml(load) at /workspace/scratch/9eb2887799f2/nailmoods-beta-correctifs/android/app/src/main/AndroidManifest.xml
+[log] xml(load) Found root namespaces in XML file: http://schemas.android.com/apk/res/android
+Generating assets for ios
+CREATE ios icon /workspace/scratch/9eb2887799f2/nailmoods-beta-correctifs/ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png (566.44 KB)
+CREATE ios splash /workspace/scratch/9eb2887799f2/nailmoods-beta-correctifs/ios/App/App/Assets.xcassets/Splash.imageset/Default@1x~universal~anyany.png (170.57 KB)
+CREATE ios splash /workspace/scratch/9eb2887799f2/nailmoods-beta-correctifs/ios/App/App/Assets.xcassets/Splash.imageset/Default@2x~universal~anyany.png (170.57 KB)
+CREATE ios splash /workspace/scratch/9eb2887799f2/nailmoods-beta-correctifs/ios/App/App/Assets.xcassets/Splash.imageset/Default@3x~universal~anyany.png (170.57 KB)
+CREATE ios splash-dark /workspace/scratch/9eb2887799f2/nailmoods-beta-correctifs/ios/App/App/Assets.xcassets/Splash.imageset/Default@1x~universal~anyany-dark.png (170.57 KB)
+CREATE ios splash-dark /workspace/scratch/9eb2887799f2/nailmoods-beta-correctifs/ios/App/App/Assets.xcassets/Splash.imageset/Default@2x~universal~anyany-dark.png (170.57 KB)
+CREATE ios splash-dark /workspace/scratch/9eb2887799f2/nailmoods-beta-correctifs/ios/App/App/Assets.xcassets/Splash.imageset/Default@3x~universal~anyany-dark.png (170.57 KB)
+
+
+Totals:
+ios: 7 generated, 1.55 MB total
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+✔ Copying web assets from dist-mobile to ios/App/App/public in 16.55ms
+✔ Creating capacitor.config.json in ios/App/App in 732.90μs
+✔ copy ios in 45.68ms
+✔ Updating iOS plugins in 2.71ms
+[info] All Capacitor plugins have a Package.swift file and will be included in Package.swift
+[info] Writing Package.swift
+[info] Found 9 Capacitor plugins for ios:
+       @capacitor/app@8.1.1
+       @capacitor/browser@8.0.4
+       @capacitor/camera@8.2.4
+       @capacitor/filesystem@8.1.3
+       @capacitor/keyboard@8.0.5
+       @capacitor/network@8.0.1
+       @capacitor/preferences@8.0.1
+       @capacitor/share@8.0.3
+       @capacitor/splash-screen@8.0.2
+✔ update ios in 37.57ms
+[info] Sync finished in 0.115s
+iOS source synchronized; compile/archive with Xcode 26+ on macOS. Bundle must be registered by Marie: com.nailmoods.app.recette

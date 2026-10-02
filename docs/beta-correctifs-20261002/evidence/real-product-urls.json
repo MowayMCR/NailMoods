@@ -1,0 +1,40 @@
+{
+  "scope": "Actual external pages through pinned server transport; no account authentication or mobile-device claim",
+  "results": [
+    {
+      "brand": "Manucurist",
+      "url": "https://www.manucurist.com/products/greenflash-milky-peach",
+      "status": "manual",
+      "reason": "Error: proto error: io error: Network is unreachable (os error 101)",
+      "at": "2026-10-02T18:23:35.723Z"
+    },
+    {
+      "brand": "KIKO Milano",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/new-power-pro-nail-lacquer-18-45994/",
+      "status": "manual",
+      "reason": "Error: proto error: io error: Network is unreachable (os error 101)",
+      "at": "2026-10-02T18:23:35.725Z"
+    },
+    {
+      "brand": "OPI",
+      "url": "https://www.opi.com/products/nail-lacquer-tiramisu-for-two",
+      "status": "manual",
+      "reason": "Error: proto error: io error: Network is unreachable (os error 101)",
+      "at": "2026-10-02T18:23:35.725Z"
+    },
+    {
+      "brand": "CANNI",
+      "url": "https://www.canni.com/products/hema-free-color-nail-gel-9ml",
+      "status": "manual",
+      "reason": "Error: proto error: io error: Network is unreachable (os error 101)",
+      "at": "2026-10-02T18:23:35.726Z"
+    },
+    {
+      "brand": "Le Mini Macaron",
+      "url": "https://leminimacaron.eu/products/blush-gel-polish",
+      "status": "manual",
+      "reason": "Error: proto error: io error: Network is unreachable (os error 101)",
+      "at": "2026-10-02T18:23:35.726Z"
+    }
+  ]
+}

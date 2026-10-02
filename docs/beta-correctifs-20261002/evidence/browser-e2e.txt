@@ -1,0 +1,11 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nailmoods@0.1.0 test:beta-browser
+> node scripts/test-beta-browser.mjs
+
+PASS Shared barcode reader: EAN-13 Green/Green Flash, UPC-E OPI, UPC-A leading zero and EAN-8
+PASS OCR real browser worker on a synthetic KIKO label
+PASS Known scan image → fiche confirmation → corrected NailMoods color → Collection → reload
+PASS Unknown detected code → immediate manual add with EAN kept
+PASS Equipment library: add/remove/idempotent selection, custom edit and reload
+PASS Visible dice button, automatic difficulty recalculation and favorite double-tap

@@ -1,0 +1,28 @@
+{
+  "migration": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true}"
+      }
+    ],
+    "isError": false
+  },
+  "edge": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"id\":\"5a482252-3150-4896-b527-3d64b9e5e0a3\",\"slug\":\"product-page\",\"name\":\"product-page\",\"status\":\"ACTIVE\",\"version\":1,\"created_at\":1790966832126,\"updated_at\":1790966832126,\"verify_jwt\":true,\"import_map\":false,\"entrypoint_path\":\"file:///tmp/user_fn_pueqkbwfwxgqzmkauxoz_5a482252-3150-4896-b527-3d64b9e5e0a3_1/source/product-page/index.ts\",\"ezbr_sha256\":\"741febbf0624beefc31dce1fdf2c5ff5218029da331ad6c8e2ae144cff6ca270\"}"
+      }
+    ],
+    "isError": false
+  },
+  "scope": "Recette seulement ; production non déployée dans cette passe",
+  "unauthenticatedRequest": {
+    "status": 401,
+    "response": {
+      "code": "UNAUTHORIZED_NO_AUTH_HEADER",
+      "message": "Missing authorization header"
+    }
+  }
+}

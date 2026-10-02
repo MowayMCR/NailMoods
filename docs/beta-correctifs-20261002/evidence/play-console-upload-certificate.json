@@ -1,0 +1,9 @@
+{
+  "observedURL": "https://play.google.com/console/u/0/developers/8877281049749249708/app/4973050792349782674/keymanagement",
+  "uploadCertificateSHA256": "58:4D:C4:C3:F4:77:C8:63:7C:CF:AF:FA:95:72:13:D8:41:25:07:34:B6:D6:67:70:D0:36:67:EE:4D:AE:08:C0",
+  "existingKeyMatch": true,
+  "appId": "com.nailmoods.app",
+  "keyAlias": "nailmoods-upload-2026",
+  "source": "Play Console rendered upload certificate and recovered public PEM. No key change, reset or upload.",
+  "date": "2026-10-02"
+}

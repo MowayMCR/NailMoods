@@ -1,0 +1,414 @@
+{
+  "commit": "06c8f923a9189828b125de966eb55f3c70cd1fc2",
+  "runs": [
+    {
+      "id": 37053765795,
+      "name": "Apple preparation checks (unsigned, no deployment)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/MowayMCR/NailMoods/actions/runs/37053765795",
+      "jobs": [
+        {
+          "id": 110993273902,
+          "name": "android",
+          "conclusion": "success",
+          "started_at": "2026-10-02T19:23:18Z",
+          "completed_at": "2026-10-02T19:25:25Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-02T19:23:19Z",
+              "completed_at": "2026-10-02T19:23:21Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-02T19:23:21Z",
+              "completed_at": "2026-10-02T19:23:22Z"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-02T19:23:22Z",
+              "completed_at": "2026-10-02T19:23:29Z"
+            },
+            {
+              "name": "Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-02T19:23:29Z",
+              "completed_at": "2026-10-02T19:23:30Z"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-02T19:23:30Z",
+              "completed_at": "2026-10-02T19:23:38Z"
+            },
+            {
+              "name": "Run npm run mobile:production",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-02T19:23:38Z",
+              "completed_at": "2026-10-02T19:23:39Z"
+            },
+            {
+              "name": "Run npx cap sync android",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-02T19:23:39Z",
+              "completed_at": "2026-10-02T19:23:40Z"
+            },
+            {
+              "name": "Run npm run mobile:assets",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-02T19:23:40Z",
+              "completed_at": "2026-10-02T19:23:41Z"
+            },
+            {
+              "name": "Run chmod +x android/gradlew && ./android/gradlew -p android -PnailmoodsEnvironment=production :app:compileDebugJavaWithJavac --console=plain",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-02T19:23:41Z",
+              "completed_at": "2026-10-02T19:25:21Z"
+            },
+            {
+              "name": "Post Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-10-02T19:25:21Z",
+              "completed_at": "2026-10-02T19:25:22Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-10-02T19:25:22Z",
+              "completed_at": "2026-10-02T19:25:22Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18,
+              "started_at": "2026-10-02T19:25:22Z",
+              "completed_at": "2026-10-02T19:25:22Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-10-02T19:25:22Z",
+              "completed_at": "2026-10-02T19:25:22Z"
+            }
+          ]
+        },
+        {
+          "id": 110993274210,
+          "name": "ios",
+          "conclusion": "success",
+          "started_at": "2026-10-02T19:23:16Z",
+          "completed_at": "2026-10-02T19:26:38Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-02T19:23:17Z",
+              "completed_at": "2026-10-02T19:23:17Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-02T19:23:17Z",
+              "completed_at": "2026-10-02T19:23:19Z"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-02T19:23:19Z",
+              "completed_at": "2026-10-02T19:23:22Z"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-02T19:23:22Z",
+              "completed_at": "2026-10-02T19:23:26Z"
+            },
+            {
+              "name": "Run npm test",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-02T19:23:26Z",
+              "completed_at": "2026-10-02T19:23:42Z"
+            },
+            {
+              "name": "Run npm run ios:recette",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-02T19:23:42Z",
+              "completed_at": "2026-10-02T19:23:45Z"
+            },
+            {
+              "name": "Toolchain and unsigned simulator build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-02T19:23:45Z",
+              "completed_at": "2026-10-02T19:25:32Z"
+            },
+            {
+              "name": "Unsigned device archive (Recette, cannot upload to TestFlight)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-02T19:25:32Z",
+              "completed_at": "2026-10-02T19:26:29Z"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-02T19:26:29Z",
+              "completed_at": "2026-10-02T19:26:33Z"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-10-02T19:26:33Z",
+              "completed_at": "2026-10-02T19:26:34Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-10-02T19:26:34Z",
+              "completed_at": "2026-10-02T19:26:35Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-10-02T19:26:35Z",
+              "completed_at": "2026-10-02T19:26:36Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-10-02T19:26:36Z",
+              "completed_at": "2026-10-02T19:26:36Z"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11247434261,
+          "name": "nailmoods-ios-unsigned-build-log",
+          "size": 354,
+          "expired": false
+        },
+        {
+          "id": 11247159423,
+          "name": "nailmoods-recette-unsigned-xcarchive",
+          "size": 38449618,
+          "expired": false
+        }
+      ]
+    },
+    {
+      "id": 37053763903,
+      "name": "Beta 6 Android candidate (unsigned, no release)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/MowayMCR/NailMoods/actions/runs/37053763903",
+      "jobs": [
+        {
+          "id": 110993267220,
+          "name": "compile",
+          "conclusion": "success",
+          "started_at": "2026-10-02T19:23:10Z",
+          "completed_at": "2026-10-02T19:27:12Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-02T19:23:11Z",
+              "completed_at": "2026-10-02T19:23:12Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-02T19:23:12Z",
+              "completed_at": "2026-10-02T19:23:13Z"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-02T19:23:13Z",
+              "completed_at": "2026-10-02T19:23:15Z"
+            },
+            {
+              "name": "Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-02T19:23:15Z",
+              "completed_at": "2026-10-02T19:23:15Z"
+            },
+            {
+              "name": "Run npm ci",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-02T19:23:15Z",
+              "completed_at": "2026-10-02T19:23:22Z"
+            },
+            {
+              "name": "Run npm test",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-02T19:23:22Z",
+              "completed_at": "2026-10-02T19:23:43Z"
+            },
+            {
+              "name": "Compile Java against the actual Billing library",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-02T19:23:43Z",
+              "completed_at": "2026-10-02T19:25:10Z"
+            },
+            {
+              "name": "Resolve the Billing dependency",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-02T19:25:10Z",
+              "completed_at": "2026-10-02T19:25:12Z"
+            },
+            {
+              "name": "Prepare unsigned beta candidate (no upload key)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-02T19:25:12Z",
+              "completed_at": "2026-10-02T19:26:29Z"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-10-02T19:26:29Z",
+              "completed_at": "2026-10-02T19:26:31Z"
+            },
+            {
+              "name": "Build Recette debug APK for physical camera validation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-02T19:26:31Z",
+              "completed_at": "2026-10-02T19:27:08Z"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-02T19:27:08Z",
+              "completed_at": "2026-10-02T19:27:10Z"
+            },
+            {
+              "name": "Post Run actions/setup-java@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22,
+              "started_at": "2026-10-02T19:27:10Z",
+              "completed_at": "2026-10-02T19:27:10Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23,
+              "started_at": "2026-10-02T19:27:10Z",
+              "completed_at": "2026-10-02T19:27:11Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24,
+              "started_at": "2026-10-02T19:27:11Z",
+              "completed_at": "2026-10-02T19:27:11Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25,
+              "started_at": "2026-10-02T19:27:11Z",
+              "completed_at": "2026-10-02T19:27:11Z"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11247529265,
+          "name": "nailmoods-recette-debug-apk",
+          "size": 43933149,
+          "expired": false
+        },
+        {
+          "id": 11247509018,
+          "name": "nailmoods-beta6-production-unsigned-aab",
+          "size": 38717060,
+          "expired": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "version": "V2-2026-10-01",
+  "sourceFile": "NailMoods_V2_Fusion_V1_V2_auditee_2026-10-01.xlsx",
+  "sourceSha256": "5ee75d3dfba63791a99a3761486db494bf27d7a9e067d88a809f473f3d1fc9ff",
+  "count": 2631,
+  "verifiedBarcodeAssociations": 1047,
+  "quarantinedCount": 351,
+  "brands": {
+    "KIKO": {
+      "active": 50,
+      "scanVariants": 0
+    },
+    "CANNI": {
+      "active": 192,
+      "scanVariants": 0
+    },
+    "Manucurist": {
+      "active": 264,
+      "scanVariants": 262
+    },
+    "OPI": {
+      "active": 86,
+      "scanVariants": 7
+    }
+  }
+}

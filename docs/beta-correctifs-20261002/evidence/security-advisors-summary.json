@@ -1,0 +1,21 @@
+{
+  "reviewedAt": "2026-10-02",
+  "intentionalNewFindings": [
+    {
+      "table": "private.product_import_quota",
+      "type": "RLS Enabled No Policy",
+      "assessment": "Private counter, no client privileges or permissive policy; deny by default is intended",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+    },
+    {
+      "function": "public.nm_product_import_quota",
+      "type": "Signed-In Users Can Execute SECURITY DEFINER Function",
+      "assessment": "Intentional RPC; auth.uid() ownership checked, user existence verified, empty search_path, no anon or PUBLIC execution, private counter inaccessible",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable"
+    }
+  ],
+  "unchangedExistingAuthFinding": {
+    "type": "Leaked Password Protection Disabled",
+    "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "archiveVersion": 2,
+  "app": {
+    "ApplicationPath": "Applications/App.app",
+    "Architectures": [
+      "arm64"
+    ],
+    "CFBundleIdentifier": "com.nailmoods.app.recette",
+    "CFBundleShortVersionString": "0.3.0",
+    "CFBundleVersion": "1",
+    "SigningIdentity": "",
+    "Team": ""
+  },
+  "cameraUsage": "Photographier un produit \u00e0 scanner ou ajouter une photo de pose dans NailMoods.",
+  "physicalDeviceTests": false,
+  "TestFlightEligible": false,
+  "reason": "unsigned Recette archive, no signing team"
+}

@@ -1,0 +1,78 @@
+{
+  "scope": "Actual browser ZXing decoding of synthetic printed codes; no mobile camera or physical product verified",
+  "results": [
+    {
+      "label": "Green Flash",
+      "observation": {
+        "rawBarcode": "3662263511142",
+        "barcodeFormat": "EAN_13",
+        "barcodeSource": "scanner",
+        "barcodeConfidence": null
+      },
+      "title": "Produit trouvé",
+      "matches": [
+        {
+          "name": "Milky Peach",
+          "brand": "Manucurist",
+          "collection": "Green Flash"
+        }
+      ]
+    },
+    {
+      "label": "Green",
+      "observation": {
+        "rawBarcode": "3662263330941",
+        "barcodeFormat": "EAN_13",
+        "barcodeSource": "scanner",
+        "barcodeConfidence": null
+      },
+      "title": "Produit trouvé",
+      "matches": [
+        {
+          "name": "Abricot",
+          "brand": "Manucurist",
+          "collection": "Green"
+        }
+      ]
+    },
+    {
+      "label": "OPI UPC-E",
+      "observation": {
+        "rawBarcode": "09421215",
+        "barcodeFormat": "UPC_E",
+        "barcodeSource": "scanner",
+        "barcodeConfidence": null
+      },
+      "title": "Produit trouvé",
+      "matches": [
+        {
+          "name": "Bubble Bath",
+          "brand": "OPI",
+          "collection": "Nail Lacquer"
+        }
+      ]
+    },
+    {
+      "label": "Unknown UPC-A leading zero",
+      "observation": {
+        "rawBarcode": "0036000291452",
+        "barcodeFormat": "EAN_13",
+        "barcodeSource": "scanner",
+        "barcodeConfidence": null
+      },
+      "title": "Ce produit n’est pas encore dans NailMoods",
+      "matches": []
+    },
+    {
+      "label": "EAN-8",
+      "observation": {
+        "rawBarcode": "55123457",
+        "barcodeFormat": "EAN_8",
+        "barcodeSource": "scanner",
+        "barcodeConfidence": null
+      },
+      "title": "Ce produit n’est pas encore dans NailMoods",
+      "matches": []
+    }
+  ]
+}
