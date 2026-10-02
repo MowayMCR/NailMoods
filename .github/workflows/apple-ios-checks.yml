@@ -2,6 +2,7 @@ name: Apple preparation checks (unsigned, no deployment)
 on:
   push:
     branches: [feat/apple-storekit-ios]
+    paths: ['src/**','scripts/**','ios/**','tests/**','supabase/**','package*.json','vite*.js','.github/workflows/apple-ios-checks.yml']
   workflow_dispatch:
 permissions:
   contents: read

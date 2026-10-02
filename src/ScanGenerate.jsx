@@ -5,7 +5,7 @@ import {readScanDraft,SCAN_DRAFT_KEY} from './scanDraft';
 import React, { useEffect, useRef, useState } from 'react';
 import { Camera, ImagePlus, ArrowLeft, ArrowRight, Check, Sparkles, RotateCcw, Pipette, X } from 'lucide-react';
 import { preparePhoto } from './ProductPhoto';
-import PolishPalette from './PolishPalette';
+import PolishPalette from './PolishPalette.jsx';
 import { Sampler } from './PhotoColor';
 import { imageCanvas, readProductPhoto } from './recognition';
 import { photoPalette, generationFamily, validHex } from './colorAnalysis';

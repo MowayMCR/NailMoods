@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Pipette, Check } from 'lucide-react';
 import { colorFamilies, chosenShadeChange, describeColor, photoPalette, preciseShade, productColor, sampleColor, validHex } from './colorAnalysis';
-import PolishPalette from './PolishPalette';
+import PolishPalette from './PolishPalette.jsx';
 import { imageCanvas } from './recognition';
 
 export function Sampler({ source, onSelect, onDone }) {

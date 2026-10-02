@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import recette from './src/cloud/recette-public-config.json'
+import recette from './src/cloud/recette-public-config.json' with { type: 'json' }
 
 export default defineConfig(() => {
   const target = process.env.VITE_DEPLOYMENT_ENV || 'recette';

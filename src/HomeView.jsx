@@ -3,7 +3,7 @@ import { useStorage } from './StorageContext';
 import React, { useEffect, useMemo, useState } from 'react';
 import { UserRound, Library, Palette, Heart, ArrowRight, ChevronRight, BookHeart, ListChecks, Play, BookmarkCheck, Sparkles, RotateCcw, Clock3, Check, Leaf } from 'lucide-react';
 import NailPreview from './NailPreview';
-import { ScanBottles } from './ScanGenerate';
+import { ScanBottles } from './ScanGenerate.jsx';
 import { DecorationPhoto } from './DecorationPicker';
 import { isDecoration } from './decorations';
 import { productColor } from './colorAnalysis';
