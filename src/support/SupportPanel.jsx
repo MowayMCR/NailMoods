@@ -8,6 +8,8 @@ import {LegalLinks} from '../privacy/PrivacyPanel';
 import {BlockedAccounts} from './SafetyActions';
 import {APP_VERSION,readDiagnostics} from './diagnostics';
 import {supportCall,supportError,ticketPayload,ticketStatus} from './service';
+import {preparePhoto} from '../ProductPhoto.jsx';
+import {dataUrlToBlob,validateImage} from '../cloud/mediaStorage';
 import './support.css';
 
 const FAQ=[['Ma photo reste-t-elle privée ?','Oui, par défaut. Public rend la copie publiée visible aux comptes autorisés. Repasser en privé bloque les nouvelles lectures. Les notes ne sont pas publiées.'],['Pourquoi mon vernis est-il « à vérifier » ?','Une couleur proche ou un numéro seul ne suffit pas à identifier un produit. Confirme la marque, la gamme et la référence sur le flacon.'],['Comment envoyer une inspiration à ma PO ?','Ouvre Envoyer à ma PO, choisis une PO parmi tes connexions acceptées, vérifie l’aperçu puis confirme. Notes et photos ne sont jointes que si tu les sélectionnes.'],['Une sauvegarde a échoué','Garde ton brouillon, retrouve une connexion puis utilise Réessayer. Ne vide pas les données du navigateur avant la synchronisation.'],['Comment retrouver mes données ou supprimer mon compte ?','Dans Profil → Confidentialité, utilise l’export ou la suppression du compte. Un espace Institut partagé demande d’abord un transfert de propriété.']];
@@ -36,8 +38,10 @@ function NewTicket({client,userId,screen,storage,onSent}){
   const key=JSON.stringify({category,description,include,file:file?[file.name,file.size,file.lastModified]:null});if(attempt.current?.key!==key)attempt.current={key,id:messageId(),attachment:null};
   const a=attempt.current;
   if(file&&!a.attachment){const {data:workspace,error:we}=await client.from('workspaces').select('id').eq('owner_user_id',userId).eq('kind','personal').limit(1).single();if(we)throw we;
-   const ext={'image/png':'png','image/jpeg':'jpeg','image/webp':'webp'}[file.type];const path=userId+'/'+workspace.id+'/support/'+a.id+'.'+ext;
-   const {error}=await client.storage.from('nailmoods-private').upload(path,file,{contentType:file.type,upsert:true});if(error)throw error;a.attachment=path;
+   // Canvas re-encoding removes source EXIF/GPS metadata before transmission.
+   const attachment=validateImage(dataUrlToBlob(await preparePhoto(file,1800)));
+   const path=userId+'/'+workspace.id+'/support/'+a.id+'.jpg';
+   const {error}=await client.storage.from('nailmoods-private').upload(path,attachment,{contentType:attachment.type,upsert:true});if(error)throw error;a.attachment=path;
   }
   const r=await supportCall(client,'submit',ticketPayload({id:a.id,category,description,screen,diagnostics:include?diagnostics:[],attachment:a.attachment},import.meta.env.VITE_DEPLOYMENT_ENV,navigator.userAgent));
   setNotice('Demande reçue · '+r.id);setDescription('');setFile(null);attempt.current=null;
