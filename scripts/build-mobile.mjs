@@ -18,5 +18,9 @@ for (const name of readdirSync('dist-mobile/legal')) {
   if (!name.endsWith('.html')) continue;
   const path = 'dist-mobile/legal/'+name;
   const html = readFileSync(path, 'utf8');
-  writeFileSync(path, html.replaceAll('href="archives/', 'href="https://mowaymcr.github.io/NailMoods/legal/archives/'));
+  let shipped = html.replaceAll('href="archives/', 'href="https://mowaymcr.github.io/NailMoods/legal/archives/');
+  for (const archived of ['conditions-0.4-beta.html','confidentialite-0.6-beta.html']) {
+    shipped = shipped.replaceAll('href="' + archived + '"', 'href="https://mowaymcr.github.io/NailMoods/legal/' + archived + '"');
+  }
+  writeFileSync(path, shipped);
 }
