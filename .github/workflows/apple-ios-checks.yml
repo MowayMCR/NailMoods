@@ -24,6 +24,13 @@ jobs:
           xcodebuild -version
           xcrun --sdk iphoneos --show-sdk-version
           xcodebuild -project ios/App/App.xcodeproj -scheme App -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/nailmoods-ios CODE_SIGNING_ALLOWED=NO build
+      - name: Unsigned device archive (Recette, cannot upload to TestFlight)
+        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -sdk iphoneos -destination 'generic/platform=iOS' -archivePath /tmp/NailMoods-Recette-unsigned.xcarchive CODE_SIGNING_ALLOWED=NO archive
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nailmoods-recette-unsigned-xcarchive
+          path: /tmp/NailMoods-Recette-unsigned.xcarchive
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         if: always()
         with:
