@@ -1,17 +1,24 @@
 # NailMoods — Google Play Billing beta 6
 
-## Release gate — reviewed 2026-10-01
+## Release gate - mise à jour du 2 octobre 2026
 
-**HOLD: the implementation is not ready for a final Billing AAB.** The source audit found code blockers in addition to Play Console configuration. See [the detailed policy and implementation audit](google-play-policy-audit-2026-10-01.md). The architecture and matrix below describe the intended behavior, not completed purchase validation.
+**HOLD pour diffusion payante.** Les défauts B01-B09 de l'audit historique sont corrigés dans le code. Voir [le bilan de corrections et preuves](google-play-billing-corrections-2026-10-02.md) et [le guide complet Play Console](google-play-beta6-pas-a-pas.md).
 
-- [ ] Resolve audit B01–B09: supported Billing SDK, transparent paywall/cancellation, valid SQL and server-only RPC, verified product/account binding, correct acknowledgement, entitlement provenance/manual priority, lifecycle reconciliation and truthful status messages.
-- [ ] Publish updated terms/privacy and align Data safety with Billing.
-- [ ] Complete Google Play configuration and real purchase/restore/cancel/expiry tests, preserving admin and founder invitation rights.
-- [ ] Validate account deletion, UGC reporting/blocking, reviewer access and final merged permissions.
-- [ ] Integrate the audited catalogue with stable existing catalog IDs and run its application/phone scan tests.
-- [ ] Deliver `NailMoods_V2_Fusion_V1_V2_auditee_2026-10-01.xlsx` in the same release package as the signed Billing AAB. Expected SHA-256: `5ee75d3dfba63791a99a3761486db494bf27d7a9e067d88a809f473f3d1fc9ff`.
+- [x] Bridge Billing 9.1.0, paywall prix/période/renouvellement/résiliation et restauration.
+- [x] SQL, validation produit/forfait/compte, acknowledgement et provenance séparée.
+- [x] Droits manuels/fondateurs, annulation jusqu'à échéance, cycle de vie et second abonnement bloqué.
+- [x] Migrations et fonction déployées en Recette/Production avec achats désactivés.
+- [x] Nouveaux textes versionnés préparés, anciennes versions et consentements conservés.
+- [x] Catalogue intégré avec IDs préservés ; 1 047 associations testées ; Excel joint dans `release/beta6`.
+- [x] 366 tests locaux, build web et contenu web mobile réussis.
+- [ ] Compilation Java finale contre le véritable SDK en CI.
+- [ ] Profil marchand, produits/forfaits/prix/pays, licence testers, API et secrets configurés.
+- [ ] Publication coordonnée des textes/client, versions légales serveur et Data safety.
+- [ ] Candidat signé avec manifeste, versionCode libre et certificat d'importation vérifiés.
+- [ ] Tests Google d'achat/restauration/annulation/expiration/grâce/blocage/révocation et priorité manuelle, tests caméra sur téléphone.
+- [ ] Promotion du candidat validé au test fermé existant.
 
-Read-only checks confirmed that free self-selection of paid tiers is disabled in both Production and Recette. The Billing table and verification Edge Function are not deployed in either environment. The workbook is a validated delivery source; it is not yet evidence of an in-app catalogue update.
+L'Excel conserve le SHA-256 `5ee75d3dfba63791a99a3761486db494bf27d7a9e067d88a809f473f3d1fc9ff`. Il accompagne l'AAB dans le lot, sans être importé dans Play Console. Aucun AAB final signé ni achat Google validé à cette reprise.
 
 ## Architecture
 
@@ -57,4 +64,4 @@ Never commit the service-account JSON or private key.
 
 ## Current stop point
 
-The source changes are drafted on branch `feat/google-play-billing-beta6`. The final AAB remains on hold until code blockers, product/base-plan/API setup, policy declarations, catalogue integration and release tests are resolved. The 2026-10-01 audit does not grant release approval.
+Corrections and the catalogue are saved on `feat/google-play-billing-beta6`; Billing is deployed but disabled. The signed candidate awaits configuration and compilation checks, then internal Google purchase tests before promotion to the closed track. The original audit is historical; consult the 2026-10-02 correction record.

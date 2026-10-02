@@ -23,6 +23,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - name: Compile Java against the actual Billing library
+        env:
+          NAILMOODS_MOBILE_ENV: production
         run: |
           node scripts/build-mobile.mjs production
           npx cap sync android
