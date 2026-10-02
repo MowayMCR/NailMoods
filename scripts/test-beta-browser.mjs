@@ -10,7 +10,7 @@ const browser=await chromium.launch({...(process.env.NAILMOODS_BROWSER_EXECUTABL
 const report={at:new Date().toISOString(),scope:'Chromium desktop, mobile-sized viewport, guest local persistence. Synthetic code images and text labels. No mobile camera, native permissions, authenticated reconnection or live Store validation.',cases:[],errors:[]};
 const page=await browser.newPage({viewport:{width:390,height:844}});page.setDefaultTimeout(10000);page.on('pageerror',e=>report.errors.push(e.message));
 const check=async(name,run)=>{try{const details=await run();report.cases.push({name,result:'PASS',details});console.log('PASS',name);}catch(e){report.cases.push({name,result:'FAIL',error:e.message});console.log('FAIL',name,e.message);await page.screenshot({path:path.join(out,'failure-'+report.cases.length+'.png')});if(await page.getByRole('button',{name:'Fermer',exact:true}).count())await page.getByRole('button',{name:'Fermer',exact:true}).click();process.exitCode=1;}};
-const screenshot=name=>page.screenshot({path:path.join(out,name+'.png')});
+const screenshot=async name=>{if(name.startsWith('scan-'))await page.locator('.recognitionStatus').scrollIntoViewIfNeeded();return page.screenshot({path:path.join(out,name+'.png')});};
 const barcode=async(bcid,text)=>bwip.toBuffer({bcid,text,scale:3,height:18,includetext:true,padding:20,backgroundcolor:'FFFFFF'});
 const collection=()=>page.getByRole('button',{name:'Collection',exact:true}).click();
 async function startCode(){await collection();await page.locator('.addProduct').click();await page.getByText('Autres façons d’ajouter',{exact:true}).click();await page.getByRole('button',{name:/Scanner le code-barres/i}).click();}
