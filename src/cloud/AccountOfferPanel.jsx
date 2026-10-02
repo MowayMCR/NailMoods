@@ -1,3 +1,4 @@
+import {isAppleIOS} from './appleBilling';
 import {track} from '../analytics/analytics';
 import React,{useEffect,useMemo,useState} from 'react';
 import {BriefcaseBusiness,Check,Heart,ShieldCheck,Sparkles} from 'lucide-react';
@@ -43,6 +44,7 @@ export default function AccountOfferPanel({client,userId,store,onApplied}){
  const needsConsent=['consent_required','age_confirmation_required'].includes(state?.reason);
  const needsLegacyAgeChoice=state?.reason==='age_confirmation_required'||state?.ageBand==='unknown';
  const confirmedAgeBand=ageBand||state?.ageBand||'';
+ if(isAppleIOS())return <section id="account-offer" className="card accountOffer"><h2>Mon offre actuelle</h2><p>{store.profile?.account_tier==='pro'?'Pro':store.profile?.account_tier==='plus'?'Plus':'Free'}</p><p>Les accès offerts restent associés à ton compte. Les abonnements Apple sont présentés ci-dessous.</p></section>;
  return <section id="account-offer" className="card accountOffer" aria-labelledby="account-offer-title">
   <div className="accountOfferHeading"><div><small>MON OFFRE</small><h2 id="account-offer-title">Choisis ton NailMoods</h2><p>Trois façons d’utiliser l’application. Free est sans abonnement. Les accès offerts pendant la bêta sont indiqués ci-dessous ; les abonnements Android sont présentés dans Google Play.</p></div><ShieldCheck aria-hidden="true"/></div>
   <div className="accountOfferGrid" role="radiogroup" aria-label="Type de compte">

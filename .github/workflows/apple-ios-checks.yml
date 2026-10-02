@@ -1,0 +1,50 @@
+name: Apple preparation checks (unsigned, no deployment)
+on:
+  push:
+    branches: [feat/apple-storekit-ios]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run ios:recette
+      - name: Toolchain and unsigned simulator build
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/nailmoods-ios CODE_SIGNING_ALLOWED=NO build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nailmoods-ios-unsigned-build-log
+          path: /tmp/nailmoods-ios/Logs/Build
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm run mobile:production
+      - run: npx cap sync android
+        env:
+          NAILMOODS_MOBILE_ENV: production
+      - run: npm run mobile:assets
+      - run: chmod +x android/gradlew && ./android/gradlew -p android -PnailmoodsEnvironment=production :app:compileDebugJavaWithJavac --console=plain

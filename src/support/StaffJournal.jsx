@@ -1,3 +1,4 @@
+import PublicationReview from './PublicationReview';
 import React,{useEffect,useState} from 'react';
 import {ShieldCheck,RefreshCw,LogOut,UserRound} from 'lucide-react';
 import {TicketList} from './SupportPanel';
@@ -13,7 +14,7 @@ export default function StaffJournal({client,onExit,onSignOut}){
  if(!allowed)return <main className="staffJournal"><h1>Accès staff indisponible</h1><p>Reconnecte-toi avec un compte habilité.</p><button onClick={onExit}>Revenir à mon profil</button><button onClick={onSignOut}>Se déconnecter</button></main>;
  return <main className="staffJournal">
   <header className="staffJournalHeader"><span className="staffJournalIcon"><ShieldCheck aria-hidden="true"/></span><div className="staffJournalHeading"><small>NAILMOODS · ESPACE INTERNE</small><h1>Journal staff</h1><p>Signalements et demandes d’aide à traiter.</p></div></header>
-  <section className="staffJournalQueue"><p className="staffTargets">Objectifs bêta : support et compte sous 48 h ouvrées · signalement sous 24 h ouvrées · urgent dès lecture.</p><button className="staffRefresh" onClick={()=>setRevision(v=>v+1)} aria-label="Actualiser le journal staff"><RefreshCw size={18}/>Actualiser</button><TicketList key={revision} client={client} staff showRefresh={false}/></section>
-  <footer className="staffJournalFooter"><p>Accès limité aux dossiers reçus et aux éléments explicitement signalés. Les collections, journaux et conversations privées ne sont pas accessibles.</p><div className="staffJournalActions"><button onClick={onExit}><UserRound size={17}/>Revenir à mon profil</button><button onClick={onSignOut}><LogOut size={17}/>Se déconnecter</button></div></footer>
+  <section className="staffJournalQueue"><p className="staffTargets">Objectifs bêta : support et compte sous 48 h ouvrées · signalement sous 24 h ouvrées · urgent dès lecture.</p><button className="staffRefresh" onClick={()=>setRevision(v=>v+1)} aria-label="Actualiser le journal staff"><RefreshCw size={18}/>Actualiser</button><PublicationReview key={'publication:'+revision} client={client} staff/><TicketList key={revision} client={client} staff showRefresh={false}/></section>
+  <footer className="staffJournalFooter"><p>Accès limité aux dossiers reçus aux éléments explicitement signalés et aux photos proposées à la publication. Les collections, journaux et conversations privées ne sont pas accessibles.</p><div className="staffJournalActions"><button onClick={onExit}><UserRound size={17}/>Revenir à mon profil</button><button onClick={onSignOut}><LogOut size={17}/>Se déconnecter</button></div></footer>
  </main>;
 }

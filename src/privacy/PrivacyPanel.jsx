@@ -1,10 +1,11 @@
+import {isAppleIOS,manageAppleSubscription} from '../cloud/appleBilling';
 import {stopActiveAnalytics} from '../analytics/analytics';
 import React, { useEffect, useState } from 'react';
 import Sheet from '../Sheet';
 import { TERMS_VERSION, PRIVACY_VERSION, TECHNOLOGIES, DENIED, availableChoices, readGuestConsent, GUEST_CONSENT_KEY } from './policy';
 import { privacyService, downloadJSON } from './service';
 import './privacy.css';
-const legal = { conditions: 'conditions-0.5-beta.html', confidentialite: 'confidentialite-0.7-beta.html', informations: 'informations-0.4-beta.html' };
+const legal = { conditions: 'conditions-0.6-beta.html', confidentialite: 'confidentialite-0.8-beta.html', informations: 'informations-0.5-beta.html' };
 export function LegalLinks() { return <p className="legalLinks"><a href={`${import.meta.env.BASE_URL}legal/${legal.conditions}`} target="_blank" rel="noopener">Conditions d’utilisation · {TERMS_VERSION}</a><a href={`${import.meta.env.BASE_URL}legal/${legal.confidentialite}`} target="_blank" rel="noopener">Politique de confidentialité · {PRIVACY_VERSION}</a><a href={`${import.meta.env.BASE_URL}legal/${legal.informations}`} target="_blank" rel="noopener">Mentions légales et conservation</a></p>; }
 export default function PrivacyPanel({ client, userId, tier, guestStorage, onDeleted, localDraft, embedded = false, onBack }) {
   const [panel, setPanel] = useState(null), [choices, setChoices] = useState(DENIED), [record, setRecord] = useState(null);
@@ -34,7 +35,7 @@ export default function PrivacyPanel({ client, userId, tier, guestStorage, onDel
     const result = userId ? await privacyService(client).exportData() : { format: 'nailmoods-guest-v1', data: localDraft?.(), privacy: readGuestConsent(guestStorage) };
     // Include unsynced local changes, distinctly labelled.
     if (userId) result.local_pending_copy = localDraft?.();
-    downloadJSON(result, 'nailmoods-mes-donnees.json'); setNotice('Ton export JSON est prêt. Il peut contenir des photos privées : conserve-le en lieu sûr.');
+    await downloadJSON(result, 'nailmoods-mes-donnees.json'); setNotice('Ton export JSON est prêt. Il peut contenir des photos privées : conserve-le en lieu sûr.');
   } catch { setNotice('L’export n’a pas abouti. Réessaie ; aucune donnée n’a été supprimée.'); } finally { setBusy(false); } }
   async function remove() { setBusy(true); setNotice(''); try {
     const deleted = await privacyService(client).deleteAccount(confirmation); await onDeleted(deleted);
@@ -58,7 +59,7 @@ export default function PrivacyPanel({ client, userId, tier, guestStorage, onDel
         {record?.consent_updated_at && <p>Dernier choix enregistré : {new Date(record.consent_updated_at).toLocaleDateString('fr-FR')}. Notice version {record.privacy_version}.</p>}
       </>}
       {panel === 'data' && <><p>Ton export regroupe ton profil, tes produits, stickers, matériel, inspirations, journal, favoris, données Pro personnelles et choix de confidentialité. Les modifications locales en attente sont identifiées séparément.</p><p>Les photos incorporées aux fiches sont incluses ; les photos enregistrées sous forme de liens restent des liens. Les fichiers déjà téléchargés et les copies volontairement partagées ne peuvent pas être effacés à distance.</p><button disabled={busy} onClick={exportData}>Télécharger mes données</button></>}
-      {panel === 'delete' && <><p>Cette action est définitive. Elle supprime ton compte, tes espaces dont tu es propriétaire, leurs produits, inspirations et journal, tes contenus privés et tes données de profil. Les messages texte déjà envoyés restent visibles chez leurs destinataires sous « Compte supprimé », sans ton nom, ton @ID ni ton avatar. Les données invitées de cet appareil sont conservées.</p><p>Télécharge tes données avant de continuer si tu souhaites les garder. Les copies déjà enregistrées par un destinataire ne sont pas supprimées à distance.</p><p>Supprimer ton compte ne résilie pas un abonnement Google Play. Résilie-le séparément avant de continuer : <a href="https://play.google.com/store/account/subscriptions" target="_blank" rel="noopener noreferrer">Gérer mes abonnements Google Play</a>.</p><button disabled={busy} onClick={exportData}>Télécharger mes données</button><label>Écris SUPPRIMER pour confirmer<input autoComplete="off" value={confirmation} onChange={e => setConfirmation(e.target.value)}/></label><button disabled={busy || confirmation !== 'SUPPRIMER'} onClick={remove}>Confirmer la suppression définitive</button><button disabled={busy} onClick={() => setPanel(null)}>Annuler</button></>}
+      {panel === 'delete' && <><p>Cette action est définitive. Elle supprime ton compte, tes espaces dont tu es propriétaire, leurs produits, inspirations et journal, tes contenus privés et tes données de profil. Les messages texte déjà envoyés restent visibles chez leurs destinataires sous « Compte supprimé », sans ton nom, ton @ID ni ton avatar. Les données invitées de cet appareil sont conservées.</p><p>Télécharge tes données avant de continuer si tu souhaites les garder. Les copies déjà enregistrées par un destinataire ne sont pas supprimées à distance.</p><p>Supprimer ton compte ne résilie pas ton abonnement App Store ou Google Play. {isAppleIOS() ? <button type="button" onClick={() => manageAppleSubscription().catch(() => setNotice('Ouvre Réglages → ton compte Apple → Abonnements pour le gérer.'))}>Gérer mon abonnement Apple</button> : <> Résilie-le séparément avant de continuer : <a href="https://play.google.com/store/account/subscriptions" target="_blank" rel="noopener noreferrer">Gérer mes abonnements Google Play</a>.</>}</p><button disabled={busy} onClick={exportData}>Télécharger mes données</button><label>Écris SUPPRIMER pour confirmer<input autoComplete="off" value={confirmation} onChange={e => setConfirmation(e.target.value)}/></label><button disabled={busy || confirmation !== 'SUPPRIMER'} onClick={remove}>Confirmer la suppression définitive</button><button disabled={busy} onClick={() => setPanel(null)}>Annuler</button></>}
       {notice && <p role="status">{notice}</p>}
     </Sheet>}
   </section>;

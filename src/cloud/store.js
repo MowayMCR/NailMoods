@@ -179,6 +179,13 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
           }
           const next=fork(state);next.queue=next.queue.filter(item=>item.id!==op.id);
           if(TABLES.includes(op.table)){if(saved)next.bases[token(op.table,op.rowId)]=saved;else delete next.bases[token(op.table,op.rowId)];}
+          if(saved?.snapshot?.publicationStatus==='pending'){
+            replaceQueuedMedia(next,op,saved);
+            if(op.table==='journal_entries')next.views[JOURNAL].entries=next.views[JOURNAL].entries.map(e=>e.id===op.values?.snapshot?.id?{...e,visibility:'private',publicationStatus:'pending'}:e);
+            if(op.table==='inspirations'){const lib=next.views[LIBRARY],mark=i=>i?.key===op.values?.snapshot?.key?{...i,isPublic:false,publicationStatus:'pending'}:i;next.views[LIBRARY]={...lib,favorites:lib.favorites.map(mark),recent:lib.recent.map(mark),projects:(lib.projects||[]).map(mark),selected:mark(lib.selected)};}
+            globalThis.window?.dispatchEvent(new Event('nm-publication-queued'));
+            onStatus({kind:'warning',code:'publication_pending',message:'Photo envoyée à vérification. Elle reste privée jusqu’à approbation ; consulte Mes publications dans ton profil.'});
+          }
           save(next);
         }
         if(state.migrationRequested && !state.migrationDone){

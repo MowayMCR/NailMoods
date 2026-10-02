@@ -27,7 +27,7 @@ export function privacyService(client) {
       result.support=[];
       for(let offset=0;;offset+=20){const page=await checked(client.rpc('nm_support',{p_action:'export',p_data:{offset}}));result.support.push(...page.items);if(!page.hasMore)break;}
       result.blocked_accounts=await checked(client.rpc('nm_safety',{p_action:'blocked',p_data:{}}));
-      result.google_play_subscriptions=await checked(client.rpc('google_play_entitlement_state'));
+      result.subscriptions=await checked(client.rpc('billing_entitlement_state'));
       // Revalidate: never download account A's export after a switch to B during the request.
       if ((await user()).id !== current.id) throw new Error('Le compte a changé. Relance le téléchargement.');
       return result;
@@ -42,7 +42,18 @@ export function privacyService(client) {
     },
   };
 }
-export function downloadJSON(data, filename) {
+export async function downloadJSON(data, filename) {
+  const {Capacitor}=await import('@capacitor/core');
+  if(Capacitor.getPlatform()==='ios'){
+    const {Filesystem,Directory,Encoding}=await import('@capacitor/filesystem');
+    const {Share}=await import('@capacitor/share');
+    const path='nailmoods-export-'+crypto.randomUUID()+'.json';
+    try{
+      const {uri}=await Filesystem.writeFile({path,directory:Directory.Cache,encoding:Encoding.UTF8,data:JSON.stringify(data,null,2)});
+      await Share.share({title:'Mes données NailMoods',files:[uri],dialogTitle:'Enregistrer mon export'});
+    }finally{try{await Filesystem.deleteFile({path,directory:Directory.Cache});}catch{}}
+    return;
+  }
   const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
   const link = document.createElement('a'); link.href = url; link.download = filename; link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);

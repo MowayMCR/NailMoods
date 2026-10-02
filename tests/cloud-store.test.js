@@ -244,3 +244,17 @@ test('local journal draft survives reload without publishing an unfinished entry
  store.storage.setItem(key,JSON.stringify(draft));assert.equal(await store.flush(),true);store.close();
  const reopened=make(storage,repo);await reopened.load();assert.deepEqual(JSON.parse(reopened.storage.getItem(key)),draft);assert.equal(repo.rows.journal_entries.length,0);
 });
+
+test('server prepublication review also makes the local Journal private without losing the photo',async()=>{
+ const repo=backend(),write=repo.write;
+ repo.write=async op=>{
+  const row=await write(op);
+  return op.table==='journal_entries'&&op.action!=='delete'?{...row,visibility:'private',snapshot:{...row.snapshot,visibility:'private',publicationStatus:'pending'}}:row;
+ };
+ const media={download:async()=>new Blob(['test'],{type:'image/png'}),uploadPublic:async()=>({path:'A/WA/journal/new-copy.png'})};
+ const store=make(memory(),repo,'A','WA',{media});await store.load();
+ store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'pose',date:'2026-09-19',photo:'A/WA/journal/private.png',mediaPath:'A/WA/journal/private.png',visibility:'public'}]}));
+ assert.equal(await store.flush(),true);
+ const entry=JSON.parse(store.storage.getItem(JOURNAL)).entries[0];
+ assert.equal(entry.visibility,'private');assert.equal(entry.publicationStatus,'pending');assert.ok(entry.photo);
+});

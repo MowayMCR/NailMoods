@@ -1,0 +1,20 @@
+import {spawnSync} from 'node:child_process';
+import {readFileSync,writeFileSync} from 'node:fs';
+const environment=process.argv[2];
+if(!['recette','production'].includes(environment))throw Error('Usage: node scripts/build-ios.mjs recette|production');
+const env={...process.env,NAILMOODS_MOBILE_ENV:environment,NAILMOODS_PLATFORM:'ios'};
+const run=(cmd,args)=>{const r=spawnSync(cmd,args,{env,stdio:'inherit'});if(r.status!==0)process.exit(r.status||1);};
+run(process.execPath,['scripts/build-mobile.mjs',environment]);
+run(process.execPath,['scripts/ios-assets.mjs']);
+run('npx',['--no-install','cap','sync','ios']);
+const bundle=env.NAILMOODS_IOS_BUNDLE_ID||(environment==='production'?'com.nailmoods.app':'com.nailmoods.app.recette');
+if(!/^[A-Za-z][A-Za-z0-9-]*(\.[A-Za-z0-9-]+)+$/.test(bundle))throw Error('Invalid iOS bundle identifier');
+const plist='ios/App/App/Info.plist';
+let xml=readFileSync(plist,'utf8').replace(/<key>CFBundleDisplayName<\/key>\s*<string>[^<]*<\/string>/,'<key>CFBundleDisplayName</key><string>'+(environment==='production'?'NailMoods':'NailMoods Recette')+'</string>');
+xml=xml.replace(/<key>CFBundleURLSchemes<\/key>\s*<array>\s*<string>[^<]*<\/string>/,'<key>CFBundleURLSchemes</key><array><string>'+(environment==='production'?'com.nailmoods.app':'com.nailmoods.app.recette')+'</string>');writeFileSync(plist,xml);
+const project='ios/App/App.xcodeproj/project.pbxproj';
+writeFileSync(project,readFileSync(project,'utf8').replace(/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/g,`PRODUCT_BUNDLE_IDENTIFIER = ${bundle};`).replace(/IPHONEOS_DEPLOYMENT_TARGET = [^;]+;/g,'IPHONEOS_DEPLOYMENT_TARGET = 16.0;'));
+// SDK package version is pinned independently of CLI-generated SPM file.
+const spm='ios/App/CapApp-SPM/Package.swift';
+writeFileSync(spm,readFileSync(spm,'utf8').replace(/from: "[\d.]+"/, 'exact: "8.5.2"'));
+console.log('iOS source synchronized; compile/archive with Xcode 26+ on macOS. Bundle must be registered by Marie: '+bundle);

@@ -15,6 +15,7 @@ export async function initializeNative(){
   const persistent=await createNativeStorage();
   setNativeServices({...persistent,cache:await createNativeCache(),purgeAccountMedia,principal:'boot',checkpoint:null});
   document.documentElement.classList.add('nm-native');
+  if(globalThis.Capacitor?.getPlatform()==='ios')document.documentElement.classList.add('nm-ios');
   await installNativeMedia();
   nativeServices().purgeAccount=async id=>{
     await Preferences.set({key:'pending-account-cleanup',value:id});

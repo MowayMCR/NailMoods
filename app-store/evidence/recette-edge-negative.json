@@ -1,0 +1,26 @@
+[
+  {
+    "endpoint": "apple-verify",
+    "scenario": "sans authentification",
+    "http": 401,
+    "body": {
+      "error": "authentication_required"
+    }
+  },
+  {
+    "endpoint": "apple-verify",
+    "scenario": "scheduler forgé",
+    "http": 401,
+    "body": {
+      "error": "invalid_scheduler_key"
+    }
+  },
+  {
+    "endpoint": "apple-notifications",
+    "scenario": "JWS forgé",
+    "http": 400,
+    "body": {
+      "error": "invalid_signed_payload"
+    }
+  }
+]

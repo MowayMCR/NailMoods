@@ -23,3 +23,11 @@ supabase/.temp/
 .mobile-assets/
 resources/
 android/app/src/main/res/**/*.png
+
+# Rebuilt from the existing official logo by ios:recette/production.
+ios/App/App/Assets.xcassets/**/*.png
+ios/App/App/public/
+ios/App/App/capacitor.config.json
+*.p8
+*.mobileprovision
+.apple-secrets*

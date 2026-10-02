@@ -49,6 +49,12 @@ test('Billing SQL executes and preserves provenance, cancellation, founder right
     await db.exec(read('supabase/migrations/20261002094228_google_play_reconciliation_nonces.sql'));
     const result=await db.exec(read('tests/sql/google-play-regression.sql'));
     assert.match(result.at(-1).rows[0].result,/^PASS:/);
+    await db.exec(read('supabase/migrations/20261002154347_apple_storekit_entitlements.sql'));
+    await db.exec(read('supabase/migrations/20261002161014_apple_reconciliation.sql'));
+    assert.equal((await db.query('select private.apple_schedule_reconciliation() as request')).rows[0].request,null);
+    await assert.rejects(db.query("select public.apple_scheduler_context('forged')"),/invalid_scheduler_key/);
+    const apple = await db.exec(read('tests/sql/apple-regression.sql'));
+    assert.match(apple.at(-1).rows[0].result,/^PASS:/);
     assert.equal((await db.query('select count(*)::integer as n from auth.users')).rows[0].n,0);
     assert.equal((await db.query('select enabled from private.google_play_settings')).rows[0].enabled,false);
     assert.equal((await db.query('select private.google_play_schedule_reconciliation() as request')).rows[0].request,null);
