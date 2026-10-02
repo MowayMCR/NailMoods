@@ -28,6 +28,7 @@ jobs:
         run: |
           node scripts/build-mobile.mjs production
           npx cap sync android
+          npm run mobile:assets
           chmod +x android/gradlew
           ./android/gradlew -p android -PnailmoodsEnvironment=production :app:compileDebugJavaWithJavac --console=plain
       - name: Resolve the Billing dependency
