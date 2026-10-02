@@ -1,4 +1,4 @@
-import EquipmentLibrary from './EquipmentLibrary';
+import EquipmentLibrary from './EquipmentLibrary.jsx';
 import {equipmentSeed} from './equipmentSeed.js';
 import {setEquipmentOwned,duplicateCustomEquipment} from './equipmentLibrary.js';
 import {productKind,productKinds} from './productKinds.js';
