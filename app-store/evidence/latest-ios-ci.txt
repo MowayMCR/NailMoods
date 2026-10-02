@@ -1,0 +1,11 @@
+Run: https://github.com/MowayMCR/NailMoods/actions/runs/37041203474
+Code commit: c49f5f73dfdd9f43665e68a2df4b56439bde4315
+Scope: unsigned Recette iOS simulator/device archive and Android Java compilation; no purchase or device execution.
+2026-10-02T17:31:38.1122370Z # tests 397
+2026-10-02T17:31:38.1123170Z # pass 395
+2026-10-02T17:31:38.1123560Z # fail 0
+2026-10-02T17:31:38.1124410Z # skipped 2
+2026-10-02T17:31:46.2769880Z Xcode 26.6
+2026-10-02T17:31:46.2783640Z Build version 17F113
+2026-10-02T17:33:54.0748330Z ** BUILD SUCCEEDED **
+2026-10-02T17:34:56.6070780Z ** ARCHIVE SUCCEEDED **

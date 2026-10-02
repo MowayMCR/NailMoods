@@ -1,0 +1,38 @@
+[
+  {
+    "project": "pueqkbwfwxgqzmkauxoz",
+    "case": "missing",
+    "status": 403,
+    "body": "{\"error\":\"forbidden\"}"
+  },
+  {
+    "project": "pueqkbwfwxgqzmkauxoz",
+    "case": "legacy_header",
+    "status": 403,
+    "body": "{\"error\":\"forbidden\"}"
+  },
+  {
+    "project": "pueqkbwfwxgqzmkauxoz",
+    "case": "forged_nonce",
+    "status": 403,
+    "body": "{\"error\":\"forbidden\"}"
+  },
+  {
+    "project": "rvqmtnqvzzxzwfxfyjcg",
+    "case": "missing",
+    "status": 403,
+    "body": "{\"error\":\"forbidden\"}"
+  },
+  {
+    "project": "rvqmtnqvzzxzwfxfyjcg",
+    "case": "legacy_header",
+    "status": 403,
+    "body": "{\"error\":\"forbidden\"}"
+  },
+  {
+    "project": "rvqmtnqvzzxzwfxfyjcg",
+    "case": "forged_nonce",
+    "status": 403,
+    "body": "{\"error\":\"forbidden\"}"
+  }
+]

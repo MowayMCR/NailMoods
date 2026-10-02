@@ -1,0 +1,5 @@
+Run: https://github.com/MowayMCR/NailMoods/actions/runs/37042670070
+Code commit: 7bf749372787b80c1deec12c21a704199f77e221
+Scope: unsigned Recette iOS simulator/device archive and Android Java compilation; no purchase or device execution.
+2026-10-02T17:45:24.0683199Z > Task :app:compileDebugJavaWithJavac
+2026-10-02T17:45:24.1783489Z BUILD SUCCESSFUL in 1m 25s

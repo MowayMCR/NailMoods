@@ -1,0 +1,11 @@
+Run: https://github.com/MowayMCR/NailMoods/actions/runs/37040835653
+Commit: aa588eebce793be67e263202a91fa7d3841cbce4
+Scope: unsigned simulator build plus unsigned device Recette archive; no distribution signature or IPA.
+2026-10-02T17:28:21.7738100Z # tests 397
+2026-10-02T17:28:21.7738440Z # pass 395
+2026-10-02T17:28:21.7738590Z # fail 0
+2026-10-02T17:28:21.7738960Z # skipped 2
+2026-10-02T17:28:26.9669870Z Xcode 26.6
+2026-10-02T17:28:26.9763970Z Build version 17F113
+2026-10-02T17:30:14.7348940Z ** BUILD SUCCEEDED **
+2026-10-02T17:31:16.6617890Z ** ARCHIVE SUCCEEDED **

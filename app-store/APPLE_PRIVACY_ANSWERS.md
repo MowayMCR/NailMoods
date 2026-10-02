@@ -7,7 +7,7 @@ Menu : App Store Connect → Apps → NailMoods → App Privacy → Get Started/
 | Catégorie Apple à cocher | Données réellement constatées | Collectée | Finalités à sélectionner | Liée | Destinataire |
 |---|---|---|---|---|---|
 | Contact Info → Name | nom/pseudo, display_name, profil professionnel | oui | App Functionality | oui | Supabase ; autres membres selon visibilité |
-| Contact Info → Email Address | Auth, récupération, support | oui | App Functionality | oui | Supabase Auth, SMTP configuré, routage support OVH |
+| Contact Info → Email Address | Auth, récupération, support | oui | App Functionality | oui | Supabase Auth, SMTP et prestataire email support à confirmer dans les consoles |
 | Identifiers → User ID | Supabase UUID, @NailMoodsID, appAccountToken, identifiant analytics pseudonymisé | oui | App Functionality ; Analytics pour identifiant analytics consenti | oui | Supabase ; Apple pour token ; Google pour identifiant obscurci |
 | Location → Coarse Location | ville professionnelle facultative saisie manuellement ; aucune permission GPS | oui, facultative | App Functionality | oui | Supabase ; public si choisi |
 | User Content → Photos or Videos | avatars, poses, inspirations, pièces jointes photo support ; pas de capture vidéo native | oui | App Functionality | oui | Supabase ; membres/staff selon action |
@@ -24,6 +24,8 @@ Menu : App Store Connect → Apps → NailMoods → App Privacy → Get Started/
 Phone Number et Physical Address : aucun champ utilisateur constaté. L’adresse professionnelle de Marie publiée dans les mentions est celle de l’éditeur, pas une collecte de l’utilisatrice. Precise Location : non. Contacts : non. Audio : non. Health/Fitness, Financial Info (Payment Info, Credit Info, Other Financial Info), Sensitive Info, Browsing History, Search History, Device ID, Advertising Data : aucun traitement applicatif constaté correspondant. Les critères d’inspiration et la recherche interne ne sont pas sauvegardés comme historique de recherche ; seul le nom d’événement générique peut l’être avec consentement. Crash Data/Performance Data : pas de Sentry/Firebase Crashlytics ou télémétrie de stack/crash dédiée trouvés. Les rapports TestFlight/Apple constituent un flux Apple à examiner séparément si exportés puis conservés par NailMoods.
 
 L’application peut traiter localement une photo OCR ou un rendu sans sauvegarde : ce calcul seul n’est pas une collecte serveur. Sauvegarde/import/publication sont des collectes de User Content. Aucun envoi à une IA distante trouvé. Aucun SDK Firebase/publicitaire/pixel/tracker tiers trouvé. ATT n’est donc pas ajouté ; refaire l’analyse avant toute nouvelle dépendance.
+
+Les parcours photo utilisent un réencodage canvas ; le support a été corrigé pour retirer aussi les métadonnées EXIF/GPS avant son upload. Vérifier séparément les anciens médias et les emails volontaires : si un traitement/conservation de coordonnées GPS y est effectivement constaté, actualiser la déclaration et minimiser les métadonnées. Aucune permission GPS n’est demandée par l’app.
 
 ## Points qui exigent encore une confirmation humaine
 

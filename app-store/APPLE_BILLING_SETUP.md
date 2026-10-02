@@ -44,7 +44,7 @@ Un Google valide donne accès sur iPhone et un Apple valide sur Android. Le serv
 ## Déploiement contrôlé
 
 1. Sauvegarder les fonctions/DDL existantes et relever les versions de migrations des deux projets. Recette : `pueqkbwfwxgqzmkauxoz` ; Production : `rvqmtnqvzzxzwfxfyjcg`.
-2. Appliquer les nouvelles migrations dans l’ordre chronologique, après les migrations Google de la branche de référence. Les settings Apple restent désactivés par défaut.
+2. Réconcilier l’historique du projet et appliquer seulement les nouvelles migrations nécessaires, dans l’ordre chronologique après Google. Consulter l’état Recette/Production dans `APPLE_COMPLIANCE_AUDIT.md` : Apple ledger/réconciliation et fonctions sont déjà présents en Recette, pas en Production. Les settings Apple restent désactivés par défaut. Séparer les migrations légales/UGC jusqu’au déploiement coordonné des clients.
 3. Déployer `apple-verify`, `apple-notifications` et `moderation-preview` avec leurs `_shared` et `deno.json`. `verify_jwt=false` est nécessaire pour le webhook Apple et les nonces cron ; les requêtes utilisatrices vérifient le JWT via Auth.getUser. Le preview exige aussi le rôle staff.
 4. Installer les secrets selon `APPLE_SECRETS_REQUIRED.md`, puis configurer uniquement le projet choisi :
 
@@ -70,3 +70,15 @@ Ne jamais activer Family Sharing ou Streamlined Purchasing pour cette première 
 La bibliothèque Node Apple est importée dans l’Edge runtime Deno. Le rejet cryptographique d’un JWS forgé est testé localement ; une vérification positive avec révocation de certificats en ligne nécessite Apple Sandbox. Le cold start, OCSP, latence et timeouts doivent être surveillés avant lancement. Le cron ne remplace pas les notifications V2 ; en cas de panne prolongée, tester la reprise et l’historique de notifications Apple. Réinstaller et se reconnecter au même compte restaure le mapping. Une suppression du compte efface ce mapping ; une restauration sur un nouveau compte n’est pas une réattribution automatique.
 
 Sources : [StoreKit](https://developer.apple.com/documentation/storekit), [App Store Server Library officielle](https://github.com/apple/app-store-server-library-node), [groupes/niveaux](https://developer.apple.com/help/app-store-connect/manage-subscriptions/offer-auto-renewable-subscriptions/).
+
+## Nettoyage médias commun Apple/Android
+
+`media-cleanup` exige désormais `x-nm-cleanup-key`, consommé via RPC service-only. Le nonce aléatoire ne dure que deux minutes, est stocké haché et n’est utilisable qu’une fois. Les anciens headers/secrets sont refusés. Les migrations correspondantes et l’Edge ont été déployées dans les deux projets ; le cron Recette existant a été adapté et un cron toutes les cinq minutes a été ajouté dans Production où il manquait.
+
+Pour un projet neuf, après ces migrations et le déploiement de l’Edge, un administrateur SQL peut configurer le job sans copier de secret :
+
+```sql
+select private.configure_media_cleanup_schedule('https://<PROJECT_REF>.supabase.co');
+```
+
+Contrôler ensuite `cron.job`, `cron.job_run_details`, les réponses du worker et les jobs médias échoués. Les permissions des objets pg_net gérés restent à corriger par leur propriétaire/Supabase : la tentative REVOKE n’a pas changé leurs ACL dans les projets observés. Le nonce retire le secret permanent de la queue, il ne remplace pas cette restriction ACL.

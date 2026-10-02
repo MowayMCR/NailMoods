@@ -1,0 +1,80 @@
+{
+  "icons": [
+    {
+      "path": "ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGB",
+      "has_transparency": false
+    },
+    {
+      "path": "ios/App/App/Assets.xcassets/Splash.imageset/Default@3x~universal~anyany.png",
+      "width": 2732,
+      "height": 2732,
+      "mode": "RGBA",
+      "has_transparency": false
+    },
+    {
+      "path": "ios/App/App/Assets.xcassets/Splash.imageset/Default@1x~universal~anyany-dark.png",
+      "width": 2732,
+      "height": 2732,
+      "mode": "RGBA",
+      "has_transparency": false
+    },
+    {
+      "path": "ios/App/App/Assets.xcassets/Splash.imageset/Default@2x~universal~anyany-dark.png",
+      "width": 2732,
+      "height": 2732,
+      "mode": "RGBA",
+      "has_transparency": false
+    },
+    {
+      "path": "ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png",
+      "width": 2732,
+      "height": 2732,
+      "mode": "RGB",
+      "has_transparency": false
+    },
+    {
+      "path": "ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png",
+      "width": 2732,
+      "height": 2732,
+      "mode": "RGB",
+      "has_transparency": false
+    },
+    {
+      "path": "ios/App/App/Assets.xcassets/Splash.imageset/Default@1x~universal~anyany.png",
+      "width": 2732,
+      "height": 2732,
+      "mode": "RGBA",
+      "has_transparency": false
+    },
+    {
+      "path": "ios/App/App/Assets.xcassets/Splash.imageset/Default@3x~universal~anyany-dark.png",
+      "width": 2732,
+      "height": 2732,
+      "mode": "RGBA",
+      "has_transparency": false
+    },
+    {
+      "path": "ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png",
+      "width": 2732,
+      "height": 2732,
+      "mode": "RGB",
+      "has_transparency": false
+    },
+    {
+      "path": "ios/App/App/Assets.xcassets/Splash.imageset/Default@2x~universal~anyany.png",
+      "width": 2732,
+      "height": 2732,
+      "mode": "RGBA",
+      "has_transparency": false
+    }
+  ],
+  "usage_descriptions": {
+    "NSCameraUsageDescription": "Photographier un produit à scanner ou ajouter une photo de pose dans NailMoods."
+  },
+  "privacy_manifest_valid_plist": true,
+  "bundle_registration_verified": false,
+  "physical_UI_verified": false
+}

@@ -8,7 +8,13 @@ Base réelle : `feat/google-play-billing-beta6`, commit `2ad90410549b5b0da31e254
 
 🟡 Bundle proposé dérivé de l’identifiant Android : `com.nailmoods.app`. Ce n’est pas la preuve d’un identifiant Apple enregistré. Marie doit le confirmer avant toute création. Team ID, App ID numérique, contrats, prix, signature, vrais achats Sandbox, captures et compte de review restent nécessaires.
 
-⛔ Cette machine Linux ne possède ni Xcode, ni certificats Apple, ni appareil iPhone. Aucune archive, compilation Swift, validation d’archive, IPA ou transaction Apple réelle n’est prétendue. Le workflow macOS fourni constitue une vérification à exécuter, pas une preuve de réussite.
+✅ La CI macOS a compilé le projet iOS et StoreKit sans signature pour simulateur avec Xcode 26.6, SDK 26.5, au commit f9aa1cd. La compilation Java Android a aussi réussi : [run 37038804502](https://github.com/MowayMCR/NailMoods/actions/runs/37038804502). Extraits dans `evidence/`.
+
+⛔ Aucune archive signée, validation d’archive de distribution, IPA ni transaction Apple réelle n’est prétendue. Cette machine Linux n’a ni certificat Apple ni iPhone ; les essais sur appareil et Sandbox restent nécessaires.
+
+✅ Une **archive appareil non signée Recette** a également été créée par CI : `evidence/ios-archive-ci.txt`. Dans [Actions](https://github.com/MowayMCR/NailMoods/actions), ouvrir le run de la branche Apple, puis Artifacts → `nailmoods-recette-unsigned-xcarchive`. Elle sert à inspecter le build et ne peut pas être envoyée à TestFlight. Rétention CI de cet artifact : 7 jours ; les sources permettent de le reconstruire.
+
+Vérification finale du code `7bf7493` : [run 37042670070](https://github.com/MowayMCR/NailMoods/actions/runs/37042670070), iOS et Android réussis, 395 tests réussis / 2 ignorés, archive appareil non signée générée. Preuves `evidence/final-code-*-ci.txt` et `final-code-artifacts.json`.
 
 ❌ Le domaine officiel est protégé par Netlify au moment de la vérification sans connexion. Les routes légales existent dans le dépôt ; leur accessibilité publique sur ce domaine n’est pas acquise.
 

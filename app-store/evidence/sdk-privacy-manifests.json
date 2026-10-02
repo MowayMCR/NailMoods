@@ -1,0 +1,17 @@
+{
+  "scope": "Installed Capacitor npm plugin source manifests; transitive SPM/archive binaries still require inspection",
+  "manifests": [
+    {
+      "path": "node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/PrivacyInfo.xcprivacy",
+      "tracking": false,
+      "required_apis": [],
+      "collected_types": []
+    },
+    {
+      "path": "node_modules/@capacitor/ios/Capacitor/Capacitor/PrivacyInfo.xcprivacy",
+      "tracking": false,
+      "required_apis": [],
+      "collected_types": []
+    }
+  ]
+}
