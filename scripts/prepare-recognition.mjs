@@ -11,4 +11,5 @@ for (const lang of ['eng', 'fra']) {
   const folder = path.dirname(require.resolve(`@tesseract.js-data/${lang}/package.json`));
   await copyFile(path.join(folder, '4.0.0_best_int', `${lang}.traineddata.gz`), new URL(`${lang}.traineddata.gz`, destination));
 }
+await copyFile(require.resolve('zxing-wasm/reader/zxing_reader.wasm'),new URL('zxing_reader.wasm',destination));
 console.log('Recognition assets ready (loaded only when requested).');

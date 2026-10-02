@@ -32,7 +32,7 @@ test('3. shade number and brand work without any EAN, including short KIKO and l
 });
 test('4. decoded unknown barcode differs from unread and keeps a nonblocking color fallback',()=>{
  const report=recognizeEvidence(catalogue,{rawText:'',barcodes:[barcodeObservation(unknown,'EAN_13','scanner')],barcodeAttempted:true},{hasColor:true});
- assert.equal(report.title,'Code-barres lu');assert.equal(report.barcodeState,'read_unknown');assert.equal(report.failure,'barcode_not_in_catalogue');assert.match(report.message,/couleur estimée reste utilisable/);assert.equal(report.matches.length,0);
+ assert.equal(report.title,'Ce produit n’est pas encore dans NailMoods');assert.equal(report.barcodeState,'read_unknown');assert.equal(report.failure,'barcode_not_in_catalogue');assert.match(report.message,/couleur estimée reste utilisable/);assert.equal(report.matches.length,0);
  const unread=recognizeEvidence(catalogue,{barcodeAttempted:true,barcodeError:'BARCODE_UNREAD'});assert.equal(unread.title,'Code-barres non lu');
  assert.notEqual(report.message,unread.message);
 });

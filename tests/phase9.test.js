@@ -15,14 +15,13 @@ test('a selected shade stays in every proposal even beyond the large inventory s
  assert.ok(report.results.length);
  for(const idea of report.results){assert.ok(idea.palette.some(p=>p.id==='p104'));assert.ok(idea.nails.some(n=>n.productId==='p104'&&n.color==='#abcdef'));}
 });
-test('selected colors and sticker survive impossible count and duration without fake equipment',()=>{
+test('impossible explicit colours and decoration retain the maximum time and expose an unavailable result',()=>{
  const items=[color('a'),color('b','#f1cdee'),sticker];
  const report=generateInspirations(items,{}, {intent:'collection',requiredColorIds:['a','b'],decorations:'with',decorationId:'s',polishCount:5,duration:15},1);
- assert.ok(report.adjusted);assert.ok(report.results.length);
- for(const idea of report.results){assert.equal(idea.palette.length,2);assert.ok(idea.resources.some(r=>r.id==='s'));assert.ok(idea.nails.some(n=>n.decoration?.motif==='flower'));assert.equal(idea.resources.length,1);}
+ assert.ok(report.adjusted);assert.equal(report.results.length,0);assert.match(report.unavailable,/Tes choix sont conservés/);
 });
-test('sticker-only and empty collections remain useful in Free',()=>{
- const r=generateInspirations([sticker],{}, {intent:'inspire',decorations:'with',decorationId:'s',duration:15},1);
+test('sticker-only and empty collections remain useful in Free with a feasible duration',()=>{
+ const r=generateInspirations([sticker],{}, {intent:'inspire',decorations:'with',decorationId:'s',duration:30},1);
  assert.ok(r.results.length);assert.ok(r.results.every(i=>i.resources.some(p=>p.id==='s')));
  assert.deepEqual(ownedIdeaProducts(r.results[0],[sticker]).map(p=>p.id),['s']);
  assert.equal(ownedIdeaProducts(generateInspirations([],{}).results[0],[]).length,0);

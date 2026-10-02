@@ -78,7 +78,7 @@ test('an outdated retained idea keeps its original shades and clearly reports ch
   assert.ok(home.retained.nails.every(nail => nail.color !== '#ffffff'));
 });
 
-test('Free home always offers an inspiration for empty or incomplete inventories', () => {
+test('Free home offers inspiration without inventory and exposes infeasible explicit limits', () => {
   const scenarios = [
     { items: [], options, route: 'collection', title: /premières couleurs/ },
     { items: colors.map(item => ({ ...item, type: 'Semi-permanent' })), options: { ...options, decorations: 'without' }, route: 'create', title: /collection/ },
@@ -88,6 +88,7 @@ test('Free home always offers an inspiration for empty or incomplete inventories
   ];
   for (const scenario of scenarios) {
     const home = buildHome({ ...base(), ...scenario });
+    if(scenario.options.duration===15){assert.equal(home.inspiration,null);assert.equal(home.readiness.route,'create');continue;}
     assert.ok(home.inspiration);
     assert.equal(home.priority, 'create');
     assert.equal(home.readiness, null);

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { productURL, shopifyURL, imageURL, shopifyCandidate, inferTraits, fetchProduct, readResponse, validBarcode, barcodeMatches, lookupBarcode, textMatches } from '../src/productImport.js';
+import { productURL, shopifyURL, imageURL, shopifyCandidate, inferTraits, fetchProduct, readResponse, validBarcode, barcodeMatches, textMatches } from '../src/productImport.js';
 import { sampleColor, photoPalette, describeColor, validHex } from '../src/colorAnalysis.js';
 import { createSuggestions } from '../src/creationEngine.js';
 import { snapshotIdea } from '../src/inspirations.js';
@@ -49,15 +49,16 @@ test('material and effect suggestions use product-specific evidence, not accesso
   assert.equal(candidate.fields.finish, undefined); assert.equal(candidate.fields.effect, undefined);
 });
 
-test('fetching omits credentials, is abortable and rejects blocked/oversized or malformed pages', async () => {
-  const controller = new AbortController(); let received;
-  const result = await fetchProduct(url, controller.signal, async (endpoint, options) => { received = { endpoint, options }; return new Response(JSON.stringify(plum)); });
-  assert.equal(result.fields.barcode, '3760297541507');
-  assert.equal(received.options.credentials, 'omit'); assert.equal(received.options.signal, controller.signal); assert.equal(received.options.referrerPolicy, 'no-referrer');
-  await assert.rejects(fetchProduct(url, controller.signal, async () => new Response('blocked', { status: 403 })));
-  await assert.rejects(fetchProduct(url, controller.signal, async () => new Response('<script>bad()</script>')), /boutique/);
-  await assert.rejects(readResponse(new Response('123456'), 5), /volumineuse/);
-  await assert.rejects(readResponse(new Response('x', { headers: { 'content-length': '9999999' } })), /volumineuse/);
+test('URL import uses the authenticated server boundary, preserves cancellation and reports manual fallback', async () => {
+  const controller=new AbortController();let request;
+  const candidate=shopifyCandidate(plum,url);
+  const result=await fetchProduct(url,controller.signal,async(name,options)=>{request={name,options};return {data:{status:'found',candidate}};});
+  assert.equal(result.fields.barcode,'3760297541507');
+  assert.equal(request.name,'product-page');assert.equal(request.options.signal,controller.signal);assert.deepEqual(request.options.body,{url});
+  const partial=await fetchProduct(url,undefined,async()=>({data:{status:'manual',candidate:{fields:{name:'Shade'},images:[],variants:[]}}}));
+  assert.equal(partial.manualFallback,true);assert.equal(partial.fields.name,'Shade');
+  await assert.rejects(fetchProduct(url,undefined,async()=>({error:new Error('403')})),/Impossible de lire/);
+  await assert.rejects(readResponse(new Response('123456'),5),/volumineuse/);
 });
 
 test('EAN/UPC check digits and zero padding avoid invalid or approximate barcode matches', () => {
@@ -68,13 +69,6 @@ test('EAN/UPC check digits and zero padding avoid invalid or approximate barcode
   assert.equal(barcodeMatches(catalog, '3760297541508').length, 0);
 });
 
-test('barcode catalog SKU is only a hint; the actual product barcode must confirm it', async () => {
-  const catalog = [{ id: 1, handle: 'dark-plum-gel-polish', variants: [{ id: 39613396615273, sku: '3760297541507' }] }];
-  const fetcher = async endpoint => new Response(JSON.stringify(endpoint.includes('products.json') ? { products: catalog } : plum));
-  const result = await lookupBarcode('3760297541507', undefined, fetcher);
-  assert.equal(result.method, 'barcode'); assert.equal(result.fields.barcode, '3760297541507');
-  await assert.rejects(lookupBarcode('3760297541507', undefined, async () => new Response(JSON.stringify({ ...plum, variants: [{ id: 39613396615273, sku: '3760297541507', barcode: '036000291452' }] }))), /Aucune référence/);
-});
 
 test('label matching needs the complete shade name and returns choices instead of an invented product', () => {
   const catalog = ['Dark Plum - Gel Polish', 'Plum Blossom - Gel Polish', 'Latte - Gel Polish'].map((title, id) => ({ id, title, variants: [{ requires_shipping: true }] }));

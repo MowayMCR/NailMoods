@@ -1,4 +1,4 @@
-name: Billing beta 6 compile checks (no release)
+name: Beta 6 Android candidate (unsigned, no release)
 on:
   push:
     branches: [feat/google-play-billing-beta6]
@@ -9,7 +9,7 @@ permissions:
 jobs:
   compile:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,3 +33,23 @@ jobs:
           ./android/gradlew -p android -PnailmoodsEnvironment=production :app:compileDebugJavaWithJavac --console=plain
       - name: Resolve the Billing dependency
         run: ./android/gradlew -p android -PnailmoodsEnvironment=production :app:dependencyInsight --dependency com.android.billingclient --configuration debugRuntimeClasspath --console=plain
+
+      - name: Prepare unsigned beta candidate (no upload key)
+        run: ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nailmoods-beta6-production-unsigned-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 7
+      - name: Build Recette debug APK for physical camera validation
+        env:
+          NAILMOODS_MOBILE_ENV: recette
+        run: |
+          npm run mobile:recette
+          npx cap sync android
+          ./android/gradlew -p android -PnailmoodsEnvironment=recette :app:assembleDebug --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nailmoods-recette-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7

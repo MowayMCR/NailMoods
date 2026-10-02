@@ -1,3 +1,5 @@
+import {canonicalTechnique, techniqueRule} from './techniqueRules.js';
+import {moodPreference, harmoniousPalette} from './moodPalettes.js';
 import { productColor, generationFamily } from './colorAnalysis.js';
 import { decorationChoice, isDecoration, stickerTags, stickerAffinity } from './decorations.js';
 import { personalAdjustment, validPersonalSnapshot } from './personalization.js';
@@ -7,28 +9,16 @@ export const normalize = value => String(value ?? '').normalize('NFD').replace(/
 export const normalizePolishCount = value => ['number', 'string'].includes(typeof value) && [1, 2, 3, 4, 5].includes(Number(value)) ? Number(value) : 'auto';
 const unique = items => [...new Map(items.filter(Boolean).map(item => [String(item.id), item])).values()];
 const fieldText = item => normalize([item.name, item.reference, item.materialStyle, ...stickerTags(item)].filter(Boolean).join(' '));
-export const auxiliary = item => /\b(base\s*coat|top\s*coat|primer|cleaner|dissolvant|remover|huile)\b/.test(normalize(item.name).replace(/-/g, ' '));
+export const auxiliary = item => Boolean(item.productKind && item.productKind !== 'Couleur' && item.productKind !== 'Gel de construction') || /\b(base\s*coat|top\s*coat|primer|cleaner|dissolvant|remover|huile)\b/.test(normalize(item.name).replace(/-/g, ' '));
 const needsLamp = item => ['Semi-permanent', 'Gel'].includes(item.type);
 const magnetic = item => /cat.?eye|magnetique|avec aimant/.test(normalize([item.finish, item.effect, item.usage].join(' ')));
 const drawing = new Set(['french', 'dots', 'line']);
-const techniqueAliases = {
-  french: 'french', 'micro french': 'micro-french', 'reverse french': 'reverse-french', 'double french': 'double-french', 'side french': 'side-french', 'deep french': 'deep-french', 'v french': 'v-french',
-  leopard: 'leopard', 'leopard print': 'leopard',
-  tortoiseshell: 'tortoiseshell', tortoise: 'tortoiseshell', crocodile: 'crocodile', 'snake print': 'snake', 'cow print': 'cow', zebra: 'zebra',
-  'blooming gel': 'blooming', blooming: 'blooming', watercolor: 'blooming', airbrush: 'aura',
-  'chrome powder': 'chrome', chrome: 'chrome', 'glazed nails': 'glazed', foil: 'foil', flakes: 'flakes',
-  'cat eye magnetic': 'cat-eye', 'cat-eye magnetic': 'cat-eye', 'velvet nails': 'velvet-magnetic',
-  'aura nails': 'aura', aura: 'aura', '3d gel': 'gel-3d', 'gel 3d': 'gel-3d', encapsulated: 'encapsulated',
-  strass: 'rhinestones', charms: 'charms', 'jelly nails': 'jelly', 'syrup nails': 'jelly', 'glass nails': 'glass-nails', 'milky nails': 'milky', 'soap nails': 'milky',
-  marble: 'marble', marbre: 'marble', zebre: 'zebra', pois: 'dots', 'line art': 'line', freehand: 'line', 'one stroke': 'one-stroke', 'dot art': 'dots', 'accent nail': 'accent', 'duo alterne': 'duo',
-  babyboomer: 'babyboomer', ombre: 'ombre', degrade: 'ombre', 'color block': 'color-block', 'negative space': 'negative-space', 'half moon': 'half-moon', ruffian: 'ruffian', 'outline nails': 'outline', 'skittle nails': 'skittle', 'mix & match': 'mix-match', monochrome: 'monochrome', 'ton sur ton': 'monochrome', 'gradient nails': 'ombre', stamping: 'stamping',
-};
 const techniqueLabel = { french: 'French', 'micro-french': 'Micro French', 'reverse-french': 'Reverse French', 'double-french': 'Double French', 'side-french': 'Side French', 'deep-french': 'Deep French', 'v-french': 'V-French', leopard: 'Léopard', tortoiseshell: 'Tortoise', crocodile: 'Crocodile', snake: 'Snake print', cow: 'Cow print', zebra: 'Zèbre', blooming: 'Blooming', chrome: 'Chrome', glazed: 'Glazed', foil: 'Foil', flakes: 'Flakes', 'cat-eye': 'Cat Eye', 'velvet-magnetic': 'Velvet magnétique', aura: 'Aura', 'gel-3d': 'Gel 3D', encapsulated: 'Encapsulé', rhinestones: 'Strass', charms: 'Charms', jelly: 'Jelly', 'glass-nails': 'Glass nails', milky: 'Milky nails', marble: 'Marbré', line: 'Line art', 'one-stroke': 'One stroke', dots: 'Dot art', babyboomer: 'Babyboomer', ombre: 'Ombré', 'color-block': 'Color block', 'negative-space': 'Negative space', 'half-moon': 'Half moon', ruffian: 'Ruffian', outline: 'Outline nails', skittle: 'Skittle nails', 'mix-match': 'Mix & match', monochrome: 'Ton sur ton', accent: 'Accent nail', duo: 'Duo alterné' };
 const frenchTechniques = new Set(['french', 'micro-french', 'reverse-french', 'double-french', 'side-french', 'deep-french', 'v-french']);
 
 export function selectedTechniques(options = {}) {
   const raw = Array.isArray(options.techniques) ? options.techniques : options.technique ? [options.technique] : [];
-  return [...new Set(raw.map(value => techniqueAliases[normalize(value)] || normalize(value)).filter(value => value && value !== 'libre'))].slice(0, 4);
+  return [...new Set(raw.map(value => canonicalTechnique(value)).filter(value => value && value !== 'libre'))].slice(0, 4);
 }
 
 // A chosen technique is a visible composition rule, never a tag appended after generation.
@@ -76,7 +66,7 @@ function applyTechniqueComposition(nails, options, pattern) {
   const target = distribution === 'all' ? [0, 1, 2, 3, 4]
     : distribution === 'accent' ? [3]
       : distribution === 'mix' ? [1, 3]
-        : french && effects.length ? [3] : effects.length > 1 ? [1, 3] : [3];
+        : french && effects.length ? [3] : effects.length > 2 ? [0,1,3,4].slice(0,effects.length) : effects.length > 1 ? [1, 3] : [3];
   const next = nails.map((nail, index) => {
     const effect = effects.length ? effects[target.indexOf(index) >= 0 ? target.indexOf(index) % effects.length : (distribution === 'all' ? index % effects.length : -1)] : '';
     const isFrench = french && (distribution !== 'accent' || index === 3);
@@ -102,50 +92,6 @@ const styleFamilies = {
   nature: ['Vert', 'Brun', 'Beige'], cottagecore: ['Vert', 'Brun', 'Beige', 'Rose'],
   y2k: ['Rose', 'Violet', 'Bleu', 'Argent'],
 };
-const moodFamilies = {
-  Douce: ['Rose', 'Nude', 'Beige'], Mystérieuse: ['Prune', 'Cassis', 'Noir', 'Violet'],
-  Chic: ['Nude', 'Bordeaux', 'Brun', 'Rouge'], Joyeuse: ['Jaune', 'Orange', 'Rose', 'Vert'],
-  Audacieuse: ['Cassis', 'Prune', 'Rose', 'Nude', 'Or', 'Brun', 'Terracotta'], 'Au calme': ['Beige', 'Nude', 'Vert', 'Bleu'],
-};
-// A palette must read as one intention at card size. These schemes prevent
-// unrelated shades from being assembled as a single style proposal.
-const paletteSchemes = {
-  douce: [
-    ['Rose', 'Nude', 'Beige', 'Blanc'],
-  ],
-  mysterieuse: [
-    ['Prune', 'Cassis', 'Noir', 'Violet', 'Bleu', 'Argent'],
-  ],
-  chic: [
-    ['Nude', 'Beige', 'Blanc', 'Brun', 'Bordeaux', 'Rouge', 'Or'],
-  ],
-  joyeuse: [
-    ['Rose', 'Jaune', 'Orange', 'Vert', 'Bleu', 'Blanc'],
-  ],
-  'au calme': [
-    ['Beige', 'Nude', 'Vert', 'Bleu', 'Blanc'],
-  ],
-  audacieuse: [
-    ['Cassis', 'Prune', 'Rose', 'Nude', 'Or'],
-    ['Brun', 'Terracotta', 'Nude', 'Blanc', 'Or'],
-  ],
-  graphique: [
-    ['Cassis', 'Prune', 'Rose', 'Nude', 'Or'],
-    ['Brun', 'Terracotta', 'Nude', 'Blanc', 'Or'],
-    ['Bleu', 'Blanc', 'Or'],
-  ],
-};
-const coherentPalette = (palette, options) => {
-  const mood = normalize(options.mood);
-  // Audacieuse has a deliberately curated colour direction even for duos.
-  // For the other moods, constrain the freely suggested (conceptual) 3+ colour
-  // boards but never make a real, limited collection impossible to use.
-  if (mood !== 'audacieuse' && (palette.length < 3 || !palette.every(item => item.conceptual))) return true;
-  if (palette.length < 2) return true;
-  const schemes = paletteSchemes[mood] || [];
-  return !schemes.length || schemes.some(scheme => palette.every(item => scheme.includes(item.family)));
-};
-
 export function profileDefaults(profile = {}) {
   const level = normalize(profile.level);
   const minutes = String(profile.duration || '').match(/\d+/g)?.map(Number) || [];
@@ -236,10 +182,11 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   // visual language and ranking copy, never as a competing colour palette.
   const preferred = [];
   const familiar = new Set();
-  const mood = moodFamilies[options.mood] || [];
+  const explicitPalette = Boolean(options.requiredColorIds?.length || options.inspirationPalette?.length);
+  const moodScore = item => explicitPalette ? 0 : moodPreference(item,options.mood);
   const primaryScore = item => {
     let score = preferred.includes(item.family) ? 18 : 0;
-    if (mood.includes(item.family)) score += 10;
+    score += moodScore(item);
     if (options.mode === 'usual') score += (item.fav ? 22 : 0) + (familiar.has(item.family) ? 6 : 0);
     if (options.mode === 'change') score += (!item.fav ? 16 : 0) + (!familiar.has(item.family) ? 6 : 0);
     if ((profile.technique === item.type) || (profile.technique === 'Vernis classique' && item.type === 'Vernis')) score += 5;
@@ -259,17 +206,19 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     const palette = unique(multiPalette || [base, second]);
     // Explicitly selected colours are always respected, even if the user
     // deliberately wants a contrast outside the suggested ambience.
-    if (!requiredIds.size && !coherentPalette(palette, options)) return;
+    if (!requiredIds.size && !explicitPalette && (palette.every(p=>p.conceptual)||supplied.mood&&requestedPolishCount==='auto') && !harmoniousPalette(palette, options.mood)) return;
     if ([...requiredIds].some(id => !palette.some(item => String(item.id) === id))) return;
     if (requestedPolishCount !== 'auto' && palette.length !== requestedPolishCount) return;
     const decorated = pattern === 'sticker' || pattern === 'paletteSticker';
     if (decoration.mode === 'with' && !decorated || decoration.mode === 'without' && decorated) return;
     if (constraints.has('noDrawing') && drawing.has(pattern)) return;
     if (constraints.has('noStickers') && decorated) return;
-    const rank = drawing.has(pattern) ? 1 : 0;
+    const techniqueRules=requestedTechniques.map(techniqueRule).filter(Boolean);
+    const rank = Math.max(drawing.has(pattern) ? 1 : 0,...techniqueRules.map(r=>r.difficulty_min));
     if (rank > maxLevel) return;
     const extra = multiPalette ? (palette.length - 1) * 5 + (decorated ? 7 : 0) : { solid: 0, accent: 5, duo: 5, sticker: 7, dots: 8, french: 15, line: 12 }[pattern];
-    const minutes = (base.type === 'Vernis' ? 15 : base.type === 'Gel' ? 30 : 25) + extra;
+    const techniqueMinutes=techniqueRules.reduce((sum,r)=>sum+r.minutes,0);
+    const minutes = (base.type === 'Vernis' ? 15 : base.type === 'Gel' ? 30 : 25) + Math.max(extra,techniqueMinutes);
     if (minutes > duration) return;
     const resources = unique([
       ...(palette.some(needsLamp) ? [tools.lamp] : []),
@@ -297,7 +246,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     const selected = selectedTechniques(options);
     // Automatic placement explores the selected techniques across cards. An
     // explicit placement remains a deliberate recipe and keeps every choice.
-    const compositionOptions = selected.length <= 2 || options.techniquePlacement !== 'auto' ? options : (() => {
+    const compositionOptions = options.techniquesSource !== 'auto' || selected.length <= 2 || options.techniquePlacement !== 'auto' ? options : (() => {
       const start = Math.floor(hashScore([pattern, base.id, second?.id || '', variant].join(':'), 1) * selected.length);
       const pair = [selected[start], selected[(start + 1) % selected.length]];
       const french = selected.find(value => frenchTechniques.has(value));
@@ -334,7 +283,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
       palette: 'Du pouce à l’auriculaire : ' + nails.map(nail => palette.find(item => item.id === nail.productId).name).join(', ') + '.',
       paletteSticker: palette.length + ' vernis répartis sur les cinq ongles, avec ' + sticker?.name + (variant === 1 ? ' sur l’index et l’annulaire.' : ' sur l’annulaire.'),
     };
-    let score = (sticker ? stickerAffinity(sticker, options) : 0) + primaryScore(base) + (palette.length > 1 ? palette.slice(1).reduce((sum, item) => sum + primaryScore(item), 0) / (palette.length - 1) * 0.2 : 0);
+    let score = (!explicitPalette&&!harmoniousPalette(palette,options.mood)?-45:0) + (sticker ? stickerAffinity(sticker, options) : 0) + primaryScore(base) + (palette.length > 1 ? palette.slice(1).reduce((sum, item) => sum + primaryScore(item), 0) / (palette.length - 1) * 0.2 : 0);
     if (options.occasion === 'Travail' && ['solid', 'accent', 'line'].includes(pattern)) score += 12;
     if (['Soirée', 'Événement'].includes(options.occasion) && ['sticker', 'duo', 'french', 'palette', 'paletteSticker'].includes(pattern)) score += 12;
     if (['Douce', 'Au calme', 'Chic'].includes(options.mood) && ['solid', 'accent'].includes(pattern)) score += 6;

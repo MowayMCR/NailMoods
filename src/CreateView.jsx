@@ -1,3 +1,4 @@
+import {surpriseTechniques, updateTechniqueChoice, techniqueWarnings} from './techniqueRules';
 import {techniqueGroups, techniqueGroup, techniqueLabel} from './techniqueGroups';
 import CreationSources from './CreationSources';
 import {recordRuntimeEvent} from './support/diagnostics';
@@ -8,8 +9,9 @@ import ColorSelection from './ColorSelection';
 import { generateInspirations, stylePalette } from './freeInspiration';
 import { useStorage } from './StorageContext';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Heart, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker, Search, Wand2, Send } from 'lucide-react';
+import { Heart, Dice5, Shuffle, Sparkles, Sun, Palette, CalendarDays, Clock3, Brush, SlidersHorizontal, ChevronRight, Check, ArrowRight, RotateCcw, Package, BookmarkCheck, Sticker, Search, Wand2, Send } from 'lucide-react';
 import { createSuggestions, inventoryStamp, profileDefaults, selectedTechniques } from './creationEngine';
+import TapFavorite from './TapFavorite';
 import NailPreview from './NailPreview';
 import PhotoInspirationFlow from './PhotoInspirationFlow';
 import './creation.css';
@@ -60,6 +62,8 @@ export default function CreateView({ onPublish, onShareToPro, onIdeaBack, ideaAc
   const [drawingGenerationError,setDrawingGenerationError]=useState('');
   const [generatingDrawing,setGeneratingDrawing]=useState(false);
   const resultAnchor = useRef(null);
+  const automaticHistory = useRef([]);
+  const automaticSeed = useRef(0);
   const options = useMemo(() => ({ ...state.options, intent: state.options.intent || (items.some(i => ['Vernis', 'Semi-permanent', 'Gel'].includes(i.type)) ? 'collection' : 'inspire') }), [state.options, items]);
   const stamp = useMemo(() => inventoryStamp(items), [items]);
   const activeRun = state.generated && state.inventory === stamp;
@@ -129,15 +133,20 @@ export default function CreateView({ onPublish, onShareToPro, onIdeaBack, ideaAc
     if(patch.intent)track('create_mode_selected',{mode:patch.intent==='collection'?'my_collection':'inspire_me'},{screen:'create'});
     if (patch.intent === 'inspire') patch = { ...patch, requiredColorIds: [] };
     setState(previous => {
-      const nextOptions = { ...previous.options, ...patch };
+      const nextOptions = updateTechniqueChoice(previous.options,patch,items,automaticHistory.current,++automaticSeed.current);
       if (nextOptions.techniquePlacement === 'mix' && (selectedTechniques(nextOptions).length < 2 || Number(nextOptions.level) < 2)) nextOptions.techniquePlacement = 'auto';
       return { ...previous, options: nextOptions, generated: false, selected: null };
     });
   }
   function toggleTechnique(value) {
-    if (value === 'Libre') { change({ techniques: [], technique: undefined }); return; }
+    if (value === 'Libre') { change({ techniques: [], technique: undefined, techniquesSource:'manual' }); return; }
     const active = (options.techniques || []).includes(value);
-    change({ techniques: active ? options.techniques.filter(item => item !== value) : [...(options.techniques || []), value].slice(0, 4), technique: undefined });
+    change({ techniques: active ? options.techniques.filter(item => item !== value) : [...(options.techniques || []), value].slice(0, 4), technique: undefined, techniquesSource:'manual' });
+  }
+  function surprise(){
+    const techniques=surpriseTechniques(options,items,automaticHistory.current,++automaticSeed.current);
+    automaticHistory.current.push(techniques);
+    change({techniques,technique:undefined,techniquesSource:'auto'});
   }
   async function generate() {
     if(generatingDrawing)return;
@@ -206,7 +215,9 @@ export default function CreateView({ onPublish, onShareToPro, onIdeaBack, ideaAc
       <div className="creationTiles creationPrimaryTiles">{['mood', 'level'].map(key => { const choice = selections[key]; return <button key={key} data-choice={key} onClick={() => openPicker(key)}>
         {['mood', 'style'].includes(key) ? <MoodGlyph value={options[key]} /> : <choice.icon />}<small>{choice.label}</small><b>{choice.format ? choice.format(options[key]) : options[key]}</b><ChevronRight className="tileArrow" />
       </button>; })}</div>
-      <button className="creationTechniqueShortcut" onClick={()=>openPicker('technique')}><MoodGlyph value={chosenTechniques[0] || 'French'} /><span><small>TECHNIQUES · FACULTATIF</small><b>{techniqueSummary}</b></span><ChevronRight/></button><button className="detailSecondary" onClick={()=>setPicker('colors')}>Couleurs principales{(options.intent==='inspire'?options.inspirationPalette?.length:selectedColors.length)?' · '+(options.intent==='inspire'?options.inspirationPalette.length:selectedColors.length):''}</button>
+      <div className="creationTechniqueCard"><button className="creationTechniqueShortcut" onClick={()=>openPicker('technique')}><MoodGlyph value={chosenTechniques[0] || 'French'} /><span><small>TECHNIQUES · {options.techniquesSource==='auto'?'CHOIX NAILMOODS':'FACULTATIF'}</small><b>{techniqueSummary}</b></span><ChevronRight/></button><button type="button" className="techniqueSurprise" onClick={surprise}><Dice5 size={18}/><span>Surprends-moi</span></button></div>
+      {techniqueWarnings(options).map(message=><p className="creationPickerHelp" role="status" key={message}>{message}</p>)}
+      <button className="detailSecondary" onClick={()=>setPicker('colors')}>Couleurs principales{(options.intent==='inspire'?options.inspirationPalette?.length:selectedColors.length)?' · '+(options.intent==='inspire'?options.inspirationPalette.length:selectedColors.length):''}</button>
       {social?.userId && ['plus','pro'].includes(social.tier) && <button className="creationTechniqueShortcut" onClick={openProCreations}><Brush /><span><small>{canDrawPro?'MES DESSINS ET CEUX DE MES PO':'CRÉATIONS DE MA PO'}</small><b>{options.proCreation?.creation?.title || (canDrawPro?'Utiliser un dessin pour ma pose':'Utiliser une création de ma PO')}</b><em>{options.proCreation?.creation ? 'Elle guidera une nouvelle composition NailMoods.' : (canDrawPro?'Retrouve tes dessins enregistrés et ceux de tes PO.':'Choisis une création rendue visible par ta PO.')}</em></span><ChevronRight /></button>}
       <details className="creationAdvanced"><summary><span><SlidersHorizontal />Personnaliser davantage</span><small>Style, durée, effets, décors et matériel</small></summary>
         <div className="creationTiles">{['style','duration', ...(chosenTechniques.length ? ['techniquePlacement'] : []), 'occasion', 'polishCount'].map(key => { const choice = selections[key]; return <button key={key} data-choice={key} onClick={() => openPicker(key)}>
@@ -232,7 +243,7 @@ export default function CreateView({ onPublish, onShareToPro, onIdeaBack, ideaAc
     {state.generated && !activeRun && <p className="creationNotice" role="status">Ta collection a changé. Relance les idées pour utiliser son contenu actuel.</p>}
     {pendingLearning && <p className="creationNotice" role="status">Tes retours ou tes réglages ont changé. Recompose tes idées pour les prendre en compte.</p>}
     {report.requestedIntent === 'collection' && report.intent === 'inspire' && <p className="creationNotice">Ta collection ne contient pas encore de couleur utilisable : voici des inspirations libres, à personnaliser quand tu veux.</p>}
-    {report.adjusted && !report.unavailable && <p className="creationNotice">Voici une alternative avec un nombre de couleurs, des décorations ou un temps adaptés aux possibilités disponibles.</p>}
+    {report.adjusted && !report.unavailable && <p className="creationNotice">Voici une alternative avec un nombre de couleurs, des décorations adaptées aux possibilités disponibles. Le temps maximal et tes choix de couleurs sont conservés.</p>}
     <button className="creationGenerate" onClick={generate}><Sparkles />{activeRun ? 'Une autre idée' : 'Générer une idée'}<ArrowRight /></button>
     <button className="nmQuiet" onClick={() => change(profileDefaults(profile))}>Utiliser mes préférences</button><button className="nmQuiet" onClick={()=>setSetBuilder(true)}>Composer doigt par doigt</button>
     </div>
@@ -247,7 +258,7 @@ export default function CreateView({ onPublish, onShareToPro, onIdeaBack, ideaAc
       {chosen && <button className="chosenIdea" onClick={() => onOpen(chosen, chosen.options)}><BookmarkCheck /><span><b>Ton idée retenue</b><small>{chosen.title} · {chosen.palette.map(item => item.name).join(' + ')}</small></span><ChevronRight /></button>}
       <div className="ideaList">{generatedIdeas.map((idea, index) => <article className={'ideaCard ideaCardOpenable ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id} onClick={() => onOpen(idea, idea.options)}>
         <div className="ideaTopline"><span><MoodGlyph value={idea.options?.mood || options.mood} /> ENVIE {String(index + 1).padStart(2, '0')}</span><span><Clock3 />≈ {idea.minutes} min</span></div>
-        <NailPreview idea={idea} controls />
+        <TapFavorite aria-label={"Ouvrir "+idea.title+" · double-tap pour le favori"} onOpen={()=>onOpen(idea,idea.options)} onToggle={()=>onFavorite(idea)} saved={library.favorites.some(saved=>saved.key===snapshotIdea(idea).key)}><NailPreview idea={idea} controls /></TapFavorite>
         <div className="ideaBody">{completedKeys.has(snapshotIdea(idea, idea.options).key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3><button className="ideaTitleLink" onClick={event=>{event.stopPropagation();onOpen(idea,idea.options);}}>{idea.title}</button></h3><p>{idea.description}</p>
           <IdeaProducts idea={idea} items={items} onCollection={onCollection} /><div className="ideaProducts">{idea.palette.map(item => <span key={item.id}><i style={{ background: item.color }} />{item.name}</span>)}</div>
           {idea.resources.filter(isDecoration).map(item => <div className="ideaDecoration" key={item.id}><DecorationPhoto item={item} /><div><small>MA DÉCORATION</small><b>{item.name}</b><span>Motif schématique sur les ongles</span></div></div>)}

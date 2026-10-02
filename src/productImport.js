@@ -1,3 +1,4 @@
+import {getCloudClient} from './cloud/client.js';
 // Public product facts only. Remote markup is parsed as data, never executed.
 export const normalizeText = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 export const plainText = value => String(value || '').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<[^>]+>/g, ' ').replace(/&(?:nbsp|amp|quot|apos|lt|gt);/g, match => ({ '&nbsp;': ' ', '&amp;': '&', '&quot;': '"', '&apos;': "'", '&lt;': '<', '&gt;': '>' }[match])).replace(/\s+/g, ' ').trim().slice(0, 500);
@@ -5,8 +6,8 @@ export const plainText = value => String(value || '').replace(/<script\b[^>]*>[\
 export function productURL(value) {
   let url;
   try { url = new URL(String(value).trim()); } catch { throw new Error('Colle le lien complet de la fiche produit, avec https://.'); }
-  if (url.protocol !== 'https:' || url.username || url.password || url.port || !url.hostname.includes('.') || /(?:^|\.)(?:localhost|local|internal)$/.test(url.hostname) || url.hostname.startsWith('[') || /^[\d.:\[\]]+$/.test(url.hostname)) {
-    throw new Error('Utilise le lien HTTPS public d’une boutique.');
+  if (!['http:','https:'].includes(url.protocol) || url.username || url.password || url.port || !url.hostname.includes('.') || /(?:^|\.)(?:localhost|local|internal)$/.test(url.hostname) || url.hostname.startsWith('[') || /^[\d.:\[\]]+$/.test(url.hostname)) {
+    throw new Error('Utilise un lien HTTP ou HTTPS public de fiche produit.');
   }
   url.hash = '';
   for (const key of [...url.searchParams.keys()]) if (/^(utm_|fbclid$|gclid$)/i.test(key)) url.searchParams.delete(key);
@@ -135,46 +136,19 @@ export async function readResponse(response, maxBytes = 2_500_000) {
   return new TextDecoder().decode(bytes);
 }
 
-export async function fetchProduct(value, signal, fetcher = fetch) {
-  const url = productURL(value).href, endpoint = shopifyURL(url);
-  const response = await fetcher(endpoint || url, { signal, credentials: 'omit', referrerPolicy: 'no-referrer' });
-  const body = await readResponse(response);
-  if (endpoint) { let raw; try { raw = JSON.parse(body); } catch { throw new Error('Cette boutique ne fournit pas de fiche lisible avec ce lien. Utilise une photo ou la saisie manuelle.'); } return shopifyCandidate(raw, url); }
-  return structuredCandidate(new DOMParser().parseFromString(body, 'text/html'), url);
-}
-
-let catalogCache;
-// This public catalog provides SKUs (not all barcodes). A SKU match is only a
-// search hint: fetch the actual variant and verify its barcode before returning.
-export async function miniMacaronCatalog(signal, fetcher = fetch) {
-  if (catalogCache) return catalogCache;
-  const result = [], seen = new Set();
-  for (let page = 1; page <= 8; page++) {
-    const response = await fetcher(`https://leminimacaron.eu/products.json?limit=250&page=${page}`, { signal, credentials: 'omit', referrerPolicy: 'no-referrer' });
-    const { products } = JSON.parse(await readResponse(response, 6_000_000));
-    if (!Array.isArray(products)) throw new Error('Le catalogue est momentanément indisponible.');
-    const next = products.filter(p => typeof p.handle === 'string' && !seen.has(p.id));
-    for (const item of next) { seen.add(item.id); result.push(item); }
-    if (products.length < 250 || !next.length) { catalogCache = result; return result; }
-  }
-  return result;
+export async function fetchProduct(value, signal, invoke) {
+  const url = productURL(value).href;
+  const call=invoke || ((name,options)=>{const client=getCloudClient();if(!client)throw Error('Connecte-toi pour analyser un lien. La saisie manuelle reste disponible.');return client.functions.invoke(name,options);});
+  const {data,error}=await call('product-page',{body:{url},signal,timeout:16000});
+  if(error)throw Error('Impossible de lire automatiquement cette fiche. Tu peux compléter les champs manuellement.');
+  if(!data?.candidate?.fields)throw Error('Impossible de lire automatiquement cette fiche.');
+  return {...data.candidate,manualFallback:data.status!=='found',importMessage:data.message||''};
 }
 
 export function barcodeMatches(products, code) {
   if (!validBarcode(code)) return [];
   const normalized = code.replace(/[\s-]/g, '').padStart(14, '0');
   return products.flatMap(product => (product.variants || []).filter(variant => [variant.barcode, variant.sku].some(value => validBarcode(value) && String(value).replace(/[\s-]/g, '').padStart(14, '0') === normalized)).map(variant => ({ product, variant })));
-}
-
-export async function lookupBarcode(code, signal, fetcher = fetch) {
-  if (!validBarcode(code)) throw new Error('Vérifie les chiffres : ce code-barres est incomplet ou incorrect.');
-  const products = await miniMacaronCatalog(signal, fetcher);
-  const matches = barcodeMatches(products, code);
-  for (const { product, variant } of matches.slice(0, 6)) {
-    const candidate = await fetchProduct(`https://leminimacaron.eu/products/${encodeURIComponent(product.handle)}?variant=${variant.id}`, signal, fetcher);
-    if (candidate.fields.barcode?.padStart(14, '0') === code.replace(/[\s-]/g, '').padStart(14, '0')) return { ...candidate, method: 'barcode' };
-  }
-  throw new Error('Aucune référence trouvée dans le catalogue Le Mini Macaron Europe consulté. Tu peux ajouter ce produit avec son lien, sa photo ou son nom.');
 }
 
 export function textMatches(products, text) {

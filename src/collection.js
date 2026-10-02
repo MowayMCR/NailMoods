@@ -1,14 +1,15 @@
+import {productKind} from './productKinds.js';
 import { normalize } from './creationEngine.js';
 
 const text = value => normalize(value).trim();
-export const emptyFilters = { brand: '', family: '', finish: '', favorites: false, sort: 'recent' };
+export const emptyFilters = { brand: '', family: '', finish: '', productKind:'', favorites: false, sort: 'recent' };
 export function collectionResults(items, query = '', type = 'Tous', filters = emptyFilters) {
   const words = text(query).split(/\s+/).filter(Boolean);
   const results = items.filter(item => {
-    const searchable = text([item.name, item.brand, item.reference, item.sku, item.collection, item.type, item.equipmentCategory, item.materialStyle, item.notes, item.family, item.finish, item.depth].filter(Boolean).join(' '));
+    const searchable = text([item.name, item.brand, item.reference, item.sku, item.collection, item.type, item.equipmentCategory, item.materialStyle, item.notes, item.family, item.finish, item.depth,productKind(item)].filter(Boolean).join(' '));
     return (type === 'Tous' || item.type === type) && words.every(word => searchable.includes(word))
       && (!filters.brand || item.brand === filters.brand) && (!filters.family || item.family === filters.family)
-      && (!filters.finish || item.finish === filters.finish) && (!filters.favorites || item.fav);
+      && (!filters.productKind || productKind(item)===filters.productKind) && (!filters.finish || item.finish === filters.finish) && (!filters.favorites || item.fav);
   });
   if (filters.sort === 'name') results.sort((a, b) => a.name.localeCompare(b.name, 'fr', { numeric: true }));
   else if (filters.sort === 'brand') results.sort((a, b) => (a.brand || '').localeCompare(b.brand || '', 'fr') || a.name.localeCompare(b.name, 'fr'));

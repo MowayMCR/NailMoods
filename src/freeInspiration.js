@@ -1,3 +1,5 @@
+import {moodPalette} from './moodPalettes.js';
+import {techniqueRule} from './techniqueRules.js';
 import { createSuggestions, inventoryTools, profileDefaults, normalize, auxiliary } from './creationEngine.js';
 import { enrichIdeaRendering } from './techniqueRendering.js';
 
@@ -14,8 +16,8 @@ export function generateInspirations(items = [], profile = {}, supplied = {}, se
   const requestedIntent = supplied.intent === 'collection' ? 'collection' : supplied.intent === 'inspire' ? 'inspire' : ownedColors.length ? 'collection' : 'inspire';
   const intent = requestedIntent === 'collection' && ownedColors.length ? 'collection' : 'inspire';
   const memoryPalette = Array.isArray(supplied.inspirationPalette) ? supplied.inspirationPalette.filter(p => p?.conceptual && p.id != null && p.name).slice(0, 5).map(p => ({ ...p, conceptual: true })) : [];
-  const source = intent === 'collection' ? items : [...(memoryPalette.length ? memoryPalette : stylePalette), ...items.filter(item => item.type === 'Matériel')];
-  const requiredColorIds = (supplied.requiredColorIds || []).map(String).filter(id => source.some(item => String(item.id) === id && ['Vernis', 'Semi-permanent', 'Gel'].includes(item.type) && Number(item.quantity ?? 1) > 0));
+  const source = intent === 'collection' ? items : [...(memoryPalette.length ? memoryPalette : moodPalette(supplied.mood||profileDefaults(profile).mood,seed,supplied.style)), ...items.filter(item => item.type === 'Matériel')];
+  const requiredColorIds = (intent==='inspire'&&memoryPalette.length?memoryPalette.map(p=>p.id):(supplied.requiredColorIds || [])).map(String).filter(id => source.some(item => String(item.id) === id && ['Vernis', 'Semi-permanent', 'Gel'].includes(item.type) && Number(item.quantity ?? 1) > 0));
   const selectedSticker = inventoryTools(items).stickers.find(item => String(item.id) === String(supplied.decorationId));
   let options = { ...profileDefaults(profile), ...supplied, requiredColorIds, allowMissingEquipment: true };
   if (intent === 'inspire') options = { ...options, constraints: (options.constraints || []).filter(x => x !== 'favorites') };
@@ -23,7 +25,7 @@ export function generateInspirations(items = [], profile = {}, supplied = {}, se
   let adjusted = false;
   if (!report.results.length) {
     adjusted = true;
-    options = { ...options, constraints: [], decorations: selectedSticker ? 'with' : 'without', decorationId: selectedSticker?.id || null, polishCount: 'auto', duration: 90 };
+    options = { ...options, constraints: options.constraints, decorations: selectedSticker ? 'with' : 'without', decorationId: selectedSticker?.id || null, polishCount: 'auto' };
     report = createSuggestions(source, profile, options, seed, limit, intent === 'collection' ? learning : null);
   }
   // Products with an unspecified application/base can still inspire by their shade,
@@ -43,6 +45,7 @@ export function generateInspirations(items = [], profile = {}, supplied = {}, se
     // Restore real product metadata; the preview never overwrites a user's product.
     const palette = idea.palette.map(p => intent === 'collection' ? { ...p, ...items.find(i => String(i.id) === String(p.id)), color: p.color, family: p.family } : p);
     const requirements = [];
+    for(const label of idea.techniques||[])for(const name of techniqueRule(label)?.requirements||[])if(!requirements.some(r=>r.name===name))requirements.push({name,required:true});
     const add = (name, owned, required = false) => { if (!owned) requirements.push({ name, required }); };
     if (palette.some(p => ['Semi-permanent', 'Gel'].includes(p.type))) add('Lampe compatible avec les produits', tools.lamp, true);
     if (palette.some(p => /cat.?eye|magnetique|avec aimant/.test(normalize(p.finish + ' ' + p.effect + ' ' + p.usage)))) add('Aimant Cat Eye', tools.magnet, true);

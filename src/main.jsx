@@ -1,3 +1,7 @@
+import EquipmentLibrary from './EquipmentLibrary';
+import {equipmentSeed} from './equipmentSeed.js';
+import {setEquipmentOwned,duplicateCustomEquipment} from './equipmentLibrary.js';
+import {productKind,productKinds} from './productKinds.js';
 import { isNative } from './platform/state.js';
 const MobileStatus = import.meta.env.VITE_NATIVE_BUILD ? React.lazy(()=>import('./platform/MobileStatus.jsx')) : null;
 import Discovery, {DiscoveryShortcut} from './social/Discovery';
@@ -107,6 +111,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   useEffect(()=>{if(!edit)return;setProductDraft(edit);try{browserStorage.setItem('nm-product-draft-v1',JSON.stringify(edit));}catch{setSaveError('Le brouillon ne peut pas être conservé. Garde cette fiche ouverte.');}},[edit]);
   const productName = useRef(null), productCamera = useRef(null), productColorArea = useRef(null);
   const [importer, setImporter] = useState(false);
+  const [equipmentOpen,setEquipmentOpen]=useState(false);
   const [addCategory,setAddCategory]=useState('product');
   const [saveError, setSaveError] = useState('');
   const [photoBusy, setPhotoBusy] = useState(false);
@@ -245,12 +250,9 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     track('product_add_started',{source,category:type},{screen:'collection'});
   }
 
+  function setOwned(row,owned){const next=setEquipmentOwned(items,row,owned,messageId);return next===items || persist(next);}
   function addOwnedEquipment(category) {
-    if(limited){setAppError('La sauvegarde du matériel est disponible avec Plus.');return;}
-    if (!['Lampe UV / LED', 'Aimant cat-eye'].includes(category)) return;
-    const next = [...items, { ...materialDefaults, id: messageId(), type: 'Matériel', name: category, equipmentCategory: category, source: 'manual' }];
-    if (!persist(next)) setAppError('Le matériel n’a pas pu être sauvegardé. Libère du stockage puis réessaie.');
-    else setAppError('');
+    const row=equipmentSeed.find(r=>r.legacyCategory===category);if(row)setOwned(row,true);
   }
 
   function change(values) {
@@ -283,7 +285,10 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
       return;
     }
     const product = { ...edit, provenance: provenanceOf(edit), id: edit.id ?? messageId(), name: edit.name.trim(), brand: edit.brand.trim(), url: edit.url.trim() };
-    if (material) product.quantity = quantity;
+    if (material) {
+      product.quantity = quantity;
+      if(duplicateCustomEquipment(items,product)){setSaveError('Ce matériel existe déjà dans ta collection. Modifie la fiche existante.');return;}
+    }
     const saved = persist(edit.id ? items.map(item => item.id === edit.id ? product : item) : [...items, product]);
     track(saved?'product_added':'product_add_failed',{source:edit.source||'manual',category:edit.type},{screen:'collection',success:saved});
     if (saved && forCreation) {
@@ -309,7 +314,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
       {tab !== 'home' && tab !== 'scan' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
       {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onOpen={openIdea} onBack={() => navigate('create')} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView ideaAction={ideaAction} onIdeaBack={returnFromIdea} onPublish={publishIdea} onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
-          <small>MES PRODUITS</small><h1>Ma collection</h1>
+          <small>{filter==='Matériel'?'MES OUTILS':'MES PRODUITS'}</small><h1>{filter==='Matériel'?'Mon matériel':'Ma collection'}</h1>{filter==='Matériel'&&<button className="detailPrimary" onClick={()=>setEquipmentOpen(true)}>+ Ajouter du matériel</button>}
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
           <div className="collectionStats">
             <div><b>{items.length}</b><span>Produits</span></div>
@@ -320,7 +325,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
         </section>
         <section className="collectionTools">
           <div className="collectionSearch"><Search /><input aria-label="Rechercher dans la collection" value={search} onChange={event => setSearch(event.target.value)} placeholder="Rechercher…" /></div>
-          <button className="addProduct" onClick={() => {setAddCategory(filter==='Matériel'?'material':filter==='Stickers & accessoires'?'decor':'product');setImporter(true);}}><Plus /> Ajouter</button>
+          <button className="addProduct" onClick={() => {if(filter==='Matériel'){setEquipmentOpen(true);return;}setAddCategory(filter==='Stickers & accessoires'?'decor':'product');setImporter(true);}}><Plus /> Ajouter</button>
         </section>
         <div className="filterRow">
           {['Tous', 'Produits', 'Stickers & accessoires', 'Matériel'].map(value =>
@@ -364,14 +369,15 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
 
     {personalOpen && <PersonalizationPanel model={personalModel} settings={personalSettings} onChange={changePersonalization} onClose={() => setPersonalOpen(false)} error={personalError} onJournal={() => { setPersonalOpen(false); navigate('journal'); }} onFavorites={() => { setPersonalOpen(false); navigate('favorites'); }} />}
 
+    {equipmentOpen&&<EquipmentLibrary items={items} onSetOwned={setOwned} onCustom={()=>{setEquipmentOpen(false);setAddCategory('material');start('manual','Matériel');}} onClose={()=>setEquipmentOpen(false)}/>}
     {importer && <Sheet title="Comment veux-tu l’ajouter ?" eyebrow="AJOUTER À MA COLLECTION" className="importSheet" onClose={() => setImporter(false)}>
         {productDraft&&<button className="detailSecondary" onClick={()=>{setImporter(false);setEdit(productDraft);}}>Reprendre mon brouillon · {productDraft.name||'Sans nom'}</button>}
-        <div className="poseTabs" aria-label="Catégorie à ajouter">{[['product','Produit'],['decor','Sticker / accessoire'],['material','Matériel']].map(([key,label])=><button key={key} aria-pressed={addCategory===key} onClick={()=>setAddCategory(key)}>{label}</button>)}</div><p className="fieldHelp">Produit par défaut. La catégorie reste modifiable dans la fiche.</p><div className="importChoices importChoicesPrimary">
+        <div className="poseTabs" aria-label="Catégorie à ajouter">{[['product','Produit'],['decor','Sticker / accessoire'],['material','Matériel']].map(([key,label])=><button key={key} aria-pressed={addCategory===key} onClick={()=>{setAddCategory(key);if(key==='material'){setImporter(false);setEquipmentOpen(true);}}}>{label}</button>)}</div><p className="fieldHelp">Produit par défaut. La catégorie reste modifiable dans la fiche.</p><div className="importChoices importChoicesPrimary">
           <button onClick={() => start('camera')}>
             <span className="importIcon"><Camera /></span><span className="importCopy"><b>Scanner / prendre en photo</b><small>Photographie le produit ou son étiquette</small></span><ChevronRight className="importArrow" />
           </button>
           <button onClick={() => start('catalog')}>
-            <span className="importIcon"><Search /></span><span className="importCopy"><b>Rechercher dans NailMoods</b><small>1 801 références · confirmation avant ajout</small></span><ChevronRight className="importArrow" />
+            <span className="importIcon"><Search /></span><span className="importCopy"><b>Rechercher dans NailMoods</b><small>2 631 références actives · confirmation avant ajout</small></span><ChevronRight className="importArrow" />
           </button>
           <button onClick={() => start('manual')}>
             <span className="importIcon"><PenLine /></span><span className="importCopy"><b>Ajouter manuellement</b><small>Ajoute seulement ce que tu connais</small></span><ChevronRight className="importArrow" />
@@ -380,7 +386,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
             <button onClick={() => start('image')}><Image /><span><b>Importer depuis la galerie</b><small>Utilise une capture ou une image existante</small></span></button>
             <button onClick={() => start('url')}><Link /><span><b>Coller une URL</b><small>Retrouve les photos et les informations</small></span></button>
             <button onClick={() => start('barcode')}><ScanLine /><span><b>Scanner le code-barres</b><small>Photo du code ou saisie des chiffres</small></span></button>
-            <button onClick={() => start('manual', 'Matériel')}><Package /><span><b>Matériel & accessoires</b><small>Lampe, stickers, pinceaux, limes…</small></span></button>
+            <button onClick={() => {setImporter(false);setEquipmentOpen(true);}}><Package /><span><b>Matériel & accessoires</b><small>Lampe, stickers, pinceaux, limes…</small></span></button>
           </div></details>
         </div>
 
@@ -390,25 +396,28 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
         <p className="fieldHelp">{provenanceOf(edit).kind === 'nailmoods' ? 'Référence issue du catalogue NailMoods · couleur à confirmer.' : provenanceOf(edit).kind === 'verified_creator' ? 'Référence liée à un catalogue de marque.' : 'Produit personnel / non vérifié · utilisable dans tes inspirations.'}</p>
         {edit.id && (isDecoration(edit) || !auxiliary(edit) && ['Vernis', 'Semi-permanent', 'Gel'].includes(edit.type)) && <><button className="detailPrimary" disabled={photoBusy || importBusy} onClick={() => save(true)}><Palette />{isDecoration(edit) ? 'Créer avec ce sticker' : 'Créer avec cette teinte'}</button><p className="fieldHelp">Enregistre tes modifications et ouvre Créer avec ce produit.</p></>}
 
+        {!material&&!edit.photo&&['camera','image'].includes(edit.source)&&<div className="photoActions"><button onClick={()=>productCamera.current?.click()}><Camera/>Photographier le produit ou l’étiquette</button><p className="fieldHelp">L’analyse démarre après la photo. Tu confirmes la fiche avant ajout.</p></div>}
         <label>Type<select value={edit.type} onChange={event => change({ type: event.target.value })}>
           {['Semi-permanent', 'Vernis', 'Gel', 'Effet', 'Matériel'].map(value => <option key={value}>{value}</option>)}
         </select></label>
         {material && <EquipmentCategory item={edit} onChange={change} />}
         <label>{material ? 'Nom du matériel' : 'Nom'}<input ref={productName} value={edit.name} onChange={event => change({ name: event.target.value })} placeholder={material ? equipmentInfo(edit).example : 'Nom du produit'} required /></label>
-        <label>Marque (facultatif)<input value={edit.brand} onChange={event => change({ brand: event.target.value })} /></label>
+        {material&&!isDecoration(edit)&&<label>Remarque (facultative)<textarea rows="2" value={edit.notes||''} onChange={event=>change({notes:event.target.value})}/></label>}
+        {!material&&<label>Marque (facultatif)<input value={edit.brand} onChange={event => change({ brand: event.target.value })} /></label>}
         {duplicates.length > 0 && <div className="duplicateNotice" role="status"><b>Peut-être déjà dans ta collection</b>{duplicates.slice(0, 3).map(({item, reason}) => <p key={item.id}>{item.name} · {reason}</p>)}<small>Tu peux conserver les deux fiches. Rien ne sera fusionné.</small></div>}
         {!material && <>
+          <label>Catégorie de produit<select value={productKind(edit)} onChange={e=>change({productKind:e.target.value,...(e.target.value==='Top Coat mat'?{finish:'Mat'}:e.target.value==='Top Coat brillant'?{finish:'Brillant'}:{})})}>{productKinds.map(k=><option key={k}>{k}</option>)}</select></label>
           <div ref={productColorArea}><PhotoColor items={items} item={edit} onChange={change} onValidityChange={setShadeValid} /></div>
           <label>Finition<select value={edit.finish} onChange={event => change({ finish: event.target.value })}>
             {['Brillant', 'Crème', 'Jelly', 'Pailleté', 'Nacré', 'Métallique', 'Chrome', 'Cat-eye', 'Mat', 'Autre'].map(value => <option key={value}>{value}</option>)}
           </select></label>
         </>}
-        <details className="nmDisclosure" open={!['manual',undefined].includes(edit.source)?true:undefined}><summary>Détails du produit · facultatifs</summary>
-        <ProductImport onManual={() => productName.current?.focus()} onPhoto={() => productCamera.current?.click()} onColor={() => { productColorArea.current?.scrollIntoView({ block: 'center' }); productColorArea.current?.querySelector('input')?.focus(); }} item={edit} onChange={change} onBusy={setImportBusy} photoBusy={photoBusy} />
+        <details className="nmDisclosure" open={!['manual',undefined].includes(edit.source)?true:undefined}><summary>{material?'Détails du matériel · facultatifs':'Détails du produit · facultatifs'}</summary>
+        {!material&&<ProductImport onManual={() => productName.current?.focus()} onPhoto={() => productCamera.current?.click()} onColor={() => { productColorArea.current?.scrollIntoView({ block: 'center' }); productColorArea.current?.querySelector('input')?.focus(); }} item={edit} onChange={change} onBusy={setImportBusy} photoBusy={photoBusy} />}
         {!material && <label>Référence (facultatif)<input value={edit.reference || ''} onChange={event => change({ reference: event.target.value })} /></label>}
         {!material && <><div className="form2"><label>Collection de marque<input value={edit.collection || ''} onChange={event => change({ collection: event.target.value })} /></label><label>SKU<input value={edit.sku || ''} onChange={event => change({ sku: event.target.value })} /></label></div><label>Notes personnelles<textarea rows="2" value={edit.notes || ''} onChange={event => change({ notes: event.target.value })} /></label></>}
-        {material && <EquipmentFields item={edit} onChange={change} />}
-        <ProductPhoto cameraInputRef={productCamera} value={edit.photo} onChange={photo => change({ photo })} onBusy={setPhotoBusy} maxSize={1200} />
+        {material && <EquipmentFields item={edit} onChange={change} hideNotes={!isDecoration(edit)} />}
+        <ProductPhoto cameraInputRef={productCamera} value={edit.photo} onChange={photo => change({ photo })} onBusy={setPhotoBusy} maxSize={2400} />
         {!material && <>
           <div className="fieldHead"><b>Famille de couleur</b><small>modifiable</small></div>
           <div className="colorChips">{colors.map(([name, color]) =>

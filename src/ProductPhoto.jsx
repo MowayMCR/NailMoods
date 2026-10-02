@@ -38,6 +38,7 @@ export default function ProductPhoto({ cameraInputRef, value, onChange, onBusy, 
   const [error, setError] = useState('');
   const [loadError, setLoadError] = useState(false);
   useEffect(() => setLoadError(false), [value]);
+  useEffect(()=>{const failure=e=>{if(e.target===gallery.current||e.target===(cameraInputRef||camera).current)setError(e.detail);};document.addEventListener('nm-media-error',failure);return()=>document.removeEventListener('nm-media-error',failure);},[cameraInputRef]);
   useEffect(() => {
     active.current = true;
     return () => { active.current = false; onBusy(false); };

@@ -1,3 +1,4 @@
+import {cameraErrorMessage} from './cameraErrors.js';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
@@ -68,13 +69,19 @@ export async function installNativeMedia(){
       await nativeServices().storage.flush();
       await nativeServices().checkpoint?.();
       await keep({...context,files:[]});
+      if(camera&&Capacitor.getPlatform()==='ios') {
+        let permission=await Camera.checkPermissions();
+        if(permission.camera==='prompt'||permission.camera==='prompt-with-rationale')permission=await Camera.requestPermissions({permissions:['camera']});
+        if(permission.camera!=='granted')throw Object.assign(Error('Camera permission denied'),{code:'CAMERA_DENIED'});
+      }
       const method=camera?'getPhoto':'pickImages';
       const data=camera?await Camera.getPhoto({source:CameraSource.Camera,resultType:CameraResultType.Uri,quality:90,correctOrientation:true,saveToGallery:false}):await Camera.pickImages({quality:90,limit:multiple?4:1});
       await retainResults(method,data);
       if(input.isConnected)await deliver(input);
     }catch(error){
       if(!pending?.files?.length)await discardRecoveredMedia();
-      if(!/cancel|canceled|cancelled|annul|No images picked|No image picked/i.test(error?.message||''))nativeNotice('Impossible d’ouvrir cette photo. Vérifie l’accès à la caméra ou choisis une image dans la galerie.');
+      const message=cameraErrorMessage(error);
+      if(message){nativeNotice(message);input.dispatchEvent(new CustomEvent('nm-media-error',{bubbles:true,detail:message}));}
     }finally{busy=false;}})();
   },true);
 }

@@ -43,7 +43,7 @@ export function EquipmentCategory({ item, onChange }) {
   </select></label>;
 }
 
-export function EquipmentFields({ item, onChange }) {
+export function EquipmentFields({ item, onChange, hideNotes=false }) {
   const type = equipmentInfo(item);
   return <>
     <div className="form2">
@@ -52,6 +52,6 @@ export function EquipmentFields({ item, onChange }) {
     </div>
     {type.decorative && <label>Couleur / motif (facultatif)<input value={item.materialStyle || ''} onChange={event => onChange({ materialStyle: event.target.value })} placeholder="Doré, argenté, fleurs, étoiles…" /></label>}
     {isDecoration(item) && <fieldset className="stickerTags"><legend>Motifs et univers <small>facultatif · plusieurs choix possibles</small></legend><div>{decorationTags.map(tag=><button key={tag} type="button" aria-pressed={stickerTags(item).includes(tag)} onClick={()=>onChange({decorationTags:stickerTags(item).includes(tag)?stickerTags(item).filter(t=>t!==tag):[...stickerTags(item),tag]})}>{tag}</button>)}</div></fieldset>}
-    <label>Notes (facultatif)<textarea rows="3" value={item.notes || ''} onChange={event => onChange({ notes: event.target.value })} placeholder="Taille, grain, embout, contenu du lot…" /></label>
+    {!hideNotes&&<label>Notes (facultatif)<textarea rows="3" value={item.notes || ''} onChange={event => onChange({ notes: event.target.value })} placeholder="Taille, grain, embout, contenu du lot…" /></label>}
   </>;
 }

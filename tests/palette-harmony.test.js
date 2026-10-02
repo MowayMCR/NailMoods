@@ -1,20 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { generateInspirations } from '../src/freeInspiration.js';
+import {harmoniousPalette} from '../src/moodPalettes.js';
 import { renderingForIdea } from '../src/techniqueRendering.js';
 
 test('audacieuse graphique proposals keep a coherent colour story', () => {
   const report = generateInspirations([], {}, { intent: 'inspire', mood: 'Audacieuse', style: 'Graphique', polishCount: 3, duration: 90, level: 2 }, 1, 12);
   const allowed = new Set(['Cassis', 'Prune', 'Rose', 'Nude', 'Or', 'Brun', 'Terracotta', 'Blanc']);
   assert.ok(report.results.length > 0);
-  assert.ok(report.results.every(idea => idea.palette.every(colour => allowed.has(colour.family))));
+  assert.ok(report.results.every(idea => harmoniousPalette(idea.palette,idea.options.mood)));
 });
 
 test('a Chic automatic palette does not mix unrelated calm colours', () => {
   const report = generateInspirations([], {}, { intent: 'inspire', mood: 'Chic', polishCount: 3, duration: 90, level: 2 }, 1, 12);
   const allowed = new Set(['Nude', 'Beige', 'Blanc', 'Brun', 'Bordeaux', 'Rouge', 'Or']);
   assert.ok(report.results.length > 0);
-  assert.ok(report.results.every(idea => idea.palette.every(colour => allowed.has(colour.family))));
+  assert.ok(report.results.every(idea => harmoniousPalette(idea.palette,idea.options.mood)));
 });
 
 test('explicitly selected colours override an ambience suggestion', () => {
@@ -25,18 +26,17 @@ test('explicitly selected colours override an ambience suggestion', () => {
   assert.ok(report.results.some(idea => idea.palette.map(colour => colour.id).sort().join(',') === 'blue,green,white'));
 });
 
-test('three chosen techniques vary their pairings across the proposed cards', () => {
+test('every manual technique remains in each card rather than silently selecting a pair', () => {
   const report = generateInspirations([], {}, { intent: 'inspire', mood: 'Audacieuse', techniques: ['French', 'Aura nails', 'Tortoiseshell'], techniquePlacement: 'auto', polishCount: 2, duration: 90, level: 2 }, 2, 8);
   const pairings = new Set(report.results.map(idea => idea.composition.techniques.join(' + ')));
-  assert.ok(pairings.has('French + Aura'));
-  assert.ok(pairings.has('French + Tortoise'));
+  assert.deepEqual([...pairings],['French + Aura + Tortoise']);
 });
 
 test('style is carried into the illustrated recipe without changing the ambience palette', () => {
   const report = generateInspirations([], {}, { intent: 'inspire', mood: 'Audacieuse', style: 'Graphique', techniques: ['French', 'Aura nails'], polishCount: 2, duration: 90, level: 2 }, 2, 4);
   assert.ok(report.results.length > 0);
   assert.ok(report.results.every(idea => idea.nails.every(nail => nail.visualStyle === 'graphique')));
-  assert.ok(report.results.every(idea => idea.palette.every(colour => ['Cassis', 'Prune', 'Rose', 'Nude', 'Or', 'Brun', 'Terracotta'].includes(colour.family))));
+  assert.ok(report.results.every(idea => harmoniousPalette(idea.palette,'Audacieuse')));
 });
 
 test('tortoise keeps its own label while reusing the marble material renderer', () => {
