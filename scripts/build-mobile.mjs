@@ -11,7 +11,7 @@ writeFileSync('dist-mobile/mobile-build.json', JSON.stringify({environment, vers
 
 // Historical texts remain on the public website; only active texts ship offline.
 rmSync('dist-mobile/legal/archives', {recursive:true, force:true});
-for (const name of ['confidentialite-0.5-beta.html','conditions-0.1-beta.html','confidentialite-0.1-beta.html','conditions-0.3-beta.html','confidentialite-0.4-beta.html','informations-0.3-beta.html']) {
+for (const name of ['confidentialite-0.6-beta.html','conditions-0.4-beta.html','confidentialite-0.5-beta.html','conditions-0.1-beta.html','confidentialite-0.1-beta.html','conditions-0.3-beta.html','confidentialite-0.4-beta.html','informations-0.3-beta.html']) {
   rmSync('dist-mobile/legal/'+name, {force:true});
 }
 for (const name of readdirSync('dist-mobile/legal')) {

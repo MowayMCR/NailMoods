@@ -1,3 +1,4 @@
+import {TERMS_VERSION,PRIVACY_VERSION} from '../src/privacy/policy.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { publicCloudConfig, authReturnUrl } from '../src/cloud/config.js';
@@ -17,7 +18,7 @@ test('signup delegates to auth without injecting privileges or duplicating backe
   let sent;
   const service = createAuthService({ auth: { signUp: async args => { sent=args; return {data:{session:null},error:null}; } } }, page);
   assert.deepEqual(await service.signUp(' a@example.test ', 'password', true, {}), {session:null});
-  assert.deepEqual(sent, {email:'a@example.test',password:'password',options:{emailRedirectTo:authReturnUrl(page),data:{adult_confirmed:true,terms_accepted:true,terms_version:'0.4-beta',privacy_version:'0.6-beta',analytics_consent:false,ads_consent:false,personalized_ads_consent:false}}});
+  assert.deepEqual(sent, {email:'a@example.test',password:'password',options:{emailRedirectTo:authReturnUrl(page),data:{adult_confirmed:true,terms_accepted:true,terms_version:TERMS_VERSION,privacy_version:PRIVACY_VERSION,analytics_consent:false,ads_consent:false,personalized_ads_consent:false}}});
 });
 test('recovery callback exchanges once per invocation and removes code from returned navigation', async () => {
   let calls = 0;

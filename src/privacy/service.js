@@ -27,6 +27,7 @@ export function privacyService(client) {
       result.support=[];
       for(let offset=0;;offset+=20){const page=await checked(client.rpc('nm_support',{p_action:'export',p_data:{offset}}));result.support.push(...page.items);if(!page.hasMore)break;}
       result.blocked_accounts=await checked(client.rpc('nm_safety',{p_action:'blocked',p_data:{}}));
+      result.google_play_subscriptions=await checked(client.rpc('google_play_entitlement_state'));
       // Revalidate: never download account A's export after a switch to B during the request.
       if ((await user()).id !== current.id) throw new Error('Le compte a changé. Relance le téléchargement.');
       return result;

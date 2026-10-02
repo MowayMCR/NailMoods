@@ -1,6 +1,6 @@
 // Local catalogue is read-only. Personal collection edits never write back to it.
 import { validHex } from './colorAnalysis.js';
-import { canonicalBrand, canonicalBarcode, productBarcodes, parseProductText, shortCode } from './productIdentity.js';
+import { canonicalBrand, observationBarcode, productBarcodes, parseProductText, shortCode } from './productIdentity.js';
 export const catalogText = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 const tokens = value => catalogText(value).split(' ').filter(Boolean);
 const contains = (haystack, needle) => Boolean(needle && (' '+haystack+' ').includes(' '+needle+' '));
@@ -15,20 +15,21 @@ export function matchCatalog(products, query, { brand = '', collection = '', ocr
   const parsed=parseProductText(query,products,{brand,collection,ocr});
   const b=canonicalBrand(parsed.brand), c=catalogText(parsed.collection);
   const codes=[...new Set([...shadeCodes,...parsed.shadeCodes].map(shortCode))];
-  const barcodeKeys=[rawBarcode,...barcodes.map(v=>typeof v==='string'?v:v.rawBarcode),...parsed.barcodes.map(v=>v.rawBarcode),q.replace(/ /g,'')].map(canonicalBarcode).filter(Boolean);
+  const observedRaw = barcodes.some(v=>v?.rawBarcode === rawBarcode);
+  const barcodeKeys=[...(observedRaw?[]:[rawBarcode]),...barcodes,...parsed.barcodes,q.replace(/ /g,'')].map(observationBarcode).filter(Boolean);
   const ranked=products.flatMap(product=>{
     const pb=canonicalBrand(product.brand),pc=catalogText(product.collection),name=catalogText(product.name),ref=catalogText(product.reference);
     const barcodeExact=productBarcodes(product).some(code=>barcodeKeys.includes(code));
     const brandConflict=Boolean(b && b!==pb), collectionConflict=Boolean(c && c!==pc);
     if(!barcodeExact && (brandConflict || collectionConflict))return [];
-    const skus=[product.sku,...(Array.isArray(product.skuAliases)?product.skuAliases:[])].map(catalogText).filter(Boolean);
+    const skus=(product.skuUnique === false ? [] : [product.sku,...(Array.isArray(product.skuAliases)?product.skuAliases:[])]).map(catalogText).filter(Boolean);
     const scannedReferences=barcodes.filter(v=>v && typeof v==='object' && ['CODE_128','CODE_39'].includes(v.barcodeFormat)).map(v=>catalogText(v.rawBarcode));
     const skuExact=skus.some(sku=>contains(q,sku) || parsed.references.some(r=>catalogText(r)===sku) || scannedReferences.includes(sku));
     const refNumeric=/^\d{1,4}$/.test(ref);
     const referenceExact=Boolean(ref && (refNumeric ? codes.includes(shortCode(ref)) : contains(q,ref) || scannedReferences.includes(ref))) || skuExact;
     const shades=[product.shadeCode,...(Array.isArray(product.shadeCodeAliases)?product.shadeCodeAliases:[]),...(refNumeric?[ref]:[])].filter(Boolean).map(shortCode);
     const shadeExact=shades.some(code=>codes.includes(code));
-    const nameExact=contains(q,name);
+    const nameExact=[name,...(product.nameAliases||[]).map(catalogText)].some(n=>contains(q,n));
     if(codes.length && shades.length && !shadeExact && !referenceExact && !barcodeExact)return [];
     let score=0,priority=0,reason='';
     if(barcodeExact){score=99;priority=7;reason='EAN / GTIN exact';}
@@ -43,7 +44,7 @@ export function matchCatalog(products, query, { brand = '', collection = '', ocr
       if(supported){score=b?76:62;priority=1;reason='Nom proche · à vérifier';}
     }
     if(!score)return [];
-    const scannedBarcode=barcodeExact && [rawBarcode,...barcodes.filter(v=>v.barcodeSource!=='ocr').map(v=>typeof v==='string'?v:v.rawBarcode)].map(canonicalBarcode).some(code=>code && productBarcodes(product).includes(code));
+    const scannedBarcode=barcodeExact && [...(observedRaw?[]:[rawBarcode]),...barcodes.filter(v=>v.barcodeSource!=='ocr')].map(observationBarcode).some(code=>code && productBarcodes(product).includes(code));
     if(ocr && !scannedBarcode){score=Math.min(score,88);reason+=' · texte lu sur photo';}
     if(brandConflict || collectionConflict){score=Math.min(score,65);reason+=' · conflit avec la marque ou la gamme lue';}
     const cap=ocr?88:100;
@@ -62,7 +63,7 @@ export function catalogCandidate(match) {
   fields.finish = finishes[catalogText(p.finish)] || 'Autre';
   if (p.finish && !finishes[catalogText(p.finish)]) fields.finishDetail = p.finish;
   if(p.colorValidated === true && validHex(p.catalogColor)) fields.catalogColor=p.catalogColor;
-  return {fields,images:[],variants:[],method:'catalog',source:p.url || '',catalogId:p.catalogId,catalogVersion:'V1-2026-09-17',evidence:match.evidence,identity: Object.fromEntries(['brand','collection','reference','sku','name'].filter(k=>p[k]).map(k=>[k,p[k]])),score:match.score,confidence:match.confidence,reason:match.reason};
+  return {fields,images:[],variants:[],method:'catalog',source:p.url || '',catalogId:p.catalogId,catalogVersion:p.catalogVersion || 'V1-2026-09-17',evidence:match.evidence,identity: Object.fromEntries(['brand','collection','reference','sku','name'].filter(k=>p[k]).map(k=>[k,p[k]])),score:match.score,confidence:match.confidence,reason:match.reason};
 }
 export function catalogueProvenance(candidate) {
   return {kind:'nailmoods',verified:false,catalogId:candidate.catalogId,catalogVersion:candidate.catalogVersion,recognitionScore:candidate.score,recognitionEvidence:candidate.evidence,catalogIdentity:candidate.identity,confirmedAt:new Date().toISOString(),importMethod:'catalog'};
@@ -70,7 +71,7 @@ export function catalogueProvenance(candidate) {
 let cached;
 export async function loadCatalog(signal) {
   if(cached) return cached;
-  const response=await fetch(import.meta.env.BASE_URL + 'catalog-v1.json',{signal});
+  const response=await fetch(import.meta.env.BASE_URL + 'catalog-v2.json',{signal});
   if(!response.ok) throw new Error('Le catalogue est indisponible. Tu peux ajouter ton produit manuellement.');
   const data=await response.json();
   if(!Array.isArray(data.products)) throw new Error('Catalogue illisible. La saisie manuelle reste disponible.');

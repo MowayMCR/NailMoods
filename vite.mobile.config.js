@@ -7,6 +7,6 @@ export default defineConfig(() => {
   process.env.VITE_DEPLOYMENT_ENV = environment;
   return mergeConfig(webConfig(), {
     base: './', build: { outDir: 'dist-mobile', emptyOutDir: true },
-    define: { 'import.meta.env.VITE_NATIVE_BUILD': 'true', 'import.meta.env.VITE_APP_VERSION': JSON.stringify('0.3.0-beta.5') },
+    define: { 'import.meta.env.VITE_NATIVE_BUILD': 'true', 'import.meta.env.VITE_APP_VERSION': JSON.stringify('0.3.0-beta.6') },
   });
 });

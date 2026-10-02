@@ -1,6 +1,6 @@
 // Bump versions only alongside archived documents and the server policy migration.
-export const TERMS_VERSION = '0.4-beta';
-export const PRIVACY_VERSION = '0.6-beta';
+export const TERMS_VERSION = '0.5-beta';
+export const PRIVACY_VERSION = '0.7-beta';
 export const GUEST_CONSENT_KEY = 'nm-privacy-guest-v1';
 // No vendor is selected. No optional SDK, pixel or advertisement is loaded.
 export const TECHNOLOGIES = Object.freeze({ analytics: true, ads: false, personalizedAds: false });

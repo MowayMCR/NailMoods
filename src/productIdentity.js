@@ -3,8 +3,15 @@ export const identityText = value => String(value || '').normalize('NFD').replac
 export const identityContains = (text, value) => Boolean(value && (' '+text+' ').includes(' '+value+' '));
 export const canonicalBrand = value => /^(kiko|kiko milano|kik0|kik0 milano)$/.test(identityText(value)) ? 'kiko milano' : identityText(value);
 export const shortCode = value => /^\d{1,4}$/.test(String(value || '').trim()) ? String(Number(value)) : identityText(value);
-export function canonicalBarcode(value) {
-  const code=String(value || '').replace(/[\s-]/g,'');
+export function canonicalBarcode(value, format = '') {
+  let code=String(value || '').replace(/[\s-]/g,'');
+  if (['UPC_E','UPC-E'].includes(format)) {
+    if (!/^[01]\d{7}$/.test(code)) return '';
+    const [n,a,b,c,d,e,f,check] = code;
+    code = Number(f) <= 2 ? n+a+b+f+'0000'+c+d+e+check :
+      f === '3' ? n+a+b+c+'00000'+d+e+check :
+      f === '4' ? n+a+b+c+d+'00000'+e+check : n+a+b+c+d+e+'0000'+f+check;
+  }
   if(!/^(?:\d{8}|\d{12}|\d{13}|\d{14})$/.test(code))return '';
   const body=code.slice(0,-1);let sum=0;
   for(let i=body.length-1,weight=3;i>=0;i--,weight=weight===3?1:3)sum+=Number(body[i])*weight;
@@ -14,8 +21,9 @@ export function barcodeObservation(rawBarcode, barcodeFormat = 'UNKNOWN', source
   return {rawBarcode:String(rawBarcode ?? ''),barcodeFormat,barcodeSource:source,barcodeConfidence:Number.isFinite(confidence)?confidence:null};
 }
 export function productBarcodes(product) {
-  return [product.ean13,product.gtin,product.barcode,...(Array.isArray(product.barcodeAliases)?product.barcodeAliases:[])].map(canonicalBarcode).filter(Boolean);
+  return [product.ean13,product.gtin,product.barcode,...(Array.isArray(product.barcodeAliases)?product.barcodeAliases:[])].map(value=>canonicalBarcode(value)).filter(Boolean);
 }
+export const observationBarcode = value => typeof value === 'string' ? canonicalBarcode(value) : canonicalBarcode(value?.rawBarcode, value?.barcodeFormat);
 export function parseProductText(text, products = [], {brand='',collection='',ocr=false} = {}) {
   const raw=String(text || '').slice(0,12000), q=identityText(raw);
   const known=[...new Set(products.map(p=>p.brand).filter(Boolean))];

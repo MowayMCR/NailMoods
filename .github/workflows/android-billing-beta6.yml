@@ -1,0 +1,32 @@
+name: Billing beta 6 compile checks (no release)
+on:
+  push:
+    branches: [feat/google-play-billing-beta6]
+    paths: ['src/**', 'public/**', 'android/**', 'scripts/**', 'supabase/**', 'tests/**', 'package*.json', 'vite.mobile.config.js', '.github/workflows/android-billing-beta6.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm test
+      - name: Compile Java against the actual Billing library
+        run: |
+          node scripts/build-mobile.mjs production
+          npx cap sync android
+          chmod +x android/gradlew
+          ./android/gradlew -p android -PnailmoodsEnvironment=production :app:compileDebugJavaWithJavac --console=plain
+      - name: Resolve the Billing dependency
+        run: ./android/gradlew -p android -PnailmoodsEnvironment=production :app:dependencyInsight --dependency com.android.billingclient --configuration debugRuntimeClasspath --console=plain
