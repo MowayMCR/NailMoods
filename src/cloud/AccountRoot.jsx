@@ -27,6 +27,7 @@ import { clearAccountCache } from '../privacy/service';
 import AccountOfferPanel from './AccountOfferPanel';
 import BillingPanel from './BillingPanel';
 import BillingSync from './BillingSync';
+import {isAppleIOS} from './appleBilling';
 import { PoReceivedShares, ShareToPoSheet } from '../social/PoShare';
 import PublicationReview from '../support/PublicationReview';
 import StaffJournal from '../support/StaffJournal';
@@ -257,9 +258,9 @@ export default function AccountRoot({App}){
         <p>Retrouve ta collection, tes inspirations et ton journal sur tes appareils. Tu peux aussi continuer sans compte.</p>
         {mode!=='password' && <label>Email<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>}
         {!['recovery','confirm'].includes(mode) && <label>Mot de passe<input type="password" autoComplete={mode==='login'?'current-password':'new-password'} minLength={mode==='login'?1:8} required value={password} onChange={e=>setPassword(e.target.value)} disabled={busy}/></label>}
-        {mode==='signup'&&<p className="accountHelp">Ton compte démarre en Free. Tu pourras choisir Plus ou Pro plus tard dans Profil → Mon offre, après confirmation de ton statut d’âge. Aucun paiement n’est demandé pendant la bêta.</p>}
+        {mode==='signup'&&<p className="accountHelp">Ton compte démarre en Free. {isAppleIOS()?'Les abonnements facultatifs Plus et Pro sont présentés dans Profil → Mon offre, avec leur prix et leur durée avant achat.':'Tu pourras choisir Plus ou Pro plus tard dans Profil → Mon offre, après confirmation de ton statut d’âge. Aucun paiement n’est demandé pendant la bêta.'}</p>}
         <LegalLinks/>
-        {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>Je confirme avoir 18 ans ou plus et j’accepte les Conditions d’utilisation</label><small>La bêta Free, Plus et Pro est réservée aux adultes. Aucun paiement n’est actif pendant cette bêta.</small></>}
+        {mode==='signup' && <><label className="consentCheck"><input type="checkbox" required checked={termsAccepted} onChange={e=>setTermsAccepted(e.target.checked)} disabled={busy}/>Je confirme avoir 18 ans ou plus et j’accepte les Conditions d’utilisation</label><small>{isAppleIOS()?'NailMoods est réservé aux adultes. Free reste gratuit.':'La bêta Free, Plus et Pro est réservée aux adultes. Aucun paiement n’est actif pendant cette bêta.'}</small></>}
         <button className="accountPrimary" disabled={busy || (mode==='signup' && !termsAccepted)}>{busy?'En cours…':mode==='signup'?'Créer mon compte':mode==='confirm'?'Renvoyer le mail de confirmation':mode==='recovery'?'Recevoir un lien':mode==='password'?'Enregistrer le mot de passe':'Se connecter'}</button>
         {mode==='login' && <><button type="button" disabled={busy} onClick={()=>changeMode('signup')}>Créer mon compte</button><button type="button" disabled={busy} onClick={()=>changeMode('recovery')}>Mot de passe oublié</button></>}
         {['signup','recovery','confirm'].includes(mode) && <button type="button" disabled={busy} onClick={()=>changeMode('login')}>J’ai déjà un compte</button>}

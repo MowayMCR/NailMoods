@@ -9,7 +9,7 @@
 
 .nm-native .app > nav { padding-bottom:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)); }
 
-.nm-ios button { min-height:44px; }
+.nm-ios button { min-height:44px; min-width:44px; }
 .nm-ios input,.nm-ios select,.nm-ios textarea { font-size:1rem; }
 .nm-ios .productSheet { padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)); }
 .nm-ios :focus-visible { outline:3px solid #733451; outline-offset:3px; }
