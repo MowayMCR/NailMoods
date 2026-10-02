@@ -36,16 +36,36 @@ test('Billing SQL executes and preserves provenance, cancellation, founder right
           new.raw_user_meta_data->>'privacy_version','18_plus'); return new; end$$;
       create trigger signup_fixture after insert on auth.users for each row execute function private.signup_fixture();
       create function cron.schedule(text,text,text) returns bigint language sql as $$select 1::bigint$$;
+      create table net.http_request_queue(headers jsonb);
       create function net.http_post(url text,headers jsonb,body jsonb,timeout_milliseconds integer)
-        returns bigint language sql as $$select 1::bigint$$;
+        returns bigint language plpgsql as $$begin
+          insert into net.http_request_queue values(headers); return 1::bigint; end$$;
     `);
     await db.exec(read('supabase/migrations/20260930210000_google_play_billing_entitlements.sql'));
     // Hosted async networking and cron are represented by the stubs above.
     await db.exec(read('supabase/migrations/20261001214434_google_play_reconciliation.sql').replace('create extension if not exists pg_net;',''));
     await db.exec(read('supabase/migrations/20261001214443_billing_legal_versions.sql'));
+    await db.exec(read('supabase/migrations/20261002093741_google_play_scheduler_queue_privacy.sql'));
+    await db.exec(read('supabase/migrations/20261002094228_google_play_reconciliation_nonces.sql'));
     const result=await db.exec(read('tests/sql/google-play-regression.sql'));
     assert.match(result.at(-1).rows[0].result,/^PASS:/);
     assert.equal((await db.query('select count(*)::integer as n from auth.users')).rows[0].n,0);
     assert.equal((await db.query('select enabled from private.google_play_settings')).rows[0].enabled,false);
+    assert.equal((await db.query('select private.google_play_schedule_reconciliation() as request')).rows[0].request,null);
+    assert.equal((await db.query('select count(*)::integer as n from private.google_play_reconcile_nonces')).rows[0].n,0);
+    await db.exec(`update private.google_play_settings set enabled=true,plus_base_plan='plus-monthly',pro_base_plan='pro-monthly',
+      reconcile_url='https://fixture.supabase.co/functions/v1/google-play-verify';`);
+    await db.query('select private.google_play_schedule_reconciliation()');
+    const nonce=(await db.query("select headers->>'x-nm-reconcile-key' as nonce from net.http_request_queue")).rows[0].nonce;
+    assert.match(nonce,/^[a-f0-9]{64}$/);
+    assert.notEqual((await db.query('select reconcile_secret from private.google_play_settings')).rows[0].reconcile_secret,nonce);
+    assert.equal((await db.query('select nonce_hash=$1 as plaintext from private.google_play_reconcile_nonces',[nonce])).rows[0].plaintext,false);
+    assert.equal((await db.query('select public.google_play_scheduler_context($1) as context',[nonce])).rows[0].context.enabled,true);
+    await assert.rejects(db.query('select public.google_play_scheduler_context($1)',[nonce]),/invalid_scheduler_key/);
+    await db.query('select private.google_play_schedule_reconciliation()');
+    const expired=(await db.query("select headers->>'x-nm-reconcile-key' as nonce from net.http_request_queue where headers->>'x-nm-reconcile-key'<>$1",[nonce])).rows[0].nonce;
+    await db.exec("update private.google_play_reconcile_nonces set expires_at=now()-interval '1 second'");
+    await assert.rejects(db.query('select public.google_play_scheduler_context($1)',[expired]),/invalid_scheduler_key/);
+    assert.equal((await db.query("select has_table_privilege('authenticated','private.google_play_reconcile_nonces','select') as allowed")).rows[0].allowed,false);
   }finally{await db.close();}
 });

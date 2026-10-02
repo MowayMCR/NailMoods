@@ -11,7 +11,7 @@
 - [x] Nouveaux textes versionnés préparés, anciennes versions et consentements conservés.
 - [x] Catalogue intégré avec IDs préservés ; 1 047 associations testées ; Excel joint dans `release/beta6`.
 - [x] 366 tests locaux, build web et contenu web mobile réussis.
-- [ ] Compilation Java finale contre le véritable SDK en CI.
+- [x] Compilation Java contre le véritable SDK réussie en CI le 2 octobre 2026.
 - [ ] Profil marchand, produits/forfaits/prix/pays, licence testers, API et secrets configurés.
 - [ ] Publication coordonnée des textes/client, versions légales serveur et Data safety.
 - [ ] Candidat signé avec manifeste, versionCode libre et certificat d'importation vérifiés.
@@ -64,4 +64,4 @@ Never commit the service-account JSON or private key.
 
 ## Current stop point
 
-Corrections and the catalogue are saved on `feat/google-play-billing-beta6`; Billing is deployed but disabled. The signed candidate awaits configuration and compilation checks, then internal Google purchase tests before promotion to the closed track. The original audit is historical; consult the 2026-10-02 correction record.
+Corrections and the catalogue are saved on `feat/google-play-billing-beta6`; Billing is deployed but disabled. Native Java compilation against the actual SDK passed. The signed candidate awaits Google configuration and signing checks, then internal Google purchase tests before promotion to the closed track. The original audit is historical; consult the 2026-10-02 correction record.
