@@ -1,0 +1,16 @@
+{
+  "workbook": "NailMoods_V2_Fusion_V1_V2_auditee_2026-10-01.xlsx",
+  "workbookSha256": "5ee75d3dfba63791a99a3761486db494bf27d7a9e067d88a809f473f3d1fc9ff",
+  "aab": "NailMoods-Production-0.3.0-beta.6-SIGNE.aab",
+  "aabCatalogueEntry": "base/assets/public/catalog-v2.json",
+  "embeddedCatalogueSha256": "2b1f785adee0b8a2fefe47a473dd93473696d2f843eb4582533aa1a55e8c9740",
+  "embeddedSourceSha256": "5ee75d3dfba63791a99a3761486db494bf27d7a9e067d88a809f473f3d1fc9ff",
+  "workbookMatchesEmbeddedSource": true,
+  "embeddedDataMatchesRepo": true,
+  "count": 2631,
+  "verifiedBarcodeAssociations": 1047,
+  "quarantinedCount": 351,
+  "supplementSmartInBeta6": false,
+  "activePreviouslyInV1": 1458,
+  "activeNewBeyondV1": 1173
+}

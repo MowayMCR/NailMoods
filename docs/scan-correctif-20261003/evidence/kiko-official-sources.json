@@ -1,0 +1,709 @@
+{
+  "checkedAt": "2026-10-03",
+  "sources": [
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-01-47275/",
+      "sourceSha256": "343cf1242b02d8e91249c788fad96761012b8a923d2c16d6feb2602213113818",
+      "reference": "01",
+      "name": "Clear",
+      "sku": "KM000000779001B",
+      "barcodes": [
+        "8059385035918"
+      ],
+      "catalogColor": ""
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-02-47276/",
+      "sourceSha256": "5fcca1434ab8e5168938a2c9323b486ee4ba21ff84dea910300cc26a7753d8cf",
+      "reference": "02",
+      "name": "Satin Light Beige",
+      "sku": "KM000000779002B",
+      "barcodes": [
+        "8059385035925"
+      ],
+      "catalogColor": "#f1dcd1"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-03-7395/",
+      "sourceSha256": "c6abcad3ad7b1003088536eec660f2d513eaec5a58764bafed3dc0fdfbfc614f",
+      "reference": "03",
+      "name": "Nude Beige",
+      "sku": "KM000000017003B",
+      "barcodes": [
+        "8025272911313"
+      ],
+      "catalogColor": "#f2d3c6"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-04-47278/",
+      "sourceSha256": "d8e278186adf0aff4196e5519be01631f8bed727bc836cbfe623057cb6966c44",
+      "reference": "04",
+      "name": "Rosy Nude",
+      "sku": "KM000000779004B",
+      "barcodes": [
+        "8059385035949"
+      ],
+      "catalogColor": "#eececb"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-05-7397/",
+      "sourceSha256": "5c7f3d4f8ddf70a847133e348cdade9955c0609b01dc858f6d6e5db15c382b10",
+      "reference": "05",
+      "name": "Taupe",
+      "sku": "KM000000017005B",
+      "barcodes": [
+        "8025272911337"
+      ],
+      "catalogColor": "#b1a097"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-06-47280/",
+      "sourceSha256": "146679301b11b03bff5f8e950d4ad053cb40aaf6ec259e3cfc68534e9d9873a1",
+      "reference": "06",
+      "name": "Dark Mauve",
+      "sku": "KM000000779006B",
+      "barcodes": [
+        "8059385035963"
+      ],
+      "catalogColor": "#8e6665"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-07-7399/",
+      "sourceSha256": "7c9bdbab04197865cb29de9571933ff3554ad35b4ae5a1ec265c18e132053dbb",
+      "reference": "07",
+      "name": "Vintage Rose",
+      "sku": "KM000000017007B",
+      "barcodes": [
+        "8025272911351"
+      ],
+      "catalogColor": "#a85467"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-10-7402/",
+      "sourceSha256": "5a5e63ed196e4783a369feb3dfbb678c042408f941ea5a6b7bb3c27819ec9e38",
+      "reference": "10",
+      "name": "Geranium Red",
+      "sku": "KM000000017010B",
+      "barcodes": [
+        "8025272911382"
+      ],
+      "catalogColor": "#e93c1a"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-101-7491/",
+      "sourceSha256": "e87395de8c7b8579aa8a4a70db3192d2e96ccb57fae98690a74b3a66f5aa2159",
+      "reference": "101",
+      "name": "White French",
+      "sku": "KM000000017101B",
+      "barcodes": [
+        "8025272912228"
+      ],
+      "catalogColor": "#f6f6f6"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-102-7492/",
+      "sourceSha256": "f2a1eb1502c1a405371817bdd2c0a782b5db5aaefd8c28aa461198e5ada30a7b",
+      "reference": "102",
+      "name": "Peach French",
+      "sku": "KM000000017102B",
+      "barcodes": [
+        "8025272912235"
+      ],
+      "catalogColor": "#ffe0d8"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-103-47346/",
+      "sourceSha256": "85df9fa52158a95e9c53f3e63cc51a3f655559109c5435aa95f25d7f183ebb5f",
+      "reference": "103",
+      "name": "Rosy French",
+      "sku": "KM000000779103B",
+      "barcodes": [
+        "8059385036601"
+      ],
+      "catalogColor": "#ffdfe4"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-11-7403/",
+      "sourceSha256": "3da944ce142d3dd1bbeb4ef88fd40699e31049837e11001af85d9e22649c7e55",
+      "reference": "11",
+      "name": "Fire Red",
+      "sku": "KM000000017011B",
+      "barcodes": [
+        "8025272911399"
+      ],
+      "catalogColor": "#dd2333"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-12-47285/",
+      "sourceSha256": "00bdeb796346cd2278c45d5a1b0792c0e2fbdfdc18da106dc6821310afcc0af9",
+      "reference": "12",
+      "name": "Scarlet Red",
+      "sku": "KM000000779012B",
+      "barcodes": [
+        "8059385036014"
+      ],
+      "catalogColor": "#a01e3e"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-13-47286/",
+      "sourceSha256": "2e0e718de2041f879a8e157c25796cb21d058e01e955c6e751206d62326da032",
+      "reference": "13",
+      "name": "Ruby Red",
+      "sku": "KM000000779013B",
+      "barcodes": [
+        "8059385036021"
+      ],
+      "catalogColor": "#88002b"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-14-47289/",
+      "sourceSha256": "95126b11db4b47d4e8be74fc4c13448fcdf4eac5513f57f9ac4f320e02dcb258",
+      "reference": "14",
+      "name": "Rouge Noir",
+      "sku": "KM000000779014B",
+      "barcodes": [
+        "8059385036038"
+      ],
+      "catalogColor": "#530024"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-15-7410/",
+      "sourceSha256": "66fe55eb4651e8ea8a7e7364c206c78e1f300aa6d492dbdc87022318f834fc75",
+      "reference": "15",
+      "name": "Pearly Cranberry",
+      "sku": "KM000000017015B",
+      "barcodes": [
+        "8025272911436"
+      ],
+      "catalogColor": "#7d013b"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-150-7405/",
+      "sourceSha256": "8d06b595b3fbb58baaeadfba00d19f402a4ca093a77fb33fbdea63d0fbc58ce1",
+      "reference": "150",
+      "name": "Nacred Arabian White",
+      "sku": "KM000000203150B",
+      "barcodes": [
+        "8025272978675"
+      ],
+      "catalogColor": "#ebe7e3"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-153-7411/",
+      "sourceSha256": "410b594047d254eebcbebe0006f6b5021f7cdae63e019965f2aa95f521048cc6",
+      "reference": "153",
+      "name": "Muget Green",
+      "sku": "KM000000203153B",
+      "barcodes": [
+        "8025272978705"
+      ],
+      "catalogColor": "#9aa180"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-16-47291/",
+      "sourceSha256": "b1b7c6edd9d19d3f6d1533d5a410609f8c70339ece86ea04a083198438764ecb",
+      "reference": "16",
+      "name": "Dark Wine",
+      "sku": "KM000000779016B",
+      "barcodes": [
+        "8059385036052"
+      ],
+      "catalogColor": "#620040"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-18-47292/",
+      "sourceSha256": "f98271fab536d8df4a4e3e0c628d97dffadb63e5c425ed060193ff8bcab11a58",
+      "reference": "18",
+      "name": "Magenta",
+      "sku": "KM000000779018B",
+      "barcodes": [
+        "8059385036069"
+      ],
+      "catalogColor": "#e2136b"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-19-7416/",
+      "sourceSha256": "0cb5f92cae24ee0d849c7790043cde0abc60288b1522c10be602208fdf4fef6a",
+      "reference": "19",
+      "name": "Pearly Hot Pink",
+      "sku": "KM000000017019B",
+      "barcodes": [
+        "8025272911474"
+      ],
+      "catalogColor": "#ce1966"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-21-7418/",
+      "sourceSha256": "89866aa052e549d1acebfa4f75f843b1a953423e6ba59e871427a4ae769f9fe9",
+      "reference": "21",
+      "name": "Pearly Golden Rose",
+      "sku": "KM000000017021B",
+      "barcodes": [
+        "8025272911498"
+      ],
+      "catalogColor": "#eb84b5"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-22-47295/",
+      "sourceSha256": "c887480fd27e4949f32df3dc9b81357e99bfe6e75c06a7d4bf93876dae2c8951",
+      "reference": "22",
+      "name": "Pearly Comfy Rose",
+      "sku": "KM000000779022B",
+      "barcodes": [
+        "8059385036090"
+      ],
+      "catalogColor": "#f3a5cc"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-23-7420/",
+      "sourceSha256": "9d29cf6c58c75ba9be22e3ade28bedda518aede7ec22d419589d1ddd365ed972",
+      "reference": "23",
+      "name": "Pearly Golden Lilac",
+      "sku": "KM000000017023B",
+      "barcodes": [
+        "8025272911511"
+      ],
+      "catalogColor": "#dbabe1"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-24-7421/",
+      "sourceSha256": "c1f0b3a8975d984201466f64629cbbfe902f3e71dedec3b747439077ca15c1a8",
+      "reference": "24",
+      "name": "Metallic Imperial Violet",
+      "sku": "KM000000017024B",
+      "barcodes": [
+        "8025272911528"
+      ],
+      "catalogColor": "#4a0062"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-25-7422/",
+      "sourceSha256": "d24dce7da09c4045446a02ac53f2c24e13f2e73f3514c70dd62101a8dc96eafe",
+      "reference": "25",
+      "name": "Purple",
+      "sku": "KM000000017025B",
+      "barcodes": [
+        "8025272911535"
+      ],
+      "catalogColor": "#4f2584"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-26-7423/",
+      "sourceSha256": "90b6beeb2e026293624cf63e9be30b978e004d0a06b81eafba15437bc5f7e12a",
+      "reference": "26",
+      "name": "Pastel Light Blue",
+      "sku": "KM000000017026B",
+      "barcodes": [
+        "8025272911542"
+      ],
+      "catalogColor": "#dee8f4"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-27-7424/",
+      "sourceSha256": "519cd7730c9c073e50f6ee5d1bc09d277a4ba726019bdb17fd7a42951289bc46",
+      "reference": "27",
+      "name": "Pearly Light Blue",
+      "sku": "KM000000017027B",
+      "barcodes": [
+        "8025272911559"
+      ],
+      "catalogColor": "#9dc2ff"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-28-7425/",
+      "sourceSha256": "705daa8fa5ccb15f0a282866dc8fff24d33d409a678d5667e6b409149448145d",
+      "reference": "28",
+      "name": "Iridescent Violet Blue",
+      "sku": "KM000000017028B",
+      "barcodes": [
+        "8025272911566"
+      ],
+      "catalogColor": "#4a4cd4"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-30-7426/",
+      "sourceSha256": "a06b4cae936b7c83ad931cac1f332842659067021ac9a708227e0c7961402396",
+      "reference": "30",
+      "name": "Cobalt",
+      "sku": "KM000000017030B",
+      "barcodes": [
+        "8025272911573"
+      ],
+      "catalogColor": "#002c76"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-32-41971/",
+      "sourceSha256": "e2a0f5ab50c5c4f957f8d776f4c3f7e84c5332ba36a5812acef4f7eff3a38de4",
+      "reference": "32",
+      "name": "Peacock Green",
+      "sku": "KM000000651001B",
+      "barcodes": [
+        "8059385025896"
+      ],
+      "catalogColor": ""
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-34-7430/",
+      "sourceSha256": "d09a0e50900d7c8abdf5da03249f1903b4b86b9dc65f3b051a9ee86d7021ef20",
+      "reference": "34",
+      "name": "Cool Gold",
+      "sku": "KM000000017034B",
+      "barcodes": [
+        "8025272911610"
+      ],
+      "catalogColor": "#d5c6ae"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-39-47305/",
+      "sourceSha256": "6fa49a1a31b1d0820b44e5dc84e2d7f37b3f9372d2bc8c89302f89b329da6427",
+      "reference": "39",
+      "name": "Vintage Red",
+      "sku": "KM000000779039B",
+      "barcodes": [
+        "8059385036212"
+      ],
+      "catalogColor": "#cb4041"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-41-47306/",
+      "sourceSha256": "84c2f46abcc5774bde2173cc93a29c8c47095558fd5c6e728b41cf83466e21d7",
+      "reference": "41",
+      "name": "Dark Chocolate",
+      "sku": "KM000000779041B",
+      "barcodes": [
+        "8059385036229"
+      ],
+      "catalogColor": "#463227"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-42-47307/",
+      "sourceSha256": "511085e86c4e81e1bde889635b89833060aa5ef8735d82cfddec619a47f582d2",
+      "reference": "42",
+      "name": "Pearly Golden White",
+      "sku": "KM000000779042B",
+      "barcodes": [
+        "8059385036236"
+      ],
+      "catalogColor": ""
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-43-7436/",
+      "sourceSha256": "a0dc41504965cb1f97c0fe24b2fb548044381d7dd73b45fa425c1a53322b7a05",
+      "reference": "43",
+      "name": "Silver",
+      "sku": "KM000000017043B",
+      "barcodes": [
+        "8025272911672"
+      ],
+      "catalogColor": "#b3b0af"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-45-7438/",
+      "sourceSha256": "0d494cebdfa60b56751f381256e5eae4e1fc74f28e8859b60f555d4f57a4ab38",
+      "reference": "45",
+      "name": "Black",
+      "sku": "KM000000017045B",
+      "barcodes": [
+        "8025272911696"
+      ],
+      "catalogColor": "#101010"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-48-7441/",
+      "sourceSha256": "994ce806eafd778b9ad8ccae9b27159b16f6efa8e062fb88ec99bbd3ee9d0d53",
+      "reference": "48",
+      "name": "Pearly Camelia",
+      "sku": "KM000000017048B",
+      "barcodes": [
+        "8025272911726"
+      ],
+      "catalogColor": "#f8a3a4"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-49-47311/",
+      "sourceSha256": "57e4a2c4fbb758d6d3d45063f4562e5cb105e1a8cf21e12c52c1848ef4a3ee3b",
+      "reference": "49",
+      "name": "Pearly Azalea",
+      "sku": "KM000000779049B",
+      "barcodes": [
+        "8059385036274"
+      ],
+      "catalogColor": "#ff8187"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-51-7444/",
+      "sourceSha256": "6797f19b00ccf60159dd913e713347529ed4f4034ad7031e69a8ea5db211a835",
+      "reference": "51",
+      "name": "Pearly Medium Nude",
+      "sku": "KM000000017051B",
+      "barcodes": [
+        "8025272911757"
+      ],
+      "catalogColor": "#c8908c"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-53-7446/",
+      "sourceSha256": "5dab9d9b7ec55ebc813efbc7a61fb0ffb6d45fedb2786b1965a0fa4a3526ca33",
+      "reference": "53",
+      "name": "Light Rosy Chestnut",
+      "sku": "KM000000017053B",
+      "barcodes": [
+        "8025272911771"
+      ],
+      "catalogColor": "#ad5e50"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-54-7447/",
+      "sourceSha256": "fa8d798e9f6144564d4e1a738aa6378ce76f596d501f49b520e961e051943342",
+      "reference": "54",
+      "name": "Vintage Rose",
+      "sku": "KM000000017054B",
+      "barcodes": [
+        "8025272911788"
+      ],
+      "catalogColor": "#ff9ba2"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-55-47316/",
+      "sourceSha256": "fe296af82d513284407aeb0844d6c6127ed44f1ad7ae21763988a7c6186e2b21",
+      "reference": "55",
+      "name": "Pearly Light Rose",
+      "sku": "KM000000779055B",
+      "barcodes": [
+        "8059385036328"
+      ],
+      "catalogColor": "#e1b7be"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-56-7449/",
+      "sourceSha256": "51df013b73fd9d533e00afcdd074b12f0a5259e466de29c6a53acb846ebd9938",
+      "reference": "56",
+      "name": "Greyish Taupe",
+      "sku": "KM000000017056B",
+      "barcodes": [
+        "8025272911801"
+      ],
+      "catalogColor": "#a98f91"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-57-47318/",
+      "sourceSha256": "8b47b359a4a575971bfa4ee4ac0ce808fb31a501d21e48d4d0b0677cc661e8e5",
+      "reference": "57",
+      "name": "Rosy Taupe",
+      "sku": "KM000000779057B",
+      "barcodes": [
+        "8059385036342"
+      ],
+      "catalogColor": "#876163"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-58-47319/",
+      "sourceSha256": "c9f8800316b17cacebbcc66605e2ec09ecead4f647062db1ff193738c6738f16",
+      "reference": "58",
+      "name": "Yellow",
+      "sku": "KM000000779058B",
+      "barcodes": [
+        "8059385036359"
+      ],
+      "catalogColor": "#ffdc3b"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-63-7456/",
+      "sourceSha256": "543b5abb47bd23b5ddbfc4fb99aebad475690c78d897c337da8f1dd18127322f",
+      "reference": "63",
+      "name": "Pearly Light Geranium",
+      "sku": "KM000000017063B",
+      "barcodes": [
+        "8025272911870"
+      ],
+      "catalogColor": "#fa4408"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-64-47322/",
+      "sourceSha256": "6fd82f707b1cd10934df87b3a4e2a189ba69a3b669991bed9e55743e04a1b0b8",
+      "reference": "64",
+      "name": "Deep Red",
+      "sku": "KM000000779064B",
+      "barcodes": [
+        "8059385036380"
+      ],
+      "catalogColor": "#d50d01"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-65-7458/",
+      "sourceSha256": "c5a6409d55e92000f73de92913bfcde69242442e932a737725044cb6a98f2523",
+      "reference": "65",
+      "name": "Strawberry Pink",
+      "sku": "KM000000017065B",
+      "barcodes": [
+        "8025272911894"
+      ],
+      "catalogColor": "#ff737c"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-66-7459/",
+      "sourceSha256": "ee986925d56ce9c3f174238b0e381a941afed32311560d18d2f14a867c95d066",
+      "reference": "66",
+      "name": "Fuchsia",
+      "sku": "KM000000017066B",
+      "barcodes": [
+        "8025272911900"
+      ],
+      "catalogColor": "#ff1c5c"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-67-7460/",
+      "sourceSha256": "e7a94729c68444a33b29063124faa27daf726e58a2946ee1fc98656bef650cd5",
+      "reference": "67",
+      "name": "Light Crimson",
+      "sku": "KM000000017067B",
+      "barcodes": [
+        "8025272911917"
+      ],
+      "catalogColor": "#763236"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-70-47326/",
+      "sourceSha256": "0da7441951fc063928c7a010eca2b54dc35ddfb28ad249f62389ddfcf76b2702",
+      "reference": "70",
+      "name": "Pearly Dark Vermillion",
+      "sku": "KM000000779070B",
+      "barcodes": [
+        "8059385036427"
+      ],
+      "catalogColor": "#740411"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-71-7464/",
+      "sourceSha256": "f57c74b225493914466f5b117b2f84d53b70149b37abd36059b467a638d7b526",
+      "reference": "71",
+      "name": "Orchid",
+      "sku": "KM000000017071B",
+      "barcodes": [
+        "8025272911955"
+      ],
+      "catalogColor": "#a32960"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-72-7465/",
+      "sourceSha256": "6e1aedd61a2680748cb9a174524f8c83554980aeb4fdb739cd5485bbd44a6e33",
+      "reference": "72",
+      "name": "Pearly Cyclamen",
+      "sku": "KM000000017072B",
+      "barcodes": [
+        "8025272911962"
+      ],
+      "catalogColor": "#d04c87"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-73-7466/",
+      "sourceSha256": "7f23107beb92eab71bad4a354522bd41c678c128577b57fe44c9da7d0a7e1267",
+      "reference": "73",
+      "name": "Candy Pink",
+      "sku": "KM000000017073B",
+      "barcodes": [
+        "8025272911979"
+      ],
+      "catalogColor": "#ff85b4"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-75-47330/",
+      "sourceSha256": "6f299da69d9589721068b9286244601b47fdd509981b6c11b9f62b191e8ae302",
+      "reference": "75",
+      "name": "Pastel Lilac",
+      "sku": "KM000000779075B",
+      "barcodes": [
+        "8059385036465"
+      ],
+      "catalogColor": "#e6bede"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-76-7469/",
+      "sourceSha256": "6e2c085a479dedabc1a34538e530ab3c24783c66d073d8cdd7beeac23420df6c",
+      "reference": "76",
+      "name": "Pearly Lavender",
+      "sku": "KM000000017076B",
+      "barcodes": [
+        "8025272912006"
+      ],
+      "catalogColor": "#aba8c5"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-77-7470/",
+      "sourceSha256": "952ff58ba8529cc791dbe1bcc6e6707afad6b097f8239a7fc90f13f3f5a5ac27",
+      "reference": "77",
+      "name": "Pastel Violet",
+      "sku": "KM000000017077B",
+      "barcodes": [
+        "8025272912013"
+      ],
+      "catalogColor": "#9f7fab"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-79-7472/",
+      "sourceSha256": "121607ad7e91777082cd251eacf1517aadc445d0940aa310e88a02165168c9df",
+      "reference": "79",
+      "name": "Denim Grey Blue",
+      "sku": "KM000000017079B",
+      "barcodes": [
+        "8025272912037"
+      ],
+      "catalogColor": "#455e6e"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-81-7474/",
+      "sourceSha256": "67fb3d5af46da8ab8cfa0b35a5f676418b511a1735d97120266a712ca0763130",
+      "reference": "81",
+      "name": "Pearly Light Blue",
+      "sku": "KM000000017081B",
+      "barcodes": [
+        "8025272912051"
+      ],
+      "catalogColor": "#a3c4e2"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-82-47336/",
+      "sourceSha256": "ee9f60c3cecc35147c56eb204a2032467acaadf976daf0d4e0777c622cd25ceb",
+      "reference": "82",
+      "name": "Emerald",
+      "sku": "KM000000779082B",
+      "barcodes": [
+        "8059385036502"
+      ],
+      "catalogColor": "#00393c"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-84-7477/",
+      "sourceSha256": "da52a82bafc013a9ee36adbf3ef6caf7c213ecc50c3ba46b0a698d46c00db1a6",
+      "reference": "84",
+      "name": "Dark Tiffany",
+      "sku": "KM000000017084B",
+      "barcodes": [
+        "8025272912082"
+      ],
+      "catalogColor": "#98c2b8"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-96-7489/",
+      "sourceSha256": "a3b4cc1c85299570d95205d101715f9771eeb48451194a0d18af55b2fb30d62f",
+      "reference": "96",
+      "name": "Pearly Anthracite",
+      "sku": "KM000000017096B",
+      "barcodes": [
+        "8025272912204"
+      ],
+      "catalogColor": "#414143"
+    },
+    {
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-97-47343/",
+      "sourceSha256": "0cf7ef6f188b0467bb23205ab88ad6c9b03e78ad098856aa3fbe5ddcd7cf5e79",
+      "reference": "97",
+      "name": "Iridescent Unicorn",
+      "sku": "KM000000779097B",
+      "barcodes": [
+        "8059385036571"
+      ],
+      "catalogColor": "#e9e5e3"
+    }
+  ]
+}

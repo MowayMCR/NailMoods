@@ -68,6 +68,15 @@ export function catalogCandidate(match) {
 export function catalogueProvenance(candidate) {
   return {kind:'nailmoods',verified:false,catalogId:candidate.catalogId,catalogVersion:candidate.catalogVersion,recognitionScore:candidate.score,recognitionEvidence:candidate.evidence,catalogIdentity:candidate.identity,confirmedAt:new Date().toISOString(),importMethod:'catalog'};
 }
+// One selection contract for Collection imports and Scan & Génère.
+// Official colors replace a photo estimate; a deliberate personal choice stays first.
+export function catalogSelectionPatch(candidate, item = {}) {
+  const explicit = ['manual','photo','scan-confirmed','product_page'].includes(item.colorSource) && validHex(item.confirmedColor || item.shade || item.color);
+  const color = candidate.fields.catalogColor || '';
+  return {...candidate.fields,provenance:catalogueProvenance(candidate),catalogColor:color,catalogColorValidated:Boolean(color && !explicit),
+    ...(!explicit && color ? {color,shade:color,confirmedColor:color,colorSource:'catalog'} : {}),
+    ...(!explicit && !color && item.colorSource==='catalog' ? {color:'',shade:'',confirmedColor:'',colorSource:''} : {})};
+}
 let cached;
 export async function loadCatalog(signal) {
   if(cached) return cached;
@@ -75,7 +84,12 @@ export async function loadCatalog(signal) {
   if(!response.ok) throw new Error('Le catalogue est indisponible. Tu peux ajouter ton produit manuellement.');
   const data=await response.json();
   if(!Array.isArray(data.products)) throw new Error('Catalogue illisible. La saisie manuelle reste disponible.');
-  cached=data.products;return cached;
+  // A separate audited supplement leaves the original workbook/ID mapping intact.
+  const supplement=await fetch(import.meta.env.BASE_URL + 'catalog-kiko-smart.json',{signal});
+  if(!supplement.ok) throw new Error('Le complément du catalogue est indisponible. Réessaie ou précise la fiche manuellement.');
+  const additional=await supplement.json();
+  if(!Array.isArray(additional.products))throw new Error('Complément du catalogue illisible.');
+  cached=[...data.products,...additional.products.filter(p=>!data.products.some(original=>original.catalogId===p.catalogId))];return cached;
 }
 
 // Future swatch import can refer to these stable groups without editing the catalogue.

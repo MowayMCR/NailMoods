@@ -32,3 +32,11 @@ export function duplicateCandidates(product, items) {
     return exactReference || sameName ? [{ item, reason: exactReference ? 'Même marque et référence' : 'Même marque, nom et collection' }] : [];
   });
 }
+export function mergeScannedProducts(items, products) {
+  const next=[...items];
+  for(const product of products){
+    const duplicate=next.some(item=>item.id===product.id || product.provenance?.catalogId && item.provenance?.catalogId===product.provenance.catalogId || text(product.brand) && text(item.brand)===text(product.brand) && text(item.collection)===text(product.collection) && (text(product.reference) && text(item.reference)===text(product.reference) || text(product.name) && text(item.name)===text(product.name)));
+    if(!duplicate)next.push({...product,provenance:provenanceOf(product)});
+  }
+  return next.length===items.length?items:next;
+}

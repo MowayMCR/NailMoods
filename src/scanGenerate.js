@@ -14,7 +14,7 @@ export function toggleScanEffect(selected, value) {
 export function confirmedScanProduct(draft, id) {
   if (!validHex(draft.color)) throw new Error('Choisis ou corrige la couleur avant de continuer.');
   const color = draft.color.toLowerCase();
-  return { ...draft, id, name: draft.name?.trim() || generationFamily({ color }), type: ['Vernis', 'Semi-permanent', 'Gel'].includes(draft.type) ? draft.type : 'Vernis', color, shade: color, confirmedColor: color, colorSource: 'scan-confirmed', family: generationFamily({ color }), quantity: 1, usage: draft.usage || 'Couleur seule', provenance: draft.provenance || { kind: 'personal', verified: false, importMethod: 'scan' } };
+  return { ...draft, id, name: draft.name?.trim() || generationFamily({ color }), type: ['Vernis', 'Semi-permanent', 'Gel'].includes(draft.type) ? draft.type : 'Vernis', color, shade: color, confirmedColor: color, colorSource: draft.catalogColorValidated?'catalog':'scan-confirmed', family: generationFamily({ color }), quantity: 1, usage: draft.usage || 'Couleur seule', provenance: draft.provenance ? {...draft.provenance,confirmedAt:new Date().toISOString()} : { kind: 'personal', verified: false, importMethod: 'scan' } };
 }
 // The natural nail is explicitly a schematic unpainted area, never an owned polish.
 const natural = { id: 'scan-natural', name: 'Ongle naturel · zone sans couleur', color: '#ead5cc', family: 'Nude', type: 'Vernis', usage: 'Couleur seule', conceptual: true, unpainted: true };

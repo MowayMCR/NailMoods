@@ -15,7 +15,7 @@ import { isDecoration } from './decorations';
 import { auxiliary } from './creationEngine';
 import { profileDefaults } from './creationEngine';
 import CollectionFilters from './CollectionFilters';
-import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf } from './collection';
+import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf, mergeScannedProducts } from './collection';
 import ContextHelp from './ContextHelp';
 import SupportPanel from './support/SupportPanel';
 import {setDiagnosticsStorage,recordRuntimeEvent} from './support/diagnostics';
@@ -273,6 +273,12 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     }
   }
 
+  function addScannedProducts(products) {
+    if(limited)return false;
+    const next=mergeScannedProducts(items,products);
+    return next===items || persist(next);
+  }
+
   function save(forCreation = false) {
     if (!edit.name.trim() || photoBusy || importBusy) return;
     if (!material && !shadeValid) {
@@ -312,7 +318,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
       <div id="context-help-slot" />
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && tab !== 'scan' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
-      {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onOpen={openIdea} onBack={() => navigate('create')} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView ideaAction={ideaAction} onIdeaBack={returnFromIdea} onPublish={publishIdea} onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
+      {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onOpen={openIdea} onBack={() => navigate('create')} capabilities={{addScannedProducts:!limited}} onAddProducts={addScannedProducts} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView ideaAction={ideaAction} onIdeaBack={returnFromIdea} onPublish={publishIdea} onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>{filter==='Matériel'?'MES OUTILS':'MES PRODUITS'}</small><h1>{filter==='Matériel'?'Mon matériel':'Ma collection'}</h1>{filter==='Matériel'&&<button className="detailPrimary" onClick={()=>setEquipmentOpen(true)}>+ Ajouter du matériel</button>}
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>

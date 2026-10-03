@@ -1,0 +1,11 @@
+{
+  "baselineCommit": "c3ef1a2d3771ff7e3043f26d75d7067cc4f743c0",
+  "kikoRanges": [
+    "Power Pro Nail Lacquer"
+  ],
+  "smartReferences": 0,
+  "candidateSelectionBefore": "  function chooseCandidate(match) {\n    task.current?.abort();setReading(false);setReadStatus('Vérifie la référence et la couleur avant de confirmer.');\n    const candidate=catalogCandidate(match);\n    setDraft(d=>({...d,...candidate.fields,provenance:catalogueProvenance(candidate)}));\n  }\n",
+  "scanIntegrationBefore": "<ScanGenerate profile={profile} items={items} onOpen={openIdea} onBack={() => navigate('create')} /> : route.startsWith('#tutoriel') ? tutorialSession ? <Tutori",
+  "dominantColorAutomaticallySelectedBefore": true,
+  "physicalReport": "User screenshot shows KIKO bottle blue, estimated beige #b5a088, no associated product. Exact shade identifier not legible."
+}

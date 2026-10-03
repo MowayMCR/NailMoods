@@ -12,6 +12,16 @@ export function recognitionPatch(report) {
   // Preserve the evidence for an unknown code as well as for a confirmed match.
   return {...(barcode?{...barcode,barcode:barcode.rawBarcode}:{}),recognitionInfo:{...report,matches:report.matches.map(m=>({...m,product:{catalogId:m.product.catalogId,brand:m.product.brand,collection:m.product.collection,name:m.product.name,reference:m.product.reference}}))}};
 }
+// A unique strong identity can prefill a proposal, but addition still needs confirmation.
+export function proposedCatalogMatch(report) {
+  if(report?.matches?.length!==1)return null;
+  const match=report.matches[0], e=match.evidence;
+  return match.score>=85 && (e?.barcode===100 || e?.brand && (e.reference || e.shadeCode || e.name>=85)) ? match : null;
+}
+export function readIdentityPatch(report, draft = {}) {
+  const p=report.parsed || {};
+  return {...recognitionPatch(report),...(!draft.brand && p.brand?{brand:p.brand}:{}),...(!draft.collection && p.collection?{collection:p.collection}:{}),...(!draft.reference && p.shadeCodes?.length===1?{reference:p.shadeCodes[0]}:{})};
+}
 export function diagnosticText(report) {
   return JSON.stringify({date:report.at,brand:report.parsed?.brand || '',collection:report.parsed?.collection || '',shadeCodes:report.parsed?.shadeCodes || [],ignoredNumbers:report.parsed?.ignoredNumbers || [],rawOCR:(report.ocrViews || []).map(view=>view.text),matchingText:report.rawText || '',barcodes:report.barcodes || [],barcodeAttempted:Boolean(report.barcodeAttempted),barcodeError:report.barcodeError || '',ocrError:report.ocrError || '',catalogAvailable:report.catalogAvailable,candidates:(report.matches || []).map(m=>({id:m.product.catalogId,brand:m.product.brand,name:m.product.name,reference:m.product.reference,score:m.score,evidence:m.evidence,reason:m.reason})),failure:report.failure || '',barcodeState:report.barcodeState},null,2);
 }

@@ -1,5 +1,5 @@
 import {recordRuntimeEvent} from './support/diagnostics';
-import { loadCatalog, catalogCandidate, catalogueProvenance } from './catalog';
+import { loadCatalog, catalogCandidate, catalogSelectionPatch } from './catalog';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, ScanLine, Camera, Image as ImageIcon, Check, X } from 'lucide-react';
 import { fetchProduct, shopifyCandidate, inferTraits, normalizeText } from './productImport';
@@ -70,7 +70,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
   }
 
   function useCandidate(fields, source) {
-    onChange({ ...fields, ...(fields.color?chosenShadeChange(fields.color,'product_page'):{}), ...(fields.family ? colorFamilyChange(item, fields.family) : {}), ...(source.source ? { url: source.source } : {}), ...(source.catalogId ? { provenance: catalogueProvenance(source), catalogColor: fields.catalogColor || '', catalogColorValidated: Boolean(fields.catalogColor), shade: item.shade || '', colorSource: item.colorSource || 'palette' } : { provenance: { kind: 'discovered', verified: false, importMethod: source.method, source: source.source || '' } }), importInfo: { method: source.method, source: source.source || '', at: new Date().toISOString() } });
+    onChange({ ...fields, ...(fields.color?chosenShadeChange(fields.color,'product_page'):{}), ...(fields.family ? colorFamilyChange(item, fields.family) : {}), ...(source.source ? { url: source.source } : {}), ...(source.catalogId ? catalogSelectionPatch({...source,fields},item) : { provenance: { kind: 'discovered', verified: false, importMethod: source.method, source: source.source || '' } }), importInfo: { method: source.method, source: source.source || '', at: new Date().toISOString() } });
     setCandidate(null); setMessage('Informations reprises. Vérifie la fiche puis enregistre-la.');
   }
   function useLine(line) {
@@ -115,7 +115,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
     const evidence=await readProductPhoto(source,signal,progress,observation=>{const pending=pendingBarcodeReport(first,observation);setReport(pending);onChange(recognitionPatch(pending));});
     let color=preciseShade(item);
     if(!isSecond && !color){
-      try {const canvas=await imageCanvas(source,signal,700);const shades=photoPalette(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height));if(shades[0]){color=shades[0];if(!signal.aborted)onChange({shade:color,color,colorSource:'photo',family:generationFamily({color})});}} catch(err){if(signal.aborted)throw err;}
+      try {const canvas=await imageCanvas(source,signal,700);const shades=photoPalette(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height));if(shades[0]){color=shades[0];if(!signal.aborted)onChange({shade:color,color,colorSource:'photo-estimated',family:generationFamily({color})});}} catch(err){if(signal.aborted)throw err;}
     }
     const merged=mergeRecognitionEvidence(first,evidence);
     return analyzeEvidence(merged,signal,Boolean(color));
@@ -141,7 +141,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
   useEffect(()=>{if(!busy&&showResult.current&&(report||candidate||error)){showResult.current=false;requestAnimationFrame(()=>panel.current?.querySelector('.recognitionStatus,.importReview,.formError')?.scrollIntoView({block:'center',behavior:'smooth'}));}},[busy,report,candidate,error]);
   return <div ref={panel} className="productImport">
     <input ref={secondView} hidden type="file" accept="image/*" capture="environment" aria-label="Deuxième vue du produit" onChange={secondViewFile}/>
-    <details className="catalogSearch" open={item.source === 'catalog' ? true : undefined}><summary>Rechercher dans le catalogue</summary><p className="fieldHelp">Catalogue NailMoods V2 audité · 2 631 références actives. Tu confirmes toujours le produit avant de l’ajouter.</p><label>Nom ou référence<input value={catalogQuery} onChange={event => setCatalogQuery(event.target.value)} placeholder="Nom de teinte, SKU, référence…" /></label><button type="button" className="importSecondary" disabled={Boolean(busy) || catalogQuery.trim().length < 2} onClick={() => run('Recherche dans le catalogue…', signal => analyzeEvidence({rawText:catalogQuery,barcodes:report?.barcodes || [],ocrViews:report?.ocrViews || [],barcodeAttempted:report?.barcodeAttempted,ocr:false},signal), 60000)}>Rechercher la référence</button></details>
+    <details className="catalogSearch" open={item.source === 'catalog' ? true : undefined}><summary>Rechercher dans le catalogue</summary><p className="fieldHelp">Catalogue NailMoods V2 et complément KIKO Smart audités. Tu confirmes toujours le produit avant de l’ajouter.</p><label>Nom ou référence<input value={catalogQuery} onChange={event => setCatalogQuery(event.target.value)} placeholder="Nom de teinte, SKU, référence…" /></label><button type="button" className="importSecondary" disabled={Boolean(busy) || catalogQuery.trim().length < 2} onClick={() => run('Recherche dans le catalogue…', signal => analyzeEvidence({rawText:catalogQuery,barcodes:report?.barcodes || [],ocrViews:report?.ocrViews || [],barcodeAttempted:report?.barcodeAttempted,ocr:false},signal), 60000)}>Rechercher la référence</button></details>
     <label>Lien du produit (facultatif)<input type="url" value={item.url} onChange={event => onChange({ url: event.target.value })} placeholder="https://…" /></label>
     <button type="button" className="importPrimary" disabled={Boolean(busy) || photoBusy || !item.url.trim()} onClick={() => run('Lecture de la fiche produit…', signal => fetchProduct(item.url, signal))}><Link />Récupérer depuis le lien</button>
     <p className="fieldHelp">Lecture sécurisée côté serveur des fiches publiques. Confirme les informations avant de les ajouter ; si le site bloque la lecture, complète le formulaire.</p>
