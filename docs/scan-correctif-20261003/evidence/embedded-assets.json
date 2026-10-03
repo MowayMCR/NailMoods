@@ -1,0 +1,118 @@
+{
+  "NailMoods-Scan-Validation-vc6-NON-SIGNE.aab": {
+    "bytes": 39134679,
+    "sha256": "fd099816423fdd9f90b62481db4601808d8f78a4b59a1b9065afae4d95a4c21f",
+    "assets": {
+      "catalog-v2.json": {
+        "identicalToSource": true,
+        "sha256": "2b1f785adee0b8a2fefe47a473dd93473696d2f843eb4582533aa1a55e8c9740",
+        "rootKeys": [
+          "version",
+          "sourceFile",
+          "sourceSha256",
+          "count",
+          "verifiedBarcodeAssociations",
+          "quarantinedCount",
+          "products"
+        ]
+      },
+      "catalog-kiko-smart.json": {
+        "identicalToSource": true,
+        "sha256": "0737abf27cef560785b02970ba269d6b97078e392d51d3e0a8a489c8b1353b46",
+        "rootKeys": [
+          "version",
+          "checkedAt",
+          "source",
+          "count",
+          "products"
+        ]
+      }
+    },
+    "mobile-build.json": {
+      "environment": "production",
+      "version": "0.3.0-beta.6",
+      "versionCode": 6,
+      "appId": "com.nailmoods.app"
+    },
+    "signatureEntries": []
+  },
+  "NailMoods-Recette-Scan-DEBUG.apk": {
+    "bytes": 46046822,
+    "sha256": "125c5a283fe7ee7814ddac0e3c61cc70439d05b0c9e0dfba1f0de36851b32e84",
+    "assets": {
+      "catalog-v2.json": {
+        "identicalToSource": true,
+        "sha256": "2b1f785adee0b8a2fefe47a473dd93473696d2f843eb4582533aa1a55e8c9740",
+        "rootKeys": [
+          "version",
+          "sourceFile",
+          "sourceSha256",
+          "count",
+          "verifiedBarcodeAssociations",
+          "quarantinedCount",
+          "products"
+        ]
+      },
+      "catalog-kiko-smart.json": {
+        "identicalToSource": true,
+        "sha256": "0737abf27cef560785b02970ba269d6b97078e392d51d3e0a8a489c8b1353b46",
+        "rootKeys": [
+          "version",
+          "checkedAt",
+          "source",
+          "count",
+          "products"
+        ]
+      }
+    },
+    "mobile-build.json": {
+      "environment": "recette",
+      "version": "0.3.0-beta.6",
+      "versionCode": 6,
+      "appId": "com.nailmoods.app.recette"
+    },
+    "signatureEntries": []
+  },
+  "NailMoods-Recette-iOS-NON-SIGNE-xcarchive.zip": {
+    "bytes": 38458531,
+    "sha256": "b58e5cf2d0ba55e236629c74db8a23d7ff1d8d76c2d95b6ec74a81294bbbf3b4",
+    "assets": {
+      "catalog-v2.json": {
+        "identicalToSource": true,
+        "sha256": "2b1f785adee0b8a2fefe47a473dd93473696d2f843eb4582533aa1a55e8c9740",
+        "rootKeys": [
+          "version",
+          "sourceFile",
+          "sourceSha256",
+          "count",
+          "verifiedBarcodeAssociations",
+          "quarantinedCount",
+          "products"
+        ]
+      },
+      "catalog-kiko-smart.json": {
+        "identicalToSource": true,
+        "sha256": "0737abf27cef560785b02970ba269d6b97078e392d51d3e0a8a489c8b1353b46",
+        "rootKeys": [
+          "version",
+          "checkedAt",
+          "source",
+          "count",
+          "products"
+        ]
+      }
+    },
+    "mobile-build.json": {
+      "environment": "recette",
+      "version": "0.3.0-beta.6",
+      "versionCode": 6,
+      "appId": "com.nailmoods.app.recette"
+    },
+    "ios": {
+      "CFBundleIdentifier": "com.nailmoods.app.recette",
+      "CFBundleVersion": "1",
+      "CFBundleShortVersionString": "0.3.0"
+    },
+    "signatureEntries": []
+  }
+}

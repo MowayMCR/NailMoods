@@ -1,0 +1,51 @@
+{
+  "scope": "Shared web UI, Chromium with mobile viewport. Actual local WASM barcode and Tesseract workers; synthetic labels/codes with officially verified identity data. No physical bottle, native camera or authenticated reconnection.",
+  "cases": [
+    {
+      "name": "Front label without shade: brand/range prefill, no automatic beige background or false missing-product claim",
+      "result": "PASS",
+      "details": {
+        "backgroundSelected": false,
+        "frontOnly": true,
+        "uniqueShadeRequired": true
+      }
+    },
+    {
+      "name": "Visible shade entry 30 → correct Smart Cobalt → official color and fiche → Collection → reload",
+      "result": "PASS",
+      "details": {
+        "product": "Smart 30 Cobalt",
+        "color": "#002c76",
+        "saved": true,
+        "reloaded": true
+      }
+    },
+    {
+      "name": "Actual WASM code decode → automatic fiche prefill before confirmation → no duplicate Collection",
+      "result": "PASS",
+      "details": {
+        "ean": "8025272911573",
+        "color": "#002c76",
+        "generation": true,
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "Manual color remains first after a second label/code photograph",
+      "result": "PASS",
+      "details": {
+        "manualColor": "#cc0099",
+        "secondReadRetained": true
+      }
+    },
+    {
+      "name": "Collection import uses same official KIKO identity and color selection",
+      "result": "PASS",
+      "details": {
+        "sharedSelection": true,
+        "manualOverride": true
+      }
+    }
+  ],
+  "errors": []
+}

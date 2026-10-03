@@ -1,0 +1,13 @@
+Fonction,Android,iOS,Résultat / preuve
+Excel V2 dans AAB bêta 6,PASS — fichier embarqué vérifié,N/A,"Source SHA exact, 2631 actifs, 1047 codes"
+KIKO Smart catalogue,Commun PASS,Commun PASS,64 références et EAN officiels ; 61 HEX
+Scan EAN réel moteur WASM,Appareil NON VÉRIFIÉ,Appareil NON VÉRIFIÉ,"Navigateur commun PASS, EAN 8025272911573"
+OCR marque/gamme puis teinte,Appareil NON VÉRIFIÉ,Appareil NON VÉRIFIÉ,"Étiquette synthétique, vrai OCR : commun PASS"
+Fiche préremplie et couleur catalogue,Appareil NON VÉRIFIÉ,Appareil NON VÉRIFIÉ,Commun PASS #002c76
+Couleur manuelle + deuxième vue,Appareil NON VÉRIFIÉ,Appareil NON VÉRIFIÉ,Commun PASS #cc0099 conservé
+"Collection, déduplication, rechargement",Compte natif NON VÉRIFIÉ,Compte natif NON VÉRIFIÉ,Commun invité local PASS
+Scan flacon Marie de bout en bout,NON VÉRIFIÉ,NON VÉRIFIÉ,Référence/étiquette dessous nécessaire
+Caméra et permission refusée,NON VÉRIFIÉ,NON VÉRIFIÉ,Aucun appareil accessible
+Recherche Internet automatique,NON IMPLÉMENTÉE,NON IMPLÉMENTÉE,Import d’une URL existant ; recherche automatique distincte
+Compilation,PASS CI,PASS CI,Commit94e8ee3
+AAB bêta 7 importable,À PRÉPARER,N/A,Dernier versionCode Play à confirmer
