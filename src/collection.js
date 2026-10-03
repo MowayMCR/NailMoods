@@ -1,7 +1,9 @@
 import {productKind} from './productKinds.js';
 import { normalize } from './creationEngine.js';
+import {productBarcodes} from './productIdentity.js';
 
 const text = value => normalize(value).trim();
+const sameProductCode=(a,b)=>{const codes=productBarcodes(a);return codes.length>0&&productBarcodes(b).some(code=>codes.includes(code));};
 export const emptyFilters = { brand: '', family: '', finish: '', productKind:'', favorites: false, sort: 'recent' };
 export function collectionResults(items, query = '', type = 'Tous', filters = emptyFilters) {
   const words = text(query).split(/\s+/).filter(Boolean);
@@ -35,7 +37,7 @@ export function duplicateCandidates(product, items) {
 export function mergeScannedProducts(items, products) {
   const next=[...items];
   for(const product of products){
-    const duplicate=next.some(item=>item.id===product.id || product.provenance?.catalogId && item.provenance?.catalogId===product.provenance.catalogId || text(product.brand) && text(item.brand)===text(product.brand) && text(item.collection)===text(product.collection) && (text(product.reference) && text(item.reference)===text(product.reference) || text(product.name) && text(item.name)===text(product.name)));
+    const duplicate=next.some(item=>item.id===product.id || sameProductCode(item,product) || product.provenance?.catalogId && item.provenance?.catalogId===product.provenance.catalogId || text(product.brand) && text(item.brand)===text(product.brand) && text(item.collection)===text(product.collection) && (text(product.reference) && text(item.reference)===text(product.reference) || text(product.name) && text(item.name)===text(product.name)));
     if(!duplicate)next.push({...product,provenance:provenanceOf(product)});
   }
   return next.length===items.length?items:next;

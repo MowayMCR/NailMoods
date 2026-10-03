@@ -11,6 +11,8 @@ import { imageCanvas, readProductPhoto } from './recognition';
 import { photoPalette, generationFamily, validHex } from './colorAnalysis';
 import { loadCatalog, catalogCandidate, catalogSelectionPatch } from './catalog';
 import RecognitionStatus from './RecognitionStatus';
+import OnlineProductLookup from './OnlineProductLookup';
+import {onlineSelectionPatch} from './productLookup';
 import { recognizeEvidence, recognitionPatch, readIdentityPatch, proposedCatalogMatch, pendingBarcodeReport, interruptedRecognition } from './recognitionReport';
 import { mergeRecognitionEvidence, parseProductText } from './productIdentity';
 import { snapshotIdea } from './inspirations';
@@ -41,9 +43,10 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, onOpen,
   const [correct,setCorrect] = useState(false), [sampling,setSampling] = useState(false), [camera,setCamera] = useState(false), [cameraPending,setCameraPending] = useState(false);
   const [added,setAdded] = useState(false), [saved,setSaved] = useState([]), [saving,setSaving] = useState('');
   const [draftAdded,setDraftAdded] = useState(false);
+  const [onlineFound,setOnlineFound] = useState(false);
   const video = useRef(null), fileInput = useRef(null), stream = useRef(null), cameraRequest = useRef(0), task = useRef(null), seed = useRef(1), heading = useRef(null), mounted = useRef(true);
-  // The scan journey uses the same consent-gated server transport as the rest
-  // of the app.  It never sends a photo, OCR result, colour or product name.
+  // Analytics uses the common consent gate and excludes scan/product content.
+  // Functional online lookup separately sends only normalized product identity.
   const track = (event, data = {}) => {
     const fields = { screen: 'scan' };
     if (event === 'scan_generate_opened' || event === 'first_product_scanned') return trackAnalytics('scan_started', { source: 'scan' }, fields);
@@ -114,7 +117,7 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, onOpen,
       const catalogueTask=loadCatalog(controller.signal).then(products=>({products,available:true}),()=>({products:[],available:false}));
       const evidence=await readProductPhoto(photo,controller.signal,progress=>{if(!controller.signal.aborted)setReadStatus('Lecture de l’étiquette : '+progress+' % · confirmation déjà possible.');},observation=>{
         if(!controller.signal.aborted){const pending=pendingBarcodeReport(previous,observation);setRecognition(pending);setDraft(d=>({...d,...recognitionPatch(pending)}));
-          void catalogueTask.then(catalogue=>{if(controller.signal.aborted)return;const quick=recognizeEvidence(catalogue.products,{...pending,rawText:'',ocr:false},{catalogAvailable:catalogue.available,ocr:false});if(proposedCatalogMatch(quick)?.evidence.barcode===100)applyReport(quick);});}
+          void catalogueTask.then(catalogue=>{if(controller.signal.aborted)return;const quick=recognizeEvidence(catalogue.products,{...pending,rawText:'',ocr:false},{catalogAvailable:catalogue.available,ocr:false});if(proposedCatalogMatch(quick)?.evidence.barcode===100)applyReport(quick);else setRecognition(quick);});}
       });
       const catalogue=await catalogueTask;if(controller.signal.aborted)return;
       const merged=mergeRecognitionEvidence(previous,evidence);
@@ -200,17 +203,18 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, onOpen,
       <input ref={secondView} hidden type="file" accept="image/*" capture="environment" aria-label="Photographier le dessous ou le dos" onChange={event=>{const file=event.target.files?.[0];event.target.value='';analyze(file,true);}}/>
       <h2>{draft.provenance?'Produit à confirmer':validHex(draft.color)?'Ta couleur':'Couleur à confirmer'}</h2>
       <div className="scanDetected">{draft.photo && <img src={draft.photo} alt="Ton vernis photographié"/>}<i style={{background:draft.color || 'transparent'}}/><div><strong>{draft.name || (validHex(draft.color)?generationFamily({color:draft.color}):'Choisis une couleur')}</strong><span>{[draft.brand,draft.reference].filter(Boolean).join(' · ')}</span><small>{draft.color}</small></div></div>
-      <p className="scanHint">{draft.catalogColorValidated?'Couleur publiée dans le catalogue. Le rendu réel dépend de la pose et de la lumière.':draft.provenance?'Cette référence n’a pas de couleur catalogue validée. Choisis la couleur du vernis pour continuer.':'La photo peut contenir le fond et le bouchon. Choisis la couleur du vernis ; aucune couleur du fond n’est retenue automatiquement.'}</p>
+      <p className="scanHint">{draft.catalogColorValidated?(draft.provenance?.importMethod==='online'?'Couleur publiée sur la fiche officielle.':'Couleur publiée dans le catalogue.')+' Le rendu réel dépend de la pose et de la lumière.':draft.provenance?'Cette référence n’a pas de couleur catalogue validée. Choisis la couleur du vernis pour continuer.':'La photo peut contenir le fond et le bouchon. Choisis la couleur du vernis ; aucune couleur du fond n’est retenue automatiquement.'}</p>
       {draft.photo && <><p className="scanHint">Le bouchon ou le fond peuvent être détectés. Choisis la couleur du vernis, ou prélève-la directement sur la photo.</p><div className="photoPalette" role="group" aria-label="Couleurs proposées depuis la photo">{(draft.photoColors||[]).map(color=><button key={color} type="button" aria-label={'Retenir la couleur '+color} aria-pressed={draft.color===color} style={{background:color}} onClick={()=>changeDraft('color',color)}>{draft.color===color&&<Check/>}</button>)}</div><button className="scanSecondary" aria-expanded={sampling} onClick={()=>setSampling(v=>!v)}><Pipette/>{sampling?'Fermer le prélèvement':'Choisir sur la photo'}</button>{sampling&&<Sampler source={draft.photo} onSelect={color=>changeDraft('color',color)} onDone={()=>setSampling(false)}/>}</>}
       {readStatus && <p role="status" className="scanHint">{readStatus}</p>}
       {!recognition && draft.photo && <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);secondView.current.click();}}>Photographier dessous / dos</button>}
-      <RecognitionStatus report={recognition} busy={busy} onSecondView={()=>{task.current?.abort();setReading(false);secondView.current.click();}}/>
+      <RecognitionStatus report={onlineFound&&recognition&&!recognition.matches.length?{...recognition,title:'Fiche disponible en ligne',message:'La référence n’était pas dans le catalogue local. Vérifie la fiche proposée ci-dessous.',needsSecondView:false}:recognition} busy={busy} onSecondView={()=>{task.current?.abort();setReading(false);secondView.current.click();}}/>
+      <OnlineProductLookup report={recognition} item={draft} onStatus={setOnlineFound} onChoose={candidate=>{task.current?.abort();setReading(false);setReadStatus('Vérifie la référence et la couleur avant de confirmer.');setLookupStatus('Référence en ligne reprise. Vérifie les champs et la couleur.');setDraft(d=>({...d,...onlineSelectionPatch(candidate,d)}));setDraftAdded(false);setCorrect(true);}}/>
       {recognition && <label className="scanLookup">Numéro de teinte, référence ou EAN<input value={query} onChange={e=>{task.current?.abort();setReading(false);setQuery(e.target.value);}} placeholder="Ex. 30, KIKO Power Pro 18, ou le code-barres"/><small role="status">{lookupStatus}</small></label>}
       {candidates.length>0 && <p className="scanHint">Touche une référence pour la confirmer, ou continue avec la couleur seule.</p>}
       {candidates.length>0 && <div className="scanCandidates" aria-label="Références possibles">{candidates.map(match=><button key={match.product.catalogId} aria-pressed={draft.provenance?.catalogId===match.product.catalogId} onClick={()=>chooseCandidate(match)}><b>{match.product.brand} · {match.product.reference || match.product.name}</b><small>{match.product.collection ? match.product.collection+' · ' : ''}{match.product.name} · {match.reason}</small><small>Correspondance {match.confidence} · indice {match.score}/100</small></button>)}</div>}
       <button className="scanPrimary" disabled={!validHex(draft.color)} onClick={confirm}><Check/>{draft.provenance?'C’est bien celui-ci':recognition?'Utiliser cette couleur':'C’est bien ça'}</button>
       {capabilities.addScannedProducts && typeof onAddProducts==='function' && <button className="scanSecondary" disabled={!validHex(draft.color)||draftAdded||Boolean(saving)} onClick={addDraft}>{draftAdded?'Produit dans ma collection':'Ajouter ce produit à ma collection'}</button>}
-      {recognition && !recognition.matches.length && <a className="scanText" href={'https://www.google.com/search?q='+encodeURIComponent([recognition.parsed?.brand,...(recognition.parsed?.shadeCodes || []),draft.rawBarcode,'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Rechercher la référence</a>}
+      {recognition && !recognition.matches.length && !onlineFound && <a className="scanText" href={'https://www.google.com/search?q='+encodeURIComponent([recognition.parsed?.brand,...(recognition.parsed?.shadeCodes || []),draft.rawBarcode,'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Ouvrir une recherche web</a>}
       {reading && <small>La lecture de l’étiquette est facultative : tu peux continuer maintenant.</small>}
       <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);setCorrect(v=>!v);}}><Pipette/>{correct?'Fermer la fiche':'Compléter ou corriger la fiche'}</button>
       {correct && <div className="scanCorrection">

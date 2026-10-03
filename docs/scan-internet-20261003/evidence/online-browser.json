@@ -1,0 +1,32 @@
+{
+  "scope": "Actual shared app UI with controlled online transport replaying the live authenticated Recette KIKO response; one local record deliberately removed to exercise fallback. No native camera, device or real browser Auth claim.",
+  "cases": [
+    {
+      "name": "Scan unknown locally → automatic Internet → sourced fiche, exact published HEX, confirmation → Collection → reload",
+      "result": "PASS",
+      "details": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-153-7411/",
+        "color": "#9aa180",
+        "collectionReloaded": true
+      }
+    },
+    {
+      "name": "Cache remains usable offline and online selection never replaces an explicit manual color",
+      "result": "PASS",
+      "details": {
+        "offline": true,
+        "networkCallsAdded": 0,
+        "manualColor": "#cc0099"
+      }
+    },
+    {
+      "name": "Collection importer receives the same online fiche and preserves the manually chosen color",
+      "result": "PASS",
+      "details": {
+        "sameSource": true,
+        "manualColor": "#214477"
+      }
+    }
+  ],
+  "errors": []
+}

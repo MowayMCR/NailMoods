@@ -11,7 +11,7 @@ export async function pinnedRequest(url:URL,ip:string,{signal,maxBytes=MAX_PAGE_
     if(signal.aborted){conn.close();signal.throwIfAborted();}
     if(url.protocol==='https:')conn=await Deno.startTls(conn as Deno.TcpConn,{hostname:url.hostname});
     signal.throwIfAborted();
-    const bytes=new TextEncoder().encode(`GET ${url.pathname}${url.search} HTTP/1.1\r\nHost: ${url.hostname}\r\nAccept: text/html, application/json\r\nAccept-Encoding: identity\r\nUser-Agent: NailMoods-ProductImport/1.0\r\nConnection: close\r\n\r\n`);
+    const bytes=new TextEncoder().encode(`GET ${url.pathname}${url.search} HTTP/1.1\r\nHost: ${url.hostname}\r\nAccept: text/html, application/json\r\nAccept-Encoding: identity\r\nUser-Agent: NailMoods/0.3 (contact@nailmoods.com)\r\nConnection: close\r\n\r\n`);
     let offset=0;while(offset<bytes.length)offset+=await conn.write(bytes.subarray(offset));
     const chunks:Uint8Array[]=[];let size=0;
     while(true){signal.throwIfAborted();const buf=new Uint8Array(65536),n=await conn.read(buf);if(n===null)break;size+=n;if(size>maxBytes+65536)throw Error('PAGE_TOO_LARGE');chunks.push(buf.slice(0,n));}

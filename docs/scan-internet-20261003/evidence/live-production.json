@@ -1,0 +1,703 @@
+{
+  "scope": "Live authenticated Edge requests with temporary test account, deleted afterwards. No camera or physical-device test.",
+  "at": "2026-10-03T11:19:07.810Z",
+  "temporaryUserDeleted": true,
+  "results": [
+    {
+      "input": {
+        "brand": "KIKO Milano",
+        "collection": "Smart"
+      },
+      "httpStatus": 200,
+      "durationMs": 1208,
+      "result": {
+        "status": "insufficient",
+        "candidates": [],
+        "message": "Ajoute un code-barres, un numéro de teinte ou un nom exact."
+      }
+    },
+    {
+      "input": {
+        "brand": "Manucurist",
+        "collection": "Green Flash",
+        "name": "Mint"
+      },
+      "httpStatus": 200,
+      "durationMs": 1875,
+      "result": {
+        "status": "found",
+        "candidates": [
+          {
+            "fields": {
+              "name": "Mint",
+              "type": "Semi-permanent",
+              "brand": "Manucurist",
+              "reference": "51058",
+              "sku": "51058",
+              "barcode": "3662263500580",
+              "photo": "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/mint.jpg?v=1661417687",
+              "collection": "Green Flash"
+            },
+            "images": [
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/mint.jpg?v=1661417687",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/1_1ab0a7e4-9fc8-44ae-a443-ba5ce4026de3.jpg?v=1701082206",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/3_4d521068-7388-49cd-9f33-c28f20560341.jpg?v=1701082206",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/MINT-Q220204-108828.jpg?v=1753868721",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-FR.jpg?v=1790334661",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-NL.jpg?v=1790334617",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-IT.jpg?v=1790334624",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-ES.jpg?v=1790334631"
+            ],
+            "variants": [
+              {
+                "id": "39429706645653",
+                "title": "Default Title",
+                "sku": "51058",
+                "barcode": "3662263500580",
+                "image": ""
+              }
+            ],
+            "source": "https://www.manucurist.com/products/vernis-green-flash-mint",
+            "method": "online",
+            "needsVariant": false,
+            "variantId": "39429706645653",
+            "raw": {
+              "title": "Mint",
+              "vendor": "Manucurist",
+              "type": "Semi-permanent LED Green Flash™",
+              "featured_image": "//cdn.shopify.com/s/files/1/0308/7296/1068/products/mint.jpg?v=1661417687",
+              "images": [
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/mint.jpg?v=1661417687",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/1_1ab0a7e4-9fc8-44ae-a443-ba5ce4026de3.jpg?v=1701082206",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/3_4d521068-7388-49cd-9f33-c28f20560341.jpg?v=1701082206",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/MINT-Q220204-108828.jpg?v=1753868721",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-FR.jpg?v=1790334661",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-NL.jpg?v=1790334617",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-IT.jpg?v=1790334624",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-ES.jpg?v=1790334631"
+              ],
+              "variants": [
+                {
+                  "id": 39429706645653,
+                  "title": "Default Title",
+                  "sku": "51058",
+                  "barcode": "3662263500580",
+                  "featured_image": null
+                }
+              ]
+            },
+            "provider": "Site officiel Manucurist",
+            "official": true,
+            "score": 88,
+            "reason": "Marque et nom à vérifier",
+            "confidence": "à confirmer",
+            "fetchedAt": "2026-10-03T11:19:02.189Z"
+          }
+        ],
+        "sources": [
+          {
+            "provider": "Site officiel Manucurist",
+            "status": "found"
+          }
+        ],
+        "message": "Produit trouvé en ligne. Vérifie la référence avant de l’ajouter.",
+        "cached": false
+      }
+    },
+    {
+      "input": {
+        "brand": "CANNI",
+        "name": "Diamond Top Coat"
+      },
+      "httpStatus": 200,
+      "durationMs": 1942,
+      "result": {
+        "status": "ambiguous",
+        "candidates": [
+          {
+            "fields": {
+              "name": "Diamond Top Coat 9ml · DiamondTop",
+              "productKind": "Top Coat",
+              "brand": "CANNI",
+              "reference": "13025",
+              "sku": "13025",
+              "photo": "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/hema-free-diamond-top-coat-9ml-279923.jpg?v=1719891171"
+            },
+            "images": [
+              "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/hema-free-diamond-top-coat-9ml-279923.jpg?v=1719891171"
+            ],
+            "variants": [
+              {
+                "id": "44261241880798",
+                "title": "DiamondTop",
+                "sku": "13025",
+                "barcode": "",
+                "image": "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/hema-free-diamond-top-coat-9ml-279923.jpg?v=1719891171"
+              }
+            ],
+            "source": "https://www.canni.com/products/hema-free-diamond-top-coat-9ml",
+            "method": "online",
+            "needsVariant": false,
+            "variantId": "44261241880798",
+            "raw": {
+              "title": "Diamond Top Coat 9ml",
+              "vendor": "CANNI",
+              "type": "Base Coat",
+              "featured_image": "//cdn.shopify.com/s/files/1/0560/7754/9767/files/hema-free-diamond-top-coat-9ml-279923.jpg?v=1719891171",
+              "images": [
+                "//cdn.shopify.com/s/files/1/0560/7754/9767/files/hema-free-diamond-top-coat-9ml-279923.jpg?v=1719891171"
+              ],
+              "variants": [
+                {
+                  "id": 44261241880798,
+                  "title": "DiamondTop",
+                  "sku": "13025",
+                  "barcode": null,
+                  "featured_image": {
+                    "id": 41496738365662,
+                    "product_id": 8081242882270,
+                    "position": 1,
+                    "created_at": "2024-07-02T11:32:51+08:00",
+                    "updated_at": "2024-07-02T11:32:51+08:00",
+                    "alt": null,
+                    "width": 1000,
+                    "height": 1000,
+                    "src": "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/hema-free-diamond-top-coat-9ml-279923.jpg?v=1719891171",
+                    "variant_ids": [
+                      44261241880798
+                    ]
+                  }
+                }
+              ]
+            },
+            "provider": "Site officiel CANNI",
+            "official": true,
+            "score": 88,
+            "reason": "Marque et nom à vérifier",
+            "confidence": "à confirmer",
+            "fetchedAt": "2026-10-03T11:19:02.245Z"
+          },
+          {
+            "fields": {
+              "name": "16ml Diamond Top Coat · DiamondTop",
+              "productKind": "Top Coat",
+              "brand": "CANNI",
+              "reference": "51237",
+              "sku": "51237",
+              "photo": "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/16ml-diamond-top-coat-395674.jpg?v=1719891025"
+            },
+            "images": [
+              "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/16ml-diamond-top-coat-395674.jpg?v=1719891025"
+            ],
+            "variants": [
+              {
+                "id": "40103350960327",
+                "title": "DiamondTop",
+                "sku": "51237",
+                "barcode": "",
+                "image": "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/16ml-diamond-top-coat-395674.jpg?v=1719891025"
+              }
+            ],
+            "source": "https://www.canni.com/products/canni-16ml-diamond-top-coat",
+            "method": "online",
+            "needsVariant": false,
+            "variantId": "40103350960327",
+            "raw": {
+              "title": "16ml Diamond Top Coat",
+              "vendor": "CANNI",
+              "type": "Topcoat",
+              "featured_image": "//cdn.shopify.com/s/files/1/0560/7754/9767/files/16ml-diamond-top-coat-395674.jpg?v=1719891025",
+              "images": [
+                "//cdn.shopify.com/s/files/1/0560/7754/9767/files/16ml-diamond-top-coat-395674.jpg?v=1719891025"
+              ],
+              "variants": [
+                {
+                  "id": 40103350960327,
+                  "title": "DiamondTop",
+                  "sku": "51237",
+                  "barcode": null,
+                  "featured_image": {
+                    "id": 41496698978526,
+                    "product_id": 6649063669959,
+                    "position": 1,
+                    "created_at": "2024-07-02T11:30:25+08:00",
+                    "updated_at": "2024-07-02T11:30:25+08:00",
+                    "alt": null,
+                    "width": 1010,
+                    "height": 1010,
+                    "src": "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/16ml-diamond-top-coat-395674.jpg?v=1719891025",
+                    "variant_ids": [
+                      40103350960327
+                    ]
+                  }
+                }
+              ]
+            },
+            "provider": "Site officiel CANNI",
+            "official": true,
+            "score": 88,
+            "reason": "Marque et nom à vérifier",
+            "confidence": "à confirmer",
+            "fetchedAt": "2026-10-03T11:19:02.260Z"
+          },
+          {
+            "fields": {
+              "name": "Diamond Top Coat 1KG · DiamondTop",
+              "productKind": "Top Coat",
+              "brand": "CANNI",
+              "reference": "843",
+              "sku": "843",
+              "photo": "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/843-hema-free.jpg?v=1741761097"
+            },
+            "images": [
+              "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/843-hema-free.jpg?v=1741761097",
+              "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/13025.jpg?v=1765937738"
+            ],
+            "variants": [
+              {
+                "id": "46356648853726",
+                "title": "DiamondTop",
+                "sku": "843",
+                "barcode": "",
+                "image": "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/843-hema-free.jpg?v=1741761097"
+              }
+            ],
+            "source": "https://www.canni.com/products/hema-free-diamond-top-coat-1kg",
+            "method": "online",
+            "needsVariant": false,
+            "variantId": "46356648853726",
+            "raw": {
+              "title": "Diamond Top Coat 1KG",
+              "vendor": "CANNI",
+              "featured_image": "//cdn.shopify.com/s/files/1/0560/7754/9767/files/843-hema-free.jpg?v=1741761097",
+              "images": [
+                "//cdn.shopify.com/s/files/1/0560/7754/9767/files/843-hema-free.jpg?v=1741761097",
+                "//cdn.shopify.com/s/files/1/0560/7754/9767/files/13025.jpg?v=1765937738"
+              ],
+              "variants": [
+                {
+                  "id": 46356648853726,
+                  "title": "DiamondTop",
+                  "sku": "843",
+                  "barcode": null,
+                  "featured_image": {
+                    "id": 43955725304030,
+                    "product_id": 8839399276766,
+                    "position": 1,
+                    "created_at": "2025-03-12T14:31:36+08:00",
+                    "updated_at": "2025-03-12T14:31:37+08:00",
+                    "alt": null,
+                    "width": 800,
+                    "height": 800,
+                    "src": "https://cdn.shopify.com/s/files/1/0560/7754/9767/files/843-hema-free.jpg?v=1741761097",
+                    "variant_ids": [
+                      46356648853726
+                    ]
+                  }
+                }
+              ]
+            },
+            "provider": "Site officiel CANNI",
+            "official": true,
+            "score": 88,
+            "reason": "Marque et nom à vérifier",
+            "confidence": "à confirmer",
+            "fetchedAt": "2026-10-03T11:19:02.247Z"
+          }
+        ],
+        "sources": [
+          {
+            "provider": "Site officiel CANNI",
+            "status": "found"
+          }
+        ],
+        "message": "Plusieurs références possibles. Choisis la bonne gamme et la bonne teinte.",
+        "cached": false
+      }
+    },
+    {
+      "input": {
+        "brand": "Le Mini Macaron",
+        "name": "Rose Antique"
+      },
+      "httpStatus": 200,
+      "durationMs": 1993,
+      "result": {
+        "status": "found",
+        "candidates": [
+          {
+            "fields": {
+              "name": "Rose Antique - Gel Polish",
+              "type": "Semi-permanent",
+              "brand": "Le Mini Macaron",
+              "reference": "3760297540302",
+              "sku": "3760297540302",
+              "barcode": "3760297540302",
+              "photo": "https://cdn.shopify.com/s/files/1/2443/8601/files/rose-antique-gel-polish-5774916.jpg?v=1763569881"
+            },
+            "images": [
+              "https://cdn.shopify.com/s/files/1/2443/8601/files/rose-antique-gel-polish-5774916.jpg?v=1763569881",
+              "https://cdn.shopify.com/s/files/1/2443/8601/products/rose-antique-gel-polish-9247326.jpg?v=1763569883",
+              "https://cdn.shopify.com/s/files/1/2443/8601/files/rose-antique-gel-polish-9080970.jpg?v=1763569883",
+              "https://cdn.shopify.com/s/files/1/2443/8601/files/rose-antique-gel-polish-7894776.jpg?v=1763569884",
+              "https://cdn.shopify.com/s/files/1/2443/8601/products/rose-antique-gel-polish-6168361.jpg?v=1763569884"
+            ],
+            "variants": [
+              {
+                "id": "32420451680361",
+                "title": "Default Title",
+                "sku": "3760297540302",
+                "barcode": "3760297540302",
+                "image": ""
+              }
+            ],
+            "source": "https://leminimacaron.eu/products/rose-antique-gel-polish",
+            "method": "online",
+            "needsVariant": false,
+            "variantId": "32420451680361",
+            "raw": {
+              "title": "Rose Antique - Gel Polish",
+              "vendor": "Le Mini Macaron",
+              "type": "Individual Gel Polish",
+              "featured_image": "//cdn.shopify.com/s/files/1/2443/8601/files/rose-antique-gel-polish-5774916.jpg?v=1763569881",
+              "images": [
+                "//cdn.shopify.com/s/files/1/2443/8601/files/rose-antique-gel-polish-5774916.jpg?v=1763569881",
+                "//cdn.shopify.com/s/files/1/2443/8601/products/rose-antique-gel-polish-9247326.jpg?v=1763569883",
+                "//cdn.shopify.com/s/files/1/2443/8601/files/rose-antique-gel-polish-9080970.jpg?v=1763569883",
+                "//cdn.shopify.com/s/files/1/2443/8601/files/rose-antique-gel-polish-7894776.jpg?v=1763569884",
+                "//cdn.shopify.com/s/files/1/2443/8601/products/rose-antique-gel-polish-6168361.jpg?v=1763569884"
+              ],
+              "variants": [
+                {
+                  "id": 32420451680361,
+                  "title": "Default Title",
+                  "sku": "3760297540302",
+                  "barcode": "3760297540302",
+                  "featured_image": null
+                }
+              ]
+            },
+            "provider": "Site officiel Le Mini Macaron",
+            "official": true,
+            "score": 88,
+            "reason": "Marque et nom à vérifier",
+            "confidence": "à confirmer",
+            "fetchedAt": "2026-10-03T11:19:02.288Z"
+          }
+        ],
+        "sources": [
+          {
+            "provider": "Site officiel Le Mini Macaron",
+            "status": "found"
+          }
+        ],
+        "message": "Produit trouvé en ligne. Vérifie la référence avant de l’ajouter.",
+        "cached": false
+      }
+    },
+    {
+      "input": {
+        "barcode": "1234567890128"
+      },
+      "httpStatus": 200,
+      "durationMs": 2031,
+      "result": {
+        "status": "not_found",
+        "candidates": [],
+        "sources": [
+          {
+            "provider": "Open Beauty Facts",
+            "status": "not_found"
+          }
+        ],
+        "message": "Aucune référence fiable trouvée en ligne. Les informations lues restent conservées.",
+        "cached": false
+      }
+    },
+    {
+      "input": {
+        "barcode": "3662263330699",
+        "brand": "Manucurist",
+        "collection": "Green",
+        "name": "Mint"
+      },
+      "httpStatus": 200,
+      "durationMs": 2309,
+      "result": {
+        "status": "found",
+        "candidates": [
+          {
+            "fields": {
+              "name": "Mint",
+              "brand": "Manucurist",
+              "reference": "33069",
+              "sku": "33069",
+              "barcode": "3662263330699",
+              "photo": "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/Mint_2f43e887-2bc3-476d-b13d-d57fc6f4e0fc.jpg?v=1790948589",
+              "collection": "Green",
+              "type": "Vernis"
+            },
+            "images": [
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/Mint_2f43e887-2bc3-476d-b13d-d57fc6f4e0fc.jpg?v=1790948589",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/1_657d5679-5a44-427c-8d76-9fa3ac20f530.jpg?v=1701082212",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/3_22678056-b77c-441b-9eba-2a36350cc225.jpg?v=1701082212",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/MINT-Q220204-108828_f1f9323d-a217-402c-8091-7285179e2bc7.jpg?v=1753868718",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-FR.jpg?v=1790334661",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-IT.jpg?v=1790334624",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-NL.jpg?v=1790334617",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-DE.jpg?v=1790334652"
+            ],
+            "variants": [
+              {
+                "id": "39429805342869",
+                "title": "Default Title",
+                "sku": "33069",
+                "barcode": "3662263330699",
+                "image": ""
+              }
+            ],
+            "source": "https://www.manucurist.com/products/vernis-green-mint?variant=39429805342869",
+            "method": "online",
+            "needsVariant": false,
+            "variantId": "39429805342869",
+            "raw": {
+              "title": "Mint",
+              "vendor": "Manucurist",
+              "type": "Vernis à ongles Green™",
+              "featured_image": "//cdn.shopify.com/s/files/1/0308/7296/1068/products/Mint_2f43e887-2bc3-476d-b13d-d57fc6f4e0fc.jpg?v=1790948589",
+              "images": [
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/Mint_2f43e887-2bc3-476d-b13d-d57fc6f4e0fc.jpg?v=1790948589",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/1_657d5679-5a44-427c-8d76-9fa3ac20f530.jpg?v=1701082212",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/3_22678056-b77c-441b-9eba-2a36350cc225.jpg?v=1701082212",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/MINT-Q220204-108828_f1f9323d-a217-402c-8091-7285179e2bc7.jpg?v=1753868718",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-FR.jpg?v=1790334661",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-IT.jpg?v=1790334624",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-NL.jpg?v=1790334617",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-DE.jpg?v=1790334652"
+              ],
+              "variants": [
+                {
+                  "id": 39429805342869,
+                  "title": "Default Title",
+                  "sku": "33069",
+                  "barcode": "3662263330699",
+                  "featured_image": null
+                }
+              ]
+            },
+            "provider": "Site officiel Manucurist",
+            "official": true,
+            "score": 100,
+            "reason": "Même code-barres",
+            "confidence": "élevée",
+            "fetchedAt": "2026-10-03T11:19:02.567Z"
+          }
+        ],
+        "sources": [
+          {
+            "provider": "Open Beauty Facts",
+            "status": "not_found"
+          },
+          {
+            "provider": "Site officiel Manucurist",
+            "status": "found"
+          }
+        ],
+        "message": "Produit trouvé en ligne. Vérifie la référence avant de l’ajouter.",
+        "cached": false
+      }
+    },
+    {
+      "input": {
+        "brand": "Manucurist",
+        "collection": "Green",
+        "name": "Mint"
+      },
+      "httpStatus": 200,
+      "durationMs": 2429,
+      "result": {
+        "status": "found",
+        "candidates": [
+          {
+            "fields": {
+              "name": "Mint",
+              "brand": "Manucurist",
+              "reference": "33069",
+              "sku": "33069",
+              "barcode": "3662263330699",
+              "photo": "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/Mint_2f43e887-2bc3-476d-b13d-d57fc6f4e0fc.jpg?v=1790948589",
+              "collection": "Green",
+              "type": "Vernis"
+            },
+            "images": [
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/Mint_2f43e887-2bc3-476d-b13d-d57fc6f4e0fc.jpg?v=1790948589",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/1_657d5679-5a44-427c-8d76-9fa3ac20f530.jpg?v=1701082212",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/3_22678056-b77c-441b-9eba-2a36350cc225.jpg?v=1701082212",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/products/MINT-Q220204-108828_f1f9323d-a217-402c-8091-7285179e2bc7.jpg?v=1753868718",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-FR.jpg?v=1790334661",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-IT.jpg?v=1790334624",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-NL.jpg?v=1790334617",
+              "https://cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-DE.jpg?v=1790334652"
+            ],
+            "variants": [
+              {
+                "id": "39429805342869",
+                "title": "Default Title",
+                "sku": "33069",
+                "barcode": "3662263330699",
+                "image": ""
+              }
+            ],
+            "source": "https://www.manucurist.com/products/vernis-green-mint",
+            "method": "online",
+            "needsVariant": false,
+            "variantId": "39429805342869",
+            "raw": {
+              "title": "Mint",
+              "vendor": "Manucurist",
+              "type": "Vernis à ongles Green™",
+              "featured_image": "//cdn.shopify.com/s/files/1/0308/7296/1068/products/Mint_2f43e887-2bc3-476d-b13d-d57fc6f4e0fc.jpg?v=1790948589",
+              "images": [
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/Mint_2f43e887-2bc3-476d-b13d-d57fc6f4e0fc.jpg?v=1790948589",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/1_657d5679-5a44-427c-8d76-9fa3ac20f530.jpg?v=1701082212",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/3_22678056-b77c-441b-9eba-2a36350cc225.jpg?v=1701082212",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/products/MINT-Q220204-108828_f1f9323d-a217-402c-8091-7285179e2bc7.jpg?v=1753868718",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-FR.jpg?v=1790334661",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-IT.jpg?v=1790334624",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-NL.jpg?v=1790334617",
+                "//cdn.shopify.com/s/files/1/0308/7296/1068/files/aplat-vert-G-GF-DE.jpg?v=1790334652"
+              ],
+              "variants": [
+                {
+                  "id": 39429805342869,
+                  "title": "Default Title",
+                  "sku": "33069",
+                  "barcode": "3662263330699",
+                  "featured_image": null
+                }
+              ]
+            },
+            "provider": "Site officiel Manucurist",
+            "official": true,
+            "score": 88,
+            "reason": "Marque et nom à vérifier",
+            "confidence": "à confirmer",
+            "fetchedAt": "2026-10-03T11:19:02.743Z"
+          }
+        ],
+        "sources": [
+          {
+            "provider": "Site officiel Manucurist",
+            "status": "found"
+          }
+        ],
+        "message": "Produit trouvé en ligne. Vérifie la référence avant de l’ajouter.",
+        "cached": false
+      }
+    },
+    {
+      "input": {
+        "brand": "OPI",
+        "collection": "Nail Lacquer",
+        "name": "Big Apple Red"
+      },
+      "httpStatus": 200,
+      "durationMs": 2847,
+      "result": {
+        "status": "found",
+        "candidates": [
+          {
+            "fields": {
+              "name": "Big Apple Red®",
+              "brand": "OPI",
+              "reference": "99350077724",
+              "sku": "99350077724",
+              "photo": "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/big-apple-red-nln25-nail-lacquer-22001014069_5d248308-fefd-4aef-a1c2-abaedcd41a56.jpg?v=1668556954",
+              "collection": "nail lacquer"
+            },
+            "images": [
+              "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/big-apple-red-nln25-nail-lacquer-22001014069_5d248308-fefd-4aef-a1c2-abaedcd41a56.jpg?v=1668556954",
+              "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/big-apple-red-mani_524efc0f-c8b0-47df-b55c-97d849265c49.jpg?v=1668556956",
+              "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/big-apple-red-brush-swatch_0baef27e-2d72-4a63-944b-100fc7139f49.jpg?v=1668556957",
+              "https://cdn.shopify.com/s/files/1/0649/4879/7673/products/big-apple-red-gif_2c78e03d-9c65-4304-93d0-3210022f9f78.gif?v=1668556961",
+              "https://cdn.shopify.com/s/files/1/0649/4879/7673/files/big-apple-red-nln25-nail-lacquer-22001014069_6982ca9b-9689-4552-a582-48baa1e00ef1.png?v=1685930788"
+            ],
+            "variants": [],
+            "source": "https://www.opi.com/products/nail-lacquer-big-apple-red",
+            "method": "online",
+            "needsVariant": false,
+            "provider": "Site officiel OPI",
+            "official": true,
+            "score": 88,
+            "reason": "Marque et nom à vérifier",
+            "confidence": "à confirmer",
+            "fetchedAt": "2026-10-03T11:19:03.166Z"
+          }
+        ],
+        "sources": [
+          {
+            "provider": "Site officiel OPI",
+            "status": "found"
+          }
+        ],
+        "message": "Produit trouvé en ligne. Vérifie la référence avant de l’ajouter.",
+        "cached": false
+      }
+    },
+    {
+      "input": {
+        "brand": "KIKO Milano",
+        "collection": "Smart Nail Lacquer",
+        "reference": "153"
+      },
+      "httpStatus": 200,
+      "durationMs": 6777,
+      "result": {
+        "status": "found",
+        "candidates": [
+          {
+            "fields": {
+              "name": "Muget Green",
+              "brand": "KIKO Milano",
+              "reference": "153",
+              "sku": "KM000000203153B",
+              "collection": "Smart Nail Lacquer",
+              "barcode": "8025272978705",
+              "shadeName": "Muget Green",
+              "shadeCode": "153",
+              "type": "Vernis",
+              "color": "#9aa180",
+              "finish": "Brillant"
+            },
+            "images": [],
+            "variants": [],
+            "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-153-7411/",
+            "method": "online",
+            "needsVariant": false,
+            "barcodeAliases": [
+              "8025272978705"
+            ],
+            "provider": "Site officiel KIKO",
+            "official": true,
+            "score": 92,
+            "reason": "Marque, gamme et référence à vérifier",
+            "confidence": "à confirmer",
+            "fetchedAt": "2026-10-03T11:19:07.092Z"
+          }
+        ],
+        "sources": [
+          {
+            "provider": "Site officiel KIKO",
+            "status": "found"
+          }
+        ],
+        "message": "Produit trouvé en ligne. Vérifie la référence avant de l’ajouter.",
+        "cached": false
+      }
+    },
+    {
+      "case": "Unauthenticated request",
+      "httpStatus": 401
+    }
+  ]
+}

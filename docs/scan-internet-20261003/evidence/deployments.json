@@ -1,0 +1,64 @@
+[
+  {
+    "project": "pueqkbwfwxgqzmkauxoz",
+    "functions": [
+      {
+        "id": "8b33f0fa-9479-481d-aca5-0bf12203efb6",
+        "slug": "product-lookup",
+        "name": "product-lookup",
+        "status": "ACTIVE",
+        "version": 2,
+        "created_at": 1791024753949,
+        "updated_at": 1791026115277,
+        "verify_jwt": true,
+        "import_map": false,
+        "entrypoint_path": "file:///tmp/user_fn_pueqkbwfwxgqzmkauxoz_8b33f0fa-9479-481d-aca5-0bf12203efb6_2/source/product-lookup/index.ts",
+        "ezbr_sha256": "121e6e9e584138aea850a9927d2dec708d5159575ea5497fd55cfe0c3262795b"
+      },
+      {
+        "id": "ed388103-6c01-4b55-84d1-9771233ff40f",
+        "slug": "nm-online-verification",
+        "name": "nm-online-verification",
+        "status": "ACTIVE",
+        "version": 6,
+        "created_at": 1791024833790,
+        "updated_at": 1791026325156,
+        "verify_jwt": true,
+        "import_map": false,
+        "entrypoint_path": "file:///tmp/user_fn_pueqkbwfwxgqzmkauxoz_ed388103-6c01-4b55-84d1-9771233ff40f_6/source/index.ts",
+        "ezbr_sha256": "e83c847f01465d551f89cd2005b276090081b2052adb2f09f1374590b009f01a"
+      }
+    ]
+  },
+  {
+    "project": "rvqmtnqvzzxzwfxfyjcg",
+    "functions": [
+      {
+        "id": "d4b9356d-91cf-499f-bea3-99eea4176647",
+        "slug": "product-lookup",
+        "name": "product-lookup",
+        "status": "ACTIVE",
+        "version": 1,
+        "created_at": 1791026326937,
+        "updated_at": 1791026326937,
+        "verify_jwt": true,
+        "import_map": false,
+        "entrypoint_path": "file:///tmp/user_fn_rvqmtnqvzzxzwfxfyjcg_d4b9356d-91cf-499f-bea3-99eea4176647_1/source/product-lookup/index.ts",
+        "ezbr_sha256": "121e6e9e584138aea850a9927d2dec708d5159575ea5497fd55cfe0c3262795b"
+      },
+      {
+        "id": "853b5748-8a4d-4a9b-97cb-f336a6ac2339",
+        "slug": "nm-online-verification",
+        "name": "nm-online-verification",
+        "status": "ACTIVE",
+        "version": 2,
+        "created_at": 1791026328215,
+        "updated_at": 1791026635511,
+        "verify_jwt": true,
+        "import_map": false,
+        "entrypoint_path": "file:///tmp/user_fn_rvqmtnqvzzxzwfxfyjcg_853b5748-8a4d-4a9b-97cb-f336a6ac2339_2/source/index.ts",
+        "ezbr_sha256": "076f3cb03ade5c704b84bfe2b5efc138532a43209039f85a1cd14badb043319a"
+      }
+    ]
+  }
+]

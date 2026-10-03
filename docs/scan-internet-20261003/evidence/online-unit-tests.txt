@@ -1,0 +1,22 @@
+✔ online GS1 normalization preserves initial zeros, validates checksums and expands UPC-E exactly like the reader (1.98616ms)
+✔ lookup request contains identity facts only, not original photo, full OCR or packaging quantity (0.501455ms)
+✔ same brand but wrong range, shade, brand or decoded barcode can never be presented as the right product (0.533042ms)
+✔ official online Shopify search resolves the product page, separates Green and Green Flash and never trusts a search snippet (12.511303ms)
+✔ untrusted search URL and redirects cannot escape an official provider to private addresses or another host (2.101211ms)
+✔ multi-shade Shopify page selects only a matching explicit variant, including its exact code and SKU (2.758557ms)
+✔ a genuine upstream HTTP 404 means barcode absent, while blocked/network responses remain unavailable (1.607207ms)
+✔ KIKO selected official page supplies its shade and explicit HEX without taking an adjacent shade (6.631129ms)
+✔ community barcode facts require an exact GTIN, source attribution and never provide a guessed RGB (0.383099ms)
+✔ unknown barcode, insufficient identity, unsupported text brand and upstream failure have distinct nonblocking statuses (3.29911ms)
+✔ online selection preserves an explicit manual color and records source/identity; missing RGB clears an old automatic catalog color (0.546903ms)
+✔ successful server lookup is cached per supplied account storage and available offline without another request (1.064241ms)
+✔ cancelled or failed online request never replaces a later draft or blocks the manual fallback (0.384661ms)
+✔ online and bundled catalogue naming aliases of one GTIN do not create a second collection record (0.49786ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 322.401459

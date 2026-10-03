@@ -1,0 +1,3 @@
+PASS Scan unknown locally → automatic Internet → sourced fiche, exact published HEX, confirmation → Collection → reload
+PASS Cache remains usable offline and online selection never replaces an explicit manual color
+PASS Collection importer receives the same online fiche and preserves the manually chosen color

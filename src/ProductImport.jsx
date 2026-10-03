@@ -9,6 +9,8 @@ import { preparePhoto } from './ProductPhoto';
 import { barcodeObservation, mergeRecognitionEvidence } from './productIdentity';
 import { recognizeEvidence, recognitionPatch, pendingBarcodeReport, interruptedRecognition } from './recognitionReport';
 import RecognitionStatus from './RecognitionStatus';
+import OnlineProductLookup from './OnlineProductLookup';
+import {onlineSelectionPatch} from './productLookup';
 import { photoPalette, generationFamily, preciseShade, colorFamilyChange,chosenShadeChange } from './colorAnalysis';
 import './product-import.css';
 
@@ -19,7 +21,8 @@ function Review({ candidate, existing, onUse, onDismiss }) {
   const [selected, setSelected] = useState(() => Object.keys(candidate.fields).filter(key => candidate.fields[key] && (key !== 'photo' || !existing.photo)));
   const toggle = key => setSelected(values => values.includes(key) ? values.filter(value => value !== key) : [...values, key]);
   function variant(id) {
-    const next = shopifyCandidate(candidate.raw, candidate.source, id);
+    const next = {...shopifyCandidate(candidate.raw, candidate.source, id),...(candidate.method==='online'?{method:'online',provider:candidate.provider,official:candidate.official,fetchedAt:candidate.fetchedAt}:{})};
+    if(candidate.fields.collection)next.fields.collection=candidate.fields.collection;
     setCurrent(next);
     setSelected(Object.keys(next.fields).filter(key => next.fields[key] && (key !== 'photo' || !existing.photo)));
   }
@@ -41,6 +44,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
   const [report,setReport] = useState(item.recognitionInfo || null);
   const secondView = useRef(null), autoPhoto=useRef(''),autoURL=useRef(''),panel=useRef(null),showResult=useRef(false);
   const [localMatches, setLocalMatches] = useState([]);
+  const [onlineFound,setOnlineFound] = useState(false);
   const [catalogQuery, setCatalogQuery] = useState('');
   const [text, setText] = useState(''), [matches, setMatches] = useState([]);
   const task = useRef(null), revision = useRef(0), barcodePhoto = useRef(null), barcodeCamera = useRef(null);
@@ -70,6 +74,7 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
   }
 
   function useCandidate(fields, source) {
+    if(source.method==='online') {onChange(onlineSelectionPatch(source,item,fields));setCandidate(null);setMessage('Informations reprises. Vérifie la fiche et la couleur puis enregistre-la.');return;}
     onChange({ ...fields, ...(fields.color?chosenShadeChange(fields.color,'product_page'):{}), ...(fields.family ? colorFamilyChange(item, fields.family) : {}), ...(source.source ? { url: source.source } : {}), ...(source.catalogId ? catalogSelectionPatch({...source,fields},item) : { provenance: { kind: 'discovered', verified: false, importMethod: source.method, source: source.source || '' } }), importInfo: { method: source.method, source: source.source || '', at: new Date().toISOString() } });
     setCandidate(null); setMessage('Informations reprises. Vérifie la fiche puis enregistre-la.');
   }
@@ -162,8 +167,9 @@ export default function ProductImport({ item, onChange, onBusy, photoBusy, onMan
       {text && <div className="readLabelResult"><label>Texte lu — tu peux le corriger<textarea rows="4" value={text} onChange={event => { setText(event.target.value); setMatches([]); setLocalMatches([]); setCandidate(null); }} /></label><p className="fieldHelp">Choisis la ligne contenant le nom.</p><div className="labelLines">{[...new Set(text.split('\n').map(line => line.trim()).filter(line => line.length > 2))].slice(0, 18).map((line, index) => <button key={index} type="button" onClick={() => useLine(line)}>{line}</button>)}</div><button type="button" className="importSecondary" disabled={Boolean(busy)} onClick={() => run('Recherche des noms lus…', signal => analyzeEvidence({rawText:text,ocrViews:report?.ocrViews || [],barcodes:report?.barcodes || [],barcodeAttempted:report?.barcodeAttempted,ocr:true},signal), 60000)}>Chercher dans NailMoods</button></div>}
     </div>}
     {busy && <div className="importProgress" role="status"><span>{busy}</span><button type="button" onClick={()=>cancel(true)}>Annuler</button></div>}
-    <RecognitionStatus report={report} busy={Boolean(busy)} onSecondView={()=>secondView.current.click()}/>
-    {(error || report && !report.matches?.length) && <div className="formError" role="alert"><p>{error || report.message}</p><p>Continue avec les champs ci-dessous : nom et couleur suffisent. Tu peux aussi photographier l’étiquette ou ajouter une URL.</p><a href={'https://www.google.com/search?q=' + encodeURIComponent([catalogQuery || text, item.brand, item.name, item.reference, item.barcode, 'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Rechercher la référence sur le web</a><div className="photoActions"><button type="button" onClick={onPhoto}>Photographier l’étiquette</button><button type="button" onClick={onColor}>Ajouter avec cette couleur</button><button type="button" onClick={()=>{cancel(true);onManual();}}>Ajouter ce produit</button></div><p>Si tu trouves le produit sur le web, colle son URL ci-dessus pour vérifier les informations.</p></div>}
+    <RecognitionStatus report={onlineFound&&report&&!report.matches?.length?{...report,title:'Fiche disponible en ligne',message:'La référence n’était pas dans le catalogue local. Vérifie la fiche proposée ci-dessous.',needsSecondView:false}:report} busy={Boolean(busy)} onSecondView={()=>secondView.current.click()}/>
+    <OnlineProductLookup report={report} item={item} enabled={!item.id} onStatus={setOnlineFound} onChoose={candidate=>{cancel();setError('');setCandidate(candidate);}}/>
+    {(error || report && !report.matches?.length && !onlineFound) && <div className="formError" role="alert"><p>{error || report.message}</p><p>Continue avec les champs ci-dessous : nom et couleur suffisent. Tu peux aussi photographier l’étiquette ou ajouter une URL.</p><a href={'https://www.google.com/search?q=' + encodeURIComponent([catalogQuery || text, item.brand, item.name, item.reference, item.barcode, 'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Rechercher la référence sur le web</a><div className="photoActions"><button type="button" onClick={onPhoto}>Photographier l’étiquette</button><button type="button" onClick={onColor}>Ajouter avec cette couleur</button><button type="button" onClick={()=>{cancel(true);onManual();}}>Ajouter ce produit</button></div><p>Si tu trouves le produit sur le web, colle son URL ci-dessus pour vérifier les informations.</p></div>}
     {localMatches.length > 0 && <div className="catalogMatches"><p>Correspondances à confirmer · le score mesure la proximité des informations, pas une certitude.</p>{localMatches.map(match => <button type="button" key={match.product.catalogId} onClick={() => setCandidate(catalogCandidate(match))}><span>{match.product.brand} — {match.product.name}<small>{match.product.collection}{match.product.reference ? ' · Réf. ' + match.product.reference : ''}</small><small>Correspondance {match.confidence} · score {match.score}/100 · {match.reason}</small></span></button>)}</div>}
     {matches.length > 0 && <div className="catalogMatches"><p>Références possibles · à confirmer</p>{matches.slice(0, 3).map(product => <button key={product.id} type="button" onClick={() => run('Lecture du produit…', signal => fetchProduct(`https://leminimacaron.eu/products/${encodeURIComponent(product.handle)}`, signal))}>{product.title}</button>)}</div>}
     {candidate && <Review key={candidate.source + candidate.fields.name + candidate.method} candidate={candidate} existing={item} onUse={useCandidate} onDismiss={() => setCandidate(null)} />}

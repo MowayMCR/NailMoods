@@ -1,22 +1,10 @@
+import {canonicalBarcode} from '../supabase/functions/_shared/productCodes.mjs';
+export {canonicalBarcode} from '../supabase/functions/_shared/productCodes.mjs';
 // Identity evidence only. A photograph's color never participates in reference matching.
 export const identityText = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 export const identityContains = (text, value) => Boolean(value && (' '+text+' ').includes(' '+value+' '));
 export const canonicalBrand = value => /^(kiko|kiko milano|kik0|kik0 milano)$/.test(identityText(value)) ? 'kiko milano' : identityText(value);
 export const shortCode = value => /^\d{1,4}$/.test(String(value || '').trim()) ? String(Number(value)) : identityText(value);
-export function canonicalBarcode(value, format = '') {
-  let code=String(value || '').replace(/[\s-]/g,'');
-  if (['UPC_E','UPC-E'].includes(format)) {
-    if (!/^[01]\d{7}$/.test(code)) return '';
-    const [n,a,b,c,d,e,f,check] = code;
-    code = Number(f) <= 2 ? n+a+b+f+'0000'+c+d+e+check :
-      f === '3' ? n+a+b+c+'00000'+d+e+check :
-      f === '4' ? n+a+b+c+d+'00000'+e+check : n+a+b+c+d+e+'0000'+f+check;
-  }
-  if(!/^(?:\d{8}|\d{12}|\d{13}|\d{14})$/.test(code))return '';
-  const body=code.slice(0,-1);let sum=0;
-  for(let i=body.length-1,weight=3;i>=0;i--,weight=weight===3?1:3)sum+=Number(body[i])*weight;
-  return (10-sum%10)%10===Number(code.at(-1))?code.padStart(14,'0'):'';
-}
 export function barcodeObservation(rawBarcode, barcodeFormat = 'UNKNOWN', source = 'manual', confidence = null) {
   return {rawBarcode:String(rawBarcode ?? ''),barcodeFormat,barcodeSource:source,barcodeConfidence:Number.isFinite(confidence)?confidence:null};
 }

@@ -34,9 +34,10 @@ async function abortable(operation,signal){
  if(!signal)return operation;signal.throwIfAborted();
  return await new Promise((resolve,reject)=>{const abort=()=>reject(signal.reason||new DOMException('Aborted','AbortError'));signal.addEventListener('abort',abort,{once:true});Promise.resolve(operation).then(resolve,reject).finally(()=>signal.removeEventListener('abort',abort));});
 }
-export async function safePage(value,{resolve,transport,signal,maxBytes=MAX_PAGE_BYTES}={}) {
+export async function safePage(value,{resolve,transport,signal,maxBytes=MAX_PAGE_BYTES,allowedHosts}={}) {
   let url=publicURL(value);
   for(let redirects=0;redirects<=MAX_REDIRECTS;redirects++) {
+    if(allowedHosts && !allowedHosts.includes(url.hostname))throw Error('HOST_BLOCKED');
     signal?.throwIfAborted();
     const answers=await abortable(resolve(url.hostname),signal);
     signal?.throwIfAborted();
@@ -48,7 +49,7 @@ export async function safePage(value,{resolve,transport,signal,maxBytes=MAX_PAGE
       const location=response.headers.get('location');if(!location)throw Error('PAGE_UNAVAILABLE');
       url=publicURL(new URL(location,url).href);continue;
     }
-    if(!response.ok)throw Error('PAGE_UNAVAILABLE');
+    if(!response.ok)throw Object.assign(Error('PAGE_UNAVAILABLE'),{status:response.status});
     const type=(response.headers.get('content-type')||'').split(';')[0].trim().toLowerCase();
     if(!['text/html','application/xhtml+xml','application/json','text/json','text/javascript','application/javascript'].includes(type))throw Error('CONTENT_TYPE_BLOCKED');
     if(Number(response.headers.get('content-length'))>maxBytes)throw Error('PAGE_TOO_LARGE');
@@ -90,6 +91,8 @@ export function productCandidate(product,source) {
 }
 export function extractProductPage(html,source,parseDocument) {
   const doc=parseDocument(html),products=[];
+  const kiko=extractKikoProduct(doc,source);
+  if(kiko)return {status:'found',candidate:kiko,evidence:'official_selected_product'};
   function visit(n){if(!n||typeof n!=='object')return;if(Array.isArray(n)){n.forEach(visit);return;}if([n['@type']].flat().some(t=>t==='Product'||t==='https://schema.org/Product'))products.push(n);if(n['@graph'])visit(n['@graph']);if(n.mainEntity)visit(n.mainEntity);}
   for(const s of doc.querySelectorAll('script[type="application/ld+json"]'))try{visit(JSON.parse(s.textContent));}catch{}
   // Related products are never silently chosen. Duplicate scripts for the same
@@ -102,6 +105,27 @@ export function extractProductPage(html,source,parseDocument) {
   // OG alone does not establish a reliable product identity.
   const candidate={fields,images:photo?[photo]:[],variants:[],source,method:'url',needsVariant:false};
   return {status:'manual',candidate,evidence:distinct.length>1?'ambiguous_products':'metadata_only',message:'Impossible de lire automatiquement cette fiche'};
+}
+export function extractKikoProduct(doc,source) {
+  const url=publicURL(source);
+  if(url.hostname!=='www.kikocosmetics.com'||!url.pathname.startsWith('/fr-fr/p/'))return null;
+  try {
+    const data=JSON.parse(doc.querySelector('#__NEXT_DATA__')?.textContent||'{}').props?.pageProps;
+    const p=data?.selected,root=data?.root;
+    if(!p?.slug||!new RegExp('^/fr-fr/p/'+p.slug.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:-\\d+)?/?$').test(url.pathname))return null;
+    const range=clean(root?.display_value||root?.name||p.display_value);
+    if(!/nail.*lacquer|vernis/i.test(range))return null;
+    const label=clean(p.color).match(/^(\d{1,4})\s+(.+)$/);
+    const reference=clean(p.shade_number||label?.[1]),shade=clean(p.shade_name||label?.[2]);
+    if(!reference||!shade)return null;
+    const candidate=productCandidate({name:shade,brand:'KIKO Milano',collection:range,sku:p.backend_id,gtin:(p.barcodes||[]).find(gtin),image:p.images?.primary?.url||doc.querySelector('meta[property="og:image"]')?.getAttribute('content')},source);
+    if(!candidate)return null;
+    Object.assign(candidate.fields,{reference,shadeName:shade,shadeCode:reference,type:'Vernis'});
+    if(/^[a-f\d]{6}$/i.test(p.hex_color||''))candidate.fields.color='#'+p.hex_color.toLowerCase();
+    if(p.finish_effect==='GLOSSY')candidate.fields.finish='Brillant';
+    candidate.barcodeAliases=(p.barcodes||[]).filter(gtin).slice(0,10);
+    return candidate;
+  } catch {return null;}
 }
 export function extractShopify(raw,source) {
   if(!raw||!clean(raw.title))throw Error('NO_PRODUCT');

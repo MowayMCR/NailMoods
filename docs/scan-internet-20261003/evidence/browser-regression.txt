@@ -1,0 +1,5 @@
+PASS Front label without shade: brand/range prefill, no automatic beige background or false missing-product claim
+PASS Visible shade entry 30 → correct Smart Cobalt → official color and fiche → Collection → reload
+PASS Actual WASM code decode → automatic fiche prefill before confirmation → no duplicate Collection
+PASS Manual color remains first after a second label/code photograph
+PASS Collection import uses same official KIKO identity and color selection
