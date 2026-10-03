@@ -1,7 +1,7 @@
 import EquipmentLibrary from './EquipmentLibrary.jsx';
 import {equipmentSeed} from './equipmentSeed.js';
 import {setEquipmentOwned,duplicateCustomEquipment} from './equipmentLibrary.js';
-import {productKind,productKinds} from './productKinds.js';
+import {productKind,productKinds,productNeedsColor} from './productKinds.js';
 import { isNative } from './platform/state.js';
 const MobileStatus = import.meta.env.VITE_NATIVE_BUILD ? React.lazy(()=>import('./platform/MobileStatus.jsx')) : null;
 import Discovery, {DiscoveryShortcut} from './social/Discovery';
@@ -281,7 +281,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
 
   function save(forCreation = false) {
     if (!edit.name.trim() || photoBusy || importBusy) return;
-    if (!material && !shadeValid) {
+    if (!material && productNeedsColor(edit) && !shadeValid) {
       setSaveError('Complète le code de ta teinte, par exemple #703650, avant d’enregistrer.');
       return;
     }
@@ -412,7 +412,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
         {!material&&<label>Marque (facultatif)<input value={edit.brand} onChange={event => change({ brand: event.target.value })} /></label>}
         {duplicates.length > 0 && <div className="duplicateNotice" role="status"><b>Peut-être déjà dans ta collection</b>{duplicates.slice(0, 3).map(({item, reason}) => <p key={item.id}>{item.name} · {reason}</p>)}<small>Tu peux conserver les deux fiches. Rien ne sera fusionné.</small></div>}
         {!material && <>
-          <label>Catégorie de produit<select value={productKind(edit)} onChange={e=>change({productKind:e.target.value,...(e.target.value==='Top Coat mat'?{finish:'Mat'}:e.target.value==='Top Coat brillant'?{finish:'Brillant'}:{})})}>{productKinds.map(k=><option key={k}>{k}</option>)}</select></label>
+          <label>Catégorie de produit<select aria-label="Catégorie de produit" value={productKind(edit)} onChange={e=>change({productKind:e.target.value,...(e.target.value==='Top Coat mat'?{finish:'Mat'}:e.target.value==='Top Coat brillant'?{finish:'Brillant'}:{})})}>{productKinds.map(k=><option key={k}>{k}</option>)}</select></label>
           <div ref={productColorArea}><PhotoColor items={items} item={edit} onChange={change} onValidityChange={setShadeValid} /></div>
           <label>Finition<select value={edit.finish} onChange={event => change({ finish: event.target.value })}>
             {['Brillant', 'Crème', 'Jelly', 'Pailleté', 'Nacré', 'Métallique', 'Chrome', 'Cat-eye', 'Mat', 'Autre'].map(value => <option key={value}>{value}</option>)}

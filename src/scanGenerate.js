@@ -1,3 +1,4 @@
+import { productKind, productNeedsColor, productCanGenerate } from './productKinds.js';
 import { TECHNOLOGIES, readGuestConsent, permissions } from './privacy/policy.js';
 import { generateInspirations } from './freeInspiration.js';
 import { generationFamily, productColor, validHex } from './colorAnalysis.js';
@@ -12,14 +13,18 @@ export function toggleScanEffect(selected, value) {
   return [...selected.filter(x => x !== incompatible[value]), value].slice(-2);
 }
 export function confirmedScanProduct(draft, id) {
-  if (!validHex(draft.color)) throw new Error('Choisis ou corrige la couleur avant de continuer.');
+  const kind=productKind(draft);
+  if (!validHex(draft.color)) {
+    if(productNeedsColor(draft))throw new Error('Choisis ou corrige la couleur avant de continuer.');
+    return {...draft,id,productKind:kind,name:draft.name?.trim()||kind,type:kind==='Gel de construction'?'Gel':draft.type||'Vernis',color:'',shade:'',confirmedColor:'',colorSource:'',family:'',quantity:1,provenance:draft.provenance?{...draft.provenance,confirmedAt:new Date().toISOString()}:{kind:'personal',verified:false,importMethod:'scan'}};
+  }
   const color = draft.color.toLowerCase();
-  return { ...draft, id, name: draft.name?.trim() || generationFamily({ color }), type: ['Vernis', 'Semi-permanent', 'Gel'].includes(draft.type) ? draft.type : 'Vernis', color, shade: color, confirmedColor: color, colorSource: draft.catalogColorValidated?(draft.colorSource==='product_page'?'product_page':'catalog'):'scan-confirmed', family: generationFamily({ color }), quantity: 1, usage: draft.usage || 'Couleur seule', provenance: draft.provenance ? {...draft.provenance,confirmedAt:new Date().toISOString()} : { kind: 'personal', verified: false, importMethod: 'scan' } };
+  return { ...draft, id, productKind:kind, name: draft.name?.trim() || generationFamily({ color }), type: kind==='Gel de construction'?'Gel':['Vernis', 'Semi-permanent', 'Gel'].includes(draft.type) ? draft.type : 'Vernis', color, shade: color, confirmedColor: color, colorSource: draft.catalogColorValidated?(draft.colorSource==='product_page'?'product_page':'catalog'):'scan-confirmed', family: generationFamily({ color }), quantity: 1, usage: draft.usage || 'Couleur seule', provenance: draft.provenance ? {...draft.provenance,confirmedAt:new Date().toISOString()} : { kind: 'personal', verified: false, importMethod: 'scan' } };
 }
 // The natural nail is explicitly a schematic unpainted area, never an owned polish.
 const natural = { id: 'scan-natural', name: 'Ongle naturel · zone sans couleur', color: '#ead5cc', family: 'Nude', type: 'Vernis', usage: 'Couleur seule', conceptual: true, unpainted: true };
 export function generateScannedIdeas(products, effects = [], profile = {}, equipment = [], seed = 1) {
-  if (!Array.isArray(products) || products.length < 1 || products.length > 2 || products.some(p => !validHex(productColor(p)))) throw new Error('Confirme une ou deux couleurs pour créer tes idées.');
+  if (!Array.isArray(products) || products.length < 1 || products.length > 2 || products.some(p => !productCanGenerate(p) || !validHex(p.confirmedColor || p.shade || p.color))) throw new Error('Confirme une ou deux couleurs pour créer tes idées.');
   const french = effects.includes('French');
   const scanned = products.map(p => ({ ...p, color: productColor(p), family: generationFamily(p) }));
   // Work with confirmed swatches, retaining real product metadata in the result.

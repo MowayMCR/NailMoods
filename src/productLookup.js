@@ -1,3 +1,4 @@
+import {productKind} from './productKinds.js';
 import {getCloudClient} from './cloud/client.js';
 import {productURL,shopifyCandidate} from './productImport.js';
 import {validHex} from './colorAnalysis.js';
@@ -51,7 +52,7 @@ export function onlineSelectionPatch(candidate,item={},selected=candidate.fields
  const fields={...selected};const color=validHex(fields.color)?fields.color.toLowerCase():'';
  delete fields.color;delete fields.photo;
  const identity=Object.fromEntries(['brand','collection','reference','sku','name','barcode'].filter(k=>fields[k]).map(k=>[k,fields[k]]));
- return {...fields,...(!item.photo&&selected.photo?{photo:selected.photo}:{}),url:candidate.source,
+ return {...fields,productKind:productKind(fields),...(!item.photo&&selected.photo?{photo:selected.photo}:{}),url:candidate.source,
   provenance:{kind:'discovered',verified:false,importMethod:'online',source:candidate.source,provider:candidate.provider,official:Boolean(candidate.official),catalogIdentity:identity,fetchedAt:candidate.fetchedAt},
   importInfo:{method:'online',source:candidate.source,provider:candidate.provider,at:new Date().toISOString()},
   catalogColor:color,catalogColorValidated:Boolean(color&&!explicit),

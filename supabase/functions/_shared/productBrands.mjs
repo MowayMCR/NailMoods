@@ -1,6 +1,9 @@
 // Recognizable product labels, independent of catalogue coverage. No shade facts.
 export const productBrandLabels=Object.freeze([
  ['KIKO Milano',['kiko','kik0','kiko milano','kik0 milano']],
+ ['DND Gel',['dnd','dnd gel','daisy nail design']],
+ ['Akzentz Luxio',['luxio','akzentz','akzentz luxio']],
+ ['The GelBottle',['the gelbottle','the gel bottle','gelbottle','tgb']],
  ['Manucurist',['manucurist']],['OPI',['opi']],['CANNI',['canni']],
  ['Le Mini Macaron',['le mini macaron','le mini macaron europe','camelia beauty']],
  ['Maybelline',['maybelline','maybelline new york','gemey maybelline','gemey']],

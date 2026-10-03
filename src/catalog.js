@@ -1,4 +1,5 @@
 // Local catalogue is read-only. Personal collection edits never write back to it.
+import { productKind } from './productKinds.js';
 import { validHex } from './colorAnalysis.js';
 import { canonicalBrand, observationBarcode, productBarcodes, parseProductText, shortCode } from './productIdentity.js';
 export const catalogText = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -59,6 +60,7 @@ export function matchCatalog(products, query, { brand = '', collection = '', ocr
 export function catalogCandidate(match) {
   const p=match.product;
   const fields=Object.fromEntries(['brand','collection','name','reference','type','url','family','finish','usage','sku','ean13','gtin','shadeCode'].filter(k=>p[k]).map(k=>[k,p[k]]));
+  fields.productKind=productKind(p);
   const finishes = { creme: 'Crème', jelly: 'Jelly', paillete: 'Pailleté', metallique: 'Métallique', brillant: 'Brillant', 'cat eye': 'Cat-eye', mat: 'Mat' };
   fields.finish = finishes[catalogText(p.finish)] || 'Autre';
   if (p.finish && !finishes[catalogText(p.finish)]) fields.finishDetail = p.finish;

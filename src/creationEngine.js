@@ -1,6 +1,7 @@
+import { productKind } from './productKinds.js';
 import {canonicalTechnique, techniqueRule} from './techniqueRules.js';
 import {moodPreference, harmoniousPalette} from './moodPalettes.js';
-import { productColor, generationFamily } from './colorAnalysis.js';
+import { productColor, generationFamily, validHex } from './colorAnalysis.js';
 import { decorationChoice, isDecoration, stickerTags, stickerAffinity } from './decorations.js';
 import { personalAdjustment, validPersonalSnapshot } from './personalization.js';
 
@@ -9,7 +10,7 @@ export const normalize = value => String(value ?? '').normalize('NFD').replace(/
 export const normalizePolishCount = value => ['number', 'string'].includes(typeof value) && [1, 2, 3, 4, 5].includes(Number(value)) ? Number(value) : 'auto';
 const unique = items => [...new Map(items.filter(Boolean).map(item => [String(item.id), item])).values()];
 const fieldText = item => normalize([item.name, item.reference, item.materialStyle, ...stickerTags(item)].filter(Boolean).join(' '));
-export const auxiliary = item => Boolean(item.productKind && item.productKind !== 'Couleur' && item.productKind !== 'Gel de construction') || /\b(base\s*coat|top\s*coat|primer|cleaner|dissolvant|remover|huile)\b/.test(normalize(item.name).replace(/-/g, ' '));
+export const auxiliary = item => (productKind(item)==='Gel de construction' && !validHex(item.confirmedColor || item.shade || item.color || item.catalogColor)) || Boolean(item.productKind && item.productKind !== 'Couleur' && item.productKind !== 'Gel de construction') || /\b(base\s*coat|top\s*coat|primer|cleaner|dissolvant|remover|huile)\b/.test(normalize(item.name).replace(/-/g, ' '));
 const needsLamp = item => ['Semi-permanent', 'Gel'].includes(item.type);
 const magnetic = item => /cat.?eye|magnetique|avec aimant/.test(normalize([item.finish, item.effect, item.usage].join(' ')));
 const drawing = new Set(['french', 'dots', 'line']);

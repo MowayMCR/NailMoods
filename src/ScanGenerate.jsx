@@ -1,3 +1,4 @@
+import { productKind, productKinds, productNeedsColor, productCanGenerate } from './productKinds.js';
 import { isNative } from './platform/state.js';
 import MoodGlyph from './MoodGlyph';
 import {useStorage} from './StorageContext';
@@ -144,7 +145,7 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, onOpen,
   }
   function confirm() {
     try {
-      if(products.length>=2)return;
+      if(products.length>=2 || !productCanGenerate(draft) || !validHex(draft.color))return;
       const retained=interruptedRecognition(recognition);
       const product=confirmedScanProduct({...draft,...(retained?recognitionPatch(retained):{})},draft.id || 'scan-'+Date.now()+'-'+products.length);
       task.current?.abort();setReading(false);setProducts(previous=>[...previous,product]);setAdded(false);
@@ -203,8 +204,8 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, onOpen,
       <input ref={secondView} hidden type="file" accept="image/*" capture="environment" aria-label="Photographier le dessous ou le dos" onChange={event=>{const file=event.target.files?.[0];event.target.value='';analyze(file,true);}}/>
       <h2>{draft.provenance?'Produit à confirmer':validHex(draft.color)?'Ta couleur':'Couleur à confirmer'}</h2>
       <div className="scanDetected">{draft.photo && <img src={draft.photo} alt="Ton vernis photographié"/>}<i style={{background:draft.color || 'transparent'}}/><div><strong>{draft.name || (validHex(draft.color)?generationFamily({color:draft.color}):'Choisis une couleur')}</strong><span>{[draft.brand,draft.reference].filter(Boolean).join(' · ')}</span><small>{draft.color}</small></div></div>
-      <p className="scanHint">{draft.catalogColorValidated?(draft.provenance?.importMethod==='online'?'Couleur publiée sur la fiche officielle.':'Couleur publiée dans le catalogue.')+' Le rendu réel dépend de la pose et de la lumière.':draft.provenance?'Cette référence n’a pas de couleur catalogue validée. Choisis la couleur du vernis pour continuer.':'La photo peut contenir le fond et le bouchon. Choisis la couleur du vernis ; aucune couleur du fond n’est retenue automatiquement.'}</p>
-      {draft.photo && <><p className="scanHint">Le bouchon ou le fond peuvent être détectés. Choisis la couleur du vernis, ou prélève-la directement sur la photo.</p><div className="photoPalette" role="group" aria-label="Couleurs proposées depuis la photo">{(draft.photoColors||[]).map(color=><button key={color} type="button" aria-label={'Retenir la couleur '+color} aria-pressed={draft.color===color} style={{background:color}} onClick={()=>changeDraft('color',color)}>{draft.color===color&&<Check/>}</button>)}</div><button className="scanSecondary" aria-expanded={sampling} onClick={()=>setSampling(v=>!v)}><Pipette/>{sampling?'Fermer le prélèvement':'Choisir sur la photo'}</button>{sampling&&<Sampler source={draft.photo} onSelect={color=>changeDraft('color',color)} onDone={()=>setSampling(false)}/>}</>}
+      <p className="scanHint">{!productNeedsColor(draft)?'Ce produit peut être enregistré sans couleur. Pour créer des idées, scanne ensuite une couleur ou un gel de construction teinté.':draft.catalogColorValidated?(draft.provenance?.importMethod==='online'?'Couleur publiée sur la fiche officielle.':'Couleur publiée dans le catalogue.')+' Le rendu réel dépend de la pose et de la lumière.':draft.provenance?'Cette référence n’a pas de couleur catalogue validée. Choisis la couleur du vernis pour continuer.':'La photo peut contenir le fond et le bouchon. Choisis la couleur du vernis ; aucune couleur du fond n’est retenue automatiquement.'}</p>
+      {draft.photo && productNeedsColor(draft) && <><p className="scanHint">Le bouchon ou le fond peuvent être détectés. Choisis la couleur du vernis, ou prélève-la directement sur la photo.</p><div className="photoPalette" role="group" aria-label="Couleurs proposées depuis la photo">{(draft.photoColors||[]).map(color=><button key={color} type="button" aria-label={'Retenir la couleur '+color} aria-pressed={draft.color===color} style={{background:color}} onClick={()=>changeDraft('color',color)}>{draft.color===color&&<Check/>}</button>)}</div><button className="scanSecondary" aria-expanded={sampling} onClick={()=>setSampling(v=>!v)}><Pipette/>{sampling?'Fermer le prélèvement':'Choisir sur la photo'}</button>{sampling&&<Sampler source={draft.photo} onSelect={color=>changeDraft('color',color)} onDone={()=>setSampling(false)}/>}</>}
       {readStatus && <p role="status" className="scanHint">{readStatus}</p>}
       {!recognition && draft.photo && <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);secondView.current.click();}}>Photographier dessous / dos</button>}
       <RecognitionStatus report={onlineFound&&recognition&&!recognition.matches.length?{...recognition,title:'Fiche disponible en ligne',message:'La référence n’était pas dans le catalogue local. Vérifie la fiche proposée ci-dessous.',needsSecondView:false}:recognition} busy={busy} onSecondView={()=>{task.current?.abort();setReading(false);secondView.current.click();}}/>
@@ -212,19 +213,20 @@ export default function ScanGenerate({ profile = {}, items = [], onBack, onOpen,
       {recognition && <label className="scanLookup">Numéro de teinte, référence ou EAN<input value={query} onChange={e=>{task.current?.abort();setReading(false);setQuery(e.target.value);}} placeholder="Ex. 30, KIKO Power Pro 18, ou le code-barres"/><small role="status">{lookupStatus}</small></label>}
       {candidates.length>0 && <p className="scanHint">Touche une référence pour la confirmer, ou continue avec la couleur seule.</p>}
       {candidates.length>0 && <div className="scanCandidates" aria-label="Références possibles">{candidates.map(match=><button key={match.product.catalogId} aria-pressed={draft.provenance?.catalogId===match.product.catalogId} onClick={()=>chooseCandidate(match)}><b>{match.product.brand} · {match.product.reference || match.product.name}</b><small>{match.product.collection ? match.product.collection+' · ' : ''}{match.product.name} · {match.reason}</small><small>Correspondance {match.confidence} · indice {match.score}/100</small></button>)}</div>}
-      <button className="scanPrimary" disabled={!validHex(draft.color)} onClick={confirm}><Check/>{draft.provenance?'C’est bien celui-ci':recognition?'Utiliser cette couleur':'C’est bien ça'}</button>
-      {capabilities.addScannedProducts && typeof onAddProducts==='function' && <button className="scanSecondary" disabled={!validHex(draft.color)||draftAdded||Boolean(saving)} onClick={addDraft}>{draftAdded?'Produit dans ma collection':'Ajouter ce produit à ma collection'}</button>}
+      <button className="scanPrimary" disabled={!productCanGenerate(draft)||!validHex(draft.color)} onClick={confirm}><Check/>{draft.provenance?'C’est bien celui-ci':recognition?'Utiliser cette couleur':'C’est bien ça'}</button>
+      {capabilities.addScannedProducts && typeof onAddProducts==='function' && <button className="scanSecondary" disabled={(productNeedsColor(draft)&&!validHex(draft.color))||draftAdded||Boolean(saving)} onClick={addDraft}>{draftAdded?'Produit dans ma collection':'Ajouter ce produit à ma collection'}</button>}
       {recognition && !recognition.matches.length && !onlineFound && <a className="scanText" href={'https://www.google.com/search?q='+encodeURIComponent([recognition.parsed?.brand,...(recognition.parsed?.shadeCodes || []),draft.rawBarcode,'vernis'].filter(Boolean).join(' '))} target="_blank" rel="noopener noreferrer">Ouvrir une recherche web</a>}
       {reading && <small>La lecture de l’étiquette est facultative : tu peux continuer maintenant.</small>}
       <button className="scanSecondary" onClick={()=>{task.current?.abort();setReading(false);setCorrect(v=>!v);}}><Pipette/>{correct?'Fermer la fiche':'Compléter ou corriger la fiche'}</button>
       {correct && <div className="scanCorrection">
+        <label>Catégorie<select aria-label="Catégorie" value={productKind(draft)} onChange={e=>changeDraft('productKind',e.target.value)}>{productKinds.map(kind=><option key={kind}>{kind}</option>)}</select></label>
         <PolishPalette value={draft.color} onChange={color=>changeDraft('color',color)} items={items}/>
         <label>Nom (facultatif)<input value={draft.name || ''} maxLength={100} onChange={e=>changeDraft('name',e.target.value)}/></label>
         <div className="scanFields"><label>Marque<input value={draft.brand || ''} maxLength={80} onChange={e=>changeDraft('brand',e.target.value)}/></label><label>Référence<input value={draft.reference || ''} maxLength={80} onChange={e=>changeDraft('reference',e.target.value)}/></label></div>
         <label>Gamme<input value={draft.collection || ''} maxLength={100} onChange={e=>changeDraft('collection',e.target.value)}/></label>
         <label>Type de produit<select value={draft.type || 'Vernis'} onChange={e=>changeDraft('type',e.target.value)}><option>Vernis</option><option>Semi-permanent</option><option>Gel</option></select></label>
         <label>Finition observée<select value={draft.finish || ''} onChange={e=>changeDraft('finish',e.target.value)}><option value="">Je ne sais pas</option>{['Brillant','Mat','Crème','Jelly','Pailleté','Métallique','Cat-eye','Autre'].map(v=><option key={v}>{v}</option>)}</select></label>
-        <button className="scanPrimary" disabled={!validHex(draft.color)} onClick={confirm}>Confirmer cette couleur<ArrowRight/></button>
+        <button className="scanPrimary" disabled={!productCanGenerate(draft)||!validHex(draft.color)} onClick={confirm}>Confirmer cette couleur<ArrowRight/></button>
       </div>}
       <button className="scanText" onClick={()=>resetCapture()}>Reprendre la photo</button>
     </div>}
