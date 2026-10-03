@@ -1,9 +1,9 @@
 import {canonicalBarcode} from './productCodes.mjs';
+import {knownProductBrand} from './productBrands.mjs';
 export const lookupText=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 const clean=(v,n=120)=>typeof v==='string'?v.replace(/[<>\x00-\x1f]/g,' ').replace(/\s+/g,' ').trim().slice(0,n):'';
 export function lookupBrand(value) {
- const s=lookupText(value);
- return /^(kiko|kik0)( milano)?$/.test(s)?'KIKO Milano':s==='manucurist'?'Manucurist':s==='canni'?'CANNI':/^(le mini macaron|le mini macaron europe|camelia beauty)$/.test(s)?'Le Mini Macaron':s==='opi'?'OPI':clean(value,80);
+ return knownProductBrand(value)||clean(value,80);
 }
 export function normalizeLookupInput(raw={}) {
  const observation=raw.barcode && typeof raw.barcode==='object'?raw.barcode:{rawBarcode:raw.barcode||raw.rawBarcode,barcodeFormat:raw.barcodeFormat};

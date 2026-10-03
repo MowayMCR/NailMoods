@@ -1,0 +1,2347 @@
+{
+  "version": "official-brands-2026-10-03",
+  "count": 117,
+  "policy": "Factual identities from official product pages; no colors inferred from photographs or names; partial brand coverage.",
+  "products": [
+    {
+      "catalogId": "nm-official-d316cb6d9854b330",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Nude Coton",
+      "reference": "16741",
+      "sku": "",
+      "shadeCode": "10",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16741",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Nude Coton"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-0b298455de7efa63",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Nude Pétale",
+      "reference": "16757",
+      "sku": "",
+      "shadeCode": "11",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16757",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Nude Pétale"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-49f31c76b0890035",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Nude Rosé",
+      "reference": "16769",
+      "sku": "",
+      "shadeCode": "12",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16769",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Nude Rosé"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-aa6fd65196a4ed63",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rose Perle",
+      "reference": "16743",
+      "sku": "",
+      "shadeCode": "20",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16743",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rose Perle"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-4036acabc50fbfe2",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rose Camélia",
+      "reference": "16875",
+      "sku": "",
+      "shadeCode": "21",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16875",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rose Camélia"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-d88ca676a22c769f",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rose Nénuphar",
+      "reference": "16891",
+      "sku": "",
+      "shadeCode": "22",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16891",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rose Nénuphar"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-dc1b70c783fc1e62",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rose Dahlia",
+      "reference": "16867",
+      "sku": "",
+      "shadeCode": "23",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16867",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rose Dahlia"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-229761433b4c26ec",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rose Framboise",
+      "reference": "16959",
+      "sku": "",
+      "shadeCode": "24",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16959",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rose Framboise"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-ce05510ef93597af",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rose Boisé",
+      "reference": "16771",
+      "sku": "",
+      "shadeCode": "25",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16771",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rose Boisé"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-0db9beea30b8c04a",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rouge Corail",
+      "reference": "16897",
+      "sku": "",
+      "shadeCode": "30",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16897",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rouge Corail"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-027cb013480f7d42",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rouge Passion",
+      "reference": "16929",
+      "sku": "",
+      "shadeCode": "31",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16929",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rouge Passion"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-398adf81bc68fb6a",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rouge Pavot",
+      "reference": "16957",
+      "sku": "",
+      "shadeCode": "32",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16957",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rouge Pavot"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-8f0aa309558da63d",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rouge Bordeaux",
+      "reference": "16998",
+      "sku": "",
+      "shadeCode": "33",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16998",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rouge Bordeaux"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-84c59c2773fef39c",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rouge Cerise",
+      "reference": "16870",
+      "sku": "",
+      "shadeCode": "34",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16870",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rouge Cerise"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-3b320d2a7b8f2fac",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Rouge Prune",
+      "reference": "16841",
+      "sku": "",
+      "shadeCode": "35",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16841",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Rouge Prune"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-8c6806505ec127fd",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Brun Tonka",
+      "reference": "17066",
+      "sku": "",
+      "shadeCode": "40",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/17066",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Brun Tonka"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-f10be173215840f8",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Mauve Jacinthe",
+      "reference": "16813",
+      "sku": "",
+      "shadeCode": "50",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16813",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Mauve Jacinthe"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-612ada66f4f2f1bc",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Mauve Bruyère",
+      "reference": "17067",
+      "sku": "",
+      "shadeCode": "51",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/17067",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Mauve Bruyère"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-51c7bf9217fc3582",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Vert Botanique",
+      "reference": "16906",
+      "sku": "",
+      "shadeCode": "60",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/16906",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Vert Botanique"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-4b562d30aaa5298d",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Bleu Nuit",
+      "reference": "17002",
+      "sku": "",
+      "shadeCode": "61",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/17002",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Bleu Nuit"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-37c98d0b1d575a11",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Argent Givré",
+      "reference": "17058",
+      "sku": "",
+      "shadeCode": "70",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/17058",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Argent Givré"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-6e62643e83212daa",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Yves Rocher",
+      "collection": "Laque Botanique",
+      "name": "Bronze Doré",
+      "reference": "17014",
+      "sku": "",
+      "shadeCode": "71",
+      "type": "Vernis",
+      "url": "https://www.yves-rocher.fr/maquillage/ongles/vernis-a-ongles/vernis-a-ongles-laque-botanique/p/17014",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à Ongles - Laque Botanique · Bronze Doré"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-74ea20aba5920438",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Lapis Lazuli",
+      "reference": "1220770003",
+      "sku": "1220770003001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770003.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Lapis Lazuli"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-cfd4981d906fb517",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Lucky Charm",
+      "reference": "1220770006",
+      "sku": "1220770006001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770006.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Lucky Charm"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-be8029e73467e55b",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Cloud Vibes?",
+      "reference": "1220770010",
+      "sku": "1220770010001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770010.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Cloud Vibes?"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-294b2975cdea5bfe",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Regalia",
+      "reference": "1220770023",
+      "sku": "1220770023001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770023.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Regalia"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-65e740d5a7f945b4",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Why Not Purple?",
+      "reference": "1220770026",
+      "sku": "1220770026001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770026.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Why Not Purple?"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-fc9983ce58017289",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Platinum Plum",
+      "reference": "1220770031",
+      "sku": "1220770031001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770031.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Platinum Plum"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-aedabe8adceaffef",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "I Dream of Cobalt",
+      "reference": "1220770032",
+      "sku": "1220770032001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770032.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - I Dream of Cobalt"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-6713257c83e7f920",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Fiery Magic",
+      "reference": "1220770033",
+      "sku": "1220770033001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770033.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Fiery Magic"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-7cd2ab5efd54f1b1",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Plum Compote",
+      "reference": "1220770034",
+      "sku": "1220770034001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770034.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Plum Compote"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-b1397ad9ce12f620",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Electric Feels",
+      "reference": "1220770036",
+      "sku": "1220770036001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770036.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Electric Feels"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-bd2f260be72f85f0",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Green With Envy",
+      "reference": "1220770037",
+      "sku": "1220770037001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770037.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Green With Envy"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-cea470baf0bcfc0c",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Vert clair/cactus",
+      "reference": "1220770040",
+      "sku": "1220770040001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770040.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Vert clair/cactus"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-cd4767e4196a2682",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Moss & Mayhem",
+      "reference": "1220770046",
+      "sku": "1220770046001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770046.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Moss & Mayhem"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-e47558d6143b081c",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Navy Baby",
+      "reference": "1220770055",
+      "sku": "1220770055001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770055.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Navy Baby"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-900ee98eec5ea1f2",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Enchanted Mist",
+      "reference": "1220770056",
+      "sku": "1220770056001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770056.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Enchanted Mist"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-0e3f16060395f9ef",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Tidal Code",
+      "reference": "1220770058",
+      "sku": "1220770058001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770058.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Tidal Code"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-3677ec6b2208efa5",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "H&M",
+      "collection": "",
+      "name": "Digital Drift",
+      "reference": "1220770060",
+      "sku": "1220770060001",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://www2.hm.com/fr_fr/productpage.1220770060.html",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Vernis à ongles - Digital Drift"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-c8e4364f3f90a016",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "GLITTER",
+      "name": "STARS",
+      "reference": "01",
+      "sku": "FMU1401601",
+      "shadeCode": "01",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-glitter-841.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS GLITTER · STARS"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-3381a046dd6e7146",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "GLITTER",
+      "name": "GALAXY",
+      "reference": "02",
+      "sku": "",
+      "shadeCode": "02",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-glitter-841.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS GLITTER · GALAXY"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-1df4583f4cda182f",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "GLITTER",
+      "name": "MARS",
+      "reference": "03",
+      "sku": "",
+      "shadeCode": "03",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-glitter-841.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS GLITTER · MARS"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-5680c7f4b1e71f29",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "GLITTER",
+      "name": "ELECTRA",
+      "reference": "04",
+      "sku": "",
+      "shadeCode": "04",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-glitter-841.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS GLITTER · ELECTRA"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-993410ce4e64541e",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "GLITTER",
+      "name": "ASTRAL",
+      "reference": "05",
+      "sku": "",
+      "shadeCode": "05",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-glitter-841.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS GLITTER · ASTRAL"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-5a19030e2229b4ef",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "GLITTER",
+      "name": "COSMIC",
+      "reference": "06",
+      "sku": "",
+      "shadeCode": "06",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-glitter-841.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS GLITTER · COSMIC"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-fd220e89842dcf89",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "NUDE",
+      "name": "IVORY",
+      "reference": "01",
+      "sku": "",
+      "shadeCode": "01",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-nude-844.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS NUDE · IVORY"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-033e3b1aaabcef61",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "NUDE",
+      "name": "SANDY ROSE",
+      "reference": "02",
+      "sku": "",
+      "shadeCode": "02",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-nude-844.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS NUDE · SANDY ROSE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-fca926c3eb45df46",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "NUDE",
+      "name": "VINTAGE NUDE",
+      "reference": "03",
+      "sku": "",
+      "shadeCode": "03",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-nude-844.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS NUDE · VINTAGE NUDE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-7a554f3adea97a72",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "NUDE",
+      "name": "MINERAL SAND",
+      "reference": "04",
+      "sku": "FMU1401904",
+      "shadeCode": "04",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-nude-844.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS NUDE · MINERAL SAND"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-9354f259f0cfe413",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "NUDE",
+      "name": "AMBER NUDE",
+      "reference": "05",
+      "sku": "",
+      "shadeCode": "05",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-nude-844.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS NUDE · AMBER NUDE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-3fd8c4fed3b6ebd4",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "NUDE",
+      "name": "KASHMIR SAND",
+      "reference": "06",
+      "sku": "",
+      "shadeCode": "06",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-nude-844.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS NUDE · KASHMIR SAND"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-84babcfd0c94e13e",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "BLOOM",
+      "name": "PORCELAIN",
+      "reference": "01",
+      "sku": "",
+      "shadeCode": "01",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-bloom-845.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS BLOOM · PORCELAIN"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-3d3dbce981b6c160",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "BLOOM",
+      "name": "BABY BLUE",
+      "reference": "02",
+      "sku": "FMU1402002",
+      "shadeCode": "02",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-bloom-845.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS BLOOM · BABY BLUE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-d306d1ad0a9e21bc",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "BLOOM",
+      "name": "MELLOW YELLOW",
+      "reference": "03",
+      "sku": "",
+      "shadeCode": "03",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-bloom-845.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS BLOOM · MELLOW YELLOW"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-240860da1f8871bf",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "BLOOM",
+      "name": "ROSE MACARON",
+      "reference": "04",
+      "sku": "",
+      "shadeCode": "04",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-bloom-845.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS BLOOM · ROSE MACARON"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-2a597d21f9818031",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "BLOOM",
+      "name": "LILAC BLOSSOM",
+      "reference": "05",
+      "sku": "",
+      "shadeCode": "05",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-bloom-845.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS BLOOM · LILAC BLOSSOM"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-18f620cac3c1f7bc",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "BLOOM",
+      "name": "MINT CANDY",
+      "reference": "06",
+      "sku": "",
+      "shadeCode": "06",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-bloom-845.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS BLOOM · MINT CANDY"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-b5955db4525e0919",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "METAL",
+      "name": "SILVER",
+      "reference": "01",
+      "sku": "",
+      "shadeCode": "01",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-metal-843.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS METAL · SILVER"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-2af635635dba924d",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "METAL",
+      "name": "GOLD",
+      "reference": "02",
+      "sku": "FMU1401802",
+      "shadeCode": "02",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-metal-843.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS METAL · GOLD"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-eab80f137e8678f6",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "METAL",
+      "name": "COPPER",
+      "reference": "03",
+      "sku": "",
+      "shadeCode": "03",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-metal-843.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS METAL · COPPER"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-e16736784dc29c4d",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "METAL",
+      "name": "BRONZE",
+      "reference": "04",
+      "sku": "",
+      "shadeCode": "04",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-metal-843.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS METAL · BRONZE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-96a649d920267061",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "METAL",
+      "name": "IRON",
+      "reference": "05",
+      "sku": "",
+      "shadeCode": "05",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-metal-843.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS METAL · IRON"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-4b371597be79095d",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "METAL",
+      "name": "PURPLE",
+      "reference": "06",
+      "sku": "",
+      "shadeCode": "06",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-metal-843.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS METAL · PURPLE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-87065366ae60fb00",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "PURE",
+      "reference": "01",
+      "sku": "",
+      "shadeCode": "01",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · PURE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-35d7030e7c93be32",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "PEARLY WHITE",
+      "reference": "02",
+      "sku": "",
+      "shadeCode": "02",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · PEARLY WHITE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-9a68ddb66a0fb060",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "MILKY WHITE",
+      "reference": "03",
+      "sku": "",
+      "shadeCode": "03",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · MILKY WHITE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-51c0ff3ff418325c",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "MILKSHAKE",
+      "reference": "04",
+      "sku": "",
+      "shadeCode": "04",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · MILKSHAKE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-83bdaf752aa2307d",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "MARSHMALLOW",
+      "reference": "05",
+      "sku": "",
+      "shadeCode": "05",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · MARSHMALLOW"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-4a84ab0d219c50c6",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "FLAMINGO",
+      "reference": "06",
+      "sku": "",
+      "shadeCode": "06",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · FLAMINGO"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-be2dc73a19bd2432",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "SWEET PINK",
+      "reference": "07",
+      "sku": "",
+      "shadeCode": "07",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · SWEET PINK"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-ea5762e80129a0bc",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "DREAM ROSE",
+      "reference": "08",
+      "sku": "",
+      "shadeCode": "08",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · DREAM ROSE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-218faa2023f3891b",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "BUBBLEGUM",
+      "reference": "09",
+      "sku": "",
+      "shadeCode": "09",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · BUBBLEGUM"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-579694eff3263d1e",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "ROSE VINTAGE",
+      "reference": "10",
+      "sku": "",
+      "shadeCode": "10",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · ROSE VINTAGE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-94b7a8bbddba9345",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "CORAL",
+      "reference": "11",
+      "sku": "",
+      "shadeCode": "11",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · CORAL"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-d2c39795fd09111e",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "SCARLET",
+      "reference": "12",
+      "sku": "",
+      "shadeCode": "12",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · SCARLET"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-8c8e99b0aa3768e0",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "FRENCH CANCAN",
+      "reference": "13",
+      "sku": "FMU1401413",
+      "shadeCode": "13",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · FRENCH CANCAN"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-8d1e7fdd3cc28a92",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "DOLCE DIVA",
+      "reference": "14",
+      "sku": "",
+      "shadeCode": "14",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · DOLCE DIVA"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-de0c4b8b94cc7401",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "RED FOREVER",
+      "reference": "15",
+      "sku": "",
+      "shadeCode": "15",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · RED FOREVER"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-d5c8ae3a36fc96d1",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "WINE RED",
+      "reference": "16",
+      "sku": "",
+      "shadeCode": "16",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · WINE RED"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-455b7c48d81465e4",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "BURGUNDY",
+      "reference": "17",
+      "sku": "",
+      "shadeCode": "17",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · BURGUNDY"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-fccf73c5ecd2a6e7",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "CHERRY RED",
+      "reference": "18",
+      "sku": "",
+      "shadeCode": "18",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · CHERRY RED"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-b1d76c847305f3f0",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "PASSION RED",
+      "reference": "19",
+      "sku": "",
+      "shadeCode": "19",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · PASSION RED"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-bf8e58121b2af786",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "GOLDEN LADY",
+      "reference": "20",
+      "sku": "",
+      "shadeCode": "20",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · GOLDEN LADY"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-f307a195ae3dddf7",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "RUBY",
+      "reference": "21",
+      "sku": "",
+      "shadeCode": "21",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · RUBY"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-845dea4f79bed4f5",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "HAPPY CHERRY",
+      "reference": "22",
+      "sku": "",
+      "shadeCode": "22",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · HAPPY CHERRY"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-524b8fa2fb14f2fc",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "POETIC PINK",
+      "reference": "23",
+      "sku": "",
+      "shadeCode": "23",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · POETIC PINK"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-998aed69cd56a114",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "BARBIE PINK",
+      "reference": "24",
+      "sku": "",
+      "shadeCode": "24",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · BARBIE PINK"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-d8ac1f527b791e60",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "PINK ROCK",
+      "reference": "25",
+      "sku": "",
+      "shadeCode": "25",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · PINK ROCK"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-705f63d5ffacc18d",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "PRETTY FUCHSIA",
+      "reference": "26",
+      "sku": "",
+      "shadeCode": "26",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · PRETTY FUCHSIA"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-5e009b9e0292fa87",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "DAHLIA ROSE",
+      "reference": "27",
+      "sku": "",
+      "shadeCode": "27",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · DAHLIA ROSE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-1863e28b45e17e5f",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "OLD ROSE",
+      "reference": "28",
+      "sku": "",
+      "shadeCode": "28",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · OLD ROSE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-7d3985ca7d5907d2",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "LILAC",
+      "reference": "29",
+      "sku": "",
+      "shadeCode": "29",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · LILAC"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-8d388f324be4a66c",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "GALAXY ROSE",
+      "reference": "30",
+      "sku": "",
+      "shadeCode": "30",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · GALAXY ROSE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-b45fe00f207bd927",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "CHERRY COSMIC",
+      "reference": "31",
+      "sku": "",
+      "shadeCode": "31",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · CHERRY COSMIC"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-7ffc70aaa29f95a6",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "VELVET PRUNE",
+      "reference": "32",
+      "sku": "",
+      "shadeCode": "32",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · VELVET PRUNE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-11e51faf896342a5",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "JELLY GRAPE",
+      "reference": "33",
+      "sku": "",
+      "shadeCode": "33",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · JELLY GRAPE"
+      ],
+      "finish": "Jelly"
+    },
+    {
+      "catalogId": "nm-official-df8b39d94eed550c",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "DEEP BLUE",
+      "reference": "34",
+      "sku": "",
+      "shadeCode": "34",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · DEEP BLUE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-041a81003f032bc1",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "DEEP PURPLE",
+      "reference": "35",
+      "sku": "",
+      "shadeCode": "35",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · DEEP PURPLE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-f8362ad60e221d0c",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "OCEAN GREEN",
+      "reference": "36",
+      "sku": "",
+      "shadeCode": "36",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · OCEAN GREEN"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-73553960028f00f9",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "COBALT BLUE",
+      "reference": "37",
+      "sku": "",
+      "shadeCode": "37",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · COBALT BLUE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-edc81230e1fb2321",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "BLUE LAGOON",
+      "reference": "38",
+      "sku": "",
+      "shadeCode": "38",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · BLUE LAGOON"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-907ab664fbd61d3d",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "GREEN FOREST",
+      "reference": "39",
+      "sku": "",
+      "shadeCode": "39",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · GREEN FOREST"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-e592bb945140ab15",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "DENIM",
+      "reference": "40",
+      "sku": "",
+      "shadeCode": "40",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · DENIM"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-ac9cc6e58f15a4aa",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "SAPPHIRE",
+      "reference": "41",
+      "sku": "",
+      "shadeCode": "41",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · SAPPHIRE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-194ab1151a5ec733",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "ROYAL BLUE",
+      "reference": "42",
+      "sku": "",
+      "shadeCode": "42",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · ROYAL BLUE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-3d7a3ca1cb600477",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "MOON GREY",
+      "reference": "43",
+      "sku": "",
+      "shadeCode": "43",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · MOON GREY"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-ec3a23a3bbac3699",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "GOLD PINK",
+      "reference": "44",
+      "sku": "",
+      "shadeCode": "44",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · GOLD PINK"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-4dcc1082660e3d8e",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "PEARLY COPPER",
+      "reference": "45",
+      "sku": "",
+      "shadeCode": "45",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · PEARLY COPPER"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-5089d8fb9e756cd9",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "CHESNUT",
+      "reference": "46",
+      "sku": "",
+      "shadeCode": "46",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · CHESNUT"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-a7e1dad02e715cc2",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "DARK TRUFFLE",
+      "reference": "47",
+      "sku": "",
+      "shadeCode": "47",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · DARK TRUFFLE"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-f03e7c562ea860f1",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Fashion Make Up",
+      "collection": "CLASSIC",
+      "name": "GOTHIC",
+      "reference": "48",
+      "sku": "",
+      "shadeCode": "48",
+      "type": "Vernis",
+      "url": "https://www.fashionmakeup.fr/art-vernis-classic-840.htm",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "VERNIS CLASSIC · GOTHIC"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-f2160a9620b4b295",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Monoprix",
+      "collection": "",
+      "name": "Monoprix Make-Up Vernis À Ongles N°20 Kaki",
+      "reference": "20",
+      "sku": "MPX_4094883",
+      "shadeCode": "20",
+      "type": "Vernis",
+      "url": "https://courses.monoprix.fr/products/monoprix-make-up-vernis-%C3%A0-ongles-n-20-kaki/MPX_4094883",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Monoprix Make-Up Vernis À Ongles N°20 Kaki"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-1849f751aadad92a",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Monoprix",
+      "collection": "",
+      "name": "Monoprix Make Up Vernis à ongles 02 rose nude",
+      "reference": "MPX_4094857",
+      "sku": "MPX_4094857",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://courses.monoprix.fr/products/monoprix-make-up-vernis-%C3%A0-ongles-02-rose-nude/MPX_4094857",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Monoprix Make Up Vernis à ongles 02 rose nude"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-237292c785e09676",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Monoprix",
+      "collection": "",
+      "name": "Monoprix Make Up Vernis A Ongles Coquelicot 5 ml",
+      "reference": "MPX_4094879",
+      "sku": "MPX_4094879",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://courses.monoprix.fr/products/monoprix-make-up-vernis-a-ongles-coquelicot-5-ml/MPX_4094879",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Monoprix Make Up Vernis A Ongles Coquelicot 5 ml"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-edfb67ccafdd87f7",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Monoprix",
+      "collection": "",
+      "name": "Monoprix Make Up L'Embelisseur Vernis Coloris Champagne Glacé",
+      "reference": "MPX_6806150",
+      "sku": "MPX_6806150",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://courses.monoprix.fr/products/monoprix-make-up-l-embelisseur-vernis-coloris-champagne-glac%C3%A9/MPX_6806150",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Monoprix Make Up L'Embelisseur Vernis Coloris Champagne Glacé"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-b7f482d011814d8f",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Monoprix",
+      "collection": "",
+      "name": "Monoprix Make Up Vernis Gel Glow Bordeaux 5 ml",
+      "reference": "MPX_6687609",
+      "sku": "MPX_6687609",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://courses.monoprix.fr/products/monoprix-make-up-vernis-gel-glow-bordeaux-5-ml/MPX_6687609",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Monoprix Make Up Vernis Gel Glow Bordeaux 5 ml"
+      ],
+      "finish": ""
+    },
+    {
+      "catalogId": "nm-official-29dbc6691da7c60b",
+      "catalogVersion": "official-brands-2026-10-03",
+      "brand": "Monoprix",
+      "collection": "",
+      "name": "Monoprix Make Up Vernis A Ongles Blanc Opaque 5 ml",
+      "reference": "MPX_4094856",
+      "sku": "MPX_4094856",
+      "shadeCode": "",
+      "type": "Vernis",
+      "url": "https://courses.monoprix.fr/products/monoprix-make-up-vernis-a-ongles-blanc-opaque-5-ml/MPX_4094856",
+      "catalogColor": "",
+      "colorValidated": false,
+      "identityStatus": "identité vérifiée sur site officiel",
+      "verifiedAt": "2026-10-03",
+      "nameAliases": [
+        "Monoprix Make Up Vernis A Ongles Blanc Opaque 5 ml"
+      ],
+      "finish": ""
+    }
+  ]
+}

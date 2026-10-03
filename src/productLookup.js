@@ -59,6 +59,12 @@ export function onlineSelectionPatch(candidate,item={},selected=candidate.fields
   ...(!explicit&&!color&&['catalog','product_page'].includes(item.colorSource)?{color:'',shade:'',confirmedColor:'',colorSource:''}:{})};
 }
 export function onlineVariant(candidate,id) {
+ if(candidate.directVariants) {
+  const selected=candidate.variants?.findIndex(v=>v.id===id);
+  if(selected==null||selected<0||!candidate.directVariants[selected])return candidate;
+  const next=candidate.directVariants[selected];
+  return {...candidate,...next,method:'online',needsVariant:true,variantId:id,variants:candidate.variants,directVariants:candidate.directVariants};
+ }
  const next=shopifyCandidate(candidate.raw,candidate.source,id);
  return {...candidate,...next,method:'online',fields:{...next.fields,...(candidate.fields.collection?{collection:candidate.fields.collection}:{})}};
 }

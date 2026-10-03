@@ -1,9 +1,10 @@
+import {knownProductBrand, detectProductBrand, productBrandLabels} from '../supabase/functions/_shared/productBrands.mjs';
 import {canonicalBarcode} from '../supabase/functions/_shared/productCodes.mjs';
 export {canonicalBarcode} from '../supabase/functions/_shared/productCodes.mjs';
 // Identity evidence only. A photograph's color never participates in reference matching.
 export const identityText = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 export const identityContains = (text, value) => Boolean(value && (' '+text+' ').includes(' '+value+' '));
-export const canonicalBrand = value => /^(kiko|kiko milano|kik0|kik0 milano)$/.test(identityText(value)) ? 'kiko milano' : identityText(value);
+export const canonicalBrand = value => identityText(knownProductBrand(value) || value);
 export const shortCode = value => /^\d{1,4}$/.test(String(value || '').trim()) ? String(Number(value)) : identityText(value);
 export function barcodeObservation(rawBarcode, barcodeFormat = 'UNKNOWN', source = 'manual', confidence = null) {
   return {rawBarcode:String(rawBarcode ?? ''),barcodeFormat,barcodeSource:source,barcodeConfidence:Number.isFinite(confidence)?confidence:null};
@@ -15,7 +16,7 @@ export const observationBarcode = value => typeof value === 'string' ? canonical
 export function parseProductText(text, products = [], {brand='',collection='',ocr=false} = {}) {
   const raw=String(text || '').slice(0,12000), q=identityText(raw);
   const known=[...new Set(products.map(p=>p.brand).filter(Boolean))];
-  const detectedBrand=/\bkik[o0]\b/.test(q)?known.find(b=>canonicalBrand(b)==='kiko milano') || 'KIKO Milano':known.filter(b=>identityContains(q,identityText(b))).sort((a,b)=>b.length-a.length)[0] || '';
+  const detectedBrand=detectProductBrand(raw) || known.filter(b=>identityContains(q,identityText(b))).sort((a,b)=>b.length-a.length)[0] || '';
   const useBrand=brand || detectedBrand;
   const ranges=[...new Set(products.filter(p=>!useBrand || canonicalBrand(p.brand)===canonicalBrand(useBrand)).map(p=>p.collection).filter(Boolean))];
   // Recognize a visible range even when this catalogue has no shades from it.
@@ -41,7 +42,8 @@ export function parseProductText(text, products = [], {brand='',collection='',oc
     let clean=line.replace(/\b(?:lot|batch|exp|mfg|made|pa[o0])\b[^\n]*/gi,'').replace(/\b\d+(?:[.,]\d+)?\s*(?:ml|fl\.?\s*oz|oz|g|kg|%|months?|mois|m)\b/gi,'').replace(/\b(?:19|20)\d{2}[-/]\d{1,2}[-/]\d{1,2}\b/g,'');
     clean=identityText(clean);
     const rangeAliases=products.filter(p=>p.collection && [collection,detectedCollection].includes(p.collection)).flatMap(p=>[...(p.collectionAliases||[]),identityText(p.collection).split(' ').filter(w=>!['nail','lacquer','polish','vernis','gel','colour','color'].includes(w)).join(' ')]).filter(value=>identityContains(q,identityText(value)));
-    for(const value of [useBrand,detectedBrand,collection,detectedCollection,...rangeAliases,'KIKO','MILANO','NAIL LACQUER','NAIL POLISH'])if(value)clean=clean.replace(new RegExp('\\b'+identityText(value).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','g'),' ').trim();
+    const brandAliases=productBrandLabels.find(([name])=>canonicalBrand(name)===canonicalBrand(useBrand))?.[1] || [];
+    for(const value of [...[...brandAliases].sort((a,b)=>b.length-a.length),useBrand,detectedBrand,collection,detectedCollection,...rangeAliases,'KIKO','MILANO','NAIL LACQUER','NAIL POLISH'])if(value)clean=clean.replace(new RegExp('\\b'+identityText(value).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','g'),' ').trim();
     if(/^\d{1,4}$/.test(clean)){
       const punctuated=/^[\s|]*[-–—•.,'’]+\s*\d{1,4}\s*$/.test(line);
       const weakSingle=ocr && clean.length===1 && !collection && !detectedCollection && !inline;

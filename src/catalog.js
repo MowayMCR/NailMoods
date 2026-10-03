@@ -89,7 +89,11 @@ export async function loadCatalog(signal) {
   if(!supplement.ok) throw new Error('Le complément du catalogue est indisponible. Réessaie ou précise la fiche manuellement.');
   const additional=await supplement.json();
   if(!Array.isArray(additional.products))throw new Error('Complément du catalogue illisible.');
-  cached=[...data.products,...additional.products.filter(p=>!data.products.some(original=>original.catalogId===p.catalogId))];return cached;
+  const officialResponse=await fetch(import.meta.env.BASE_URL + 'catalog-official-brands.json',{signal});
+  if(!officialResponse.ok)throw new Error('Le complément des marques est indisponible. La saisie manuelle reste disponible.');
+  const official=await officialResponse.json();
+  if(!Array.isArray(official.products))throw new Error('Complément des marques illisible.');
+  cached=[...new Map([...data.products,...additional.products,...official.products].map(p=>[p.catalogId,p])).values()];return cached;
 }
 
 // Future swatch import can refer to these stable groups without editing the catalogue.

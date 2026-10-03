@@ -1,5 +1,6 @@
 import {safePage,publicURL,analyzeProductURL,extractShopify} from './productPageCore.mjs';
 import {canonicalBarcode} from './productCodes.mjs';
+import {extraOfficialBrands,extraOfficialLookup} from './officialBrandLookup.mjs';
 import {normalizeLookupInput,lookupKey,lookupBrand,lookupText,identityMatch,lookupContains as contains,lookupRange as range,lookupShortCode as short} from './lookupIdentity.mjs';
 export {identityMatch} from './lookupIdentity.mjs';
 export {normalizeLookupInput,lookupKey} from './lookupIdentity.mjs';
@@ -118,6 +119,7 @@ export async function lookupProduct(raw,context,parseDocument) {
  if(Object.hasOwn(shops,input.brand))jobs.push({provider:'Site officiel '+input.brand,run:()=>shopSearch(input,context,parseDocument)});
  if(input.brand==='KIKO Milano')jobs.push({provider:'Site officiel KIKO',run:()=>kikoSearch(input,context,parseDocument)});
  if(input.brand==='OPI' && input.name)jobs.push({provider:'Site officiel OPI',run:()=>opiSearch(input,context,parseDocument)});
+ if(extraOfficialBrands.includes(input.brand))jobs.push({provider:'Site officiel '+input.brand,run:()=>extraOfficialLookup(input,context,parseDocument)});
  await Promise.all(jobs.map(async job=>{try{const found=await job.run();candidates.push(...found);sources.push({provider:job.provider,status:found.length?'found':'not_found'});}catch{sources.push({provider:job.provider,status:'unavailable'});}}));
  const unique=[...new Map(candidates.filter(Boolean).sort((a,b)=>Number(b.official)-Number(a.official)||b.score-a.score).map(c=>[c.source+'|'+c.fields.barcode+'|'+c.fields.reference,c])).values()].slice(0,3);
  const status=unique.length?unique.length===1?'found':'ambiguous':!jobs.length?'unsupported':sources.some(s=>s.status==='unavailable')?'unavailable':'not_found';
