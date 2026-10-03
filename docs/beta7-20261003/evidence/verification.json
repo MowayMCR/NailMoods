@@ -1,0 +1,52 @@
+{
+  "source_commit": "563cbf7b22229c3f964d73a95c4c488f2200a480",
+  "version": "0.3.0-beta.7",
+  "versionCode": 7,
+  "appId": "com.nailmoods.app",
+  "excel_source_sha256": "5ee75d3dfba63791a99a3761486db494bf27d7a9e067d88a809f473f3d1fc9ff",
+  "catalog_v2_products": 2631,
+  "kiko_supplement_products": 64,
+  "new_official_products": 117,
+  "new_explicit_hex": 0,
+  "coverage": {
+    "Fashion Make Up": 72,
+    "H&M": 17,
+    "Monoprix": 6,
+    "Yves Rocher": 22
+  },
+  "source_url_count": 50,
+  "server_recovered": "Production product-lookup v2, bundle 9d458c7c02c17167a9ceb82d44c741410104b81f8a0b56200aeca8f149b7a6b3",
+  "signing_status": "SIGNED_AND_VERIFIED",
+  "physical_camera_status": "NOT_TESTED",
+  "professional_scan": {
+    "biab_classification": "PASS",
+    "colorless_product_save": "PASS",
+    "browser_collection_reload": "PASS",
+    "DND_Luxio_TGB_aliases": "PASS"
+  },
+  "tests": {
+    "files_passed": 68,
+    "files_failed": 0,
+    "existing_browser_scan_cases_passed": 5,
+    "professional_browser_cases_passed": 2
+  },
+  "android_run": "https://github.com/MowayMCR/NailMoods/actions/runs/37133113490",
+  "signed_bundle": {
+    "environment": "production",
+    "version": "0.3.0-beta.7",
+    "versionCode": 7,
+    "appId": "com.nailmoods.app",
+    "source_sha256": "397291495ecb449482fed534bcdd072de5f60ef103273a18bf5c101f0cc6fb16",
+    "signed_sha256": "a857179383e664e0771385f3029497d797dd0f51d8255ed6587413be03a60043",
+    "signed_bytes": 39252516,
+    "payload_files": 1139,
+    "payload_unchanged": true,
+    "bundletool_validation": "PASS",
+    "jarsigner_strict_trusted_alias": "PASS",
+    "key_alias": "nailmoods-upload-2026",
+    "signing_algorithm": "SHA256withRSA",
+    "apk_debuggable": false,
+    "ocr_files": 17
+  },
+  "library_file_id": "libfile_7435f7d7b1bc819196ed849a940393b4"
+}
