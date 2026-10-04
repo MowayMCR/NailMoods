@@ -33,6 +33,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="${nailmoodsScheme}" android:host="pose" />
+                <data android:scheme="${nailmoodsScheme}" android:host="share" />
             </intent-filter>
         </activity>
 

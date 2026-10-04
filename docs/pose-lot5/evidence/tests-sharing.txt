@@ -1,0 +1,12 @@
+✔ sharing migration: owner-only allowlisted frozen preview, references, revision, revoke and cascade (1560.734164ms)
+✔ shared link strips authentication query, keeps web base, never embeds content (1.04532ms)
+✔ native share links are strictly isolated by environment and survive sign-in (0.285772ms)
+✔ send contract forwards identifiers and opt-ins only, no client snapshot (0.774791ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1694.781996

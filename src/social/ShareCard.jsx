@@ -1,3 +1,4 @@
+import PoseSharedSummary from '../poseCycle/PoseSharedSummary';
 import {useStorage} from '../StorageContext';
 import {readInspirations,saveProject,INSPIRATIONS_KEY} from '../inspirations';
 import {proposalIdea} from './proposal';
@@ -10,6 +11,7 @@ function PrivateShareDetails({client,snapshot:s,id}){const storage=useStorage(),
 export default function ShareCard({client,snapshot,id}){const [detail,setDetail]=useState(null),[error,setError]=useState('');return <><div className="poShareSummary"><b>{snapshot.title}</b><div>{(snapshot.colors||[]).map((c,i)=><i key={i} style={{background:c}}/>)}</div><small>{snapshot.mood} · {snapshot.level}</small><button onClick={async()=>{setError('');try{setDetail(await poShareService(client).detail(id));}catch{setError('Cette fiche n’est plus accessible.');}}}>Ouvrir la fiche partagée</button>{error&&<p role="status">{error}</p>}</div>{detail&&<Sheet title="Fiche partagée" onClose={()=>setDetail(null)}><ShareDetails client={client} id={id} snapshot={detail}/><button onClick={async()=>{try{await navigator.clipboard.writeText(new URL('#partage/'+id,window.location.href).href);setError('Lien copié, réservé aux participants.');}catch{setError('Copie indisponible.');}}}>Copier le lien privé</button></Sheet>}</>;}
 
 export function ShareDetails({client,snapshot,id}) {
+ if(snapshot.source_type==='pose')return <PoseSharedSummary client={client} snapshot={snapshot} id={id}/>;
  if(snapshot.public_reference){const p=snapshot.publication;return <div className="poShareSummary">{p?<><h3>{p.title}</h3><ContentImage client={client} kind={p.kind} id={p.id} title={p.title} preview={p.preview}/><p>@{p.handle}</p><p>{(p.tags?.moods||[]).join(' · ')}</p></>:<p>Cette publication n’est plus disponible.</p>}</div>;}
  return <PrivateShareDetails client={client} snapshot={snapshot} id={id}/>;
 }

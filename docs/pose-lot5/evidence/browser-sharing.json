@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "at": "2026-10-04T17:49:12.985Z",
+  "environment": "recette",
+  "realAccounts": 3,
+  "checks": [
+    "A Plus / B Pro / C Free authentifiés ; aperçu serveur sans notes, Planning, suivi ni Collection privée ; mauvais propriétaire et version périmée refusés",
+    "Fiche exécutée dans les 4 moods : mêmes données / HEX, ambiance complète distincte ; marges >=16 px, aucun débordement 320/360/390/430",
+    "Modification / rechargement du même projet ; export .ics réel, détails privés exclus par défaut",
+    "Fiche centrale → DIY existant sur le même pose_projects",
+    "Envoi explicite à la connexion Pro réelle, fiche figée, lien copié et QR décodé vers la même fiche privée",
+    "PO autorisée ouvre le lien ; compte tiers Free et anonyme refusés ; destinataire incapable de retirer le partage de la cliente",
+    "Modification du projet sans altérer la fiche envoyée ; note seulement sur opt-in ; répétition du même envoi sans doublon",
+    "Retrait d’accès depuis l’interface ; ancien lien et QR refusés après révocation",
+    "Free conserve sa fiche personnelle et le DIY ; envoi social premium et IA+ toujours refusés",
+    "Photo tenue jointe uniquement sur opt-in ; accès via passerelle autorisée, téléchargement direct et tiers refusés ; accès média retiré après révocation",
+    "Suppression du projet retire ses fiches liées sans rendre publiques ses données"
+  ],
+  "errors": [],
+  "physicalDeviceTests": false,
+  "fixtures": "Projets et produits synthétiques ; authentification et RPC réels. Aucune destinataire réelle contactée."
+}

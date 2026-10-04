@@ -1,0 +1,18 @@
+{
+  "project": "pueqkbwfwxgqzmkauxoz",
+  "migration": "20261004173436_pose_project_sharing",
+  "productionTouched": false,
+  "newSecurityWarnings": 0,
+  "preexistingSecurityWarnings": {
+    "authenticated_security_definer_function_executable": 4,
+    "auth_leaked_password_protection": 1
+  },
+  "fixtureCleanup": {
+    "projectRowsRemaining": 0,
+    "messagesRemoved": 5,
+    "notificationsRemoved": 5,
+    "accountPreferencesRestored": true,
+    "acceptedConnectionPreserved": true
+  },
+  "physicalDeviceTests": false
+}

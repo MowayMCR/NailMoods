@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "images": 8,
+  "moods": 4,
+  "widths": [
+    320,
+    390,
+    1200
+  ],
+  "errors": []
+}

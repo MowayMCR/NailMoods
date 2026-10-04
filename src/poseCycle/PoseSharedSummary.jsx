@@ -1,0 +1,11 @@
+import React from 'react';
+import NailPreview from '../NailPreview';
+import ContentImage from '../social/ContentImage';
+import {ReferenceImage} from '../PhotoReferences';
+import './projectSheet.css';
+export default function PoseSharedSummary({client,snapshot:s,id}){
+ return <div className="poseSharedSummary"><div className="poseEyebrow">FICHE PO · VERSION PARTAGÉE</div><h2>{s.title}</h2>{s.preview?.nails?.length===5&&<div className="poseSheetVisual"><NailPreview idea={s.preview}/></div>}<div className="poseSheetFacts"><span><small>Forme</small><b>{s.preview?.shape||'À préciser'}</b></span><span><small>Longueur</small><b>{s.preview?.length||'À préciser'}</b></span><span><small>Mood</small><b>{s.mood||'Libre'}</b></span></div><div className="poseTags">{s.techniques?.map(t=><span key={t}>{t}</span>)}</div><h3>Teintes & références</h3><ul className="poseProducts">{(s.products||[]).map((p,i)=><li key={i}><span className="poseSwatch">{p.color&&<i style={{background:p.color}}/>}</span><span><b>{p.name||'Couleur à préciser'}</b><small>{[p.brand,p.collection,p.reference].filter(Boolean).join(' · ')||'Sans référence fabricant renseignée'}</small><small>{[p.type,p.finish,p.effect&&p.effect!=='Aucun'?p.effect:'',p.opacity].filter(Boolean).join(' · ')}</small>{p.color&&<small>{p.color.toUpperCase()}</small>}</span></li>)}</ul><h3>Matériel & décorations</h3><ul className="poseEquipment">{[...new Set([...(s.equipment||[]).map(p=>[p.name,p.reference].filter(Boolean).join(' · ')),...(s.requirements||[])])].map(t=><li key={t}>{t}</li>)}</ul>{!s.equipment?.length&&!s.requirements?.length&&<p>À préciser ensemble selon les produits et la technique retenus.</p>}
+ {s.include_notes&&s.notes&&<section className="poseNote"><h3>Note jointe volontairement</h3><p>{s.notes}</p></section>}
+ {s.include_images&&s.images?.length>0&&<section><h3>Référence jointe volontairement</h3><div className="poseReference">{s.images.map((p,i)=>id?<ContentImage key={i} client={client} kind="share" id={id} index={i} title={'Référence partagée '+(i+1)}/>:<ReferenceImage key={i} src={p.src} alt={'Référence qui sera partagée '+(i+1)}/>)}</div></section>}
+ <p className="poseFinePrint">La PO confirme la faisabilité, ses produits et leur protocole. Cette fiche n’atteste pas de compatibilité chimique.</p></div>;
+}
