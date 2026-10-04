@@ -1,3 +1,4 @@
+import './build-theme-css.mjs';
 import { mkdir, readdir, copyFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';

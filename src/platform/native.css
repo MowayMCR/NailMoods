@@ -2,9 +2,9 @@
 .nm-native body { padding-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px)); }
 .nm-native .productSheet { max-height: calc(var(--nm-visible-height) - var(--safe-area-inset-top,env(safe-area-inset-top,0px)) - var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)) - 24px); }
 .nm-native input,.nm-native textarea { scroll-margin-block: 90px; }
-.nm-native .mobileStatus { position:fixed;z-index:12000;left:12px;right:12px;bottom:calc(82px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)));background:#fffaf7;color:#733451;border:1px solid #e6cad6;border-radius:16px;padding:12px 16px;font:14px/1.45 system-ui;box-shadow:0 4px 20px #40203022; }
+.nm-native .mobileStatus { position:fixed;z-index:12000;left:12px;right:12px;bottom:calc(82px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)));background:var(--surfacePrimary);color:var(--error);border:1px solid var(--borderDefault);border-radius:16px;padding:12px 16px;font:14px/1.45 system-ui;box-shadow:0 4px 20px color-mix(in srgb,var(--overlay) 13%,transparent); }
 .nm-native .mobileStatus p { margin:0 0 8px; }
-.nm-native .mobileStatus button { min-height:44px;border:0;background:#f5e5ec;color:#733451;border-radius:10px;padding:8px 12px;margin:4px 8px 0 0;font:600 14px system-ui; }
+.nm-native .mobileStatus button { min-height:44px;border:0;background:var(--surfaceSecondary);color:var(--error);border-radius:10px;padding:8px 12px;margin:4px 8px 0 0;font:600 14px system-ui; }
 .nm-native.nm-keyboard .mobileStatus { position:static;margin:10px; }
 
 .nm-native .app > nav { padding-bottom:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)); }
@@ -12,5 +12,5 @@
 .nm-ios button { min-height:44px; min-width:44px; }
 .nm-ios input,.nm-ios select,.nm-ios textarea { font-size:1rem; }
 .nm-ios .productSheet { padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)); }
-.nm-ios :focus-visible { outline:3px solid #733451; outline-offset:3px; }
+.nm-ios :focus-visible { outline:3px solid var(--borderDefault); outline-offset:3px; }
 @media(prefers-reduced-motion:reduce){.nm-ios *{scroll-behavior:auto!important;animation-duration:0.01ms!important;transition-duration:0.01ms!important;}}

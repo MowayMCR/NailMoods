@@ -18,6 +18,7 @@ export default function Sheet({ title, eyebrow = 'MON NAILMOODS', children, onCl
     const previousFocus = document.activeElement, root = document.getElementById('root'), url = location.href;
     const theme = getComputedStyle(root?.querySelector('.app') || document.documentElement);
     for (const name of theme) if (name.startsWith('--')) host.current.style.setProperty(name, theme.getPropertyValue(name));
+    host.current.dataset.mood=document.documentElement.dataset.mood||'soft-glam';
     document.body.appendChild(host.current);
     const id = titleId, item = { id, host: host.current };
     // Replacing a chooser with an editor keeps the same history level.

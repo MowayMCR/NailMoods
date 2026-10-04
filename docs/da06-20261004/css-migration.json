@@ -1,0 +1,114 @@
+[
+  {
+    "file": "src/cloud/account.css",
+    "replacements": 72
+  },
+  {
+    "file": "src/creation.css",
+    "replacements": 54
+  },
+  {
+    "file": "src/creative-sources.css",
+    "replacements": 26
+  },
+  {
+    "file": "src/design-system.css",
+    "replacements": 67
+  },
+  {
+    "file": "src/help.css",
+    "replacements": 10
+  },
+  {
+    "file": "src/home.css",
+    "replacements": 16
+  },
+  {
+    "file": "src/identity/identity-search.css",
+    "replacements": 3
+  },
+  {
+    "file": "src/inspiration.css",
+    "replacements": 25
+  },
+  {
+    "file": "src/journal.css",
+    "replacements": 47
+  },
+  {
+    "file": "src/online-product-lookup.css",
+    "replacements": 9
+  },
+  {
+    "file": "src/personalization.css",
+    "replacements": 13
+  },
+  {
+    "file": "src/photo-inspiration.css",
+    "replacements": 60
+  },
+  {
+    "file": "src/platform/native.css",
+    "replacements": 7
+  },
+  {
+    "file": "src/privacy/privacy.css",
+    "replacements": 19
+  },
+  {
+    "file": "src/product-import.css",
+    "replacements": 26
+  },
+  {
+    "file": "src/profile-sheet.css",
+    "replacements": 12
+  },
+  {
+    "file": "src/profile.css",
+    "replacements": 74
+  },
+  {
+    "file": "src/recognition-status.css",
+    "replacements": 5
+  },
+  {
+    "file": "src/scanGenerate.css",
+    "replacements": 27
+  },
+  {
+    "file": "src/social/discovery.css",
+    "replacements": 36
+  },
+  {
+    "file": "src/social/po-share.css",
+    "replacements": 7
+  },
+  {
+    "file": "src/social/social-beta.css",
+    "replacements": 21
+  },
+  {
+    "file": "src/style.css",
+    "replacements": 57
+  },
+  {
+    "file": "src/support/staff-journal.css",
+    "replacements": 18
+  },
+  {
+    "file": "src/support/support.css",
+    "replacements": 4
+  },
+  {
+    "file": "src/tutorial.css",
+    "replacements": 24
+  },
+  {
+    "file": "src/ux-polish.css",
+    "replacements": 8
+  },
+  {
+    "file": "src/workspaces/professional.css",
+    "replacements": 50
+  }
+]

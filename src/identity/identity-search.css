@@ -1,6 +1,6 @@
 .identityResultCard{grid-template-columns:46px minmax(0,1fr) 20px;align-items:center;width:100%;text-align:left;color:inherit;transition:transform .16s ease,background .16s ease,box-shadow .16s ease}
-.identityResultCard:hover{background:#fffafb;box-shadow:0 8px 20px #73345112}
-.identityResultCard:active{transform:scale(.985);background:var(--soft);box-shadow:0 2px 8px #73345112}
+.identityResultCard:hover{background:var(--surfacePrimary);box-shadow:0 8px 20px color-mix(in srgb,var(--overlay) 7%,transparent)}
+.identityResultCard:active{transform:scale(.985);background:var(--soft);box-shadow:0 2px 8px color-mix(in srgb,var(--overlay) 7%,transparent)}
 .identityResultCard:focus-visible{outline:3px solid color-mix(in srgb,var(--a) 38%,transparent);outline-offset:2px}
 .identityResultChevron{color:var(--a);width:18px;height:18px}
 .resultAvatar img{width:46px;height:46px}

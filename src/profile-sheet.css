@@ -31,9 +31,9 @@
   justify-content: space-between;
   gap: 12px;
   padding: 13px 16px;
-  border: 1px solid var(--nm-line, #e8dce2);
+  border: 1px solid var(--nm-line, var(--borderDefault));
   border-radius: 16px;
-  background: var(--surface, #fff);
+  background: var(--surface, var(--surfacePrimary));
   color: var(--ink);
   text-align: left;
   font-size: 1rem;
@@ -58,7 +58,7 @@
   padding: 10px 8px 14px !important;
   color: var(--ink);
   text-align: center;
-  box-shadow: inset 0 0 0 1px var(--nm-line, #e8dce2);
+  box-shadow: inset 0 0 0 1px var(--nm-line, var(--overlay));
 }
 .app .profileSheet .visualOptions > button.selected {
   color: var(--accent-text);
@@ -84,7 +84,7 @@
   display: block;
   margin-top: 4px !important;
   max-width: 100%;
-  color: var(--muted, #75656e);
+  color: var(--muted, var(--textSecondary));
   font-size: .875rem !important;
   font-weight: 400;
   line-height: 1.35 !important;
@@ -99,7 +99,7 @@
   place-items: center;
   border-radius: 50%;
   background: var(--accent-text);
-  color: #fff;
+  color: var(--textOnAccent);
 }
 .app .profileSheet :is(.visualOptions, .themeGrid) em svg { width: 14px; height: 14px; fill: none; }
 
@@ -113,7 +113,7 @@
   min-height: 64px;
   padding: 14px 0;
   border: 0;
-  border-bottom: 1px solid var(--nm-line, #e8dce2);
+  border-bottom: 1px solid var(--nm-line, var(--borderDefault));
   background: transparent;
   text-align: left;
   color: var(--ink);
@@ -127,9 +127,9 @@
   padding: 12px;
   display: grid;
   gap: 6px;
-  border: 1px solid var(--nm-line, #e8dce2);
+  border: 1px solid var(--nm-line, var(--borderDefault));
   border-radius: 16px;
-  background: var(--surface, #fff);
+  background: var(--surface, var(--surfacePrimary));
   color: var(--ink);
   text-align: center;
 }
@@ -142,6 +142,6 @@
 .app .profileSheet .universeGroup { margin: 20px 0; }
 .app .profileSheet .universeGroup h3 { font-size: 1.125rem; }
 .app .profileSheet .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.app .profileSheet .chips button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 10px 12px; border: 1px solid var(--nm-line, #e8dce2); border-radius: 24px; background: var(--surface, #fff); color: var(--ink); font-size: .875rem; }
-.app .profileSheet .chips button.on { background: var(--accent-text); color: #fff; }
-.app .profileSheet .primarySticky.inSheet { position: sticky; bottom: -20px; width: 100%; margin-top: 16px; padding: 14px; border: 0; border-radius: 16px; background: var(--accent-text); color: #fff; font-weight: 650; }
+.app .profileSheet .chips button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 10px 12px; border: 1px solid var(--nm-line, var(--borderDefault)); border-radius: 24px; background: var(--surface, var(--surfacePrimary)); color: var(--ink); font-size: .875rem; }
+.app .profileSheet .chips button.on { background: var(--accent-text); color: var(--textOnAccent); }
+.app .profileSheet .primarySticky.inSheet { position: sticky; bottom: -20px; width: 100%; margin-top: 16px; padding: 14px; border: 0; border-radius: 16px; background: var(--accent-text); color: var(--textOnAccent); font-weight: 650; }

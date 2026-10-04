@@ -1,0 +1,74 @@
+[
+  {
+    "path": "public/icons/nailmoods-effects-themes.png",
+    "sha256": "d739a5baff665635d58b1a22ee75d4a6fc9f05ee98fd988d53a44def659a9751",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  },
+  {
+    "path": "public/icons/nailmoods-styles.png",
+    "sha256": "cdc151d4e4e1c8c40e577aed2f0ca6bc073739ef691130bce45b7602ca28fcae",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  },
+  {
+    "path": "public/icons/nailmoods-techniques.png",
+    "sha256": "1fe5cf66e7340f9589c2b1b384ef5bf3326639cb419b1bb26100da89550751d0",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  },
+  {
+    "path": "public/nail-hand-mockup-v1.webp",
+    "sha256": "32b78d4bdad5c3fb4a6c2c7d06ff92bffe3d3a1446b824ae97d8cd171f45dfb3",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  },
+  {
+    "path": "public/nailmoods-icon.png",
+    "sha256": "861bdd476c48ef211b92283e51cfd71bcab8ff1d7b6432f1350d21be969ad8a1",
+    "references_detected": false,
+    "decision": "Conserver — référence dynamique ou usage à vérifier"
+  },
+  {
+    "path": "public/nailmoods-logo.svg",
+    "sha256": "d2fc6d83e7e4171bf67d7c2cf819b22bc47c50c3a809feb1418f48bf87306dea",
+    "references_detected": false,
+    "decision": "Conserver — référence dynamique ou usage à vérifier"
+  },
+  {
+    "path": "public/nailmoods-official.png",
+    "sha256": "450235a64ff555d12a2b343a3ee9f1a8c45ea92560e6d71359a329e3bc146129",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  },
+  {
+    "path": "public/nailmoods-symbol.png",
+    "sha256": "91d237e00b62f215318a3e7eaafb00e01543b547c2340ebbf7044e628b3b573b",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  },
+  {
+    "path": "public/realistic-core-finishes.png",
+    "sha256": "8e2bfccb172b6cf5afa1aac19e56270b49dbd8cc2fd804f5daa065e45c20bdbc",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  },
+  {
+    "path": "public/realistic-multitechnique.png",
+    "sha256": "71735c1d8cdccead5276574a835eb37359d8d845baf3ccb50977e2ad3fc45bbf",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  },
+  {
+    "path": "public/realistic-relief-jewels.png",
+    "sha256": "2fec3c7210bf9b6dd86a9111fe51f0a611c0daf5031a812eaafa0720daa91920",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  },
+  {
+    "path": "public/realistic-special-finishes.png",
+    "sha256": "161ca4309efdaf738d22f774d478c66f6fe9c9b8fa86a96ebc2fd6c10961a3d2",
+    "references_detected": true,
+    "decision": "Conserver — utilisé"
+  }
+]
