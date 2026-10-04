@@ -28,6 +28,7 @@ jobs:
           node scripts/build-theme-css.mjs
           npm run mobile:production
           npx cap sync android
+          npm run mobile:assets
       - name: Compile optimized release without AAB
         run: |
           chmod +x android/gradlew
