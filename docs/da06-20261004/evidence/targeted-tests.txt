@@ -1,0 +1,18 @@
+✔ Accessible semantic palette: Soft Glam (1.523341ms)
+✔ Accessible semantic palette: Dark Feminine (0.21808ms)
+✔ Accessible semantic palette: Cottagecore (0.241705ms)
+✔ Accessible semantic palette: Pop Pastel (0.17835ms)
+✔ Legacy theme conversion is independent from preferred universes (0.197639ms)
+✔ New account enters onboarding; old profiles, guests and completed accounts keep access (0.177087ms)
+✔ Native token pair restores session; wrong origin, environment and mixed credentials do not (0.746548ms)
+✔ Web callback verifies hashed email token and rejects a different origin (0.835773ms)
+✔ Public profile only falls back for missing version, never authorization errors (0.260374ms)
+✔ Public profile projection executes original guard, explicit opt-ins and strict field allowlist in Postgres (1374.553897ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1490.283184

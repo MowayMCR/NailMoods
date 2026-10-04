@@ -1,0 +1,126 @@
+{
+  "at": "2026-10-04T09:36:46.517Z",
+  "scope": "Chromium desktop, mobile-sized viewport, guest local persistence. Synthetic code images and text labels. No mobile camera, native permissions, authenticated reconnection or live Store validation.",
+  "cases": [
+    {
+      "name": "Shared barcode reader: EAN-13 Green/Green Flash, UPC-E OPI, UPC-A leading zero and EAN-8",
+      "result": "PASS",
+      "details": [
+        {
+          "label": "Green Flash",
+          "observation": {
+            "rawBarcode": "3662263511142",
+            "barcodeFormat": "EAN_13",
+            "barcodeSource": "scanner",
+            "barcodeConfidence": null
+          },
+          "title": "Produit trouvé",
+          "matches": [
+            {
+              "name": "Milky Peach",
+              "brand": "Manucurist",
+              "collection": "Green Flash"
+            }
+          ]
+        },
+        {
+          "label": "Green",
+          "observation": {
+            "rawBarcode": "3662263330941",
+            "barcodeFormat": "EAN_13",
+            "barcodeSource": "scanner",
+            "barcodeConfidence": null
+          },
+          "title": "Produit trouvé",
+          "matches": [
+            {
+              "name": "Abricot",
+              "brand": "Manucurist",
+              "collection": "Green"
+            }
+          ]
+        },
+        {
+          "label": "OPI UPC-E",
+          "observation": {
+            "rawBarcode": "09421215",
+            "barcodeFormat": "UPC_E",
+            "barcodeSource": "scanner",
+            "barcodeConfidence": null
+          },
+          "title": "Produit trouvé",
+          "matches": [
+            {
+              "name": "Bubble Bath",
+              "brand": "OPI",
+              "collection": "Nail Lacquer"
+            }
+          ]
+        },
+        {
+          "label": "Unknown UPC-A",
+          "observation": {
+            "rawBarcode": "0036000291452",
+            "barcodeFormat": "EAN_13",
+            "barcodeSource": "scanner",
+            "barcodeConfidence": null
+          },
+          "title": "Ce produit n’est pas encore dans NailMoods",
+          "matches": []
+        },
+        {
+          "label": "Unknown EAN-8",
+          "observation": {
+            "rawBarcode": "55123457",
+            "barcodeFormat": "EAN_8",
+            "barcodeSource": "scanner",
+            "barcodeConfidence": null
+          },
+          "title": "Ce produit n’est pas encore dans NailMoods",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "name": "OCR real browser worker on a synthetic KIKO label",
+      "result": "PASS",
+      "details": {
+        "text": "KIKO MILANO\n\nPower Pro Nail Lacquer\n\nWatermelon 18",
+        "physicalLabel": false
+      }
+    },
+    {
+      "name": "Known scan image → fiche confirmation → corrected NailMoods color → Collection → reload",
+      "result": "PASS",
+      "details": {
+        "name": "Milky Peach",
+        "color": "#df94a3",
+        "persisted": true
+      }
+    },
+    {
+      "name": "Unknown detected code → immediate manual add with EAN kept",
+      "result": "PASS",
+      "details": {
+        "unknownCodePreserved": true
+      }
+    },
+    {
+      "name": "Equipment library: add/remove/idempotent selection, custom edit and reload",
+      "result": "PASS",
+      "details": {
+        "standardToggle": true,
+        "customPersisted": true
+      }
+    },
+    {
+      "name": "Visible dice button, automatic difficulty recalculation and favorite double-tap",
+      "result": "PASS",
+      "details": {
+        "diceVisible": true,
+        "doubleTapAddsAndRemoves": true
+      }
+    }
+  ],
+  "errors": []
+}

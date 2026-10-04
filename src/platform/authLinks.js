@@ -1,3 +1,4 @@
+import {parseAuthCallback} from '../cloud/authCallback.js';
 export const mobileAppId = environment => environment === 'production' ? 'com.nailmoods.app' : environment === 'recette' ? 'com.nailmoods.app.recette' : null;
 export function mobileAuthReturnUrl(environment, recovery = false) {
   const appId = mobileAppId(environment);
@@ -7,7 +8,7 @@ export function mobileAuthReturnUrl(environment, recovery = false) {
 export function validateMobileAuthUrl(value, environment) {
   try {
     const u = new URL(value);
-    return u.protocol === mobileAppId(environment)+':' && u.hostname === 'auth' && u.pathname === '/callback' && !u.username && !u.password && !u.port && !u.hash && ['callback','recovery'].includes(u.searchParams.get('auth')) && Boolean(u.searchParams.get('code') || u.searchParams.get('error'));
+    return u.protocol === mobileAppId(environment)+':' && u.hostname === 'auth' && u.pathname === '/callback' && !u.username && !u.password && !u.port && Boolean(parseAuthCallback(value));
   } catch { return false; }
 }
 let pending = null;

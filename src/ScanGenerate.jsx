@@ -25,7 +25,7 @@ import { track as trackAnalytics } from './analytics/analytics';
 import './scanGenerate.css';
 
 export function ScanBottles() {
-  return <span className="scanBottles" aria-hidden="true">{['#813c60','#dba5aa'].map((color,i)=><svg key={color} viewBox="0 0 44 76" style={{ transform: `rotate(${i ? 8 : -8}deg)` }}><rect x="14" y="3" width="16" height="26" rx="3" fill="var(--b)"/><path d="M14 29h16v5c0 3 8 4 8 12v22a5 5 0 0 1-5 5H11a5 5 0 0 1-5-5V46c0-8 8-9 8-12Z" fill={color} stroke="var(--a)" strokeWidth="1.4"/><path d="M12 48v15" stroke="#fff" strokeWidth="3" opacity=".55" strokeLinecap="round"/><rect x="17" y="48" width="13" height="10" rx="2" fill="#fff" opacity=".65"/></svg>)}</span>;
+  return <span className="scanBottles" aria-hidden="true">{['var(--accentSecondary)','var(--accentSoft)'].map((color,i)=><svg key={color} viewBox="0 0 44 76" style={{ transform: `rotate(${i ? 8 : -8}deg)` }}><rect x="14" y="3" width="16" height="26" rx="3" fill="var(--b)"/><path d="M14 29h16v5c0 3 8 4 8 12v22a5 5 0 0 1-5 5H11a5 5 0 0 1-5-5V46c0-8 8-9 8-12Z" fill={color} stroke="var(--a)" strokeWidth="1.4"/><path d="M12 48v15" stroke="#fff" strokeWidth="3" opacity=".55" strokeLinecap="round"/><rect x="17" y="48" width="13" height="10" rx="2" fill="#fff" opacity=".65"/></svg>)}</span>;
 }
 
 // Paid actions require explicit capabilities supplied by a real entitlement adapter.

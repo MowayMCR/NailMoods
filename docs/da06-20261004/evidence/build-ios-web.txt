@@ -1,0 +1,44 @@
+Recognition assets ready (loaded only when requested).
+vite v8.3.0 building client environment for production...
+transforming...
+
+./boot.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+✓ 2159 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-mobile/index.html                               1.86 kB │ gzip:   1.00 kB
+dist-mobile/assets/nativeRuntime-DcTvwFdf.css        1.57 kB │ gzip:   0.63 kB
+dist-mobile/assets/main-uopcpw8J.css               288.11 kB │ gzip:  50.15 kB
+dist-mobile/assets/dist-DHjwEL3R.js                  0.06 kB │ gzip:   0.07 kB
+dist-mobile/assets/esm-BXnREEUW.js                   0.14 kB │ gzip:   0.12 kB
+dist-mobile/assets/state-Bb0N3oXV.js                 0.26 kB │ gzip:   0.20 kB
+dist-mobile/assets/esm-Bb2s1iIy.js                   0.35 kB │ gzip:   0.25 kB
+dist-mobile/assets/definitions-DlpntO5o.js           0.35 kB │ gzip:   0.25 kB
+dist-mobile/assets/web-D2BZOLca.js                   0.36 kB │ gzip:   0.24 kB
+dist-mobile/assets/web-CnILfZoc.js                   0.36 kB │ gzip:   0.24 kB
+dist-mobile/assets/web-CKbW2vyR.js                   0.84 kB │ gzip:   0.40 kB
+dist-mobile/assets/entry-1v_e_IDu.js                 0.98 kB │ gzip:   0.55 kB
+dist-mobile/assets/index-XSJnJghy.js                 0.98 kB │ gzip:   0.56 kB
+dist-mobile/assets/esm-Cf7A9ymq.js                   1.03 kB │ gzip:   0.53 kB
+dist-mobile/assets/web-C7foVr7q.js                   1.10 kB │ gzip:   0.54 kB
+dist-mobile/assets/web-Bh-0cxpW.js                   1.19 kB │ gzip:   0.54 kB
+dist-mobile/assets/preload-helper-uBIymjUX.js        1.23 kB │ gzip:   0.68 kB
+dist-mobile/assets/rolldown-runtime-C0FnF6B9.js      1.29 kB │ gzip:   0.71 kB
+dist-mobile/assets/authLinks-BmYOoi0d.js             1.49 kB │ gzip:   0.75 kB
+dist-mobile/assets/MobileStatus-uaUZ5941.js          1.74 kB │ gzip:   0.81 kB
+dist-mobile/assets/themes-BTAMkSfI.js                2.89 kB │ gzip:   1.43 kB
+dist-mobile/assets/dist-BUaBGHqH.js                  7.78 kB │ gzip:   3.11 kB
+dist-mobile/assets/nativeRuntime-BoN2NOqY.js         7.80 kB │ gzip:   3.12 kB
+dist-mobile/assets/jsx-runtime-D3F0h15I.js           8.24 kB │ gzip:   3.11 kB
+dist-mobile/assets/web-j2e5Lili.js                   8.47 kB │ gzip:   2.82 kB
+dist-mobile/assets/nativeMedia-CEYNfkF4.js          14.31 kB │ gzip:   5.19 kB
+dist-mobile/assets/src-SuYvKHvm.js                  17.24 kB │ gzip:   7.31 kB
+dist-mobile/assets/reader-Cx5cFgjW.js               36.38 kB │ gzip:  12.92 kB
+dist-mobile/assets/main-BzVpmKXK.js              1,170.36 kB │ gzip: 345.61 kB
+
+✓ built in 391ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

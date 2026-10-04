@@ -31,3 +31,8 @@ ios/App/App/capacitor.config.json
 *.p8
 *.mobileprovision
 .apple-secrets*
+
+# Local development symlink and review captures delivered in the DA06 dossier.
+/node_modules
+/docs/da06-20261004/evidence/**/*.png
+/docs/da06-20261004/evidence/*.png

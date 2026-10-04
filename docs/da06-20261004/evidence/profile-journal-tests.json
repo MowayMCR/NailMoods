@@ -1,0 +1,17 @@
+{
+  "scope": "Local journal CRUD and isolated public-profile projection fixture. No remote account or publication.",
+  "cases": [
+    {
+      "name": "Allowed public fields render read-only",
+      "status": "PASS"
+    },
+    {
+      "name": "Two private journal entries saved, grid, reload and detail notes preserved",
+      "status": "PASS"
+    },
+    {
+      "name": "Simulated native safe areas reserved at top/bottom",
+      "status": "PASS"
+    }
+  ]
+}

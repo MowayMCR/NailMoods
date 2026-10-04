@@ -1,0 +1,170 @@
+{
+  "scope": "Chromium, local guest fixtures. No real authentication, native device, payment or live backend mutation.",
+  "cases": [
+    {
+      "name": "Five navigation tabs; Profile remains in header",
+      "status": "PASS"
+    },
+    {
+      "name": "Soft Glam global theme, sheet, persistence and product shade",
+      "status": "PASS",
+      "details": {
+        "mood": "soft-glam",
+        "productHex": "#bd7084"
+      }
+    },
+    {
+      "name": "Dark Feminine global theme, sheet, persistence and product shade",
+      "status": "PASS",
+      "details": {
+        "mood": "dark-feminine",
+        "productHex": "#bd7084"
+      }
+    },
+    {
+      "name": "Cottagecore global theme, sheet, persistence and product shade",
+      "status": "PASS",
+      "details": {
+        "mood": "cottagecore",
+        "productHex": "#bd7084"
+      }
+    },
+    {
+      "name": "Pop Pastel global theme, sheet, persistence and product shade",
+      "status": "PASS",
+      "details": {
+        "mood": "pop-pastel",
+        "productHex": "#bd7084"
+      }
+    },
+    {
+      "name": "Same architecture; four different backgrounds",
+      "status": "PASS",
+      "details": {
+        "colors": [
+          "rgb(251, 245, 239)",
+          "rgb(36, 24, 35)",
+          "rgb(247, 245, 233)",
+          "rgb(250, 245, 254)"
+        ],
+        "geometry": [
+          {
+            "w": 350,
+            "h": 487
+          },
+          {
+            "w": 350,
+            "h": 487
+          },
+          {
+            "w": 350,
+            "h": 487
+          },
+          {
+            "w": 350,
+            "h": 487
+          }
+        ]
+      }
+    },
+    {
+      "name": "All main screens and small/large viewports",
+      "status": "PASS",
+      "details": [
+        {
+          "width": 320,
+          "screen": "home"
+        },
+        {
+          "width": 320,
+          "screen": "feed"
+        },
+        {
+          "width": 320,
+          "screen": "create"
+        },
+        {
+          "width": 320,
+          "screen": "collection"
+        },
+        {
+          "width": 320,
+          "screen": "journal"
+        },
+        {
+          "width": 390,
+          "screen": "home"
+        },
+        {
+          "width": 390,
+          "screen": "feed"
+        },
+        {
+          "width": 390,
+          "screen": "create"
+        },
+        {
+          "width": 390,
+          "screen": "collection"
+        },
+        {
+          "width": 390,
+          "screen": "journal"
+        },
+        {
+          "width": 430,
+          "screen": "home"
+        },
+        {
+          "width": 430,
+          "screen": "feed"
+        },
+        {
+          "width": 430,
+          "screen": "create"
+        },
+        {
+          "width": 430,
+          "screen": "collection"
+        },
+        {
+          "width": 430,
+          "screen": "journal"
+        },
+        {
+          "width": 768,
+          "screen": "home"
+        },
+        {
+          "width": 768,
+          "screen": "feed"
+        },
+        {
+          "width": 768,
+          "screen": "create"
+        },
+        {
+          "width": 768,
+          "screen": "collection"
+        },
+        {
+          "width": 768,
+          "screen": "journal"
+        }
+      ]
+    },
+    {
+      "name": "Onboarding reuses profile, resumes and only completes after final CTA",
+      "status": "PASS"
+    },
+    {
+      "name": "Guide replays from Help, follows real screens and completes",
+      "status": "PASS"
+    },
+    {
+      "name": "No JavaScript runtime errors",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}
