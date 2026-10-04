@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "ownerCanReadBeforeAndAfterForeignDenial": true,
+  "foreignReadDenied": true,
+  "followupWidths": [
+    320,
+    360,
+    390,
+    430
+  ],
+  "errors": [],
+  "at": "2026-10-04T16:15:48.562Z"
+}

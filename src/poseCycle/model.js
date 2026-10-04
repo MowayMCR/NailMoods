@@ -1,3 +1,4 @@
+import {validateFollowUp} from './followUp.js';
 import {snapshotIdea, validIdea, ideaAvailability} from '../inspirations.js';
 import {validDate, localDate} from '../journal.js';
 import {buildTutorial} from '../tutorial.js';
@@ -37,7 +38,8 @@ export function validateProject(row) {
  if(['done','follow_up','removal_due'].includes(row.status)&&!d.realizedOn)fail('date','Indique la date réelle avant de suivre cette pose.');
  for(const field of ['referenceMedia','followUp','alternatives','protocolReferences','aiJobIds'])if(!Array.isArray(d[field]))fail('details','Liste de projet invalide.');
  // References only. Outfit media is private and bound to this project.
- if(d.referenceMedia.length||d.followUp.length||d.aiJobIds.length)fail('future_media','Les médias de suivi et IA seront intégrés dans leurs lots dédiés.');
+ validateFollowUp(row);
+ if(d.referenceMedia.length||d.aiJobIds.length)fail('future_media','Les références externes et IA restent réservées à leurs lots dédiés.');
  if(d.outfitMedia!==null){const m=d.outfitMedia;if(d.source!=='outfit'||!m||m.bucket!=='nailmoods-private'||!['image/jpeg','image/png','image/webp'].includes(m.contentType)||!(m.bytes>0&&m.bytes<=5*1024*1024)||!['jpg','png','webp'].some(ext=>m.path===`${row.user_id}/${row.workspace_id}/pose/${row.id}.${ext}`))fail('media','Référence de tenue privée invalide.');}
  if(d.outfit!==undefined&&(!d.outfit||d.outfit.version!==1||!['match','contrast','quiet','bold','surprise'].includes(d.outfit.mode)||typeof d.outfit.collectionOnly!=='boolean'||!Array.isArray(d.outfit.colors)||d.outfit.colors.length<1||d.outfit.colors.length>5||!d.outfit.colors.every(c=>/^#[0-9a-f]{6}$/i.test(c))))fail('outfit','Analyse de tenue invalide.');
  for(const field of ['source_inspiration_id','journal_entry_id'])if(row[field]!==null&&!idOK(row[field]))fail('link','Référence distante invalide.');

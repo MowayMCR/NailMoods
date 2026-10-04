@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "at": "2026-10-04T16:13:29.116Z",
+  "checks": [
+    "Mois entier, navigation mois précédent/suivant, sélection du jour et détail du rendez-vous",
+    "Ajout depuis un jour, type personnel, date préremplie et persistance après rechargement",
+    "Mois responsive sans débordement 320/360/390/430 px",
+    "Quatre captures réelles du même calendrier et des mêmes rendez-vous",
+    "Je l’ai faite, âge réel, photo privée J+7, notes et ressenti sauvegardés puis repris",
+    "Pose réalisée visible dans Mes poses et retour vers le même projet, sans dupliquer une fiche Journal",
+    "Dépose enregistrée : le compteur de durée portée s’arrête et persiste",
+    "Modifier et supprimer une observation sans perdre le reste de la timeline",
+    "Second vrai compte : projet privé invisible, modification et téléchargement de photo refusés",
+    "Vrai compte Free : réalisation, observation et photo privée autorisées ; IA+ reste fermée"
+  ],
+  "errors": [],
+  "nativeDeviceTests": false,
+  "photoFixture": "Illustration du renderer NailMoods capturée dans l’app, utilisée comme image de test ; aucune photo personnelle."
+}

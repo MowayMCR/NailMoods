@@ -1,5 +1,12 @@
 // UI palettes only. Product HEX, finishes, scans and renderers never pass through this module.
+const planningColors={
+ 'soft-glam':['#92566e','#ad754b','#6c8195','#647854','#826a99','#a96979','#77726a'],
+ 'dark-feminine':['#edaac4','#e4b77e','#9fb9dc','#a8c5a0','#c7a2df','#e6a399','#c1babc'],
+ 'cottagecore':['#8b606b','#a37839','#657f93','#597849','#866a93','#a36f55','#767568'],
+ 'pop-pastel':['#ab6197','#aa7d34','#578796','#63906b','#8663ae','#b36a6e','#80768c']
+};
 const palette = (id, name, description, colors, p) => Object.freeze({id,name,description,colors,tokens:Object.freeze({
+ ...Object.fromEntries(['pose','event','follow_up','maintenance','removal','prepare','personal'].map((k,i)=>['planning_'+k,planningColors[id][i]])),
  backgroundPrimary:p[0],backgroundSecondary:p[1],backgroundTertiary:p[2],
  surfacePrimary:p[3],surfaceSecondary:p[1],surfaceElevated:p[3],
  accentPrimary:p[4],accentSecondary:p[5],accentSoft:p[2],
