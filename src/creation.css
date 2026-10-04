@@ -72,16 +72,16 @@
 .ideaTopline{display:flex;align-items:center;justify-content:space-between;padding:15px 17px 0;color:var(--a);font-size:9px;letter-spacing:.04em;font-weight:700}
 .ideaTopline>span:last-child{display:flex;align-items:center;gap:4px;color:var(--muted);font-weight:500;letter-spacing:0}
 .ideaTopline svg{width:12px;height:12px}
-.nailPreview{display:flex;gap:4px;align-items:flex-end;justify-content:center;padding:14px 22px 16px;margin:9px 10px 0;background:linear-gradient(150deg,#fff,var(--soft));border-radius:19px;min-height:148px}
-.nailPreview svg{width:18%;max-width:62px;min-width:0;filter:drop-shadow(0 5px 3px #4c203a12)}
-.nailPreview svg:first-child{width:19%;transform:rotate(-10deg);margin-right:3px}
-.nailPreview svg:nth-child(2){transform:translateY(-4px)}
-.nailPreview svg:nth-child(3){transform:translateY(-9px)}
-.nailPreview svg:nth-child(4){transform:translateY(-4px)}
-.nailPreview svg:last-child{width:15%;transform:rotate(8deg);margin-left:2px}
-.nailPreview.shortNails svg{max-height:94px}
-.nailPreview.compactNails{min-height:0;width:100%;max-width:228px;gap:2px;padding:10px 9px 7px;margin:10px 0;border-radius:12px}
-.nailPreview.compactNails>svg{height:64px;max-height:64px;max-width:40px;filter:none}
+.nailPreview{display:flex;gap:7px;align-items:flex-end;justify-content:center;padding:18px 18px 16px;margin:9px 10px 0;background:linear-gradient(145deg,var(--productSurface,#f4f3f1),#fffaf8);border:1px solid color-mix(in srgb,var(--borderDefault,#ead9df) 55%,transparent);border-radius:20px;min-height:154px}
+.nailPreview svg{width:18%;max-width:64px;min-width:0;filter:drop-shadow(0 8px 6px #4c203a1c)}
+.nailPreview svg:first-child{width:18%;transform:rotate(-7deg) translateY(4px);margin-right:2px}
+.nailPreview svg:nth-child(2){transform:rotate(-2deg) translateY(-3px)}
+.nailPreview svg:nth-child(3){transform:translateY(-8px) scale(1.03)}
+.nailPreview svg:nth-child(4){transform:rotate(2deg) translateY(-3px)}
+.nailPreview svg:last-child{width:17%;transform:rotate(7deg) translateY(4px);margin-left:2px}
+.nailPreview.shortNails svg{max-height:96px}
+.nailPreview.compactNails{min-height:0;width:100%;max-width:248px;gap:4px;padding:12px 11px 10px;margin:10px 0;border-radius:15px}
+.nailPreview.compactNails>svg{height:76px;max-height:76px;max-width:43px;filter:drop-shadow(0 5px 4px #4c203a18)}
 .nailPreview.realisticNails{background:radial-gradient(ellipse at 50% 18%,#fff 0,#f6edf1 57%,#e9dce3 100%)}
 .nailPreview.realisticNails svg{filter:drop-shadow(0 8px 5px #391c2d2b)}
 .photorealNails{position:relative;overflow:hidden;margin:9px 10px 0;border:1px solid #e5d9df;border-radius:19px;background:#f4f0ed;aspect-ratio:85/62;box-shadow:inset 0 0 0 1px #fff8}
