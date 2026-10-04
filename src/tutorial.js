@@ -104,7 +104,7 @@ export function updateTutorial(session, action, now = Date.now()) {
   switch (action.type) {
     case 'finishWithoutGuide':
       if (session.status === 'completed') return session;
-      return { ...next, status: 'completed', completionMode: 'unguided', completedAt: now, timer: emptyTimer() };
+      return { ...next, status: 'completed', completionMode: 'unguided', cycleCompletionPending:true, completedAt: now, timer: emptyTimer() };
     case 'hand':
       if (session.status !== 'ready' || !['left', 'right'].includes(action.hand)) return session;
       return { ...next, firstHand: action.hand, steps: buildTutorial(session.idea, action.hand) };
@@ -124,7 +124,7 @@ export function updateTutorial(session, action, now = Date.now()) {
       if (!canComplete(session, now)) return session;
       const completed = [...new Set([...session.completed, step.id])];
       next = { ...next, completed, timer: session.timer.stepId === step.id ? emptyTimer() : session.timer };
-      if (completed.length === session.steps.length) return { ...next, status: 'completed', completedAt: now };
+      if (completed.length === session.steps.length) return { ...next, status: 'completed', cycleCompletionPending:true, completedAt: now };
       return { ...next, current: firstIncomplete(next) };
     }
     case 'timerStart': {
@@ -142,6 +142,12 @@ export function updateTutorial(session, action, now = Date.now()) {
     case 'timerResume':
       if (session.status !== 'active' || session.timer.status !== 'paused' || session.timer.remainingMs <= 0) return session;
       return { ...next, timer: { ...session.timer, status: 'running', endsAt: now + session.timer.remainingMs } };
+    case 'cycleRecorded':
+      return session.status==='completed' && typeof action.projectId==='string' ? {...next,cycleCompletionPending:false,poseProjectId:action.projectId} : session;
+    case 'timerFinish':
+      return session.timer.status !== 'idle' ? { ...next, timer: { ...session.timer, status:'done',remainingMs:0,endsAt:null } } : session;
+    case 'timerAlerts':
+      return { ...next, alertsEnabled: action.enabled === true };
     case 'timerReset':
       return { ...next, timer: emptyTimer() };
     default: return session;

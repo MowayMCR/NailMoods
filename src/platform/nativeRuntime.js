@@ -1,3 +1,4 @@
+import {setupTimerAlerts} from '../poseCycle/timerAlerts.js';
 import {queuePoseShareLink} from '../poseCycle/shareLinks.js';
 import {queueProjectLink} from '../poseCycle/projectLinks.js';
 import {setupPlanningNotifications} from '../poseCycle/notifications.js';
@@ -31,7 +32,7 @@ export async function initializeNative(){
   const environment=import.meta.env.VITE_DEPLOYMENT_ENV;
   await App.addListener('appUrlOpen',({url})=>{if(!(import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&(queueProjectLink(url,environment)||queuePoseShareLink(url,environment))))queueAuthUrl(url,environment);});
   const launch=await App.getLaunchUrl();if(launch?.url){if(!(import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&(queueProjectLink(launch.url,environment)||queuePoseShareLink(launch.url,environment))))queueAuthUrl(launch.url,environment);}
-  if(import.meta.env.VITE_POSE_CYCLE_ENABLED==='true')await setupPlanningNotifications();
+  if(import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'){await setupPlanningNotifications();await setupTimerAlerts();}
   const connectivity=({connected})=>{document.documentElement.classList.toggle('nm-offline',!connected);window.dispatchEvent(new Event(connected?'online':'offline'));window.dispatchEvent(new CustomEvent('nm-native-connectivity',{detail:connected}));};
   const current=await Network.getStatus();connectivity(current);
   await Network.addListener('networkStatusChange',connectivity);

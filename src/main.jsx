@@ -1,3 +1,4 @@
+import TutorialTimerRuntime from './poseCycle/TutorialTimerRuntime';
 import PlanningRuntime from './poseCycle/PlanningRuntime';
 import {profileMood,moodFor,themeStyle,applyMood} from './design/themes';
 import {needsOnboarding} from './design/onboarding';
@@ -98,6 +99,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   useEffect(()=>{setDiagnosticsStorage(browserStorage);const offline=()=>recordRuntimeEvent('network','error','offline');const fault=()=>recordRuntimeEvent('ui','error','unhandled');window.addEventListener('offline',offline);window.addEventListener('error',fault);window.addEventListener('unhandledrejection',fault);return()=>{setDiagnosticsStorage(null);window.removeEventListener('offline',offline);window.removeEventListener('error',fault);window.removeEventListener('unhandledrejection',fault);};},[browserStorage]);
   const [tutorials, setTutorials] = useState(() => readTutorials(browserStorage));
   const [journal, setJournal] = useState(() => readJournal(browserStorage));
+  useEffect(()=>{const refresh=e=>{if(e.detail.userId===browserStorage.userId&&e.detail.workspaceId===browserStorage.workspaceId)setJournal(readJournal(browserStorage));};window.addEventListener('nm-journal-realized',refresh);return()=>window.removeEventListener('nm-journal-realized',refresh);},[browserStorage]);
   const [journalDraftIdea, setJournalDraftIdea] = useState(null);
   const [personalSettings, setPersonalSettings] = useState(() => readPersonalization(browserStorage));
   const [personalOpen, setPersonalOpen] = useState(false);
@@ -192,18 +194,19 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     if (session.status === 'paused' && !saveTutorials(actOnTutorial(tutorials, id, { type: 'resume' }))) return;
     openTutorial(id);
   }
-  function startTutorial(idea, newPose = false, {open=true} = {}) {
-    const existing = !newPose && tutorials.sessions.find(session => session.idea.key === idea.key && session.status !== 'completed');
+  function startTutorial(idea, newPose = false, {open=true,projectId=null,sessionId=null} = {}) {
+    const existing = !newPose && tutorials.sessions.find(session => session.status !== 'completed' && ((session.idea.key === idea.key && (session.poseProjectId||null)===projectId)||(projectId&&session.id===sessionId&&!session.poseProjectId)));
     if (existing) {
-      if (existing.status === 'paused' && !saveTutorials(actOnTutorial(tutorials, existing.id, { type: 'resume' }))) return;
+      if(projectId&&!existing.poseProjectId&&!saveTutorials({...tutorials,sessions:tutorials.sessions.map(s=>s.id===existing.id?{...s,poseProjectId:projectId}:s)}))return;
+      if (existing.status === 'paused' && !saveTutorials(actOnTutorial({...tutorials,sessions:tutorials.sessions.map(s=>s.id===existing.id&&projectId?{...s,poseProjectId:projectId}:s)}, existing.id, { type: 'resume' }))) return;
       if(open)openTutorial(existing.id); return existing.id;
     }
-    const session = newTutorial(idea, 'pose-' + messageId());
+    const session = {...newTutorial(idea, 'pose-' + messageId()),...(projectId?{poseProjectId:projectId}:{})};
     if (saveTutorials(addTutorial(tutorials, session))) {if(open)openTutorial(session.id); return session.id;}
   }
   function finishIdea(idea) {
     const result = markIdeaDone(tutorials, idea, 'pose-' + messageId());
-    if (result.store === tutorials || saveTutorials(result.store)) journalForSession(result.session);
+    if (result.store === tutorials || saveTutorials(result.store)) {if(import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&browserStorage.accountScoped)openTutorial(result.session.id);else journalForSession(result.session);}
   }
   function tutorialAction(action) {
     if (!tutorialSession) return false;
@@ -385,7 +388,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
       <button data-tour={id} key={id} className={tab === id || tab === 'scan' && id === 'create' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'create' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}{limited && id==='collection' ? ' · Plus' : ''}</span></button>
     )}</nav>
 
-    {import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&<PlanningRuntime preferences={profile.planningNotifications}/>}
+    <TutorialTimerRuntime tutorials={tutorials} onOpen={openTutorial}/>{import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&<PlanningRuntime preferences={profile.planningNotifications}/>}
     {tour&&<CoachTour onNavigate={navigate} onFinish={()=>{if(changeProfile({...profile,guide_completed:true,guide_pending:false}))setTour(false);}}/>}
     {personalOpen && <PersonalizationPanel model={personalModel} settings={personalSettings} onChange={changePersonalization} onClose={() => setPersonalOpen(false)} error={personalError} onJournal={() => { setPersonalOpen(false); navigate('journal'); }} onFavorites={() => { setPersonalOpen(false); navigate('favorites'); }} />}
 

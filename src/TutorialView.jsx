@@ -1,3 +1,6 @@
+import TutorialCompletion from './poseCycle/TutorialCompletion';
+import {prepareTimerAlerts,isNativeTimer} from './poseCycle/timerAlerts';
+import {manufacturerProtocols} from './poseCycle/protocols';
 import { StorageHint } from './StorageContext';
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, BookHeart, Check, CheckCircle2, ChevronRight, Clock3, ListChecks, Pause, Play, RotateCcw, Sparkles, Timer } from 'lucide-react';
@@ -28,6 +31,9 @@ export function TutorialBanner({ session, onOpen }) {
 }
 
 function StepTimer({ session, step, onAction, now, locked }) {
+  const [alertMessage,setAlertMessage]=useState(''),[alertBusy,setAlertBusy]=useState(false);
+  useEffect(()=>{const status=e=>setAlertMessage(({scheduled:'Alerte programmée sur ce téléphone. Le système peut la décaler.',permission:'Notifications non autorisées : le temps reste visible dans l’app.',error:'Alerte non programmée. Garde le minuteur à l’écran.'})[e.detail.state]||'');window.addEventListener('nm-timer-status',status);return()=>window.removeEventListener('nm-timer-status',status);},[]);
+  const protocols=step.products.flatMap(product=>manufacturerProtocols(product,'curing'));
   const savedDuration = Number(session.durations[step.id]);
   const [minutes, setMinutes] = useState(Number.isInteger(savedDuration) && savedDuration > 0 ? String(Math.floor(savedDuration / 60)) : '');
   const [seconds, setSeconds] = useState(Number.isInteger(savedDuration) && savedDuration > 0 ? String(savedDuration % 60) : '');
@@ -44,21 +50,26 @@ function StepTimer({ session, step, onAction, now, locked }) {
   return <section className={'stepTimer ' + (elapsed ? 'elapsed' : '')} aria-label="Minuteur de cette étape">
     <div className="timerTitle"><Timer /><div><b>{step.timer === 'lamp' ? 'Ton temps sous lampe' : 'Ton temps de séchage'}</b><small>Minuteur facultatif</small></div></div>
     <p>{step.timer === 'lamp' ? 'Renseigne la durée indiquée pour ce produit et ta lampe. Tu peux aussi utiliser directement le minuteur de ta lampe.' : 'Renseigne le temps indiqué pour cette couche ou cette finition. Le minuteur ne vérifie pas si le vernis est sec.'}</p>
+    {step.timer==='lamp'&&<div className="timerProtocol">{protocols.length?protocols.map(p=><p key={p.id}><a href={p.sourceUrl} target="_blank" rel="noopener noreferrer">{p.brand} · {p.title}</a><br/>{p.seconds} s · {p.layer} · {p.lampModels.join(', ')}. Vérifie la référence et la lampe avant de renseigner ce temps.</p>):<p>Durée fabricant non renseignée. Consulte les recommandations du fabricant de ton produit. La puissance en watts ne permet pas de calculer ce temps.</p>}</div>}
     {otherTimer ? <div className="otherTimer"><p>Un minuteur est déjà associé à une autre étape.</p><button onClick={() => onAction({ type: 'go', index: session.steps.findIndex(value => value.id === timer.stepId) })}>Retrouver ce minuteur<ArrowRight /></button></div> : <>
       {ours && <div className="timerDisplay"><span role="timer" aria-label={'Temps restant : ' + formatCountdown(remaining)}>{formatCountdown(remaining)}</span><small role="status">{elapsed ? 'Temps écoulé · valide quand tu es prête' : paused ? 'Minuteur en pause' : 'Minuteur en cours'}</small></div>}
       {!running && !paused && <div className="timerInputs"><label>Minutes<input aria-label="Minutes du minuteur" type="number" inputMode="numeric" min="0" max="60" step="1" value={minutes} placeholder="0" disabled={stopped} onChange={event => setMinutes(event.target.value)} /></label><span>:</span><label>Secondes<input aria-label="Secondes du minuteur" type="number" inputMode="numeric" min="0" max="59" step="1" value={seconds} placeholder="00" disabled={stopped} onChange={event => setSeconds(event.target.value)} /></label></div>}
       <div className="timerActions">
         {running ? <button disabled={stopped} onClick={() => onAction({ type: 'timerPause' })}><Pause />Pause minuteur</button> : paused ? <button disabled={stopped} onClick={() => onAction({ type: 'timerResume' })}><Play />Reprendre le minuteur</button> : <button disabled={stopped || !validDuration} onClick={() => onAction({ type: 'timerStart', seconds: total })}><Play />{elapsed ? 'Relancer le minuteur' : 'Démarrer le minuteur'}</button>}
+        {(running||paused)&&<button disabled={stopped} onClick={()=>onAction({type:'timerFinish'})}><Check/> Terminer le minuteur</button>}
         {ours && <button disabled={stopped} onClick={() => onAction({ type: 'timerReset' })}><RotateCcw />Remettre à zéro</button>}
       </div>
       {!running && !paused && !validDuration && (minutes || seconds) && <p className="timerHelp">Choisis une durée entre 1 seconde et 60 minutes, avec moins de 60 dans le champ secondes.</p>}
     </>}
-    <p className="timerFootnote">Tu peux le relancer à chaque couche ou ongle selon ta notice. La fin est signalée à l’écran, sans son. Si tu verrouilles l’écran, le temps écoulé sera retrouvé à ton retour.</p>
+    <div className="timerAlerts"><button disabled={alertBusy} aria-pressed={session.alertsEnabled===true} onClick={async()=>{if(session.alertsEnabled){onAction({type:'timerAlerts',enabled:false});setAlertMessage('Alertes de ce minuteur désactivées.');return;}setAlertBusy(true);try{const state=await prepareTimerAlerts();onAction({type:'timerAlerts',enabled:state==='native'||state==='foreground'});setAlertMessage(({native:'Notifications activées sur ce téléphone.',foreground:'Son activé pendant cette ouverture ; vibration si disponible.',permission:'Autorise les notifications dans les réglages du téléphone.',visual:'Le signal visuel reste disponible.'})[state]);}catch{setAlertMessage('Alerte indisponible. Le temps reste affiché.');}finally{setAlertBusy(false);}}}>{session.alertsEnabled?'Désactiver les alertes':'Activer les alertes du minuteur'}</button>{alertMessage&&<p role="status">{alertMessage}</p>}</div>
+    <p className="timerFootnote">{isNativeTimer()?'Une notification locale peut signaler la fin hors de l’app si tu l’autorises. Les réglages et l’économie de batterie peuvent la retarder.':'Dans ce navigateur, le signal fonctionne quand l’app reste ouverte. Après rechargement, réactive le son si nécessaire.'} Le temps écoulé est retrouvé à ton retour. Termine ou valide l’étape toi-même ; le minuteur ne confirme pas la catalysation.</p>
   </section>;
 }
 
 export default function TutorialView({ session, items, onAction, onOpenIdea, onCollection, onNew, onList, onJournal, journaled }) {
   const [planOpen, setPlanOpen] = useState(false);
+  const [timerOpen,setTimerOpen]=useState(()=>session.timer.stepId===session.steps[session.current]?.id&&session.timer.status!=='idle');
+  useEffect(()=>setTimerOpen(session.timer.stepId===session.steps[session.current]?.id&&session.timer.status!=='idle'),[session.id,session.current]);
   const heading = useRef(null);
   const now = useClock(session.timer.status === 'running');
   const step = session.steps[session.current];
@@ -76,7 +87,7 @@ export default function TutorialView({ session, items, onAction, onOpenIdea, onC
     <div className="tutorialStart"><button className="detailPrimary" onClick={() => onAction({ type: 'start' })}><Play />Commencer ma pose<ArrowRight /></button><small>≈ {session.idea.minutes} min pour la couleur et la décoration, hors préparation, dépose et séchage.</small></div>
   </div>;
 
-  if (session.status === 'completed') return <div className="tutorialPage">{toolbar}<section className="tutorialHero tutorialSuccess"><CheckCircle2 /><small>À TON RYTHME, JUSQU’AU BOUT</small><h1 ref={heading} tabIndex={-1}>Ta pose est<br /><em>terminée</em></h1><p>{session.idea.title}</p><NailPreview idea={session.idea} /><span>{session.completionMode === 'unguided' ? 'Pose marquée comme faite · tutoriel passé' : session.steps.length + ' étapes validées · les deux mains'}</span></section><section className="tutorialIntro"><p>Garde une photo du résultat et tes impressions dans ton journal. Tu pourras le compléter à ton rythme.</p><button className="detailPrimary" onClick={onJournal}><BookHeart />{journaled ? 'Voir dans mon journal' : 'Ajouter au journal'}<ArrowRight /></button><button className="detailSecondary" onClick={() => onOpenIdea(session.idea)}>Revoir l’inspiration<ArrowRight /></button><button className="detailSecondary" onClick={() => onNew(session.idea)}><RotateCcw />Refaire cette pose</button><button className="detailSecondary" onClick={onList}><ListChecks />Mes poses</button></section></div>;
+  if (session.status === 'completed') return <div className="tutorialPage">{toolbar}<section className="tutorialHero tutorialSuccess"><CheckCircle2 /><small>À TON RYTHME, JUSQU’AU BOUT</small><h1 ref={heading} tabIndex={-1}>Ta pose est<br /><em>terminée</em></h1><p>{session.idea.title}</p><NailPreview idea={session.idea} /><span>{session.completionMode === 'unguided' ? 'Pose marquée comme faite · tutoriel passé' : session.steps.length + ' étapes validées · les deux mains'}</span></section><TutorialCompletion session={session} onAction={onAction}/><section className="tutorialIntro"><p>Garde une photo du résultat et tes impressions dans ton journal. Tu pourras le compléter à ton rythme.</p><button className="detailPrimary" onClick={onJournal}><BookHeart />{journaled ? 'Voir dans mon journal' : 'Ajouter au journal'}<ArrowRight /></button><button className="detailSecondary" onClick={() => onOpenIdea(session.idea)}>Revoir l’inspiration<ArrowRight /></button><button className="detailSecondary" onClick={() => onNew(session.idea)}><RotateCcw />Refaire cette pose</button><button className="detailSecondary" onClick={onList}><ListChecks />Mes poses</button></section></div>;
 
   return <div className="tutorialPage">{toolbar}<section className="tutorialProgress"><div><span>{session.completed.length} / {session.steps.length} étapes validées</span><button onClick={() => setPlanOpen(true)}>Voir les étapes<ListChecks /></button></div><progress max="100" value={progress} aria-label="Progression de la pose" /><small>{session.idea.title}</small></section>
     {session.status === 'paused' && <section className="tutorialPaused" role="status"><Pause /><div><b>Ta pose est en pause</b><p>Tout est conservé. Le minuteur reste en pause jusqu’à ce que tu le relances.</p></div><button onClick={() => onAction({ type: 'resume' })}><Play />Reprendre ma pose</button></section>}
@@ -86,7 +97,7 @@ export default function TutorialView({ session, items, onAction, onOpenIdea, onC
       {step.products.length > 0 && <div className="stepProducts">{step.products.map(item => <button key={item.id} onClick={() => onCollection(item.id)}>{item.type !== 'Matériel' && <i style={{ background: item.color }} />}<span>{item.name}</span><ChevronRight /></button>)}</div>}
       {locked && <p className="stepHint" role="status">Tu peux lire cette étape. Reviens à l’étape en cours pour continuer la pose.</p>}
       {step.targets.length > 0 && <p className="tutorialTargets"><b>Ongles concernés</b>{step.targets.map(index => fingers[index]).join(' · ')}</p>}
-      {step.timer && <details key={step.id} className="tutorialTimerOptions" open={session.timer.stepId === step.id && session.timer.status !== 'idle'}><summary><Clock3 /><span>Minuteur facultatif</span><ChevronRight /></summary><StepTimer session={session} step={step} onAction={onAction} now={now} locked={locked} /></details>}
+      {step.timer && <details key={step.id} className="tutorialTimerOptions" open={timerOpen}><summary onClick={e=>{e.preventDefault();setTimerOpen(v=>!v);}}><Clock3 /><span>Minuteur facultatif</span><ChevronRight /></summary><StepTimer session={session} step={step} onAction={onAction} now={now} locked={locked} /></details>}
     </section>
     {collectionNotice}
     <div className="tutorialStepActions">{locked ? <button className="detailPrimary" onClick={() => onAction({ type: 'go', index: earliest })}><ArrowLeft />Revenir à l’étape en cours</button> : <><button className="detailPrimary" disabled={!canComplete(session, now)} onClick={() => onAction({ type: 'complete' })}><Check />{completionLabel(session)}<ArrowRight /></button>{active && !canComplete(session, now) && <p>Le minuteur tourne encore. Attends la fin ou mets-le en pause avant de valider.</p>}</>}

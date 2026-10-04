@@ -258,3 +258,19 @@ test('server prepublication review also makes the local Journal private without 
  const entry=JSON.parse(store.storage.getItem(JOURNAL)).entries[0];
  assert.equal(entry.visibility,'private');assert.equal(entry.publicationStatus,'pending');assert.ok(entry.photo);
 });
+
+test('realized Journal merge preserves unrelated pending drafts and server row identity',async()=>{
+ const repo=backend(),store=make(memory(),repo);await store.load();repo.fail=true;store.storage.setItem(COLLECTION,JSON.stringify([polish]));await store.flush();
+ const row={id:'remote-journal',created_by:'A',workspace_id:'WA',performed_on:'2026-09-20',visibility:'private',snapshot:{id:'project-1',version:1,title:'Ma pose',date:'2026-09-20'}};
+ await assert.rejects(store.storage.acceptJournalRow({...row,created_by:'B'}),/autre compte/);
+ await store.storage.acceptJournalRow(row);assert.equal(store.pending,1);assert.equal(JSON.parse(store.storage.getItem(COLLECTION))[0].id,polish.id);assert.equal(JSON.parse(store.storage.getItem(JOURNAL)).entries[0].remoteId,'remote-journal');
+ repo.fail=false;repo.rows.journal_entries.push(row);await store.flush();store.storage.setItem(JOURNAL,JSON.stringify({entries:[{...row.snapshot,remoteId:row.id,notes:'Mon ajout'}],hiddenSessions:[]}));await store.flush();assert.equal(repo.rows.journal_entries.length,1);assert.equal(repo.writes.at(-1).rowId,row.id);
+});
+
+test('new timer state becomes durable while an earlier remote save is still pending',async()=>{
+ const local=memory(),repo=backend(),store=make(local,repo);await store.load();const original=repo.write;let release,entered;const started=new Promise(r=>entered=r);repo.write=async(...args)=>{entered();await new Promise(r=>release=r);return original(...args);};
+ store.storage.setItem('nm-tutorials-v1',JSON.stringify({sessions:[{id:'s',timer:{status:'running',endsAt:10000}}]}));await started;
+ store.storage.setItem('nm-tutorials-v1',JSON.stringify({sessions:[{id:'s',timer:{status:'paused',remainingMs:5000}}]}));
+ let restored;for(let i=0;i<50;i++){restored=await cacheFor(local).getCachedWorkspace(accountCacheKey('A','WA'));if(restored.views['nm-tutorials-v1'].sessions[0].timer.status==='paused')break;await new Promise(r=>setImmediate(r));}
+ assert.equal(restored.views['nm-tutorials-v1'].sessions[0].timer.status,'paused');repo.write=original;release();await store.flush();
+});

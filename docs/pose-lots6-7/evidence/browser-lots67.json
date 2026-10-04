@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "at": "2026-10-04T18:23:19.174Z",
+  "environment": "recette",
+  "realAccounts": 3,
+  "checks": [
+    "Trois comptes authentifiés : réalisation Free privée, retry sans doublon, RPC autre compte et lecture Journal refusées ; IA+ fermé.",
+    "Case PO 22 px et libellé horizontal sur 320/360/390/430 px ; aucun partage envoyé.",
+    "Projet → DIY → tutoriel existant : démarrer / pause / reload / reprendre / terminer ; expiration réelle sans validation automatique ; fallback fabricant explicite.",
+    "Fin guidée : même pose_projects, Journal privé créé automatiquement, produits et techniques conservés, rechargement sans doublon.",
+    "Photo importée, note/ressenti, timeline J+14 persistants ; date réelle synchronisée Journal ; photo accessible uniquement à sa propriétaire, suivi absent du Journal partageable.",
+    "Même suivi réel dans les quatre moods ; marges et absence de débordement sur 320/360/390/430 px.",
+    "Entretien rattaché au même projet, date choisie, rappel facultatif créé puis retrouvé après reload ; mois et couleur par type conservés.",
+    "Mes poses → suivi retrouve le même projet ; dépose réelle enregistrée et compteur arrêté à 14 jours."
+  ],
+  "errors": [],
+  "physicalDeviceTests": false,
+  "fixtures": "Données synthétiques ; import image effectué avec une illustration de l’app, pas une photo réelle d’ongles."
+}

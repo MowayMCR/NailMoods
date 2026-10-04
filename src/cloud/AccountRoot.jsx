@@ -1,3 +1,4 @@
+import {clearTutorialTimerNotifications} from '../poseCycle/timerAlerts.js';
 import {clearPlanningNotifications} from '../poseCycle/notifications.js';
 import {parseAuthCallback} from './authCallback';
 import {Splash} from '../design/UI';
@@ -171,7 +172,7 @@ export default function AccountRoot({App}){
     recordCloudEvent(browserStorage,mode,true);
     }catch(error){recordCloudEvent(browserStorage,mode,false);setAuthError(authMessage(error));}finally{if(mounted.current)setBusy(false);}
   }
-  async function logout(){setBusy(true);setAuthError('');try{track('logout');void analytics.current?.flush();await active.current?.ensureDurable();await clearPlanningNotifications();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{setBusy(false);}}
+  async function logout(){setBusy(true);setAuthError('');try{track('logout');void analytics.current?.flush();await active.current?.ensureDurable();await clearPlanningNotifications();await clearTutorialTimerNotifications();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{setBusy(false);}}
   async function migrate(){setBusy(true);setAuthError('');try{
     if(import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && loaded.store.profile?.account_tier==='free')throw new Error('L’import dans la collection est disponible avec Plus. Ta copie invitée reste conservée.');
     const guest=readGuest(browserStorage);

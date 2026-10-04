@@ -11,7 +11,10 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
   const fork=value=>({...value,views:{...value.views},ids:{...value.ids},bases:{...value.bases},queue:[...value.queue],profile:{...value.profile}});
   function save(next){check();state=next;}
   function failure(error){const safe=error?.name==='QuotaExceededError'?cacheError(error):error;onStatus({kind:'error',pending:state?.queue.length||0,code:safe.code||'save',message:safe.message});}
-  async function persistCache(snapshot) {
+  let cacheTail=Promise.resolve(),cacheConflict=null;
+  function persistCache(snapshot){const task=cacheTail.then(()=>writeCache(snapshot),()=>writeCache(snapshot));cacheTail=task.catch(()=>{});return task;}
+  async function writeCache(snapshot) {
+    if(cacheConflict)throw cacheConflict;
     try {
       await cache.setCachedWorkspace(key,snapshot);
       cacheFailure=null;
@@ -23,7 +26,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
       // overwriting data that is waiting in the other tab.
       if (error?.code !== 'cache_conflict') throw error;
       const latest=await cache.getCachedWorkspace(key);
-      if (latest?.queue?.length) throw error;
+      if (latest?.queue?.length) {cacheConflict=error;throw error;}
       await cache.setCachedWorkspace(key,snapshot);
       cacheFailure=null;
     }
@@ -201,9 +204,20 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
   const adapter={
     accountScoped:true,
     media,userId,workspaceId,
+    async acceptJournalRow(row){
+      await initialize();check();
+      if(!row?.id||row.created_by!==userId||row.workspace_id!==workspaceId||!row.snapshot?.id)throw new Error('Pose reçue pour un autre compte.');
+      // Never discard a pending local edit after a server-side realization.
+      if(state.queue.some(op=>op.table==='journal_entries'&&op.rowId===row.id))throw new Error('La pose est enregistrée. Synchronise les modifications du Journal puis recharge la fiche.');
+      const next=fork(state),entry={...row.snapshot,remoteId:row.id,date:row.performed_on,notes:row.notes||'',photo:row.photo_url||row.media_path||row.snapshot.photo||'',mediaPath:row.media_path||null,publicMediaPath:row.public_media_path||null,visibility:row.visibility==='public'?'public':'private'};
+      const journal=next.views[JOURNAL]||{entries:[],hiddenSessions:[]};
+      next.views[JOURNAL]={...journal,entries:[entry,...journal.entries.filter(e=>e.id!==entry.id&&e.remoteId!==row.id)]};
+      next.ids[token('journal_entries',entry.id)]=row.id;next.bases[token('journal_entries',row.id)]=row;save(next);await persistCache(next);
+      globalThis.window?.dispatchEvent(new CustomEvent('nm-journal-realized',{detail:{userId,workspaceId}}));
+    },
     get accountTier(){return state?.profile?.account_tier || 'free';},
     getItem(k){return state?.views[k]===undefined?null:JSON.stringify(state.views[k]);},
-    setItem(k,json){check();const value=JSON.parse(json);if(same(state.views[k],value))return;const next=fork(state);changes(next,k,state.views[k],value);next.views[k]=value;save(next);void flush();},
+    setItem(k,json){check();const value=JSON.parse(json);if(same(state.views[k],value))return;const next=fork(state);changes(next,k,state.views[k],value);next.views[k]=value;save(next);void persistCache(next).catch(failure);void flush();},
   };
   return {
     storage:adapter,
@@ -237,7 +251,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
       }
       if(useRemote && state?.queue.length){
         await cache.backupWorkspace(key,state);check();
-        next.migrationRequested=false;
+        next.migrationRequested=false;cacheConflict=null;
       } else if(state?.queue.length){
         // Do not replace pending drafts or their conflict baseline on reload.
         next.views=state.views;next.ids={...next.ids,...state.ids};next.queue=state.queue;

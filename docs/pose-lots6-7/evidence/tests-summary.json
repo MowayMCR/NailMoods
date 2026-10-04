@@ -1,0 +1,15 @@
+{
+  "tests": 510,
+  "passed": 508,
+  "failed": 0,
+  "skipped": 2,
+  "build": "recette web OK",
+  "nativePhysicalTests": false,
+  "productionChanges": false,
+  "cleanup": {
+    "projects": 0,
+    "journal": 0,
+    "planning": 0
+  },
+  "securityWarnings": "4 existing billing/entitlement callable definers and leaked-password protection disabled; no new warning"
+}
