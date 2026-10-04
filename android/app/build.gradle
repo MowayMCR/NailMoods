@@ -42,12 +42,13 @@ android {
     buildTypes {
         release {
             if (uploadStore) signingConfig signingConfigs.upload
-            // No R8 obfuscation: a mapping file is not generated or needed.
-            minifyEnabled false
+            // Produce mapping.txt for Play crash deobfuscation.
+            minifyEnabled true
+            shrinkResources true
             // Include available upstream native symbols; stripped dependencies
             // cannot yield debug data that their publisher has removed.
             ndk { debugSymbolLevel 'FULL' }
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

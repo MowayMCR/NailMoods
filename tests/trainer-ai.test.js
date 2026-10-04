@@ -1,0 +1,21 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import {EXERCISES,exercise,canvasPoint} from '../src/trainer/model.js';
+import {createAIService,validRequest,FEATURES} from '../supabase/functions/ai-internal/provider.mjs';
+import {setup,login,insert,A,B,WA,WB} from './helpers/pose-db.js';import {newProject} from '../src/poseCycle/model.js';
+test('eight distinct practice templates; pointer clamps to viewBox',()=>{assert.equal(EXERCISES.length,8);assert.equal(new Set(EXERCISES.map(e=>JSON.stringify(e.paths))).size,8);assert.equal(exercise('missing').id,'lines');assert.deepEqual(canvasPoint({clientX:-10,clientY:500},{left:0,top:0,width:100,height:160}),{x:0,y:160});});
+test('provider contract is explicitly zero-generation and validates request allowlist',async()=>{const req={requestId:crypto.randomUUID(),projectId:crypto.randomUUID(),feature:'generateVariation'};assert.equal(validRequest(req),true);assert.equal(validRequest({...req,apiKey:'secret'}),false);assert.equal(validRequest({...req,projectId:'other'}),false);for(const f of FEATURES){const r=await createAIService()[f]({project:{id:req.projectId}});assert.equal(r.generated,false);assert.equal(r.experimental,true);assert.equal(r.projectId,req.projectId);}});
+test('IA internal ledger: ownership, entitlement, independent photo gate, replay, quota, deletion, no cost forgery',async()=>{
+ const db=await setup();try{
+ const file=fs.readdirSync('supabase/migrations').find(f=>f.endsWith('_ai_internal_jobs.sql'));await db.exec(fs.readFileSync('supabase/migrations/'+file,'utf8'));await db.exec('grant usage on schema private to service_role');
+ await login(db,A);const pa=await insert(db,'pose_projects',newProject({userId:A,workspaceId:WA}));await login(db,B);const pb=await insert(db,'pose_projects',newProject({userId:B,workspaceId:WB}));const begin=(id=crypto.randomUUID(),project=pa.id,feature='generateVariation')=>db.query('select nm_ai_begin($1,$2,$3) j',[id,project,feature]);
+ await login(db,A);await assert.rejects(begin(),/AI_INTERNAL_ONLY/);await db.exec('reset role');await db.query('insert into private.addon_internal_accounts values($1),($2)',[A,B]);await db.exec('update private.addon_feature_flags set enabled=true');await login(db,A);await assert.rejects(begin(),/AI_NOT_ALLOWED/);
+ await db.exec('reset role');await db.query("insert into private.addon_entitlements(user_id,feature,source,source_ref,status) values($1,'ai_plus','beta','test','active'),($2,'ai_plus','beta','test','active')",[A,B]);await db.query('insert into private.ai_quotas values($1,2)',[A]);await login(db,A);
+ await assert.rejects(begin(crypto.randomUUID(),pb.id),/AI_PROJECT_UNAVAILABLE/);await assert.rejects(begin(crypto.randomUUID(),pa.id,'analyzeOutfit'),/FEATURE_REQUIRES_PLUS/);
+ const request=crypto.randomUUID(),j=(await begin(request)).rows[0].j;assert.equal(j.claimed,true);assert.equal((await begin(request)).rows[0].j.claimed,false);
+ await assert.rejects(db.query('select nm_ai_finish($1,$2,$3)',[j.id,A,{}]),/permission/);await assert.rejects(db.query('select * from private.ai_jobs'),/permission/);
+ await login(db,B);assert.equal((await db.query('select nm_ai_history() h')).rows[0].h.length,0);assert.equal((await db.query('select nm_ai_delete($1) d',[j.id])).rows[0].d,false);
+ await login(db,A,'service_role');await db.query('select nm_ai_finish($1,$2,$3)',[j.id,A,{experimental:true,generated:false}]);await login(db,A);const history=(await db.query('select nm_ai_history() h')).rows[0].h;assert.equal(history[0].status,'succeeded');assert.equal('estimated_cost_usd' in history[0],false);await db.query('select nm_ai_delete($1)',[j.id]);assert.equal((await db.query('select nm_ai_history() h')).rows[0].h.length,0);await begin();await assert.rejects(begin(),/AI_QUOTA_EXCEEDED/);
+ await db.exec('reset role');const ledger=(await db.query('select * from private.ai_jobs where id=$1',[j.id])).rows[0];assert.equal(Number(ledger.estimated_cost_usd),0);assert.equal(ledger.result,null);assert.ok(ledger.deleted_at);assert.equal((await db.query('select tier from private.account_entitlements where user_id=$1',[A])).rows[0].tier,'free');
+ await db.query('delete from auth.users where id=$1',[A]);assert.equal((await db.query('select * from private.ai_jobs where user_id=$1',[A])).rows.length,0);
+ }finally{await db.close();}
+});

@@ -36,6 +36,9 @@ jobs:
           ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain --info > artifacts/v08/evidence/gradle-release.log 2>&1
           tail -40 artifacts/v08/evidence/gradle-release.log
           cp android/app/build/outputs/bundle/release/app-release.aab artifacts/v08/
+          test -s android/app/build/outputs/mapping/release/mapping.txt
+          cp android/app/build/outputs/mapping/release/mapping.txt artifacts/v08/evidence/
+          if [ -f android/app/build/outputs/native-debug-symbols/release/native-debug-symbols.zip ]; then cp android/app/build/outputs/native-debug-symbols/release/native-debug-symbols.zip artifacts/v08/evidence/; fi
           sha256sum artifacts/v08/app-release.aab > artifacts/v08/evidence/unsigned.sha256
           cp android/app/src/main/assets/public/mobile-build.json artifacts/v08/evidence/
           python3 - <<'PY'

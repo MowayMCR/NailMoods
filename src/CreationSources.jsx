@@ -1,8 +1,10 @@
+import {InternalAIEntry} from './aiPlus/InternalLab';
 import React from 'react';
 import {Sparkles, Library, Images, ScanLine, Palette, Brush, ArrowRight, ChevronRight, BookHeart,Shirt,CalendarDays} from 'lucide-react';
 import {DiscoveryShortcut} from './social/Discovery';
 
 const sources = [
+  ['trainer', Brush, 'Nail Art Trainer', 'Huit gestes à explorer · pour toutes'],
   ['collection', Library, 'Ma collection', 'Avec mes produits et mes couleurs'],
   ['photos', Images, 'Photos d’inspiration', 'Une pose ou une image à réinventer'],
   ['scan', ScanLine, 'Scan & Génère', 'Partir de tes vernis et de leurs couleurs'],
@@ -21,6 +23,7 @@ export default function CreationSources({onChoose, onJournal,outfit=false,onPlan
     <button className="sourceAtelier" onClick={()=>onChoose('atelier')}><span className="sourceAtelierIcon" aria-hidden="true"><Brush/></span><span><span className="sourceAtelierTitle"><b>Dessin sur ongles</b><em>PRO</em></span><small>Dessine sur les 5 ongles ou reprends un dessin de ton Atelier.</small></span><ChevronRight aria-hidden="true"/></button>
     {outfit&&<button className="sourceJournalLink" onClick={onPlanning}><CalendarDays/><span>Mon Planning</span><ChevronRight/></button>}
     {outfit&&<button className="sourceJournalLink" onClick={onPoseProjects}><BookHeart/><span>Mes projets de pose</span><ChevronRight/></button>}
+    <InternalAIEntry/>
     <DiscoveryShortcut featured/>
     <button className="sourceJournalLink" onClick={onJournal}><BookHeart/><span>Retrouver mes idées dans <b>Mes poses</b></span><ChevronRight/></button>
   </div>;

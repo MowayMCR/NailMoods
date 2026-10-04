@@ -1,0 +1,42 @@
+name: Android release validation (no AAB)
+on:
+  push:
+    branches: [feat/trainer-ai-internal-lots10-11]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - name: Prepare Android
+        env:
+          NAILMOODS_MOBILE_ENV: production
+          VITE_POSE_CYCLE_ENABLED: 'true'
+        run: |
+          node scripts/build-theme-css.mjs
+          npm run mobile:production
+          npx cap sync android
+      - name: Compile optimized release without AAB
+        run: |
+          chmod +x android/gradlew
+          ./android/gradlew -p android -PnailmoodsEnvironment=production :app:assembleRelease --console=plain
+          test -s android/app/build/outputs/mapping/release/mapping.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-release-diagnostics
+          path: |
+            android/app/build/outputs/mapping/release/
+            android/app/build/outputs/native-debug-symbols/release/
+          retention-days: 14

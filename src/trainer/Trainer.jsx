@@ -1,0 +1,25 @@
+import React,{useId,useRef,useState} from 'react';
+import {ArrowLeft,Brush,Check,Maximize2,Minimize2,Undo2,Trash2} from 'lucide-react';
+import {EXERCISES,exercise,canvasPoint} from './model.js';
+import {addStroke,strokePath,proNailGeometry} from '../workspaces/proNailEditorModel.js';
+import './trainer.css';
+export default function Trainer(){
+ const [selected,setSelected]=useState(null),[design,setDesign]=useState({version:1,strokes:[]}),[active,setActive]=useState(null),[guide,setGuide]=useState(true),[size,setSize]=useState(2),[full,setFull]=useState(false),[finished,setFinished]=useState([]),[point,setPoint]=useState({x:50,y:80});
+ const live=useRef(null),id=useId().replaceAll(':',''),current=exercise(selected),outline=proNailGeometry('Ovale').path;
+ function open(value){setSelected(value);setDesign({version:1,strokes:[]});setGuide(true);setActive(null);live.current=null;}
+ function start(e){if(live.current||e.button!==0)return;e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);live.current={points:[canvasPoint(e,e.currentTarget.getBoundingClientRect())],color:'#813c60',size,mode:'draw'};setActive({...live.current});}
+ function move(e){if(!live.current)return;live.current.points.push(canvasPoint(e,e.currentTarget.getBoundingClientRect()));live.current.points=live.current.points.slice(-240);setActive({...live.current});}
+ function end(){if(!live.current)return;const stroke=live.current;setDesign(d=>addStroke(d,stroke));live.current=null;setActive(null);}
+ function key(e){if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();if(e.key===' ')setDesign(d=>addStroke(d,{points:[point],color:'#813c60',size,mode:'draw'}));else {const delta={ArrowLeft:[-3,0],ArrowRight:[3,0],ArrowUp:[0,-3],ArrowDown:[0,3]}[e.key];if(delta)setPoint(p=>({x:Math.max(0,Math.min(100,p.x+delta[0])),y:Math.max(0,Math.min(160,p.y+delta[1]))}));}}
+ return <section className={'trainerPage'+(full?' trainerFullscreen':'')} onKeyDown={e=>{if(e.key==='Escape')setFull(false);}}>
+ <button className="nmQuiet" onClick={()=>{if(selected){setFull(false);setSelected(null);}else location.hash='creer';}}><ArrowLeft size={18}/>{selected?'Les exercices':'Revenir à Créer'}</button>
+ <header><small>LE GESTE CRÉATIF</small><h1>{selected?current.name:'Un geste à la fois'}</h1><p>{selected?current.hint:'Quelques minutes pour explorer les lignes, les courbes et les motifs. À ton rythme, sans note.'}</p></header>
+ {!selected?<div className="trainerGrid">{EXERCISES.map((e,i)=><button key={e.id} onClick={()=>open(e.id)}><svg aria-hidden="true" viewBox="0 0 100 160"><path d={outline} fill="var(--surfaceElevated)"/>{e.paths.map((p,n)=><path key={n} d={p} fill="none" stroke="var(--accentPrimary)" strokeWidth={e.id==='dots'?5:2} strokeLinecap="round"/>)}</svg><small>EXERCICE {i+1}</small><b>{e.name}</b><span>{finished.includes(e.id)?<><Check size={15}/> Exploré</>:'À toi de jouer'}</span></button>)}</div>:<>
+ <div className="trainerToolbar"><button onClick={()=>setGuide(v=>!v)} aria-pressed={guide}>{guide?'Masquer le modèle':'Afficher le modèle'}</button><button aria-label={full?'Quitter le plein écran':'Plein écran'} onClick={()=>setFull(v=>!v)}>{full?<Minimize2/>:<Maximize2/>}</button></div>
+ <div className="trainerCanvas"><svg data-testid="trainer-canvas" viewBox="0 0 100 160" role="application" tabIndex="0" aria-label="Zone de dessin. Flèches pour déplacer le curseur, espace pour poser un point." onPointerDown={start} onPointerMove={move} onPointerUp={end} onPointerCancel={()=>{live.current=null;setActive(null);}} onKeyDown={key}><defs><clipPath id={id}><path d={outline}/></clipPath></defs><path d={outline} fill="#fff6f1" stroke="#d2b6b0" strokeWidth=".6"/><g clipPath={'url(#'+id+')'}>{guide&&current.paths.map((p,n)=><path key={n} d={p} fill="none" stroke="#ab9c98" strokeDasharray="2 3" strokeWidth={current.id==='dots'?4:1.3} strokeLinecap="round"/>)}{[...design.strokes,...(active?[active]:[])].map((s,n)=><path key={n} d={strokePath(s)} fill="none" stroke={s.color} strokeWidth={s.size} strokeLinecap="round" strokeLinejoin="round"/>)}</g><circle className="trainerKeyboardCursor" cx={point.x} cy={point.y} r="3" fill="none" stroke="#282020" strokeWidth=".5"/></svg></div>
+ <div className="trainerToolbar"><button disabled={!design.strokes.length} onClick={()=>setDesign(d=>({...d,strokes:d.strokes.slice(0,-1)}))}><Undo2 size={18}/>Annuler</button><button disabled={!design.strokes.length} onClick={()=>setDesign({version:1,strokes:[]})}><Trash2 size={18}/>Effacer</button></div>
+ <label className="trainerSize"><Brush size={18}/>Épaisseur<input aria-label="Épaisseur du trait" type="range" min="1" max="8" value={size} onChange={e=>setSize(Number(e.target.value))}/><output>{size}</output></label>
+ <button className="trainerDone" onClick={()=>{setFinished(v=>[...new Set([...v,current.id])]);setFull(false);setSelected(null);}}><Check size={18}/>Terminer cet exercice</button><p className="trainerFootnote">Un entraînement sur écran. Tes essais restent dans cette session ; ils ne sont ni notés ni publiés.</p>
+ </>}
+ </section>;
+}

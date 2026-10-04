@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Capacitor dispatches annotated plugins through reflection.
+-keepattributes *Annotation*,SourceFile,LineNumberTable
+-keep @com.getcapacitor.annotation.CapacitorPlugin class * { *; }
+-keepclassmembers class * { @com.getcapacitor.PluginMethod <methods>; }
+-keepclassmembers class * { @android.webkit.JavascriptInterface <methods>; }
