@@ -9,7 +9,7 @@ const icons = { palette: Palette, package: Package, lamp: Lightbulb, sparkles: S
 const actions = { home: ['Créer ma première idée', 'create'], profile: ['Explorer mes couleurs', 'collection'], collection: ['Créer avec mes couleurs', 'create'], equipment: ['Créer avec mon matériel', 'create'], generator: ['Voir mon matériel', 'equipment'], moodboard: ['Créer une autre idée', 'create'], journal: ['Voir mes inspirations', 'favorites'] };
 export default function ContextHelp({ screen, step, onNavigate }) {
   const guide = guides[screen];
-  const [offer, setOffer] = useState(() => screen === 'home' && !helpSeen('home'));
+  const [offer, setOffer] = useState(false);
   const [feedback, setFeedback] = useState(false);
   const [opened, setOpened] = useState(false);
   const [slide, setSlide] = useState(0);
@@ -47,7 +47,7 @@ export default function ContextHelp({ screen, step, onNavigate }) {
           if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) move(currentSlide.current + (dx < 0 ? 1 : -1));
           touch.current = null;
         }}><div className="coachIllustration" aria-hidden="true"><Icon strokeWidth={1.3} /><i /><i /></div><div aria-live="polite"><h2 ref={heading} tabIndex={-1}>{title}</h2><p>{copy}</p></div></div>
-        <button className="coachLink" onClick={()=>setFeedback(true)}>Signaler un problème ou une suggestion</button><div className="coachActions"><button onClick={() => finish(true)}>Passer</button>{slide > 0 && <button onClick={() => move(slide - 1)}>Précédent</button>}<button className="coachNext" onClick={() => slide === guide.slides.length - 1 ? finish() : move(slide + 1)}>{slide === guide.slides.length - 1 ? 'Terminer' : 'Suivant'}<ArrowRight /></button></div>
+        <button className="coachLink" onClick={()=>{finish();window.dispatchEvent(new Event("nm-tour-replay"));}}>Rejouer la visite de NailMoods</button><button className="coachLink" onClick={()=>setFeedback(true)}>Signaler un problème ou une suggestion</button><div className="coachActions"><button onClick={() => finish(true)}>Passer</button>{slide > 0 && <button onClick={() => move(slide - 1)}>Précédent</button>}<button className="coachNext" onClick={() => slide === guide.slides.length - 1 ? finish() : move(slide + 1)}>{slide === guide.slides.length - 1 ? 'Terminer' : 'Suivant'}<ArrowRight /></button></div>
         {slide === guide.slides.length - 1 && actions[screen] && onNavigate && <button className="coachLink" onClick={() => { finish(); onNavigate(actions[screen][1]); }}>{actions[screen][0]}<ArrowRight /></button>}
       </section>}
       {feedback && <Feedback screen={screen + ' / ' + step} onClose={()=>setFeedback(false)} />}

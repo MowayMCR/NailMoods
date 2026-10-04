@@ -1,10 +1,14 @@
+import {profileMood,moodFor,themeStyle,applyMood} from './design/themes';
+import {needsOnboarding} from './design/onboarding';
+import Onboarding from './design/Onboarding';
+import CoachTour from './design/CoachTour';
 import EquipmentLibrary from './EquipmentLibrary.jsx';
 import {equipmentSeed} from './equipmentSeed.js';
 import {setEquipmentOwned,duplicateCustomEquipment} from './equipmentLibrary.js';
 import {productKind,productKinds,productNeedsColor} from './productKinds.js';
 import { isNative } from './platform/state.js';
 const MobileStatus = import.meta.env.VITE_NATIVE_BUILD ? React.lazy(()=>import('./platform/MobileStatus.jsx')) : null;
-import Discovery, {DiscoveryShortcut} from './social/Discovery';
+import Discovery from './social/Discovery';
 import {messageId} from './social/messageState';
 import Sheet from './Sheet';
 import RenderBoundary from './RenderBoundary';
@@ -24,7 +28,7 @@ import AccountRoot from './cloud/AccountRoot';
 import {tierCapabilities} from './cloud/betaTier';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Home, Palette, Library, BookHeart, UserRound, ChevronRight, X, Check, Search, Plus, Camera, Trash2, Heart, Link, ScanLine, Image, PenLine, WandSparkles, Package } from 'lucide-react';
+import { Home, Palette, Library, BookHeart, UserRound, Compass, ChevronRight, X, Check, Search, Plus, Camera, Trash2, Heart, Link, ScanLine, Image, PenLine, WandSparkles, Package } from 'lucide-react';
 import { equipmentInfo, EquipmentVisual, EquipmentCategory, EquipmentFields } from './equipment';
 import ProductPhoto from './ProductPhoto';
 import ProductImport from './ProductImport.jsx';
@@ -48,8 +52,9 @@ import './ux-polish.css';
 import './creative-sources.css';
 import './profile-sheet.css';
 import './illustrated-icons.css';
+import './design/da06.css';
 import { PERSONALIZATION_KEY, readPersonalization, buildPersonalModel } from './personalization';
-const colors=colorFamilies;const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[];const themes={nailmoods:['#b44d76','#733451','#f8e9ee','#fdfaf7'],witchy:['#8d5576','#241625','#eee4ed','#faf6f9'],girly:['#e05f8c','#b84970','#fde8ef','#fff9fb'],goth:['#a52d4e','#211a1e','#eee5e8','#faf8f8'],celestial:['#6674b5','#293567','#e9ecf8','#fafbff'],coquette:['#c84768','#8e2944','#fae7eb','#fffafb'],clean:['#7d8067','#555947','#eeeee7','#fbfbf8'],y2k:['#d850b6','#8753d1','#f2e7ff','#fdf9ff']};
+const colors=colorFamilies;const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[];
 
 function Brand() {
   return <div className="brandFinal officialBrand"><img className="brandWordmark" src={import.meta.env.BASE_URL + 'nailmoods-official.png'} alt="NailMoods — Explore. Crée. Ressens." /><img className="brandSymbol" src={import.meta.env.BASE_URL + 'nailmoods-symbol.png'} alt="NailMoods" /></div>;
@@ -61,7 +66,7 @@ function readStored(browserStorage, key, fallback) {
 }
 
 const materialDefaults = { equipmentCategory: 'Autre matériel', quantity: 1, reference: '', materialStyle: '', notes: '', photo: '' };
-const tabRoutes = { scan: 'scan', home: 'accueil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris', projects: 'projets', tutorials: 'tutoriel' };
+const tabRoutes = { scan: 'scan', home: 'accueil', feed:'fil', create: 'creer', collection: 'collection', journal: 'journal', profile: 'profil', favorites: 'favoris', projects: 'projets', tutorials: 'tutoriel' };
 const tabFromHash = () => window.location.hash.startsWith('#profil/') ? 'profile' : window.location.hash.startsWith('#journal/') ? 'journal' : window.location.hash.startsWith('#creer/') || window.location.hash.startsWith('#inspiration/') || window.location.hash.startsWith('#tutoriel') || ['#favoris', '#projets'].includes(window.location.hash) ? 'create' : Object.keys(tabRoutes).find(tab => '#' + tabRoutes[tab] === window.location.hash) || 'home';
 const themeBackupKey = storage => `nm-theme-v1:${storage.userId || 'guest'}:${storage.workspaceId || 'personal'}`;
 const readThemeBackup = storage => { try { return window.localStorage.getItem(themeBackupKey(storage)) || ''; } catch { return ''; } };
@@ -80,8 +85,11 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const [profile, setProfile] = useState(() => {
     const stored = readStored(browserStorage, 'nm-profile', {});
     const retainedTheme = readThemeBackup(browserStorage);
-    return { ...defaultProfile, ...stored, theme: themes[retainedTheme] ? retainedTheme : stored?.theme || defaultProfile.theme, styles: Array.isArray(stored?.styles) ? stored.styles : defaultProfile.styles };
+    return { ...defaultProfile, ...stored, visualMood: moodFor(stored?.visualMood || retainedTheme || stored?.theme).id, styles: Array.isArray(stored?.styles) ? stored.styles : defaultProfile.styles };
   });
+  const [onboarding,setOnboarding]=useState(()=>needsOnboarding(readStored(browserStorage,'nm-profile',{}),browserStorage.accountScoped));
+  const [tour,setTour]=useState(()=>Boolean(profile.guide_pending&&!profile.guide_completed));
+  useEffect(()=>{const replay=()=>setTour(true);window.addEventListener('nm-tour-replay',replay);return()=>window.removeEventListener('nm-tour-replay',replay);},[]);
   const [library, setLibrary] = useState(() => readInspirations(browserStorage));
   const [appError, setAppError] = useState('');
   const [feedbackOpen,setFeedbackOpen]=useState(false);
@@ -117,8 +125,8 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const [photoBusy, setPhotoBusy] = useState(false);
   const [importBusy, setImportBusy] = useState(false);
   const [shadeValid, setShadeValid] = useState(true);
-  const th = themes[profile.theme] || themes.nailmoods;
-  useEffect(()=>{onThemeChange?.({'--a':th[0],'--b':th[1],'--soft':th[2],'--paper':th[3]});},[th,onThemeChange]);
+  const mood=profileMood(profile);
+  useEffect(()=>{const style=applyMood(mood);onThemeChange?.(style);},[mood,onThemeChange]);
   const material = edit?.type === 'Matériel';
 
   function navigate(next) {
@@ -139,7 +147,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
 
   useEffect(()=>{const changed=()=>setLibrary(readInspirations(browserStorage));window.addEventListener('nm-library-updated',changed);return()=>window.removeEventListener('nm-library-updated',changed);},[browserStorage]);
   function changeProfile(next) {
-    try { browserStorage.setItem('nm-profile', JSON.stringify(next)); if (themes[next.theme]) saveThemeBackup(browserStorage, next.theme); setProfile(next); setAppError(''); return true; }
+    try { browserStorage.setItem('nm-profile', JSON.stringify(next)); saveThemeBackup(browserStorage, profileMood(next).id); setProfile(next); setAppError(''); return true; }
     catch { setAppError('Ton profil n’a pas pu être sauvegardé. Libère un peu de stockage sur cet appareil puis réessaie.'); return false; }
   }
   function changePersonalization(next) {
@@ -309,16 +317,17 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const duplicates = edit ? duplicateCandidates(edit, items) : [];
   const colorCount = new Set(items.filter(item => item.type !== 'Matériel' && item.family).map(item => item.family)).size;
 
-  return <div className="app phase2" style={{ '--a': th[0], '--b': th[1], '--soft': th[2], '--paper': th[3] }}>
-    <header><Brand /><DiscoveryShortcut compact/><NotificationButton /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header><StorageStatus />
-    {import.meta.env.VITE_DEPLOYMENT_ENV==='recette' && <aside role="status" style={{textAlign:'center',padding:'10px',background:'#f8e9ee',color:'#733451'}}>NailMoods-Recette · environnement de test séparé</aside>}
+  if(onboarding)return <Onboarding profile={profile} onChange={changeProfile} identityExtras={identityExtras} appearanceExtras={appearanceExtras} onDone={()=>{setOnboarding(false);setTour(true);navigate('home');}}/>;
+  return <div className="app phase2" data-mood={mood.id} style={themeStyle(mood)}>
+    <header><Brand /><NotificationButton /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={tab==='feed'?'home':route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" data-tour="profile" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header><StorageStatus />
+    {import.meta.env.VITE_DEPLOYMENT_ENV==='recette' && <aside role="status" style={{textAlign:'center',background:'var(--surfaceSecondary)',color:'var(--textSecondary)',fontSize:'11px',padding:'6px 10px'}}>NailMoods-Recette · environnement de test séparé</aside>}
     <SocialGlobal /><Discovery onAccount={()=>{window.location.hash='profil/'+(browserStorage.accountScoped?'offer':'account');}} />
     <main>
       {tab !== 'profile' && syncNotice}
       <div id="context-help-slot" />
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && tab !== 'scan' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
-      {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onOpen={openIdea} onBack={() => navigate('create')} capabilities={{addScannedProducts:!limited}} onAddProducts={addScannedProducts} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView ideaAction={ideaAction} onIdeaBack={returnFromIdea} onPublish={publishIdea} onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
+      {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'feed' ? <Discovery embedded profile={profile} onAccount={()=>{window.location.hash='profil/'+(browserStorage.accountScoped?'offer':'account');}}/> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onOpen={openIdea} onBack={() => navigate('create')} capabilities={{addScannedProducts:!limited}} onAddProducts={addScannedProducts} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView ideaAction={ideaAction} onIdeaBack={returnFromIdea} onPublish={publishIdea} onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <>
         <section className="collectionHero">
           <small>{filter==='Matériel'?'MES OUTILS':'MES PRODUITS'}</small><h1>{filter==='Matériel'?'Mon matériel':'Ma collection'}</h1>{filter==='Matériel'&&<button className="detailPrimary" onClick={()=>setEquipmentOpen(true)}>+ Ajouter du matériel</button>}
           <p>Tes couleurs, tes effets et tout ton matériel de manucure.</p>
@@ -365,14 +374,16 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
           <p>{items.length ? 'Essaie un autre nom ou efface les filtres.' : filter === 'Matériel' ? 'Lampes, stickers, pinceaux, limes… Rassemble ici ce que tu possèdes.' : 'Ta collection personnalise tes idées. Tu peux aussi créer sans ajouter de produit.'}</p>
           {!items.length?<><button onClick={()=>setImporter(true)}><Plus/>Ajouter mon premier produit</button><button className="nmQuiet" onClick={()=>navigate('create')}>Créer sans collection</button></>:<button onClick={()=>{setSearch('');setFilter('Tous');setCollectionFilters({...emptyFilters});}}>Réinitialiser les filtres</button>}
         </section>}
-      </> : tab === 'profile' ? <ProfileView route={route} onHelp={()=>setFeedbackOpen(true)} accountAccess={accountAccess} identityExtras={identityExtras} extras={profileExtras} appearanceExtras={appearanceExtras} onCreate={() => { setCreationEntry(profileDefaults(profile)); navigate('create'); }} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView onScan={() => navigate('scan')} onCreate={() => { setCreationEntry({ intent: 'inspire' }); navigate('create'); }} profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView onShareToPro={onShareToPro} media={media} onFavorites={() => navigate('favorites')} library={library} profile={profile} journal={journal} sessions={tutorials.sessions} items={items} route={route} draftIdea={journalDraftIdea} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
+      </> : tab === 'profile' ? <ProfileView journal={journal} library={library} onJournal={openJournal} onOpen={openIdea} onRestartOnboarding={()=>{if(changeProfile({...profile,onboarding_step:0,onboarding_completed:false}))setOnboarding(true);}} route={route} onHelp={()=>setFeedbackOpen(true)} accountAccess={accountAccess} identityExtras={identityExtras} extras={profileExtras} appearanceExtras={appearanceExtras} onCreate={() => { setCreationEntry(profileDefaults(profile)); navigate('create'); }} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView onScan={() => navigate('scan')} onCreate={() => { setCreationEntry({ intent: 'inspire' }); navigate('create'); }} profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView onShareToPro={onShareToPro} media={media} onFavorites={() => navigate('favorites')} library={library} profile={profile} journal={journal} sessions={tutorials.sessions} items={items} route={route} draftIdea={journalDraftIdea} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
+    <button className="betaFeedbackLink" onClick={()=>setTour(true)}>Visiter NailMoods</button>
     <button className="betaFeedbackLink" onClick={()=>setFeedbackOpen(true)}>Aide & Support</button>
     </main>
     {feedbackOpen&&<SupportPanel screen={tab} onClose={()=>setFeedbackOpen(false)}/>}
-    <nav>{[['home', Home, 'Accueil'], ['create', Palette, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Mes poses'], ['profile', UserRound, 'Profil']].map(([id, Icon, label]) =>
-      <button key={id} className={tab === id || tab === 'scan' && id === 'home' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'home' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}{limited && ['collection','journal'].includes(id) ? ' · Plus' : ''}</span></button>
+    <nav>{[['home', Home, 'Accueil'], ['feed', Compass, 'Fil'], ['create', Plus, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Mes poses']].map(([id, Icon, label]) =>
+      <button data-tour={id} key={id} className={tab === id || tab === 'scan' && id === 'create' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'create' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}{limited && ['collection','journal'].includes(id) ? ' · Plus' : ''}</span></button>
     )}</nav>
 
+    {tour&&<CoachTour onNavigate={navigate} onFinish={()=>{if(changeProfile({...profile,guide_completed:true,guide_pending:false}))setTour(false);}}/>}
     {personalOpen && <PersonalizationPanel model={personalModel} settings={personalSettings} onChange={changePersonalization} onClose={() => setPersonalOpen(false)} error={personalError} onJournal={() => { setPersonalOpen(false); navigate('journal'); }} onFavorites={() => { setPersonalOpen(false); navigate('favorites'); }} />}
 
     {equipmentOpen&&<EquipmentLibrary items={items} onSetOwned={setOwned} onCustom={()=>{setEquipmentOpen(false);setAddCategory('material');start('manual','Matériel');}} onClose={()=>setEquipmentOpen(false)}/>}

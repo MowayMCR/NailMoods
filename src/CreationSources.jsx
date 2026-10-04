@@ -5,7 +5,7 @@ import {DiscoveryShortcut} from './social/Discovery';
 const sources = [
   ['collection', Library, 'Ma collection', 'Avec mes produits et mes couleurs'],
   ['photos', Images, 'Photos d’inspiration', 'Une pose ou une image à réinventer'],
-  ['scan', ScanLine, 'Scanner un produit', 'Partir d’un vernis ou d’une teinte'],
+  ['scan', ScanLine, 'Scan & Génère', 'Partir de tes vernis et de leurs couleurs'],
   ['manual', Palette, 'Composition manuelle', 'Choisir chaque ongle, un à un'],
 ];
 
@@ -14,7 +14,7 @@ export default function CreationSources({onChoose, onJournal}) {
     <div className="sourceHeading"><small>LE STUDIO CRÉATIF</small><h1>D’où part ton idée ?</h1><p>Une envie, une couleur, un dessin…<br/>Choisis ton point de départ.</p></div>
     <button className="sourceFree" onClick={()=>onChoose('inspire')}>
       <span className="sourceFreeIcon" aria-hidden="true"><Sparkles/></span>
-      <span className="sourceFreeCopy"><b>Inspiration libre</b><small>Laisse venir les idées, avec ou sans collection.</small><span>Créer une idée <ArrowRight/></span></span>
+      <span className="sourceFreeCopy"><b>Inspire-moi</b><small>Laisse venir les idées, avec ou sans collection.</small><span>Créer une idée <ArrowRight/></span></span>
     </button>
     <div className="sourceSectionLabel">OU AVEC CE QUI T’INSPIRE</div>
     <div className="sourceCardGrid">{sources.map(([id,Icon,title,description])=><button className={'sourceCard sourceCard--'+id} key={id} onClick={()=>onChoose(id)}><span className="sourceCardIcon" aria-hidden="true"><Icon/></span><b>{title}</b><small>{description}</small><ChevronRight className="sourceCardArrow" aria-hidden="true"/></button>)}</div>
