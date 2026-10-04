@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "widths": [
+    320,
+    360,
+    390,
+    430
+  ],
+  "moods": 4,
+  "headingOverlap": false,
+  "colors": [
+    "rgb(245, 232, 231)",
+    "rgb(48, 33, 45)",
+    "rgb(238, 237, 221)",
+    "rgb(240, 230, 246)"
+  ]
+}

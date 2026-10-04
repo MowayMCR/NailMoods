@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "checks": [
+    "Trainer Free réel : 8 exercices, tracé souris, annulation, clavier, plein écran, progression de session ; marges 320/360/390/430."
+  ],
+  "errors": []
+}
