@@ -1,0 +1,13 @@
+{
+  "url": "https://mowaymcr.github.io/NailMoods/",
+  "commit": "caaf30d5a6eeef1b740691c9b06ee930a768e9d5",
+  "appAssertionsPassed": true,
+  "mode": "guest; no production data mutation",
+  "trainerExercises": 8,
+  "tabs": 5,
+  "internalAI": "closed",
+  "unauthenticatedEndpoint": 401,
+  "recipeRequests": 0,
+  "pageErrors": [],
+  "reportValidation": "Initial combined run found report-only text overflow. Corrected and retested separately at 320/390/900 px with five embedded images."
+}
