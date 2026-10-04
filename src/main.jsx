@@ -1,3 +1,4 @@
+import ProductKnowledge from './productKnowledge/ProductKnowledge';
 import TutorialTimerRuntime from './poseCycle/TutorialTimerRuntime';
 import PlanningRuntime from './poseCycle/PlanningRuntime';
 import {profileMood,moodFor,themeStyle,applyMood} from './design/themes';
@@ -456,6 +457,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
           </div>
         </>}
         </details>
+        {!material&&<ProductKnowledge key={edit.id||'new'} product={edit} items={items} profile={profile} onChange={change} onProfile={()=>{setEdit(null);window.location.hash='profil/lifestyle';}}/>}
         <button className={'favoriteToggle ' + (edit.fav ? 'on' : '')} onClick={() => change({ fav: !edit.fav })}><Heart fill={edit.fav ? 'currentColor' : 'none'} /> {edit.fav ? 'Dans mes favoris' : 'Ajouter aux favoris'}</button>
         <div className="sheetActions">
           {saveError && <p className="formError" role="alert">{saveError}</p>}

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "at": "2026-10-04T19:11:18.888Z",
+  "environment": "recette",
+  "realAccounts": 3,
+  "checks": [
+    "Référence fabricant réelle Green Flash Red Cherry : BHT repéré, HEMA/Di-HEMA non confondus avec Bis-HEMA ; lampes exactes 60/120 s, autre lampe sans durée ; Green/Green Flash signalés comme systèmes distincts.",
+    "INCI personnel : saisie sur fiche, save/reload serveur, trois mentions exactes ; alternative de même famille/finition/opacité, couleurs inchangées."
+  ],
+  "errors": [],
+  "physicalDeviceTests": false
+}

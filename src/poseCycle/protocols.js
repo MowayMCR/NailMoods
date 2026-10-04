@@ -8,5 +8,7 @@ export function validManufacturerProtocol(p){
  return Array.isArray(p.steps)&&p.steps.length>0&&p.steps.length<=30&&p.steps.every(text);
 }
 const normalize=v=>String(v||'').normalize('NFKC').trim().toLocaleLowerCase('fr-FR');
-export function manufacturerProtocols(product,kind,registry=MANUFACTURER_PROTOCOLS){return registry.filter(p=>validManufacturerProtocol(p)&&p.kind===kind&&[['brand','brand'],['range','range'],['productType','type'],['reference','reference']].every(([a,b])=>normalize(p[a])===normalize(b==='range'?(product?.range||product?.productRange||product?.collection):product?.[b])));}
+export function manufacturerProtocols(product,kind,registry=MANUFACTURER_PROTOCOLS){return registry.filter(p=>validManufacturerProtocol(p)&&p.kind===kind&&(p.identity
+ ? ['brand','collection','name','type','sku'].every(k=>text(p.identity[k])&&normalize(p.identity[k])===normalize(product?.[k]))
+ : [['brand','brand'],['range','range'],['productType','type'],['reference','reference']].every(([a,b])=>normalize(p[a])===normalize(b==='range'?(product?.range||product?.productRange||product?.collection):product?.[b]))));}
 export function documentedCuring(product,lampModel,layer,registry=MANUFACTURER_PROTOCOLS){return manufacturerProtocols(product,'curing',registry).filter(p=>p.layer===layer&&p.lampModels.some(l=>normalize(l)===normalize(lampModel)));}

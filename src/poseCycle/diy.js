@@ -10,7 +10,7 @@ const unique=values=>[...new Set(values.filter(Boolean))];
 export const DIY_STATES={owned:['✓','Je possède'],near:['≈','Teinte proche'],missing:['−','Il me manque'],check:['?','À vérifier']};
 export const diyColor=p=>p?.colorSource==='palette'&&!p.catalogColorValidated&&!p.conceptual?'':preciseShade(p)||(p?.conceptual&&validHex(p.color)?p.color.toLowerCase():'');
 const catalogId=p=>p.catalogId||p.provenance?.catalogId;
-const finish=p=>norm([p.finishDetail||p.finish,p.effect].filter(Boolean).join(' '));
+const finish=p=>norm([p.finishDetail||p.finish,(!['aucun','none',''].includes(norm(p.effect)))?p.effect:''].filter(Boolean).join(' '));
 const opacity=p=>norm(p.opacity||p.coverage);
 const family=p=>[norm(p.type),norm(productKind(p))].join(':');
 const stocked=p=>Number(p.quantity??1)>0;

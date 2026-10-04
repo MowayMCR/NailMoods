@@ -59,7 +59,7 @@ export function matchCatalog(products, query, { brand = '', collection = '', ocr
 }
 export function catalogCandidate(match) {
   const p=match.product;
-  const fields=Object.fromEntries(['brand','collection','name','reference','type','url','family','finish','usage','sku','ean13','gtin','shadeCode'].filter(k=>p[k]).map(k=>[k,p[k]]));
+  const fields=Object.fromEntries(['brand','collection','name','reference','type','url','family','finish','coverage','opacity','usage','sku','ean13','gtin','shadeCode'].filter(k=>p[k]).map(k=>[k,p[k]]));
   fields.productKind=productKind(p);
   const finishes = { creme: 'Crème', jelly: 'Jelly', paillete: 'Pailleté', metallique: 'Métallique', brillant: 'Brillant', 'cat eye': 'Cat-eye', mat: 'Mat' };
   fields.finish = finishes[catalogText(p.finish)] || 'Autre';

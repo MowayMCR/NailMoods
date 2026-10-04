@@ -9,7 +9,8 @@ export const fingers = ['Pouce', 'Index', 'Majeur', 'Annulaire', 'Auriculaire'];
 export const difficultyLabels = ['Très simple', 'Un peu de détail', 'À l’aise'];
 const clone = value => JSON.parse(JSON.stringify(value));
 const sameId = (a, b) => String(a) === String(b);
-const compactProduct = ({ photo, ...product }) => product;
+// Personal INCI transcriptions belong to the private Collection, never to a pose snapshot.
+const compactProduct = ({ photo, ingredientRecord, ...product }) => product;
 const hash = value => {
   let result = 2166136261;
   for (const char of value) result = Math.imul(result ^ char.charCodeAt(0), 16777619);
