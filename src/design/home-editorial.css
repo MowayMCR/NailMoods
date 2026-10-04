@@ -1,0 +1,89 @@
+/* LOT A only: editorial compositions. Product colour surfaces stay neutral. */
+.app .smartHome{padding:12px 18px 28px;display:flex;flex-direction:column;gap:18px}
+.app .smartHome .homeGreeting{position:relative;margin:0;padding:18px 4px 8px;isolation:isolate;overflow:hidden;border-radius:0}
+.app .smartHome .homeGreeting:after{content:'';position:absolute;z-index:-1;right:-70px;top:15px;width:170px;height:210px;mask:var(--nm-petal) center/contain no-repeat;background:linear-gradient(140deg,var(--accentSoft),transparent);transform:rotate(16deg);opacity:.75}
+.app .smartHome .homeGreeting h1{font-size:42px;line-height:1.06;letter-spacing:-.035em;margin:16px 0 14px;max-width:330px}
+.app .smartHome .homeGreeting h1 em{font-weight:400;color:var(--accentPrimary)}
+.app .smartHome .homeGreeting>small{font-size:10px;letter-spacing:.17em}
+.app .smartHome .homeGreeting>p{font-size:14px;line-height:1.55;margin-bottom:24px}
+.app .smartHome .nmHomeMood{gap:8px;align-items:center;padding:0 0 18px}
+.nmMoodSignature{display:flex;align-items:center;gap:8px;min-width:0}
+.nmMoodSignature>span:first-child{display:grid;grid-template-columns:repeat(2,13px);gap:3px;flex-shrink:0}
+.nmMoodSignature i{width:13px;height:13px;border-radius:50%;border:1px solid var(--borderDefault)}
+.nmMoodSignature>span:last-child{display:grid;gap:4px}
+.nmMoodSignature small{font-size:8px;letter-spacing:.12em}
+.nmMoodSignature strong{font-size:12px;font-weight:650;white-space:nowrap}
+.app .smartHome .nmHomeMood button{font-size:10px;padding:8px 10px;min-height:44px;flex-shrink:0}
+.app .smartHome .homeGreeting .homePrimary{min-height:48px;border-radius:16px;font-size:13px;margin:0}
+.nmHomeSectionHeading{display:flex;align-items:center;justify-content:space-between;padding:8px 4px 0}
+.nmHomeSectionHeading>svg{width:17px;color:var(--accentSecondary);stroke-width:1.3}
+.app .smartHome .nmHomeBento{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.app .smartHome .nmHomeBento>button{padding:17px;min-height:0;border-radius:24px;gap:0;box-shadow:0 3px 12px color-mix(in srgb,var(--overlay) 3%,transparent);min-width:0;transition:background-color .2s,transform .15s}
+.app .smartHome .nmHomeBento b{font:24px/1.08 Georgia,serif;letter-spacing:-.025em;margin:8px 0}
+.app .smartHome .nmHomeBento .nmEyebrow{font-size:9px;letter-spacing:.1em;line-height:1.5}
+.app .smartHome .nmHomeBento small{font-size:11px;line-height:1.5;color:var(--textSecondary)}
+.nmBentoFoot{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;font:500 10px/1.4 system-ui,sans-serif;color:var(--textSecondary);margin-top:auto;padding-top:16px}
+.nmBentoFoot>svg{width:16px;height:16px;flex-shrink:0;color:var(--accentPrimary)}
+.app .smartHome .nmUniverseCard{grid-column:1/-1;display:grid;grid-template-columns:1fr 1.05fr;grid-template-rows:auto 1fr auto;min-height:195px;background:linear-gradient(125deg,var(--accentSoft),var(--surfacePrimary))}
+.nmUniverseCard>.nmEyebrow{grid-column:1}
+.app .smartHome .nmUniverseCard>b{grid-column:1;align-self:center;font-size:27px;margin:12px 0}
+.nmUniverseCard b em{font-weight:400}
+.nmUniverseCard>.nmBentoFoot{grid-column:1/-1;padding-top:8px}
+.app .smartHome .nmUniverseArt{grid-column:2;grid-row:1/3;align-items:center;justify-content:center;gap:8px;margin:0 0 0 5px;transform:rotate(-5deg)}
+.nmUniverseArt>span{display:flex;align-items:center;justify-content:center;flex-direction:column;padding:12px 5px;gap:8px;background:var(--surfacePrimary);border:1px solid var(--borderDefault);border-radius:40px 40px 18px 18px;min-width:0;width:76px;min-height:115px;box-shadow:0 5px 10px color-mix(in srgb,var(--overlay) 4%,transparent)}
+.nmUniverseArt>span:nth-child(2){transform:translateY(12px) rotate(10deg)}
+.app .smartHome .nmUniverseArt .moodGlyph{width:56px;height:56px;flex-shrink:0}
+.nmUniverseArt>span>span{font:500 9px/1.25 system-ui,sans-serif;text-align:center;overflow-wrap:anywhere;color:var(--textPrimary)}
+.app .smartHome .nmPaletteCard{background:linear-gradient(150deg,var(--surfacePrimary),var(--cardHighlight))}
+.nmMoodCollage{position:relative;width:100%;height:146px;margin:12px 0 4px}
+.nmMoodPaper{position:absolute;left:5px;top:10px;width:76%;height:99px;border:1px solid var(--borderDefault);background:var(--surfacePrimary);border-radius:3px 22px 3px 3px;transform:rotate(-9deg);padding:12px;color:var(--accentPrimary);box-shadow:0 4px 10px color-mix(in srgb,var(--overlay) 5%,transparent)}
+.nmMoodPaper>svg{width:22px;position:absolute;right:8px;top:10px;stroke-width:1.2}
+.nmMoodPaper i{font:italic 22px/1 Georgia,serif;position:absolute;bottom:14px;left:12px}
+.nmMoodRibbon{position:absolute;width:60px;height:50px;right:-5px;top:47px;background:var(--accentSecondary);mask:var(--nm-petal) center/contain no-repeat;transform:rotate(-15deg);opacity:.6}
+.nmMoodHeart{position:absolute;width:18px;right:2px;top:13px;stroke-width:1.3;color:var(--accentPrimary);transform:rotate(15deg)}
+.app .smartHome .nmMoodSwatches{position:absolute;bottom:3px;left:0;right:0;gap:0;justify-content:center;padding:6px;background:var(--surfacePrimary);border:1px solid var(--borderDefault);border-radius:99px;transform:rotate(4deg)}
+.app .smartHome .nmMoodSwatches i{width:26px;height:26px;flex:0 0 26px;margin-left:-2px;box-shadow:none;border:2px solid var(--surfacePrimary)}
+.app .smartHome .nmTutorialCard{background:var(--surfaceSecondary)}
+.nmGuideArt{position:relative;display:flex;justify-content:center;align-items:flex-start;padding-top:8px;width:100%;height:146px;margin:12px 0 4px}
+.nmGuideBook{position:relative;display:grid;place-items:center;width:90px;height:100px;border-radius:6px 18px 18px 6px;border:1px solid var(--borderDefault);border-left:5px solid var(--accentSecondary);background:var(--surfacePrimary);transform:rotate(7deg);box-shadow:3px 5px 0 var(--accentSoft)}
+.nmGuideBook>.moodGlyph{width:68px;height:68px}
+.nmGuideBook>svg:last-child{position:absolute;bottom:-9px;right:-6px;background:var(--accentPrimary);color:var(--textOnAccent);padding:8px;border-radius:50%;width:32px;height:32px;fill:currentColor}
+.nmGuideSteps{position:absolute;bottom:2px;display:flex;gap:12px;align-items:center}
+.nmGuideSteps:before{content:'';position:absolute;height:1px;background:var(--borderDefault);left:0;right:0;top:50%}
+.nmGuideSteps i{position:relative;display:grid;place-items:center;width:23px;height:23px;border:1px solid var(--borderDefault);border-radius:50%;background:var(--surfacePrimary);font:10px system-ui,sans-serif;color:var(--textSecondary)}
+.nmTutorialCard progress{width:100%;height:5px;margin-top:10px}
+.app .smartHome .nmCollectionBento{grid-column:1/-1;display:grid;grid-template-columns:1.05fr 1fr;align-items:stretch;gap:14px;background:var(--surfacePrimary)}
+.nmCollectionCopy{display:flex;align-items:flex-start;flex-direction:column}
+.nmCollectionCopy>b{display:block}
+.nmCollectionStillLife{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px 7px 10px;border-radius:18px;background:var(--productSurface);color:var(--productInk);isolation:isolate;min-width:0}
+.nmMiniProduct{display:flex;flex-direction:column;align-items:center;gap:14px;flex:1;min-width:0}
+.nmMiniProduct:nth-child(2){transform:translateY(-8px)}
+.nmMiniBottle{position:relative;width:32px;height:46px;border:1px solid #302b2d30;border-radius:8px 8px 7px 7px;background:#fff;box-shadow:0 5px 5px #302b2d12;margin-top:27px}
+.nmMiniBottle:before{content:'';position:absolute;left:8px;top:-27px;height:27px;width:14px;border-radius:3px 3px 0 0;background:linear-gradient(90deg,#302b2d,#55504e,#302b2d)}
+.nmMiniBottle>span{display:block;position:absolute;inset:3px;border-radius:5px}
+.nmMiniBottle:after{content:'';position:absolute;top:8px;bottom:8px;left:6px;width:2px;background:#fff8;border-radius:2px}
+.nmMiniProduct>i{width:21px;height:21px;border-radius:50%;border:1px solid #302b2d25}
+.nmCollectionEmpty{display:grid;place-items:center;text-align:center;gap:16px;font-size:11px;line-height:1.5}
+.nmCollectionEmpty svg{width:35px;height:35px;stroke-width:1}
+.app .smartHome .homeInspiration{margin:8px 0 0;padding:18px 14px 14px;border-radius:26px;background:var(--surfacePrimary)}
+.app .smartHome .homeSectionTitle{padding:0 4px 12px}
+.app .smartHome .homeSectionTitle h2{font-size:26px!important}
+.app .smartHome .homeCompactIdea{padding:0!important;gap:0!important;border-radius:19px;overflow:hidden;background:var(--surfaceSecondary)!important}
+.app .smartHome .homeCompactIdea>.nailPreview{min-height:208px;padding:26px 8px 22px;border-radius:19px;margin:0;gap:1px;box-shadow:none}
+.app .smartHome .homeCompactIdea>.nailPreview>svg{max-height:none;max-width:none;width:20%;filter:drop-shadow(0 7px 5px #302b2d22)}
+.app .smartHome .homeCompactIdea>.nmDailyIdeaCopy{padding:17px;gap:9px}
+.app .smartHome .homeCompactIdea>.nmDailyIdeaCopy>b{font-size:26px}
+.nmDailyIdeaCopy>small:last-child{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.nmDailyIdeaCopy svg{width:16px;height:16px;flex-shrink:0}
+.app .smartHome .scanHomeCard{margin:0;padding:22px 18px;gap:14px;box-shadow:none}
+.app .smartHome .communityEntry{margin:0;width:100%}
+.app .smartHome .nmDisclosure{margin:0;border-radius:18px}
+@media(max-width:350px){.app .smartHome{padding-left:14px;padding-right:14px}.app .smartHome .homeGreeting h1{font-size:37px}.app .smartHome .nmHomeBento{gap:10px}.app .smartHome .nmHomeBento>button{padding:14px}.app .smartHome .nmUniverseCard>b{font-size:24px}.app .smartHome .nmUniverseArt{gap:4px;margin-left:0}.app .smartHome .nmUniverseArt .moodGlyph{width:43px;height:43px}.nmUniverseArt>span{width:59px;min-height:104px}.app .smartHome .nmHomeBento b{font-size:22px}.nmMoodSignature strong{font-size:11px}.app .smartHome .nmHomeMood button{font-size:9px;padding:8px}.nmMiniBottle{width:26px}.nmMiniBottle:before{left:5px}.nmCollectionStillLife{gap:3px}.nmMoodPaper i{font-size:20px}.app .smartHome .nmMoodSwatches i{width:22px;height:22px;flex-basis:22px}.app .smartHome .nmHomeBento .nmEyebrow{font-size:8px;letter-spacing:.07em}}
+.app .smartHome .nmHomeBento .nmPaletteCard>b,.app .smartHome .nmHomeBento .nmTutorialCard>b{font-size:21px;line-height:1.12}
+.app .smartHome .nmUniverseArt{transform:none}
+.app .smartHome .nmUniverseArt>span:first-child{transform:rotate(-6deg)}
+.app .smartHome .homeCompactIdea>.nailPreview{align-items:center;min-height:190px}
+.app .smartHome .nmUniverseCard{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
+.app .smartHome .nmUniverseArt{min-width:0;gap:6px}
+.nmUniverseArt>span{flex:1;min-width:0;width:auto}
+@media(min-width:351px) and (max-width:380px){.app .smartHome .nmUniverseArt .moodGlyph{width:46px;height:46px}.app .smartHome .nmUniverseCard>b{font-size:25px}}

@@ -16,7 +16,7 @@ import { productColor } from './colorAnalysis';
 import { easeLabels, feelingLabels, filterJournal, journalDate, journalProducts, journalValidation, localDate, newJournalEntry, newJournalEntryFromIdea, pendingJournalPoses } from './journal';
 import './journal.css';
 
-function JournalVisual({ entry, compact = false, media = null }) {
+export function JournalVisual({ entry, compact = false, media = null }) {
   const [resolved, setResolved] = useState(() => typeof entry.photo === 'string' && !entry.photo.startsWith('data:') && !entry.mediaPath ? entry.photo : '');
   useEffect(() => {
     let active = true;

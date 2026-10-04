@@ -1,4 +1,5 @@
-import MoodGlyph from './MoodGlyph';
+import HomeBento from './design/HomeBento';
+import './design/home-editorial.css';
 import {profileMood} from './design/themes';
 import {DiscoveryShortcut} from './social/Discovery';
 import { useStorage } from './StorageContext';
@@ -54,7 +55,7 @@ export default function HomeView({ profile, items, library, journal, tutorials, 
   const nextTitle = home.priority === 'resume' ? resume.idea.title : home.priority === 'retained' ? retained.title : readiness ? readiness.title : 'On crée ta prochaine pose ?';
 
   return <div className="homePage smartHome">
-    <section className="homeGreeting"><small>{profile.name ? 'BONJOUR, ' + profile.name.toLocaleUpperCase('fr') : 'TON NAILMOODS, À TON RYTHME'}</small><Leaf className="homeBotanical" aria-hidden="true"/><h1>De belles idées.<br/><em>À ton image.</em></h1><p>Un peu d’inspiration, beaucoup de toi.</p><div className="nmHomeMood"><span className="nmEyebrow">{profileMood(profile).name}</span><button onClick={()=>{window.location.hash="profil/ambiance";}}>Changer d’ambiance</button></div>
+    <section className="homeGreeting"><small>{profile.name ? 'BONJOUR, ' + profile.name.toLocaleUpperCase('fr') : 'TON NAILMOODS, À TON RYTHME'}</small><Leaf className="homeBotanical" aria-hidden="true"/><h1>De belles idées.<br/><em>À ton image.</em></h1><p>Un peu d’inspiration,<br/>beaucoup de toi.</p><div className="nmHomeMood"><span className="nmMoodSignature"><span aria-hidden="true">{profileMood(profile).colors.map(c=><i key={c} style={{background:c}}/>)}</span><span><small>MON AMBIANCE</small><strong>{profileMood(profile).name}</strong></span></span><button onClick={()=>{window.location.hash="profil/ambiance";}}>Changer d’ambiance</button></div>
       <button className="homePrimary" onClick={create}><Sparkles />Créer une idée<ArrowRight /></button>
 
     </section>
@@ -67,18 +68,14 @@ export default function HomeView({ profile, items, library, journal, tutorials, 
             : <><p>Retrouve ton envie, ton nombre de vernis et tes décorations. Tu peux tout adapter au moment de créer.</p><button className="homePrimary" onClick={create}><Palette />Créer ma prochaine pose<ArrowRight /></button></>}
     </section>}
 
-    <div className="nmHomeBento" aria-label="Ton inspiration du moment">
-      <button className="nmUniverseCard" onClick={()=>{window.location.hash='profil/preferences';}}><span className="nmEyebrow">TES UNIVERS</span><div className="nmUniverseArt" aria-hidden="true">{(profile.styles.length?profile.styles:['Cottagecore','Dark feminine']).slice(0,2).map(v=><MoodGlyph value={v} key={v}/>)}</div><b>{profile.styles.length?profile.styles.slice(0,2).join(' & '):'À chaque envie, un univers'}</b><small>Explorer ce qui te ressemble →</small></button>
-      <button className="nmPaletteCard" onClick={create}><span className="nmEyebrow">INSPIRATION EXPRESS</span><div className="nmPaletteArt" aria-hidden="true"><Sparkles/><div className="nmMoodSwatches">{profileMood(profile).colors.map(c=><i key={c} style={{background:c}}/>)}</div><span>{profileMood(profile).name}</span></div><b>Place à ton mood</b><small>Une ambiance, une nouvelle idée →</small></button>
-      <button className="nmEditorialCard" onClick={()=>onNavigate('tutorials')}><BookHeart aria-hidden="true"/><b>Un geste<br/>après l’autre</b><small>Retrouve tes poses guidées et leur progression →</small></button>
-      <button className="nmEditorialCard" onClick={()=>onNavigate('collection')}><Library aria-hidden="true"/><b>Des trésors<br/>à portée de main</b><small>{items.length?items.length+' produits dans ta collection':'Tes vernis, stickers et matériel'} →</small></button>
-    </div>
+    <div className="nmHomeSectionHeading"><span className="nmEyebrow">TON CARNET D’ENVIES</span><Heart aria-hidden="true"/></div>
+    <HomeBento profile={profile} items={items} resume={resume} onCreate={create} onNavigate={onNavigate}/>
+    {inspiration && <section className="homeInspiration" aria-labelledby="home-inspiration-title"><div className="homeSectionTitle"><div><small>MON INSPIRATION DU JOUR</small><h2 id="home-inspiration-title">Une inspiration pour toi</h2></div>{(home.alternativeCount > 1 || pendingLearning) && <button onClick={regenerate} aria-label={pendingLearning ? 'Actualiser mon inspiration' : 'Proposer une autre inspiration'}><RotateCcw /></button>}</div>
+      <button className="homeCompactIdea" onClick={() => onOpen(inspiration, options)}><NailPreview idea={inspiration} /><span className="nmDailyIdeaCopy"><small className="nmEyebrow">{inspiration.shape} · {inspiration.length}</small><b>{inspiration.title}</b><small>Découvrir la pose et sa recette <ArrowRight aria-hidden="true"/></small></span><ChevronRight/></button>
+    </section>}
     <section className="scanHomeCard" aria-labelledby="scan-home-title"><div><small><Sparkles size={14}/>UNE IDÉE SOUS LA MAIN</small><h2 id="scan-home-title">Scan &amp; Génère</h2><p>Montre-moi tes couleurs, je te propose une pose.</p></div><ScanBottles/><button className="homePrimary" onClick={onScan}>Scanner mes vernis<ArrowRight/></button></section>
 
     <DiscoveryShortcut featured/>
-    {inspiration && <section className="homeInspiration" aria-labelledby="home-inspiration-title"><div className="homeSectionTitle"><div><small>MON INSPIRATION DU JOUR</small><h2 id="home-inspiration-title">Une inspiration pour toi</h2></div>{(home.alternativeCount > 1 || pendingLearning) && <button onClick={regenerate} aria-label={pendingLearning ? 'Actualiser mon inspiration' : 'Proposer une autre inspiration'}><RotateCcw /></button>}</div>
-      <button className="homeCompactIdea" onClick={() => onOpen(inspiration, options)}><NailPreview idea={inspiration} /><span><b>{inspiration.title}</b><small>Voir l’idée et sa recette</small></span><ChevronRight/></button>
-    </section>}
     <details className="nmDisclosure"><summary>Mes raccourcis et mon activité</summary>    {!items.length && <section className="homeCollectionInvite"><span className="homeCollectionGlyph"><Library /></span><div><small>MA COLLECTION</small><b>Ta collection, à ton rythme</b><p>Ajoute tes produits pour personnaliser tes idées — ou commence tout de suite.</p><div className="homeCollectionActions"><button className="homeCollectionPrimary" onClick={() => onNavigate('collection')}>Ajouter mes produits<ChevronRight /></button><button className="homeCollectionQuiet" onClick={create}>Créer sans collection<ArrowRight /></button></div></div></section>}
 
     {home.pending ? <section className="homeMemory" aria-labelledby="home-memory-title"><BookHeart /><div><small>UN SOUVENIR, SI TU EN AS ENVIE</small><h2 id="home-memory-title">Comment était ta pose ?</h2><p>{home.pending.idea.title}</p><NailPreview idea={home.pending.idea} compact /><small>Photo et ressenti restent facultatifs.</small><button className="homeTextButton" onClick={() => onJournalSession(home.pending)}>Ajouter au journal<ArrowRight /></button></div></section>

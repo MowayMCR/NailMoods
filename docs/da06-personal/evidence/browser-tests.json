@@ -1,0 +1,906 @@
+{
+  "scope": "Vite / Chromium; local demonstration profile. Splash and public-profile components executed in isolated harness. No real session or remote mutation.",
+  "checks": [
+    {
+      "screen": "profile",
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "case": "Universe add/remove persists in main profile",
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "case": "Mood switches immediately without clearing universes",
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "case": "Onboarding completion only on final CTA; resume and same profile preserved",
+      "mood": "soft-glam",
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "case": "Onboarding completion only on final CTA; resume and same profile preserved",
+      "mood": "dark-feminine",
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "case": "Onboarding completion only on final CTA; resume and same profile preserved",
+      "mood": "cottagecore",
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "profile",
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-0",
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-1",
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-2",
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-3",
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-4",
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-5",
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-6",
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "screen": "onboarding-7",
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "case": "Onboarding completion only on final CTA; resume and same profile preserved",
+      "mood": "pop-pastel",
+      "status": "PASS"
+    },
+    {
+      "case": "Preference edit persists in main profile",
+      "status": "PASS"
+    },
+    {
+      "case": "Read-only public profile; allowed fields and actual render previews",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

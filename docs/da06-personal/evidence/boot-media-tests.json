@@ -1,0 +1,122 @@
+[
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "soft-glam",
+    "width": 320,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "soft-glam",
+    "width": 360,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "soft-glam",
+    "width": 390,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "soft-glam",
+    "width": 430,
+    "status": "PASS"
+  },
+  {
+    "case": "Boot retry appears only on error",
+    "mood": "soft-glam",
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "dark-feminine",
+    "width": 320,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "dark-feminine",
+    "width": 360,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "dark-feminine",
+    "width": 390,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "dark-feminine",
+    "width": 430,
+    "status": "PASS"
+  },
+  {
+    "case": "Boot retry appears only on error",
+    "mood": "dark-feminine",
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "cottagecore",
+    "width": 320,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "cottagecore",
+    "width": 360,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "cottagecore",
+    "width": 390,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "cottagecore",
+    "width": 430,
+    "status": "PASS"
+  },
+  {
+    "case": "Boot retry appears only on error",
+    "mood": "cottagecore",
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "pop-pastel",
+    "width": 320,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "pop-pastel",
+    "width": 360,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "pop-pastel",
+    "width": 390,
+    "status": "PASS"
+  },
+  {
+    "case": "First HTML boot restores complete mood",
+    "mood": "pop-pastel",
+    "width": 430,
+    "status": "PASS"
+  },
+  {
+    "case": "Boot retry appears only on error",
+    "mood": "pop-pastel",
+    "status": "PASS"
+  },
+  {
+    "case": "Shared journal visual resolves private media via media.signedUrl",
+    "status": "PASS"
+  }
+]

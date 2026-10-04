@@ -1,3 +1,4 @@
+import { mobileVersion } from './mobile-version.mjs';
 import { spawnSync } from 'node:child_process';
 import { writeFileSync, rmSync, readdirSync, readFileSync } from 'node:fs';
 const environment = process.argv[2];
@@ -7,7 +8,7 @@ for (const args of [['scripts/prepare-recognition.mjs'], ['node_modules/vite/bin
   const result = spawnSync(process.execPath, args, {env, stdio:'inherit'});
   if (result.status !== 0) process.exit(result.status || 1);
 }
-writeFileSync('dist-mobile/mobile-build.json', JSON.stringify({environment, version:env.NAILMOODS_PLATFORM==='ios'?'0.3.0-beta.6':'0.3.0-beta.7', versionCode:env.NAILMOODS_PLATFORM==='ios'?6:7, appId:env.NAILMOODS_PLATFORM==='ios'&&env.NAILMOODS_IOS_BUNDLE_ID?env.NAILMOODS_IOS_BUNDLE_ID:environment==='production'?'com.nailmoods.app':'com.nailmoods.app.recette'}, null, 2));
+writeFileSync('dist-mobile/mobile-build.json', JSON.stringify({environment, ...mobileVersion(env.NAILMOODS_PLATFORM), appId:env.NAILMOODS_PLATFORM==='ios'&&env.NAILMOODS_IOS_BUNDLE_ID?env.NAILMOODS_IOS_BUNDLE_ID:environment==='production'?'com.nailmoods.app':'com.nailmoods.app.recette'}, null, 2));
 
 // Historical texts remain on the public website; only active texts ship offline.
 rmSync('dist-mobile/legal/archives', {recursive:true, force:true});

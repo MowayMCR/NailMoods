@@ -1,0 +1,87 @@
+[
+  {
+    "file": "src/NailPreview.jsx",
+    "unchanged": true,
+    "sha256": "d3d7c9152abd5ff635ed72f416af596341aa8ee6ac78b259ca4a196f92aef35f"
+  },
+  {
+    "file": "src/MoodGlyph.jsx",
+    "unchanged": true,
+    "sha256": "4e119b0e3694e8f9270d90347abd5ea1ffda81e8f9e506153ab6dd2d1a049e11"
+  },
+  {
+    "file": "src/iconAtlas.js",
+    "unchanged": true,
+    "sha256": "0f196ce842ad123a272f2a060da4b3066571c4953b9f0175f6163563d9e730c7"
+  },
+  {
+    "file": "src/iconRegistry.js",
+    "unchanged": true,
+    "sha256": "46d9bf2b555a051068052ca212aa4f41f440debd4f263b4e5c2b73058525c504"
+  },
+  {
+    "file": "src/design/themes.js",
+    "unchanged": true,
+    "sha256": "bc14dc61f654dee7e83b73c20a7135ea1b4c12eb13c359dc31460f41b68b99ef"
+  },
+  {
+    "file": "public/realistic-relief-jewels.png",
+    "unchanged": true,
+    "sha256": "2fec3c7210bf9b6dd86a9111fe51f0a611c0daf5031a812eaafa0720daa91920"
+  },
+  {
+    "file": "public/realistic-special-finishes.png",
+    "unchanged": true,
+    "sha256": "161ca4309efdaf738d22f774d478c66f6fe9c9b8fa86a96ebc2fd6c10961a3d2"
+  },
+  {
+    "file": "public/realistic-multitechnique.png",
+    "unchanged": true,
+    "sha256": "71735c1d8cdccead5276574a835eb37359d8d845baf3ccb50977e2ad3fc45bbf"
+  },
+  {
+    "file": "public/nailmoods-logo.svg",
+    "unchanged": true,
+    "sha256": "d2fc6d83e7e4171bf67d7c2cf819b22bc47c50c3a809feb1418f48bf87306dea"
+  },
+  {
+    "file": "public/realistic-core-finishes.png",
+    "unchanged": true,
+    "sha256": "8e2bfccb172b6cf5afa1aac19e56270b49dbd8cc2fd804f5daa065e45c20bdbc"
+  },
+  {
+    "file": "public/nailmoods-official.png",
+    "unchanged": true,
+    "sha256": "450235a64ff555d12a2b343a3ee9f1a8c45ea92560e6d71359a329e3bc146129"
+  },
+  {
+    "file": "public/nailmoods-symbol.png",
+    "unchanged": true,
+    "sha256": "91d237e00b62f215318a3e7eaafb00e01543b547c2340ebbf7044e628b3b573b"
+  },
+  {
+    "file": "public/nailmoods-icon.png",
+    "unchanged": true,
+    "sha256": "861bdd476c48ef211b92283e51cfd71bcab8ff1d7b6432f1350d21be969ad8a1"
+  },
+  {
+    "file": "public/nail-hand-mockup-v1.webp",
+    "unchanged": true,
+    "sha256": "32b78d4bdad5c3fb4a6c2c7d06ff92bffe3d3a1446b824ae97d8cd171f45dfb3"
+  },
+  {
+    "file": "public/icons/nailmoods-effects-themes.png",
+    "unchanged": true,
+    "sha256": "d739a5baff665635d58b1a22ee75d4a6fc9f05ee98fd988d53a44def659a9751"
+  },
+  {
+    "file": "public/icons/nailmoods-styles.png",
+    "unchanged": true,
+    "sha256": "cdc151d4e4e1c8c40e577aed2f0ca6bc073739ef691130bce45b7602ca28fcae"
+  },
+  {
+    "file": "public/icons/nailmoods-techniques.png",
+    "unchanged": true,
+    "sha256": "1fe5cf66e7340f9589c2b1b384ef5bf3326639cb419b1bb26100da89550751d0"
+  }
+]

@@ -1,0 +1,39 @@
+✔ Accessible semantic palette: Soft Glam (2.360384ms)
+✔ Accessible semantic palette: Dark Feminine (0.305051ms)
+✔ Accessible semantic palette: Cottagecore (0.241494ms)
+✔ Accessible semantic palette: Pop Pastel (0.177808ms)
+✔ Legacy theme conversion is independent from preferred universes (0.253542ms)
+✔ New account enters onboarding; old profiles, guests and completed accounts keep access (0.234985ms)
+✔ Native token pair restores session; wrong origin, environment and mixed credentials do not (0.773318ms)
+✔ Web callback verifies hashed email token and rejects a different origin (0.802832ms)
+✔ Public profile only falls back for missing version, never authorization errors (0.372673ms)
+✔ Public profile projection executes original guard, explicit opt-ins and strict field allowlist in Postgres (1617.857777ms)
+✔ handles normalize without mutating UUIDs or silently swallowing invalid characters (1.285581ms)
+✔ search ranking preserves opaque technical identities and prioritizes exact handles (0.829883ms)
+✔ native PKCE callback is isolated: production (2.443679ms)
+✔ native PKCE callback is isolated: recette (0.501036ms)
+✔ Android back closes intermediate levels before minimizing (0.208024ms)
+✔ restored camera results cannot enter another account or form (0.388977ms)
+✔ failed durable writes retain the newest draft for retry (0.521708ms)
+✔ network failure never treats a denied session as offline access (0.270659ms)
+✔ native network timeout aborts an upload and respects caller cancellation (10.943674ms)
+✔ signup rejects absent or non-boolean terms before making any Auth call (1.984146ms)
+✔ no unselected provider gets anticipatory permission (0.222816ms)
+✔ advertising and personalization are distinct; withdrawal takes immediate effect (0.226702ms)
+✔ Plus, Pro and professional contexts cannot show ads, nor protected flows (0.515678ms)
+✔ unknown or outdated notice denies optional services; advertising context excludes private data (1.876994ms)
+✔ account cleanup never deletes guests, tokens or another account (0.2451ms)
+✔ delete requires typed confirmation and an authenticated user; failure never reports success (0.589821ms)
+✔ export paginates owned records only and rejects an account switch (3.288966ms)
+✔ consent is loaded from the server again after reconnection, never borrowed from a guest (0.668059ms)
+✔ privacy confirmation records an explicit age band independently from terms (0.375918ms)
+✔ signup records the explicit 18+ declaration without optional tracking (0.428257ms)
+✔ deleted message authors never expose cached profile identity (1.007822ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1766.179596

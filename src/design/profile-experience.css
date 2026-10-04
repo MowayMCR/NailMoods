@@ -1,0 +1,145 @@
+/* DA06 personal space: shared visual language, unchanged profile data and journeys. */
+.app .profilePage .profileHero{position:relative;display:grid;grid-template-columns:84px minmax(0,1fr);gap:18px;margin:12px 18px 18px;padding:26px 20px 0;border-radius:28px;overflow:hidden;background:linear-gradient(135deg,var(--cardHighlight),var(--surfacePrimary));box-shadow:none}
+.app .profilePage .profileHero:before{content:'';position:absolute;right:-24px;top:6px;width:140px;height:180px;mask:var(--nm-petal) center/contain no-repeat;background:var(--accentSecondary);opacity:.18;pointer-events:none}
+.app .profilePage .profileHero>div{min-width:0;position:relative}
+.app .profilePage .profileHero h1{font:34px/1.1 Georgia,serif;margin:7px 0;overflow-wrap:anywhere}
+.app .profilePage .profileHero small{font-size:9px;letter-spacing:.12em;color:var(--textSecondary)}
+.app .profilePage .profileHero p{font-size:13px;line-height:1.6;margin:10px 0;color:var(--textSecondary)}
+.app .profilePage .profileAvatarButton{align-self:start;margin-top:9px;width:84px;height:92px;border-radius:44px 44px 28px 28px;background:var(--surfacePrimary);border:1px solid var(--borderDefault);padding:5px}
+.app .profilePage .profileAvatarButton .avatar.big{width:72px;height:80px;border-radius:40px 40px 24px 24px;font-size:36px;margin:0;background:var(--accentSoft)!important;color:var(--accentPrimary)!important;border:0}
+.app .nmEditProfile{position:relative;min-height:44px;border:1px solid var(--borderDefault);border-radius:99px;padding:9px 12px;background:var(--surfacePrimary);color:var(--accentPrimary);font-size:11px;display:inline-flex;align-items:center;gap:7px}
+.app .profilePage .nmProfileStats{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:15px 0;margin-top:4px;border-top:1px solid var(--borderDefault);width:100%;gap:8px}
+.nmProfileStats>span{display:flex;flex-direction:column;gap:4px;text-align:center;font-size:10px;color:var(--textSecondary)}
+.nmProfileStats b{font:25px Georgia,serif;color:var(--textPrimary)}
+.app .profilePage .nmProfileBento{padding:0 18px;gap:16px}
+.app .profilePage .nmProfileBento>.nmBento{padding:20px 16px;border-radius:24px;box-shadow:none}
+.app .profilePage .nmSectionHead{gap:8px;align-items:center;margin-bottom:14px}
+.app .profilePage .nmSectionHead h2{margin:4px 0 0;font-size:25px}
+.app .profilePage .nmSectionHead button{font-size:11px;padding:8px 10px;min-height:44px;flex-shrink:0;border:1px solid var(--borderDefault);border-radius:99px;background:var(--surfacePrimary)}
+.app .profilePage .nmSectionHead small{font-size:8px;letter-spacing:.1em}
+.app .profilePage .nmProfileUniverses{background:linear-gradient(140deg,var(--surfacePrimary),var(--cardHighlight))}
+.nmUniverseTiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.nmUniverseTile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:17px 7px;min-height:118px;border:1px solid var(--borderDefault);background:var(--surfacePrimary);border-radius:44px 44px 18px 18px;text-align:center;color:var(--textPrimary)}
+.nmUniverseTile>.moodGlyph{width:58px;height:58px;flex-shrink:0}
+.nmUniverseTile>span{font:500 11px/1.4 system-ui,sans-serif;overflow-wrap:anywhere}
+.nmUniverseTiles:has(>.nmUniverseTile:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
+.nmUniverseTiles:has(>.nmUniverseTile:only-child){grid-template-columns:minmax(0,140px)}
+.nmPreferenceSummary.nmPreferenceTiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0;text-align:center}
+.nmPreferenceSummary.nmPreferenceTiles>div{position:relative;display:grid;grid-template-columns:24px auto;justify-content:center;gap:5px 8px;align-content:center;text-align:center;padding:14px 10px;background:var(--surfaceSecondary);border:1px solid var(--borderDefault);border-radius:16px;min-width:0;min-height:83px}
+.nmPreferenceSummary.nmPreferenceTiles>div:last-child:nth-child(odd){grid-column:1/-1}
+.nmPreferenceTiles>div>svg{grid-row:span 2;width:23px;height:32px;align-self:center;color:var(--accentPrimary);stroke-width:1.4}
+.nmPreferenceTiles>div>svg.profileNail{height:40px}
+.nmPreferenceSummary.nmPreferenceTiles dt{font-size:10px;margin:0;color:var(--textSecondary)}
+.nmPreferenceSummary.nmPreferenceTiles dd{font:600 12px/1.4 system-ui,sans-serif;margin:0;color:var(--textPrimary);overflow-wrap:anywhere}
+.app .profilePage .nmProfileAmbience{position:relative;background:linear-gradient(130deg,var(--cardHighlight),var(--surfacePrimary));overflow:hidden}
+.app .profilePage .nmProfileAmbience p{font-size:12px;color:var(--textSecondary);margin:4px 0 17px}
+.app .profilePage .nmMoodSummary{display:flex;gap:10px;margin:0;padding:0}
+.app .profilePage .nmMoodSummary i{width:44px;height:44px;border:3px solid var(--surfacePrimary);box-shadow:0 0 0 1px var(--borderDefault)}
+.app .profilePage .nmProfileRecent{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.app .profilePage .nmProfileRecent>button{display:flex;flex-direction:column;align-items:stretch;padding:0;gap:0;background:var(--surfaceSecondary);border:1px solid var(--borderDefault);border-radius:17px;overflow:hidden;min-width:0;justify-content:flex-start}
+.app .profilePage .nmProfileRecent>button:first-child:nth-last-child(3){grid-column:1/-1;display:grid;grid-template-columns:1.2fr 1fr;align-items:center}
+.app .profilePage .nmProfileRecent>button>span{padding:12px;text-align:left;min-width:0}
+.app .profilePage .nmProfileRecent b{font:17px/1.2 Georgia,serif;display:block;overflow-wrap:anywhere;color:var(--textPrimary)}
+.app .profilePage .nmProfileRecent small{font:10px/1.5 system-ui,sans-serif;color:var(--textSecondary);margin:7px 0 0}
+.app .profilePage .nmProfileRecent .journalVisual{width:100%;min-width:0;background:var(--productSurface)}
+.app .profilePage .nmProfileRecent .nailPreview{width:100%;max-width:none;margin:0;padding:16px 3px;min-height:126px;gap:1px;border:0;border-radius:0}
+.app .profilePage .nmProfileRecent .nailPreview>svg{height:76px;max-width:none;width:19%;margin:0}
+.app .profilePage .nmProfileRecent .journalVisual>small{display:none}
+.app .profilePage .nmProfileRecent .journalVisual>img{display:block;width:100%;height:140px;object-fit:cover;margin:0;border-radius:0}
+.app .profilePage .nmProfileRecent .journalVisual:has(>img)>.nailPreview{display:none}
+.app .profilePage .nmProfileRecent .journalNoPhoto{min-height:125px;font-size:11px;padding:12px}
+.nmProfileEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:18px 10px;background:var(--surfaceSecondary);border-radius:18px;color:var(--textSecondary)}
+.nmProfileEmpty>svg{width:32px;height:32px;stroke-width:1;color:var(--accentSecondary)}
+.nmProfileEmpty p{font-size:12px;line-height:1.6;margin:0;max-width:220px}
+.nmProfileEmpty .nmButton{font-size:11px}
+.app .profilePage .profileDestinations{margin:25px 18px 0;padding-top:18px;border-top:1px solid var(--borderDefault);gap:8px}
+.app .profilePage .profileDestinations>.nmShortcut{min-height:48px;font-size:12px;border-radius:14px;box-shadow:none;background:var(--surfacePrimary);color:var(--textSecondary);border-color:var(--borderDefault)}
+/* Read-only public profiles consume the existing privacy-filtered projection. */
+.publicProfileSheet .publicProfileIntro{display:flex;align-items:center;gap:16px;padding:25px 18px;background:linear-gradient(145deg,var(--cardHighlight),var(--surfacePrimary));border:1px solid var(--borderDefault);border-radius:26px;overflow-wrap:anywhere}
+.nmPublicInitial{display:grid;place-items:center;flex-shrink:0;width:72px;height:84px;background:var(--surfacePrimary);border:1px solid var(--borderDefault);border-radius:40px 40px 24px 24px;font:34px Georgia,serif;color:var(--accentPrimary)}
+.publicProfileSheet .publicProfileIntro h2{font:30px Georgia,serif;margin:9px 0}
+.publicProfileSheet .publicProfileIntro p{font-size:12px;margin:0;color:var(--textSecondary)}
+.publicProfileSheet .publicProfile>.nmBento{padding:20px 16px;box-shadow:none;border-radius:24px}
+.publicProfileSheet .publicProfile>.nmBento h3{margin:0 0 16px;font:24px Georgia,serif}
+.publicProfileSheet .publicContentCard{display:flex;flex-direction:column;gap:12px;padding:12px;background:var(--surfacePrimary);border:1px solid var(--borderDefault);border-radius:24px}
+.publicProfileSheet .publicContentCard h4{font:22px Georgia,serif;margin:4px 0}
+/* Miniature of the shared architecture; each option supplies its own full palette. */
+.nmMoodOption .nmMiniPreview,.nmIntroMoodPreview .nmMiniPreview{display:flex;flex-direction:column;gap:8px;padding:10px;height:200px;background:var(--backgroundPrimary);border:1px solid var(--borderDefault);border-radius:16px;color:var(--textPrimary);overflow:hidden;width:100%}
+.nmMiniBrand{display:flex;align-items:center;gap:4px;font:10px Georgia,serif}
+.nmMiniBrand img{width:15px;height:19px;object-fit:contain}
+.nmMiniBrand>svg{width:10px;height:10px;margin-left:auto;color:var(--accentPrimary)}
+.nmMiniPreview .nmMiniHeading{display:flex;flex-direction:column;gap:1px;height:auto;width:100%;background:none;font:15px/1.1 Georgia,serif;color:var(--textPrimary);border-radius:0;letter-spacing:-.02em}
+.nmMiniHeading em{color:var(--accentPrimary)}
+.nmMiniPreview>.nmMiniBento{display:grid;grid-template-columns:1fr 1fr;gap:5px;min-height:58px;flex:1}
+.nmMiniBento>span{display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;border:1px solid var(--borderDefault);border-radius:10px;background:var(--surfaceSecondary);min-width:0;padding:5px 2px}
+.nmMiniBento>span:last-child{background:var(--cardHighlight)}
+.nmMiniBento>span>svg{width:27px;height:27px;color:var(--accentPrimary)}
+.nmMiniPreview .nmMiniBento i{background:none!important;color:var(--textPrimary);font:7px system-ui,sans-serif}
+.nmMiniCTA{display:flex;justify-content:space-between;align-items:center;background:var(--accentPrimary);color:var(--textOnAccent);padding:6px 7px;font:8px system-ui,sans-serif;border-radius:6px}
+.nmMiniPreview .nmMiniNav{height:9px;display:flex;align-items:center;justify-content:space-around;background:var(--surfacePrimary);border-radius:4px;width:100%}
+.nmMiniPreview .nmMiniNav i{width:4px;height:4px;border-radius:50%;background:var(--textSecondary)}
+.nmMiniPreview .nmMiniNav i:first-child{background:var(--accentPrimary)}
+.nmMoodGrid .nmMoodOption{gap:8px;padding:11px;border-radius:22px;min-width:0}
+.nmMoodGrid .nmMoodOption strong{font:19px Georgia,serif}
+.nmMoodGrid .nmMoodOption small{font-size:10px;line-height:1.4}
+.nmMoodGrid .nmMoodState{font-size:11px;margin-top:auto}
+/* First connection: the same profile is edited throughout. */
+.nmOnboarding.nmBrandOnboarding{padding-left:22px;padding-right:22px;max-width:560px}
+.nmBrandOnboarding .nmOnboardingTop{gap:10px;height:78px}
+.nmBrandOnboarding .nmOnboardingTop>span{letter-spacing:.17em;font-size:9px}
+.nmBrandOnboarding .nmOnboardingTop>button{min-width:44px;width:auto;padding:8px;font-size:11px;color:var(--textSecondary);border:1px solid var(--borderDefault)}
+.nmOnboardingProgress{display:flex;gap:6px;margin:10px 0 24px}
+.nmOnboardingProgress i{height:3px;flex:1;background:var(--borderDefault);border-radius:9px}
+.nmOnboardingProgress i.active{background:var(--accentPrimary)}
+.nmBrandOnboarding main>.nmEyebrow{font-size:9px;letter-spacing:.14em;margin:0 0 14px}
+.nmBrandOnboarding main>h1{font:38px/1.08 Georgia,serif;letter-spacing:-.035em;margin:0 0 15px;max-width:330px}
+.nmBrandOnboarding main>p:not(.nmEyebrow){font-size:13px;line-height:1.65;color:var(--textSecondary);margin:0 0 20px}
+.nmBrandOnboarding .nmOnboardingArt{position:relative;min-height:300px;margin:26px 0 22px;border:1px solid var(--borderDefault);border-radius:90px 30px 80px 30px;padding:25px;gap:15px;background:linear-gradient(150deg,var(--surfacePrimary),var(--cardHighlight));isolation:isolate}
+.nmBrandOnboarding .nmOnboardingArt:after{content:'';position:absolute;bottom:-25px;right:-35px;width:180px;height:200px;mask:var(--nm-petal) center/contain no-repeat;background:var(--accentSecondary);opacity:.2;z-index:-1;transform:rotate(-20deg)}
+.nmBrandOnboarding .art-0>img{width:116px;height:155px;justify-self:center;background:var(--surfacePrimary);padding:15px;border:1px solid var(--borderDefault);border-radius:60px 60px 30px 30px}
+.nmBrandOnboarding .art-0>span{font:32px/1.4 Georgia,serif;color:var(--accentPrimary)}
+.nmBrandOnboarding .art-1,.nmBrandOnboarding .art-2{border-radius:28px;padding:20px;min-height:310px}
+.nmBrandOnboarding .art-1>div,.nmBrandOnboarding .art-2>div{position:relative;padding:16px 7px;min-height:125px;border:1px solid var(--borderDefault);border-radius:50px 50px 18px 18px;background:var(--surfacePrimary);gap:10px;transform:rotate(-4deg)}
+.nmBrandOnboarding .art-1>div:nth-child(even),.nmBrandOnboarding .art-2>div:nth-child(even){transform:rotate(4deg)}
+.nmBrandOnboarding .art-1>div>span,.nmBrandOnboarding .art-2>div>span{font:14px/1.2 Georgia,serif;color:var(--textPrimary)}
+.nmBrandOnboarding .art-2>div{border-radius:22px}
+.nmBrandOnboarding .art-2>div>svg{width:36px;height:36px;stroke-width:1.2}
+.nmBrandOnboarding .art-3{grid-template-columns:1fr .8fr;gap:12px;border-radius:28px;padding:18px}
+.nmBrandOnboarding .art-3>.nmIntroMoodPreview{padding:0;transform:rotate(-5deg);border-radius:18px;background:none;display:block}
+.nmBrandOnboarding .art-3 .nmMiniPreview{height:240px}
+.nmBrandOnboarding .nmIntroSignature{font:22px/1.4 Georgia,serif;color:var(--accentPrimary)}
+.nmBrandOnboarding .nmOnboardingActions{margin-top:24px;gap:10px;padding-bottom:16px}
+.nmBrandOnboarding .nmOnboardingActions .nmButton{font-size:12px;min-height:48px;border-radius:16px}
+.nmBrandOnboarding .nmOnboardingActions>.nmButton-ghost{order:2;flex:1 0 100%;min-height:44px}
+.nmBrandOnboarding .nmOnboardingActions>.nmButton-primary{order:1;flex:1 0 100%}
+.nmBrandOnboarding .nmPreferenceForm{gap:0 10px;padding:10px 14px;background:var(--surfacePrimary);border:1px solid var(--borderDefault);border-radius:24px}
+.nmBrandOnboarding .nmField{font-size:11px;gap:7px;margin:13px 0}
+.nmBrandOnboarding .nmField input,.nmBrandOnboarding .nmField select,.nmBrandOnboarding .nmField textarea{background:var(--surfaceSecondary);font-size:14px;min-height:48px;padding:10px;border-radius:14px}
+.nmBrandOnboarding .nmUniverseGrid{gap:10px;max-height:48dvh;padding:5px 3px 10px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--accentSecondary) var(--surfaceSecondary)}
+.nmBrandOnboarding .nmUniverseGrid>button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:125px;padding:15px 10px;border-radius:23px;background:var(--surfacePrimary);text-align:center;font-size:12px;transition:background-color .18s,border-color .18s}
+.nmBrandOnboarding .nmUniverseGrid>button .moodGlyph{width:53px;height:53px}
+.nmBrandOnboarding .nmUniverseGrid>button[aria-pressed=true]{background:var(--selectionBackground);border-color:var(--borderActive)}
+.nmBrandOnboarding .nmUniverseGrid>button>svg:last-child:not(.moodGlyph){position:absolute;right:9px;top:9px;background:var(--accentPrimary);color:var(--textOnAccent);border-radius:50%;width:20px;height:20px;padding:3px}
+.nmBrandOnboarding .nmProfilePreview{padding:24px 16px;border-radius:26px;background:linear-gradient(150deg,var(--cardHighlight),var(--surfacePrimary));box-shadow:none}
+.nmBrandOnboarding .nmProfilePreview>.avatar.big{width:83px;height:94px;border-radius:44px 44px 26px 26px;border:5px solid var(--surfacePrimary);font-size:40px}
+.nmBrandOnboarding .nmProfilePreview h2{font:29px Georgia,serif;margin:14px 0}
+.nmBrandOnboarding .nmProfilePreview p{font-size:12px;color:var(--textSecondary)}
+.nmBrandOnboarding .nmProfilePreview .nmUniverseTiles{margin:20px 0}
+.nmBrandOnboarding .nmProfilePreview .nmUniverseTile{min-height:100px;padding:12px 6px}
+.nmBrandOnboarding .nmProfilePreview .nmUniverseTile>.moodGlyph{width:45px;height:45px}
+.nmBrandOnboarding .nmProfilePreview .nmPreferenceSummary{display:grid;margin:20px 0}
+.nmRecapMood{display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;padding-top:16px;border-top:1px solid var(--borderDefault)}
+.nmRecapMood .nmPalette{gap:3px}
+.nmRecapMood .nmPalette i{width:18px;height:18px}
+@media(max-width:350px){.app .profilePage .profileHero{margin-left:14px;margin-right:14px;grid-template-columns:65px minmax(0,1fr);padding:20px 14px 0;gap:12px}.app .profilePage .profileAvatarButton{width:65px;height:77px}.app .profilePage .profileAvatarButton .avatar.big{width:53px;height:65px;font-size:29px}.app .profilePage .profileHero h1{font-size:30px}.app .profilePage .nmProfileBento{padding:0 14px}.app .profilePage .nmProfileBento>.nmBento{padding:18px 12px}.nmUniverseTiles{gap:6px}.nmUniverseTile>.moodGlyph{width:45px;height:45px}.nmUniverseTile>span{font-size:10px}.nmPreferenceSummary.nmPreferenceTiles>div{grid-template-columns:23px auto;padding:12px 8px;gap:5px}.nmPreferenceSummary.nmPreferenceTiles dd{font-size:11px}.nmOnboarding.nmBrandOnboarding{padding-left:16px;padding-right:16px}.nmBrandOnboarding main>h1{font-size:34px}.nmBrandOnboarding .nmOnboardingArt{padding:20px 14px;gap:10px}.nmBrandOnboarding .art-0>span{font-size:29px}.nmBrandOnboarding .nmIntroSignature{font-size:19px}.nmMoodGrid{gap:8px}.nmMoodGrid .nmMoodOption{padding:8px}.nmMoodGrid .nmMoodOption strong{font-size:17px}.nmMoodOption .nmMiniPreview{padding:8px;height:190px}.nmMiniPreview .nmMiniHeading{font-size:13px}.nmBrandOnboarding .nmPreferenceForm{padding:8px 10px}.nmBrandOnboarding .nmField select{font-size:12px;padding:8px}.nmBrandSplash h1{font-size:43px}}
+
+.nmPreferenceTiles>div>svg{grid-row:1;height:24px}
+.nmPreferenceSummary.nmPreferenceTiles dt{align-self:center}
+.nmPreferenceSummary.nmPreferenceTiles dd{grid-column:1/-1;overflow-wrap:normal;text-align:center}
+.nmBrandOnboarding main>h1{text-wrap:balance}
+.nmBrandOnboarding .nmProfilePreview>.avatar.big{display:grid;place-items:center}
+.publicProfileSheet .publicContentCard>.nailPreview{order:-1;flex:none;width:100%;max-width:none;height:auto;min-height:165px;padding:22px 8px;margin:0;gap:1px;border-radius:17px}
+.publicProfileSheet .publicContentCard>.nailPreview>svg{width:19%;height:100px;max-height:100px;max-width:none;margin:0}
+.publicProfileSheet .publicContentCard>img{order:-1;border-radius:17px}
+.nmBrandOnboarding .nmField input,.nmBrandOnboarding .nmField select,.nmBrandOnboarding .nmField textarea{font-size:16px}
+@media(max-width:350px){.nmBrandOnboarding .nmPreferenceForm{grid-template-columns:1fr}}

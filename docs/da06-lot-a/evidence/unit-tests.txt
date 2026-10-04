@@ -1,0 +1,37 @@
+✔ Accessible semantic palette: Soft Glam (1.552746ms)
+✔ Accessible semantic palette: Dark Feminine (0.228435ms)
+✔ Accessible semantic palette: Cottagecore (0.380985ms)
+✔ Accessible semantic palette: Pop Pastel (0.190077ms)
+✔ Legacy theme conversion is independent from preferred universes (0.247134ms)
+✔ New account enters onboarding; old profiles, guests and completed accounts keep access (0.268686ms)
+✔ Native token pair restores session; wrong origin, environment and mixed credentials do not (1.128636ms)
+✔ Web callback verifies hashed email token and rejects a different origin (0.832989ms)
+✔ Public profile only falls back for missing version, never authorization errors (0.336718ms)
+✔ Public profile projection executes original guard, explicit opt-ins and strict field allowlist in Postgres (1559.514428ms)
+✔ home reads the same choices as Create without writing or resetting an existing generation (2.56153ms)
+✔ an active pose takes priority and completed active IDs fall back to the last unfinished pose (12.041345ms)
+✔ the chosen paused session is kept even if the same idea has another, more recent session (3.685068ms)
+✔ a retained idea is offered until performed; started and completed copies are never proposed as waiting (8.082052ms)
+✔ an outdated retained idea keeps its original shades and clearly reports changed or missing references (8.468295ms)
+✔ Free home offers inspiration without inventory and exposes infeasible explicit limits (17.92823ms)
+✔ home suggestions preserve explicit constraints, precise colors and the selected decoration (11.685607ms)
+✔ home is stable for the same day and data, offers another recipe on request, and avoids pending ideas (9.399773ms)
+✔ journal prompts use completed, unrecorded, non-dismissed poses; latest memories use the pose date (20.161835ms)
+✔ multi-technique selection preserves French leopard and tortoise as a visible per-nail composition (5.139085ms)
+✔ every visual family can be composed on a French tip and survives a favorite snapshot (1.961974ms)
+✔ mix & match produces five visibly different nail roles while preserving one palette (1.891989ms)
+✔ a mix & match pose makes every announced non-French technique visible (1.26409ms)
+✔ mix & match is reserved for advanced multi-technique choices (1.090418ms)
+✔ manual French has separate base and tip, changing the base preserves the chosen tip (2.699749ms)
+✔ base and motif colors on all five nails survive saving and reloading a manual project (2.31658ms)
+✔ inspiration-only composition remains valid after reopening, and unused decor is excluded (2.094004ms)
+✔ manual palette deduplicates colors, keeps collection names and offers white and black (0.339953ms)
+✔ suggested techniques are canonical and legacy identical colors gain contrast on selection (0.274775ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1696.314896

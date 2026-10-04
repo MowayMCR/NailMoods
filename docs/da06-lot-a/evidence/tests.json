@@ -1,0 +1,124 @@
+{
+  "fixture": "Local demonstration collection; not Marie’s live account. Same data and product HEX in every mood.",
+  "results": [
+    {
+      "mood": "soft-glam",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "mood": "soft-glam",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "mood": "soft-glam",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "mood": "soft-glam",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "mood": "dark-feminine",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "mood": "dark-feminine",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "mood": "dark-feminine",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "mood": "dark-feminine",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "mood": "cottagecore",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "mood": "cottagecore",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "mood": "cottagecore",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "mood": "cottagecore",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "mood": "pop-pastel",
+      "width": 320,
+      "status": "PASS"
+    },
+    {
+      "mood": "pop-pastel",
+      "width": 360,
+      "status": "PASS"
+    },
+    {
+      "mood": "pop-pastel",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "mood": "pop-pastel",
+      "width": 430,
+      "status": "PASS"
+    },
+    {
+      "action": ".nmUniverseCard",
+      "destination": "#profil/preferences",
+      "status": "PASS"
+    },
+    {
+      "action": ".nmPaletteCard",
+      "destination": "#creer",
+      "status": "PASS"
+    },
+    {
+      "action": ".nmTutorialCard",
+      "destination": "#tutoriel",
+      "status": "PASS"
+    },
+    {
+      "action": ".nmCollectionBento",
+      "destination": "#collection",
+      "status": "PASS"
+    },
+    {
+      "action": ".homeCompactIdea",
+      "destination": "#inspiration/",
+      "status": "PASS"
+    },
+    {
+      "action": ".nmHomeMood button",
+      "destination": "#profil/ambiance",
+      "status": "PASS"
+    },
+    {
+      "case": "Empty universes and collection contain no invented data",
+      "status": "PASS"
+    },
+    {
+      "case": "Long universe labels, three selected universes, empty collection, 320px",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

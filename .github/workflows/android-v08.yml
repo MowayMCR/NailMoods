@@ -1,0 +1,76 @@
+name: Android v0.8 validated DA06 (build only)
+on:
+  push:
+    branches: [build/v0.8-da06]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm test
+      - name: Embed approved Production UI
+        env:
+          NAILMOODS_MOBILE_ENV: production
+        run: |
+          node scripts/build-theme-css.mjs
+          npm run mobile:production
+          npx cap sync android
+          npm run mobile:assets
+      - name: Build release bundle and inspect available native symbols
+        run: |
+          mkdir -p artifacts/v08/evidence
+          chmod +x android/gradlew
+          ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain --info > artifacts/v08/evidence/gradle-release.log 2>&1
+          tail -40 artifacts/v08/evidence/gradle-release.log
+          cp android/app/build/outputs/bundle/release/app-release.aab artifacts/v08/
+          sha256sum artifacts/v08/app-release.aab > artifacts/v08/evidence/unsigned.sha256
+          cp android/app/src/main/assets/public/mobile-build.json artifacts/v08/evidence/
+          python3 - <<'PY'
+          import pathlib, subprocess, json, zipfile
+          results=[]
+          for p in pathlib.Path('android/app/build/intermediates/merged_native_libs').rglob('*.so'):
+              out=subprocess.check_output(['readelf','-SW',str(p)],text=True)
+              results.append({'library':p.name,'abi':p.parent.name,'has_symtab':'.symtab' in out,'has_debug_info':'.debug_info' in out})
+          with zipfile.ZipFile('artifacts/v08/app-release.aab') as z:
+              metadata=[n for n in z.namelist() if 'debugsymbols' in n or 'proguard.map' in n]
+          pathlib.Path('artifacts/v08/evidence/native-symbols.json').write_text(json.dumps({'input_libraries':results,'bundle_debug_metadata':metadata},indent=2))
+          print(json.dumps({'input_libraries':results,'bundle_debug_metadata':metadata},indent=2))
+          PY
+          mkdir -p artifacts/part00 artifacts/part01 artifacts/part02
+          split -b 20M -d artifacts/v08/app-release.aab artifacts/chunk-
+          for i in 00 01 02; do if [ -f "artifacts/chunk-$i" ]; then mv "artifacts/chunk-$i" "artifacts/part$i/"; fi; done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nailmoods-v08-unsigned-part00
+          path: artifacts/part00/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nailmoods-v08-unsigned-part01
+          path: artifacts/part01/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nailmoods-v08-unsigned-part02
+          path: artifacts/part02/
+          if-no-files-found: ignore
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nailmoods-v08-build-evidence
+          path: artifacts/v08/evidence/
+          retention-days: 14

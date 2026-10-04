@@ -1,0 +1,21 @@
+.nmSplash.nmBrandSplash{box-sizing:border-box;text-align:center;position:relative;background:var(--backgroundPrimary);color:var(--textPrimary);font-family:system-ui,sans-serif}.nmBrandSplash .nmSplashContent{position:relative;z-index:1;max-width:340px}.nmBrandSplash .nmSplashProgress{display:block;overflow:hidden;background:var(--borderDefault);border-radius:8px}.nmBrandSplash .nmSplashProgress:after{content:'';display:block;height:100%;width:45%;background:var(--progressActive);animation:nmBrandLoading 1.6s ease-in-out infinite alternate}@keyframes nmBrandLoading{to{transform:translateX(125%)}}@media(prefers-reduced-motion:reduce){.nmBrandSplash .nmSplashProgress:after{animation:none;width:100%}}
+/* Brand entrance. No artificial delay or always-on decorative animation. */
+.nmSplash.nmBrandSplash{display:flex;flex-direction:column;justify-content:center;gap:0;min-height:100dvh;padding:calc(30px + env(safe-area-inset-top,0px)) 25px calc(30px + env(safe-area-inset-bottom,0px));isolation:isolate;overflow:hidden}
+.nmBrandSplash .nmSplashPetal{position:absolute;inset:auto;width:420px;height:540px;border-radius:46% 54% 55% 40%;transform:rotate(-18deg);background:linear-gradient(140deg,var(--surfacePrimary),var(--cardHighlight));top:calc(50% - 315px);z-index:-1;opacity:.8}
+.nmBrandSplash:before,.nmBrandSplash:after{content:'';position:absolute;z-index:-1;width:240px;height:340px;mask:var(--nm-petal) center/contain no-repeat;background:var(--accentSecondary);opacity:.25}
+.nmBrandSplash:before{left:-100px;top:6%;transform:rotate(30deg)}
+.nmBrandSplash:after{right:-70px;bottom:2%;transform:rotate(-20deg)}
+.nmSplashEyebrow{font:600 9px system-ui,sans-serif;letter-spacing:.24em;color:var(--textSecondary)}
+.nmSplashLogo{display:grid;place-items:center;margin:36px auto 23px;width:142px;height:160px;background:var(--surfacePrimary);border:1px solid var(--borderDefault);border-radius:75px 75px 45px 45px;box-shadow:0 7px 20px color-mix(in srgb,var(--overlay) 4%,transparent)}
+.nmSplashLogo>img{width:87px;height:113px;object-fit:contain}
+.nmBrandSplash h1{font:47px Georgia,serif;letter-spacing:-.035em;margin:0 0 18px}
+.nmBrandSplash .nmSplashMotto{font:18px/1.5 Georgia,serif;color:var(--textSecondary)}
+.nmBrandSplash .nmSplashLoading{margin-top:42px;font-size:12px}
+.nmBrandSplash .nmSplashLoading p{font-size:12px;line-height:1.6}
+.nmBrandSplash .nmSplashProgress{width:115px;height:3px;margin:20px auto}
+.nmBrandSplash .nmSplashSignature{font:italic 17px/1.5 Georgia,serif!important;margin:50px 0 0;color:var(--textSecondary)}
+.nmSplashDoodle{position:absolute;inset:0;pointer-events:none;z-index:-1;color:var(--accentPrimary)}
+.nmSplashDoodle svg:first-child{position:absolute;width:22px;left:16%;top:28%;transform:rotate(-20deg);stroke-width:1}
+.nmSplashDoodle svg:last-child{position:absolute;width:28px;right:15%;top:61%;stroke-width:1}
+
+@media(max-height:700px){.nmBrandSplash .nmSplashLogo{margin:22px auto 15px;width:118px;height:135px}.nmBrandSplash .nmSplashLogo>img{width:73px;height:95px}.nmBrandSplash .nmSplashLoading{margin-top:24px}.nmBrandSplash .nmSplashSignature{margin-top:28px}}
