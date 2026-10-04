@@ -1,0 +1,44 @@
+import React,{useEffect,useMemo,useState} from 'react';
+import {ArrowLeft,Brush,Check,ChevronRight,Heart,Package,Play} from 'lucide-react';
+import {useSocial} from '../social/SocialContext';
+import {useStorage} from '../StorageContext';
+import {Button,MoodPicker} from '../design/UI';
+import {profileMood} from '../design/themes';
+import NailPreview from '../NailPreview';
+import RecipeSummary from '../RecipeSummary';
+import {validIdea} from '../inspirations';
+import {techniqueReference} from '../techniqueRules';
+import {techniqueLabel} from '../techniqueGroups';
+const displayTechnique=t=>techniqueLabel(techniqueReference.find(r=>r.id===t)?.label||({line:'Lignes',dots:'Pois',monochrome:'Couleur unie'}[t])||t);
+import {poseRepository} from './repository';
+import {projectFromIdea} from './model';
+import {DIY_STATES,diyChecklist,diyColor} from './diy';
+import './diy.css';
+function useRepository(){const social=useSocial(),storage=useStorage();return useMemo(()=>social?.client&&social.userId&&storage.workspaceId?poseRepository(social.client,{userId:social.userId,workspaceId:storage.workspaceId}):null,[social?.client,social?.userId,storage.workspaceId]);}
+export function DiyEntry({idea}){
+ const social=useSocial(),storage=useStorage(),repo=useRepository();const [busy,setBusy]=useState(false),[error,setError]=useState('');
+ if(import.meta.env.VITE_POSE_CYCLE_ENABLED!=='true')return null;
+ const premium=idea.intent==='photos'&&!['plus','pro'].includes(social?.tier);
+ async function open(){setBusy(true);setError('');try{const project=await repo.importLegacy(projectFromIdea(idea,{userId:social.userId,workspaceId:storage.workspaceId}));window.location.hash='creer/diy/'+project.id;}catch(e){setError(e.message);}finally{setBusy(false);}}
+ return <section className="diyEntry"><Brush aria-hidden="true"/><div><h2>De l’envie à ta pose</h2><p>Ta recette, les produits que tu possèdes et ce qu’il reste à préparer.</p></div><Button disabled={!repo||premium} busy={busy} onClick={open}>Je veux la réaliser <ChevronRight size={17}/></Button>{!repo&&<p>Connecte-toi pour enregistrer ce projet privé et préparer ta fiche DIY.</p>}{premium&&<p>La préparation d’un projet depuis une photo est réservée à Plus et Pro.</p>}{error&&<p role="alert">{error}</p>}</section>;
+}
+function Swatch({product}){const color=diyColor(product);return <span className="diySwatch" aria-label={color?'Teinte '+color:'Teinte non renseignée'}>{color?<i style={{background:color}}/>:<Package size={20}/>}</span>;}
+function Need({row,onCollection}){const [symbol,label]=DIY_STATES[row.state];return <li className={'diyNeed diyNeed-'+row.state}><div className="diyNeedTop">{row.target?<Swatch product={row.target}/>:<span className="diyTool"><Brush size={22}/></span>}<div><small>{row.kind==='product'?'PRODUIT':'MATÉRIEL / DÉCORATION'}</small><h3>{row.label}</h3>{row.target?.type!=='Matériel'&&row.target?.finish&&<small>{row.target.type} · {row.target.finish}</small>}</div></div><span className="diyState">{symbol} {label}</span><p>{row.reason}</p>{row.matches.map(p=><button className="diyMatch" key={p.id} onClick={()=>onCollection(p.id)}><Swatch product={p}/><span><b>{p.name}</b><small>{[p.brand,p.finish,p.opacity||p.coverage].filter(Boolean).join(' · ')||'Ma Collection'}</small></span><ChevronRight size={17}/></button>)}{row.unknown.map(v=><p className="diyNote" key={v}>{v}</p>)}</li>;}
+export default function DiyView({route,items,profile,onMoodChange,onCollection,onTutorial}){
+ const repo=useRepository(),social=useSocial();const [project,setProject]=useState(null),[error,setError]=useState(''),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[moods,setMoods]=useState(false),[filter,setFilter]=useState('all'),[reload,setReload]=useState(0);
+ const id=route.match(/^#creer\/diy\/([a-f0-9-]{36})$/i)?.[1];
+ useEffect(()=>{let alive=true;setProject(null);setError('');setLoading(Boolean(repo&&id));if(repo&&id)repo.get('projects',id).then(p=>{if(alive){if(!p)throw Error('Ce projet n’est pas accessible dans ton compte.');setProject(p);}}).catch(e=>{if(alive)setError(e.message);}).finally(()=>{if(alive)setLoading(false);});return()=>{alive=false;};},[repo,id,reload]);
+ const idea=validIdea(project?.details.composition)?project.details.composition:null,checklist=useMemo(()=>idea?diyChecklist(idea,items):null,[idea,items]);
+ const premium=project&&(['outfit','image'].includes(project.details.source)||idea?.intent==='photos')&&!['plus','pro'].includes(social?.tier);
+ async function tutorial(){setBusy(true);setError('');try{const sessionId=onTutorial(idea,false,{open:false});if(!sessionId)throw Error('Le tutoriel n’a pas pu être enregistré. Réessaie.');const saved=await repo.save('projects',{...project,details:{...project.details,tutorialSessionId:sessionId}});setProject(saved);window.location.hash='tutoriel/'+sessionId;}catch(e){setError(e.message);}finally{setBusy(false);}}
+ return <div className="diyPage"><div className="diyToolbar"><button className="nmQuiet" onClick={()=>{window.location.hash=project?'creer/pose/'+project.id:'creer/projets-pose';}}><ArrowLeft size={17}/> Mon projet</button><button className="nmQuiet" onClick={()=>setMoods(!moods)}><Heart size={17}/>{profileMood(profile).name}</button></div>{moods&&<MoodPicker value={profileMood(profile).id} onChange={onMoodChange}/>}
+ {loading&&<p role="status">Préparation de ta fiche…</p>}{!repo&&!loading&&<p>Connecte-toi pour retrouver tes projets privés.</p>}{!id&&<p>Cette adresse de projet est invalide.</p>}{error&&<div role="alert" className="diyError"><p>{error}</p><Button variant="secondary" onClick={()=>setReload(v=>v+1)}>Recharger la fiche</Button></div>}
+ {project&&<><div className="diyHeading"><small>MA FICHE DIY · PRIVÉE</small><h1>{project.title}</h1><p>Tout préparer, à ton rythme.</p></div>{!idea?<section className="diyCard"><h2>Une inspiration à ajouter</h2><p>Ce projet ne contient pas encore de composition. Ouvre une inspiration puis choisis « Je veux la réaliser ».</p><Button onClick={()=>{window.location.hash='creer';}}>Trouver une inspiration</Button></section>:<>
+ <section className="diyHero diyCard"><div className="diyPreview"><NailPreview idea={idea}/></div><div className="diyFacts"><span>{idea.shape} · {idea.length}</span><span>≈ {idea.minutes} min pour le décor</span></div><div className="diyTechniques">{checklist.techniques.map(t=><span key={t}>{displayTechnique(t)}</span>)}</div></section>
+ <section className="diyOverview diyCard"><small>AVANT LE PREMIER GESTE</small><h2>Ai-je tout ce qu’il faut ?</h2><div className="diyCounts">{Object.entries(DIY_STATES).filter(([s])=>s!=='check'||checklist.counts[s]>0).map(([s,[icon,label]])=><span key={s}><b>{checklist.counts[s]}</b><small>{icon} {label}</small></span>)}</div><p>Comparaison avec ta Collection actuelle. Une teinte proche reste une suggestion visuelle, pas une compatibilité chimique.</p></section>
+ <section className="diyNeedsSection"><h2>Ce qu’il me faut</h2><div className="diyFilters" role="group" aria-label="Filtrer les besoins">{[['all','Tout'],['product','Produits'],['tool','Matériel']].map(([v,label])=><button key={v} aria-pressed={filter===v} onClick={()=>setFilter(v)}>{filter===v&&<Check size={14}/>} {label}</button>)}</div><ul className="diyNeeds">{checklist.rows.filter(r=>filter==='all'||(filter==='product'?r.kind==='product':r.kind!=='product')).map(row=><Need key={row.id} row={row} onCollection={onCollection}/>)}</ul>{!checklist.rows.some(r=>filter==='all'||(filter==='product'?r.kind==='product':r.kind!=='product'))&&<p>Aucun besoin de cette catégorie n’est identifié dans cette recette.</p>}</section>
+ <section className="diyCard diyGuide"><small>UN GESTE APRÈS L’AUTRE</small><h2>Ta recette, étape par étape</h2><p>Le guide existant reprend les couleurs et leur placement sur chaque doigt.</p>{checklist.partial.length>0&&<p className="diyNote">Guide partiel pour : {checklist.partial.map(displayTechnique).join(', ')}. Les gestes spécifiques de ces techniques ne sont pas encore détaillés. Complète avec un tutoriel adapté et le protocole fabricant.</p>}<RecipeSummary idea={idea}/>{checklist.notes.length>0&&<details><summary>Points à préparer</summary><ul>{checklist.notes.map(n=><li key={n}>{n}</li>)}</ul></details>}<p className="diyNote">Base, finition, lampe et temps de catalysation : suis les recommandations du fabricant. Les alternatives ne remplacent pas automatiquement les produits de la recette.</p><Button busy={busy} disabled={premium} onClick={tutorial}><Play size={17}/> Ouvrir le tutoriel</Button>{premium&&<p>Reprendre la création depuis une photo nécessite Plus ou Pro. Ta fiche reste consultable.</p>}</section>
+ <Button variant="secondary" onClick={()=>{window.location.hash='creer/planning/'+project.id;}}>Planifier cette pose</Button><p className="diyFooter">Même projet, même recette. Tes photos et notes restent privées.</p>
+ </>}</>}
+ </div>;
+}

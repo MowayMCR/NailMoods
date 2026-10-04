@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "reportImages": 7,
+  "reportTabs": 4,
+  "reportWidths": [
+    320,
+    390,
+    1200
+  ],
+  "planningWidths": [
+    320,
+    360,
+    390,
+    430
+  ],
+  "minimumMonthInset": 16,
+  "errors": []
+}

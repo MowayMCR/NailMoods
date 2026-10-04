@@ -49,3 +49,5 @@ ios/App/App/capacitor.config.json
 /docs/pose-lot3/evidence/*.png
 
 /docs/pose-month-followup/evidence/*.png
+
+/docs/pose-lot4/evidence/*.png

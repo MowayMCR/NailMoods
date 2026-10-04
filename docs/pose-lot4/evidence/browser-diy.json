@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "at": "2026-10-04T17:00:23.949Z",
+  "checks": [
+    "Inspiration réelle → Je veux la réaliser → même pose_projects ; produit possédé, alternative proche, produit et pinceau manquants",
+    "Marges des pages et cartes >=16 px, sans débordement aux largeurs 320/360/390/430",
+    "Quatre captures réelles, fonds/surfaces distincts, données et couleurs produits identiques",
+    "Lien vers la fiche du produit réellement possédé",
+    "Suppression d’un produit : l’alternative disparaît après reprise, sans modifier la recette",
+    "Deux ouvertures de la même inspiration réutilisent le même projet",
+    "Le tutoriel existant est ouvert et sa session est reliée au Projet de pose",
+    "Second vrai compte : lecture et modification du projet refusées",
+    "Suivi : marges intérieures réelles conservées autour des textes et de la timeline, 320 à 430 px",
+    "Compte Free réel : fiche DIY personnelle et tutoriel autorisés ; IA+ toujours fermé"
+  ],
+  "errors": [],
+  "environment": "recette",
+  "fixture": "Produits et inspiration synthétiques, comptes de recette authentiques. Données nettoyées à la fin.",
+  "physicalDeviceTests": false
+}

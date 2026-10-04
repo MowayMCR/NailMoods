@@ -1,0 +1,20 @@
+✔ DIY exact reference present, depleted reference absent, changed snapshot flagged (1.419736ms)
+✔ DIY conceptual IDs cannot imply ownership; near colors remain visual only (0.650564ms)
+✔ DIY a close color with different finish, family or opacity is excluded (0.266163ms)
+✔ DIY ranks near alternatives and preserves every product HEX (0.756514ms)
+✔ DIY exact catalog identity is reused, a name or brand alone never is (0.260965ms)
+✔ DIY no visual matching from a family fallback or unknown finish (0.166392ms)
+✔ DIY French/dots reuse drawing needs without inventing a UV lamp for normal polish (5.065298ms)
+✔ DIY equipment requires correct category and specificity, quantity is respected (1.379706ms)
+✔ DIY gel requires lamp without deriving a curing duration; advanced guide is explicit (0.494898ms)
+✔ DIY base/top are only listed when actually specified, no mutation/duplicate needs (0.938449ms)
+✔ DIY ignores a Collection family palette promoted to a shade by legacy mapping (0.159782ms)
+✔ DIY stamping uses existing category and differentiates plate, stamp and scraper (0.627138ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 126.125862

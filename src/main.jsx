@@ -192,14 +192,14 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     if (session.status === 'paused' && !saveTutorials(actOnTutorial(tutorials, id, { type: 'resume' }))) return;
     openTutorial(id);
   }
-  function startTutorial(idea, newPose = false) {
+  function startTutorial(idea, newPose = false, {open=true} = {}) {
     const existing = !newPose && tutorials.sessions.find(session => session.idea.key === idea.key && session.status !== 'completed');
     if (existing) {
       if (existing.status === 'paused' && !saveTutorials(actOnTutorial(tutorials, existing.id, { type: 'resume' }))) return;
-      openTutorial(existing.id); return;
+      if(open)openTutorial(existing.id); return existing.id;
     }
     const session = newTutorial(idea, 'pose-' + messageId());
-    if (saveTutorials(addTutorial(tutorials, session))) openTutorial(session.id);
+    if (saveTutorials(addTutorial(tutorials, session))) {if(open)openTutorial(session.id); return session.id;}
   }
   function finishIdea(idea) {
     const result = markIdeaDone(tutorials, idea, 'pose-' + messageId());
