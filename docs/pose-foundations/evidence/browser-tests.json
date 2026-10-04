@@ -1,0 +1,17 @@
+{
+  "scope": "React + dépôt réel + PostgreSQL PGlite local; comptes fictifs. Aucune connexion Production, aucun envoi calendrier/notification.",
+  "checks": [
+    "Création via dépôt et PostgreSQL local",
+    "Reprise après rechargement, titre et formulaire modifiés conservés",
+    "Planning et rappel explicites sauvegardés",
+    "Aucun débordement 320 px",
+    "Aucun débordement 360 px",
+    "Aucun débordement 390 px",
+    "Aucun débordement 430 px",
+    "Mêmes données présentées avec les tokens DA06",
+    "Désactivation persistée du rappel",
+    "Suppression de date et de ses rappels liés",
+    "Suppression et absence confirmée après rechargement"
+  ],
+  "errors": []
+}

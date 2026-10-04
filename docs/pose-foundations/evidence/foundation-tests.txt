@@ -1,0 +1,24 @@
+✔ SQL: own project CRUD, revision conflict, historical import uniqueness and immutable ownership (1792.901038ms)
+✔ SQL: all three tables reject peer/anonymous writes and reads; project deletion cascades planning/reminders (1276.20971ms)
+✔ SQL: explicit dates/DST, canceled actions, reminder edits and invalid media are checked (1261.495456ms)
+✔ SQL: source links cannot point into another account and Journal rows are never rewritten (1192.292289ms)
+✔ SQL: IA+ independent from Free/Plus/Pro and manual/store rights, hidden until internal flag AND entitlement (1209.534749ms)
+✔ SQL: suspension/confirmation guards and existing photo-project rights cannot be bypassed by IA+ (1143.230024ms)
+✔ SQL: anonymous inserts/updates fail, private grants cannot be forged, revoked/future grants deny access (1200.680379ms)
+✔ SQL: local catalog security checks and rollback preserve the old schema (1189.925745ms)
+✔ Project uses the existing composition, exact HEX, availability and tutorial (3.859369ms)
+✔ Legacy Journal remains byte-identical and multiple realizations keep distinct identity (15.816117ms)
+✔ Tutorial and its Journal resolve to the same lifecycle identity (0.893088ms)
+✔ Photo adapters keep the existing source private and do not duplicate bytes (0.466334ms)
+✔ Planning preserves all-day dates, explicit user instants and DST boundaries (2.600016ms)
+✔ Planning uses the real calendar week and excludes canceled actions (2.295357ms)
+✔ AI+ stays hidden without migration and never falls back on a permission error (0.44367ms)
+✔ Repository + real Postgres: create, reload, update, stale conflict, import idempotency and cascade delete (1844.452321ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10395.637608
