@@ -135,11 +135,13 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
   const [mode, setMode] = useState('illustrated');
   useEffect(() => setMode('illustrated'), [idea.id, idea.key]);
   const shape = normalize(idea.shape);
-  const path = shape.includes('stiletto') ? 'M12 83 32 7 52 83Q52 94 32 94T12 83Z'
-    : /coffin|ballerine/.test(shape) ? 'M12 82 21 13H43L52 82Q52 94 32 94T12 82Z'
-      : shape.includes('amande') ? 'M15 81C13 56 19 25 32 14C45 25 51 56 49 81C48 96 16 96 15 81Z'
-        : shape.includes('carre') ? 'M12 82V22Q12 15 19 15H45Q52 15 52 22V82Q52 94 32 94T12 82Z'
-          : 'M12 82V38C12 8 52 8 52 38V82Q52 94 32 94T12 82Z';
+  const path = shape.includes('stiletto') ? 'M13 82 32 6 51 82C50 93 43 98 32 98S14 93 13 82Z'
+    : /coffin|ballerine/.test(shape) ? 'M13 81 20 14H44L51 81C50 93 43 98 32 98S14 93 13 81Z'
+      : shape.includes('amande') ? 'M15 80C14 55 20 25 32 12C44 25 50 55 49 80C48 93 42 98 32 98S16 93 15 80Z'
+        : shape.includes('ovale') ? 'M14 80C13 55 18 27 32 15C46 27 51 55 50 80C49 93 42 98 32 98S15 93 14 80Z'
+          : shape.includes('ronde') ? 'M13 79V39C13 20 21 11 32 11S51 20 51 39V79C50 92 43 97 32 97S14 92 13 79Z'
+            : shape.includes('carre') ? 'M13 81V22C13 16 17 13 22 13H42C47 13 51 16 51 22V81C50 93 43 97 32 97S14 93 13 81Z'
+              : 'M14 80C14 54 18 27 32 15C46 27 50 54 50 80C49 93 42 98 32 98S15 93 14 80Z';
   const illustratedPreview = <div className={'nailPreview illustratedNails ' + (/courte/.test(normalize(idea.length)) ? 'shortNails ' : '') + (compact ? 'compactNails ' : '') + (onSelect ? 'interactiveNails ' : '')} role={onSelect ? 'group' : 'img'} aria-label={onSelect ? 'Choisir un ongle' : 'Inspiration illustrée : ' + idea.description}>
     {idea.nails.map((nail, index) => {
       const color = nail.color || '#b88699', light = mix(color, '#ffffff', .45), dark = mix(color, '#100711', .18);
@@ -160,7 +162,9 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
           <filter id={ids.blur}><feGaussianBlur stdDeviation="4"/></filter>
           <filter id={ids.relief} x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1.5" dy="3" stdDeviation="2" floodColor="#25111d" floodOpacity=".55"/></filter>
         </defs>
-        <path d={path} fill={mode === 'realistic' ? dark : `url(#${ids.depth})`} stroke={mix(color, '#381728', .42)} strokeOpacity=".38" strokeWidth=".9" />
+        <ellipse cx="32" cy="91" rx="18" ry="5" fill="#29131d" opacity=".08" />
+        <path d={path} fill={mode === 'realistic' ? dark : `url(#${ids.depth})`} stroke={mix(color, '#381728', .42)} strokeOpacity=".32" strokeWidth=".85" />
+        <path d="M19 80Q32 88 45 80" fill="none" stroke="#fff" strokeOpacity=".16" strokeWidth="1.1" strokeLinecap="round" />
         <g clipPath={'url(#' + ids.clip + ')'}>
           {mode === 'realistic' ? <MaterialLayer technique={nail.technique || rendering.technique} nail={nail} index={index} ids={ids} /> : <>
             <IllustratedTechniqueLayer technique={nail.technique} nail={nail} ids={ids} />
