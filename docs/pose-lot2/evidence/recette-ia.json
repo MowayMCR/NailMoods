@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-04T13:58:30.994Z",
+  "project": "pueqkbwfwxgqzmkauxoz",
+  "realAccounts": 2,
+  "checks": [
+    "Deux authentifications réelles et espaces personnels distincts",
+    "IA+ autorisé au compte interne titulaire, masqué pour le second compte",
+    "Attribution IA+ par le client refusée"
+  ],
+  "passed": true
+}

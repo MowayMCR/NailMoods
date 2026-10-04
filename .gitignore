@@ -43,3 +43,5 @@ ios/App/App/capacitor.config.json
 
 # Local foundation review captures are delivered in the validation dossier.
 /docs/pose-foundations/evidence/*.png
+
+/docs/pose-lot2/evidence/*.png

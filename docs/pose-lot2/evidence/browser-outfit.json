@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-04T14:49:02.677Z",
+  "project": "pueqkbwfwxgqzmkauxoz",
+  "scope": "Application exécutée, Auth et base Supabase recette réels. Tenue synthétique et deux produits de test. Aucun appel IA. Pas de test caméra sur appareil physique.",
+  "checks": [
+    "Application réelle : écran Créer connecté au compte de recette",
+    "Import et analyse locale d’une image de tenue synthétique",
+    "Les cinq modes produisent chacun trois propositions",
+    "Option Collection : produits possédés avec qualification de proximité",
+    "Aucun débordement 320/360/390/430 px",
+    "Quatre moods globaux, mêmes données et HEX produits identiques",
+    "Proposition ouverte et sauvegardée dans pose_projects avec événement Planning",
+    "Reprise réelle après rechargement, tenue et événement conservés",
+    "Second vrai compte : projet, fichier privé et URL signée refusés"
+  ],
+  "errors": [],
+  "passed": true
+}

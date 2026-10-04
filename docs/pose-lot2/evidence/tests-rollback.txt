@@ -1,0 +1,11 @@
+✔ atomic outfit save, event in existing Planning, idempotent retry and cleanup references (1581.308356ms)
+✔ Free and foreign/missing outfit paths refused; invalid event rolls back entire project (1205.938937ms)
+✔ empty-data rollback restores legacy cleanup and removes outfit RPC (1181.542985ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4111.428638

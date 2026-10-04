@@ -1,0 +1,11 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {createClient} from '@supabase/supabase-js';import {newProject} from '../src/poseCycle/model.js';
+const cfg=JSON.parse(fs.readFileSync('src/cloud/recette-public-config.json')),creds=JSON.parse(fs.readFileSync(process.env.NM_POSE_FIXTURES));assert.equal(new URL(cfg.VITE_SUPABASE_URL).hostname,'pueqkbwfwxgqzmkauxoz.supabase.co');
+const c=createClient(cfg.VITE_SUPABASE_URL,cfg.VITE_SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});let id=crypto.randomUUID();
+try{const login=await c.auth.signInWithPassword(creds.c);assert.ifError(login.error);const cap=await c.rpc('nm_capabilities');assert.ifError(cap.error);assert.equal(cap.data.tier,'free');const w=await c.from('workspaces').select('id').eq('kind','personal').eq('owner_user_id',login.data.user.id).single();assert.ifError(w.error);
+const insert=await c.from('journal_entries').insert({id,workspace_id:w.data.id,created_by:login.data.user.id,performed_on:'2026-10-04',visibility:'private',snapshot:{id,title:'Pose personnelle Free — fixture'}});assert.ifError(insert.error);
+const row=await c.from('journal_entries').select('snapshot').eq('id',id).single();assert.ifError(row.error);assert.equal(row.data.snapshot.title,'Pose personnelle Free — fixture');
+const update=await c.from('journal_entries').update({notes:'Note personnelle'}).eq('id',id).select('notes').single();assert.ifError(update.error);assert.equal(update.data.notes,'Note personnelle');
+assert.ok((await c.from('journal_entries').update({visibility:'public'}).eq('id',id)).error);assert.ok((await c.from('pose_projects').insert(newProject({userId:login.data.user.id,workspaceId:w.data.id,title:'Photo interdite',source:'outfit'}))).error);
+const del=await c.from('journal_entries').delete().eq('id',id).select('id').single();assert.ifError(del.error);id=null;
+fs.writeFileSync('docs/pose-lot2/evidence/recette-journal-free.json',JSON.stringify({passed:true,tier:'free',checks:['Création/relecture/modification/suppression Journal personnel','Publication publique refusée','Création projet source tenue refusée'],remote:true},null,2));console.log('Journal Free : CRUD personnel réussi, publication et tenue refusées.');
+}finally{if(id)await c.from('journal_entries').delete().eq('id',id);await c.auth.signOut();}

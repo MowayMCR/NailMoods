@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-04T13:57:42.353Z",
+  "project": "pueqkbwfwxgqzmkauxoz",
+  "realAccounts": 2,
+  "checks": [
+    "Deux authentifications réelles et espaces personnels distincts",
+    "CRUD, reprise et conflit de révision sur les deux comptes",
+    "Projets/planning/rappels : lecture, modification et suppression croisée refusées dans les deux sens",
+    "Désactivation des rappels et suppression en cascade vérifiées",
+    "IA+ masqué et refusé par défaut pour les deux comptes"
+  ],
+  "passed": true
+}

@@ -1,6 +1,6 @@
 export function tierCapabilities(tier) {
  const personal=['free','plus','pro'].includes(tier);
- return {personal,social:tier==='plus'||tier==='pro',photos:tier==='plus'||tier==='pro',pro:tier==='pro',inspire:true,scan:true};
+ return {personal,journal:personal,social:tier==='plus'||tier==='pro',photos:tier==='plus'||tier==='pro',pro:tier==='pro',inspire:true,scan:true};
 }
 export const ACCOUNT_OFFERS=Object.freeze([
  {tier:'free',name:'Free',tagline:'Découvrir NailMoods',features:['Collection et matériel personnels','Inspirations illustrées et tutoriels','Journal, poses et favoris personnels']},

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "tier": "free",
+  "checks": [
+    "Création/relecture/modification/suppression Journal personnel",
+    "Publication publique refusée",
+    "Création projet source tenue refusée"
+  ],
+  "remote": true
+}
