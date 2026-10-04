@@ -1,0 +1,20 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+✔ Copying web assets from dist-mobile to ios/App/App/public in 25.79ms
+✔ Creating capacitor.config.json in ios/App/App in 577.74μs
+✔ copy ios in 55.74ms
+✔ Updating iOS plugins in 3.98ms
+[info] All Capacitor plugins have a Package.swift file and will be included in Package.swift
+[info] Writing Package.swift
+[info] Found 10 Capacitor plugins for ios:
+       @capacitor/app@8.1.1
+       @capacitor/browser@8.0.4
+       @capacitor/camera@8.2.4
+       @capacitor/filesystem@8.1.3
+       @capacitor/keyboard@8.0.5
+       @capacitor/local-notifications@8.3.1
+       @capacitor/network@8.0.1
+       @capacitor/preferences@8.0.1
+       @capacitor/share@8.0.3
+       @capacitor/splash-screen@8.0.2
+✔ update ios in 38.39ms
+[info] Sync finished in 0.127s

@@ -1,3 +1,4 @@
+import PlanningView from './poseCycle/PlanningView';
 import OutfitFlow,{outfitEnabled} from './poseCycle/OutfitFlow';
 import {surpriseTechniques, updateTechniqueChoice, techniqueWarnings} from './techniqueRules';
 import {techniqueGroups, techniqueGroup, techniqueLabel} from './techniqueGroups';
@@ -42,7 +43,7 @@ const durationLabel = value => value === 90 ? '90 min max' : value + ' min max';
 const polishCountLabel = value => value === 'auto' ? 'Automatique' : value + ' vernis';
 const polishCountHints = { auto: 'Des associations de 1 à 5 couleurs.', 1: 'Un seul vernis coloré.', 2: 'Duos, accents et détails.', 3: 'Un trio à répartir sur les ongles.', 4: 'Quatre vernis dans une même composition.', 5: 'Un vernis différent sur chaque ongle.' };
 
-export default function CreateView({ onMoodChange, onPublish, onShareToPro, onIdeaBack, ideaAction, onSaveIdea, onSaveProject, onJournalIdea, entryOptions, onEntryConsumed, onRename, onEquipment, items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
+export default function CreateView({ onProfileChange, onMoodChange, onPublish, onShareToPro, onIdeaBack, ideaAction, onSaveIdea, onSaveProject, onJournalIdea, entryOptions, onEntryConsumed, onRename, onEquipment, items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
   const browserStorage=useStorage();
   const social=useSocial();
   const [state, setState] = useState(() => { const saved = readCreationState(browserStorage, profile); return entryOptions ? { ...saved, options: { ...saved.options, ...entryOptions, ...(entryOptions.intent === 'inspire' ? { requiredColorIds: [] } : {}) }, generated: false, selected: null } : saved; });
@@ -181,8 +182,9 @@ export default function CreateView({ onMoodChange, onPublish, onShareToPro, onId
   if ((proDrawing || route === '#creer/atelier') && canDrawPro) return <div className="creationPage proDrawingPage"><button type="button" className="quietButton" onClick={()=>{setProDrawing(null);onRoute('create');}}>Revenir à Créer</button><h1>Mon Atelier</h1><p>Dessine, retrouve ta bibliothèque et crée une pose à partir de tes dessins.</p><ProCreationsPanel client={social.client} userId={social.userId} workspaceId={browserStorage.workspaceId} defaultShape={profile.shape} defaultLength={profile.length} onUse={useSavedDrawing} startDrawing={proDrawing==='draw'}/></div>;
   const drawingAction = canDrawPro && <button type="button" className="manualSetAction proDrawAction" onClick={()=>setProDrawing('draw')}><Brush/><span><b>Dessiner sur un ongle · Pro</b><small>Pinceau, gomme et couleurs au choix</small></span><ChevronRight/></button>;
 
+  if(outfitEnabled() && route.startsWith('#creer/planning'))return <PlanningView profile={profile} onChange={onProfileChange} route={route}/>;
   if(outfitEnabled() && /^#creer\/(tenue|pose\/|projets-pose)/.test(route)) return <OutfitFlow items={items} profile={profile} route={route} onMoodChange={onMoodChange} onBack={()=>{window.location.hash='creer';setSourceOpen(true);}}/>;
-  if(sourceOpen && route!=='#creer/atelier') return <CreationSources outfit={outfitEnabled()} onPoseProjects={()=>{window.location.hash='creer/projets-pose';}} onJournal={()=>onRoute('journal')} onChoose={id=>{
+  if(sourceOpen && route!=='#creer/atelier') return <CreationSources onPlanning={()=>{window.location.hash='creer/planning';}} outfit={outfitEnabled()} onPoseProjects={()=>{window.location.hash='creer/projets-pose';}} onJournal={()=>onRoute('journal')} onChoose={id=>{
     if(id==='outfit'){window.location.hash='creer/tenue';return;}
     if(id==='atelier'){window.location.hash='creer/atelier';return;}
     setSourceOpen(false);

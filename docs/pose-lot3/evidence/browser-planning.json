@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "at": "2026-10-04T15:31:03.763Z",
+  "checks": [
+    "Créer un moment dans le vrai Planning et statut Projet planifié",
+    "Rappel persisté à la date choisie ; navigateur annonce honnêtement la limite hors app",
+    "Modifier la date, désactiver puis réactiver le rappel",
+    "Modification et reprise après rechargement, rappel conservé",
+    "Téléchargement réel .ics, heure UTC correcte et note privée exclue par défaut",
+    "Planning sans débordement 320/360/390/430 px",
+    "Quatre captures réelles du même Planning et des mêmes données",
+    "Préférence de catégorie mémorisée dans le profil",
+    "Aller-retour Projet ↔ Planning sans copie de modèle",
+    "Second vrai compte : lecture, modification Planning et suppression rappel étrangers refusées",
+    "Annulation désactive les rappels ; suppression retire les rappels en cascade",
+    "Troisième vrai compte Free : projet personnel, Planning et rappel autorisés"
+  ],
+  "errors": [],
+  "nativeDeviceTests": false,
+  "scope": "Application exécutée avec Auth, DB, RLS et profil réels en recette. Calendrier .ics réel. Aucun test physique Android/iOS."
+}

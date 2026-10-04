@@ -9,6 +9,7 @@ const config: CapacitorConfig = {
   android: { backgroundColor: '#fffaf7' },
   plugins: {
     SplashScreen: { launchShowDuration: 400, launchAutoHide: true, backgroundColor: '#fffaf7', showSpinner: false },
+    LocalNotifications: { presentationOptions: ['banner', 'list', 'sound'] },
     Keyboard: { resize: 'body', resizeOnFullScreen: true },
   },
 };

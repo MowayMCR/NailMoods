@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//NailMoods//Planning//FR
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:952b9f1a-19b8-47da-b49f-de46c5d70a18@nailmoods.com
+DTSTAMP:20261004T152932Z
+SEQUENCE:2
+DTSTART:20270601T160000Z
+DTEND:20270601T170000Z
+SUMMARY:NailMoods — Ma pose cassis\, prête
+DESCRIPTION:Projet privé NailMoods : http://127.0.0.1:4300/#creer/pose/3c9
+ 05bdc-598c-4fbe-a77c-5ff7bab9090c\nConnecte-toi à ton compte pour l’ouv
+ rir.
+LOCATION:
+CLASS:PRIVATE
+END:VEVENT
+END:VCALENDAR

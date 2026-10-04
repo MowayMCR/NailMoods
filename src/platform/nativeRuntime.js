@@ -1,3 +1,5 @@
+import {queueProjectLink} from '../poseCycle/projectLinks.js';
+import {setupPlanningNotifications} from '../poseCycle/notifications.js';
 import { createNativeCache } from './nativeCache.js';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
@@ -26,8 +28,9 @@ export async function initializeNative(){
   if(cleanup)await nativeServices().purgeAccount(cleanup);
   await App.addListener('appRestoredResult',result=>{void acceptRestoredCamera(result).catch(()=>nativeNotice('La photo reste en attente de récupération. Réessaie.'));});
   const environment=import.meta.env.VITE_DEPLOYMENT_ENV;
-  await App.addListener('appUrlOpen',({url})=>{queueAuthUrl(url,environment);});
-  const launch=await App.getLaunchUrl();if(launch?.url)queueAuthUrl(launch.url,environment);
+  await App.addListener('appUrlOpen',({url})=>{if(!(import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&queueProjectLink(url,environment)))queueAuthUrl(url,environment);});
+  const launch=await App.getLaunchUrl();if(launch?.url){if(!(import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&queueProjectLink(launch.url,environment)))queueAuthUrl(launch.url,environment);}
+  if(import.meta.env.VITE_POSE_CYCLE_ENABLED==='true')await setupPlanningNotifications();
   const connectivity=({connected})=>{document.documentElement.classList.toggle('nm-offline',!connected);window.dispatchEvent(new Event(connected?'online':'offline'));window.dispatchEvent(new CustomEvent('nm-native-connectivity',{detail:connected}));};
   const current=await Network.getStatus();connectivity(current);
   await Network.addListener('networkStatusChange',connectivity);

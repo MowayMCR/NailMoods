@@ -1,0 +1,8 @@
+import {noticeCandidates} from './planning.js';
+const ours=n=>n.extra?.scope==='pose-planning'||n.id>=1700000000&&n.id<1700000060;
+// Serialize OS operations; a sign-out invalidates any in-flight schedule before cleanup.
+export function createReminderScheduler(adapter){let epoch=0,queue=Promise.resolve();const serialize=job=>{const result=queue.then(job,job);queue=result.catch(()=>{});return result;};return {
+ invalidate(){epoch++;},
+ clear(){const ticket=++epoch;return serialize(async()=>{const pending=await adapter.getPending();const ids=pending.notifications.filter(ours).map(n=>({id:n.id}));if(ids.length)await adapter.cancel({notifications:ids});const delivered=await adapter.getDeliveredNotifications();const old=delivered.notifications.filter(ours);if(old.length)await adapter.removeDeliveredNotifications({notifications:old});return ticket;});},
+ sync(input){const ticket=epoch;return serialize(async()=>{if(ticket!==epoch)return {state:'superseded'};const pending=await adapter.getPending();const existing=pending.notifications.filter(ours).map(n=>({id:n.id}));if(existing.length)await adapter.cancel({notifications:existing});if(ticket!==epoch)return {state:'superseded'};const permission=await adapter.checkPermissions();if(permission.display!=='granted')return {state:'permission',count:0};const notifications=noticeCandidates(input);if(ticket!==epoch)return {state:'superseded'};if(notifications.length)await adapter.schedule({notifications});if(ticket!==epoch){await adapter.cancel({notifications:notifications.map(n=>({id:n.id}))});return {state:'superseded'};}return {state:'scheduled',count:notifications.length};});}
+};}
