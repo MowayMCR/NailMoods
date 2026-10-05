@@ -61,6 +61,25 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - name: Report Apple signing readiness without revealing values
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_DISTRIBUTION_P12_BASE64: ${{ secrets.APPLE_DISTRIBUTION_P12_BASE64 }}
+          APPLE_DISTRIBUTION_P12_PASSWORD: ${{ secrets.APPLE_DISTRIBUTION_P12_PASSWORD }}
+          APPLE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+          BUNDLE_CONFIRMED: ${{ vars.IOS_BUNDLE_ID_CONFIRMED }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          names=['APPLE_TEAM_ID','APPLE_DISTRIBUTION_P12_BASE64','APPLE_DISTRIBUTION_P12_PASSWORD','APPLE_PROVISIONING_PROFILE_BASE64','APP_STORE_CONNECT_KEY_ID','APP_STORE_CONNECT_ISSUER_ID','APP_STORE_CONNECT_PRIVATE_KEY']
+          result={'missingSecretNames':[n for n in names if not os.environ.get(n)],'bundleConfirmed':os.environ.get('BUNDLE_CONFIRMED')=='true'}
+          pathlib.Path('artifacts/ios').mkdir(parents=True,exist_ok=True)
+          pathlib.Path('artifacts/ios/apple-readiness.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result))
+          PY
       - run: npm ci --no-audit --no-fund
       - name: Unit and database integration tests
         run: |
