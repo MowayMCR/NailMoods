@@ -83,7 +83,7 @@ function IllustratedTechniqueLayer({ technique, nail, ids }) {
   if (technique === 'milky') return <rect width="64" height="104" fill="#fff8f1" opacity=".52"/>;
   if (technique === 'jelly') return <rect width="64" height="104" fill={color} opacity=".38"/>;
   if (technique === 'glass-nails') return <path d="M15 80V36Q17 16 32 16T49 36V80" fill="none" stroke="#fff" strokeWidth="3" opacity=".72"/>;
-  if (['velvet-magnetic','cat-eye'].includes(technique)) return <><ellipse cx="32" cy="54" rx="24" ry="37" fill={accent} opacity=".42"/><path d="M12 82 53 24" stroke="#fff" opacity=".58" strokeWidth="4"/></>;
+  if (['velvet-magnetic','cat-eye'].includes(technique)) return <><ellipse cx="32" cy="54" rx="24" ry="37" fill={`url(#${ids.decorHalo})`} opacity=".65"/><path d="M12 82 53 24" stroke="#fff" opacity=".58" strokeWidth="4"/></>;
   if (technique === 'marble') return <g fill="none" stroke={accent} strokeLinecap="round"><path d="M8 28C29 35 19 48 50 56S37 75 57 83" strokeWidth="8" opacity=".2"/><path d="M8 28C29 35 19 48 50 56S37 75 57 83" strokeWidth="2.7"/><path d="M5 60Q20 44 34 51M29 43Q37 35 53 38M37 73Q23 69 14 88" strokeWidth="1.4" opacity=".8"/></g>;
   if (['foil','flakes','glitter'].includes(technique)) return <g fill="#fff1ad">{[[20,31],[40,39],[24,60],[43,74],[33,86]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i%2?2.3:1.5}/>)}</g>;
   if (technique === 'rhinestones') return <g><Gem x={32} y={48} size={7}/><Gem x={24} y={62} size={4} color="#ffd9f7"/></g>;
@@ -150,7 +150,7 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
         <defs>
           <clipPath id={ids.clip}><path d={path} /></clipPath>
           <radialGradient id={ids.decorHalo}><stop stopColor={nail.accentColor||light}/><stop offset=".4" stopColor={nail.accentColor||light} stopOpacity=".9"/><stop offset="1" stopColor={nail.accentColor||light} stopOpacity="0"/></radialGradient>
-          <linearGradient id={ids.depth} x1="0" y1="0" x2="1" y2="1"><stop stopColor={light}/><stop offset=".22" stopColor={color}/><stop offset=".65" stopColor={color}/><stop offset=".9" stopColor={dark}/><stop offset="1" stopColor={mix(color,'#ffffff',.25)}/></linearGradient>
+          <linearGradient id={ids.depth} x1="0" y1="0" x2="1" y2="1"><stop stopColor={light}/><stop offset=".22" stopColor={color}/><stop offset=".65" stopColor={color}/><stop offset="1" stopColor={dark}/></linearGradient>
           <radialGradient id={ids.halo}><stop stopColor="#fff" stopOpacity=".78"/><stop offset=".2" stopColor={light} stopOpacity=".65"/><stop offset=".58" stopColor={color} stopOpacity=".2"/><stop offset="1" stopColor={dark} stopOpacity="0"/></radialGradient>
           <radialGradient id={ids.velvet}><stop stopColor="#fff" stopOpacity=".72"/><stop offset=".35" stopColor={light} stopOpacity=".48"/><stop offset="1" stopColor={color} stopOpacity="0"/></radialGradient>
           <linearGradient id={ids.chrome} x1="0" y1="0" x2="1" y2="0"><stop stopColor={dark}/><stop offset=".18" stopColor="#fff"/><stop offset=".36" stopColor={light}/><stop offset=".57" stopColor={dark}/><stop offset=".78" stopColor="#fff"/><stop offset="1" stopColor={color}/></linearGradient>
@@ -162,9 +162,8 @@ export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels 
           <filter id={ids.blur}><feGaussianBlur stdDeviation="4"/></filter>
           <filter id={ids.relief} x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1.5" dy="3" stdDeviation="2" floodColor="#25111d" floodOpacity=".55"/></filter>
         </defs>
-        <ellipse cx="32" cy="91" rx="18" ry="5" fill="#29131d" opacity=".08" />
+        {/* One silhouette: the CSS drop-shadow follows this contour. No detached base or cuticle seam. */}
         <path d={path} fill={mode === 'realistic' ? dark : `url(#${ids.depth})`} stroke={mix(color, '#381728', .42)} strokeOpacity=".32" strokeWidth=".85" />
-        <path d="M19 80Q32 88 45 80" fill="none" stroke="#fff" strokeOpacity=".16" strokeWidth="1.1" strokeLinecap="round" />
         <g clipPath={'url(#' + ids.clip + ')'}>
           {mode === 'realistic' ? <MaterialLayer technique={nail.technique || rendering.technique} nail={nail} index={index} ids={ids} /> : <>
             <IllustratedTechniqueLayer technique={nail.technique} nail={nail} ids={ids} />
