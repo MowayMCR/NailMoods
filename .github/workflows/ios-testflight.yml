@@ -1,0 +1,26 @@
+name: Build NailMoods iOS / TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Verify only, or sign and upload to TestFlight
+        type: choice
+        options: [verify, testflight]
+        default: verify
+      build_number:
+        description: Optional unused Apple build number (default 10000 + run number)
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  ios-beta:
+    uses: MowayMCR/NailMoods/.github/workflows/ios-testflight.yml@feat/ios-testflight-beta1
+    with:
+      mode: ${{ inputs.mode }}
+      build_number: ${{ inputs.build_number }}
+      source_ref: feat/ios-testflight-beta1
+    secrets: inherit
