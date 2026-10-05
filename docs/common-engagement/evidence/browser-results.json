@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-05T18:28:10.607Z",
+  "scope": "Real shared App and components. Synthetic accounts/data; PGlite-backed planning/project SQL with RLS; local account-store stand-in. No hosted OAuth or native-device claim.",
+  "checks": [
+    "Profile no overflow 320",
+    "Profile no overflow 360",
+    "Profile no overflow 390",
+    "Profile no overflow 430",
+    "Profile → planning → create → SQL persistence after reload",
+    "Profile reflects saved planning date",
+    "Failed planning load clears stale dates and retries",
+    "Context choices persist; profile preferences unchanged",
+    "Double tap changes a favourite once without opening the idea",
+    "Existing inspiration → actual adapted variant",
+    "Adaptation → pose_projects → reload",
+    "Remove favourite → undo → reload",
+    "Profile planning visible for free",
+    "Profile planning visible for plus",
+    "Profile planning visible for pro",
+    "Free retains planning; collection adaptation remains premium",
+    "Empty collection has an immediate action"
+  ],
+  "errors": []
+}
