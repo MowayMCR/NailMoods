@@ -31,21 +31,26 @@ jobs:
       - name: Build
         env:
           VITE_DEPLOYMENT_ENV: production
+          VITE_PRO_V2_ENABLED: 'true'
           VITE_POSE_CYCLE_ENABLED: 'true'
+          VITE_CATALOGUE_ADMIN_ENABLED: 'true'
+          VITE_PO_LOOP_ENABLED: 'true'
           VITE_SUPABASE_URL: https://rvqmtnqvzzxzwfxfyjcg.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_EZthbmym16fnDWx9W6RkEg_ublzI88l
         run: npm run build
       - name: Conserver la Web App de recette séparée
         uses: actions/checkout@v4
         with:
-          ref: 8808a5ffcd9b0393545bf0e5fe529b67b2b95fa9
+          ref: ${{ github.sha }}
           path: validation-source
-      - name: Construire la recette existante
+      - name: Construire la même version en recette
         working-directory: validation-source
         env:
           VITE_DEPLOYMENT_ENV: recette
           VITE_PRO_V2_ENABLED: 'true'
           VITE_POSE_CYCLE_ENABLED: 'true'
+          VITE_CATALOGUE_ADMIN_ENABLED: 'true'
+          VITE_PO_LOOP_ENABLED: 'true'
         run: |
           npm ci
           npm run build -- --base /NailMoods/validation-pro-v2/

@@ -11,6 +11,7 @@ export function ingredientMatches(entry,watch){const wanted=norm(watch),value=no
 export function ingredientReport(text,watch=[]){return inciEntries(text).map(name=>({name,watched:watch.filter(w=>ingredientMatches(name,w))}));}
 export function inciFor(product){const d=productDocument(product),personal=product?.ingredientRecord;
  if(personal?.text?.trim()&&['label','manufacturer'].includes(personal.source)&&norm(personal.identity)===identityKey(product))return {text:personal.text,sourceUrl:safeSource(personal.sourceUrl),checkedAt:personal.recordedAt,label:'Transcription personnelle · à vérifier sur le flacon',personal:true};
+ const central=product?.catalogTechnical?.inci;if(central?.value&&safeSource(central.sourceUrl)&&['manufacturer','documented'].includes(central.status))return {text:central.value,sourceUrl:central.sourceUrl,label:'Liste documentée dans le catalogue NailMoods · vérifier le flacon',personal:false};
  return d?{text:d.inci,sourceUrl:d.sourceUrl,checkedAt:d.checkedAt,label:'Liste publiée par le fabricant · '+d.market,personal:false}:null;}
 export function identityKey(p){return ['brand','collection','name','type','sku','reference'].map(k=>norm(p?.[k])).join('|');}
 export function recordIngredients(product,patch){return {...product.ingredientRecord,...patch,identity:identityKey(product),recordedAt:new Date().toISOString().slice(0,10)};}

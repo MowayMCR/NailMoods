@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-05T18:28:10.607Z",
+  "at": "2026-10-05T17:44:33.547Z",
   "scope": "Real shared App and components. Synthetic accounts/data; PGlite-backed planning/project SQL with RLS; local account-store stand-in. No hosted OAuth or native-device claim.",
   "checks": [
     "Profile no overflow 320",

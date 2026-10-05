@@ -1,5 +1,6 @@
 import useUndoNotice from './engagement/useUndoNotice';
 import {restoreFavorite,restoreProduct} from './engagement/undo.js';
+import {catalogCandidate,catalogSelectionPatch} from './catalog.js';
 import ProductKnowledge from './productKnowledge/ProductKnowledge';
 import TutorialTimerRuntime from './poseCycle/TutorialTimerRuntime';
 import PlanningRuntime from './poseCycle/PlanningRuntime';
@@ -265,6 +266,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   }
 
 
+  useEffect(()=>{const open=e=>{if(!e.detail?.catalogId||limited)return;setSaveError('');setEdit({...defaults,...catalogSelectionPatch(catalogCandidate({product:e.detail,score:100,confidence:'élevée',reason:'Référence catalogue exacte'})),source:'catalog'});track('pro_catalog_added',{source:'showcase'});};window.addEventListener('nm-pro-catalog',open);return()=>window.removeEventListener('nm-pro-catalog',open);},[limited]);
   function start(source, type = addCategory!=='product' ? 'Matériel' : defaults.type) {
     setImporter(false);
     setSaveError('');
