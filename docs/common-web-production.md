@@ -23,3 +23,7 @@ Les résultats sont dans common-engagement/evidence/browser-results.json et regl
 
 ## Périmètre restant
 Catalogue central/admin, boucle complète cliente-PO-retour, signature Pro dérivée, récap et mesures agrégées : non livrés par ce déploiement. Android et Apple restent inchangés. Retour arrière : revenir au code main 340c201 puis redéployer ; aucune migration inverse nécessaire. Les projets créés restent compatibles avec le schéma existant.
+
+## Publication confirmée
+
+PR15 fusionnée sur main au commit 4f40f1878d4bdec8622143f68b2f3fc473d7fc7f. Run GitHub Pages 37356345234. Vérification navigateur sur https://mowaymcr.github.io/NailMoods/#profil : carte Mon planning et Ton NailMoods visibles, sans bandeau recette. Réglages : marge de titre 18px, prénom et bio de même largeur (492px dans la fenêtre observée). Vérification en mode découverte, aucun compte personnel modifié. Capture profil-production.jpg.
