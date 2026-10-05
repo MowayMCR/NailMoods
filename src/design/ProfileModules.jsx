@@ -2,7 +2,7 @@ import React from 'react';
 import {Clock3, Sparkles, Ruler, Layers, Heart, ArrowUpRight} from 'lucide-react';
 import MoodGlyph from '../MoodGlyph';
 import ProfileNail from '../ProfileNail';
-import {preferenceFields} from './onboarding';
+import {preferenceFields} from './onboarding.js';
 import {choices} from '../profileOptions';
 
 export function UniverseTiles({values=[]}) {

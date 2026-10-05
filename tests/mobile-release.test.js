@@ -27,3 +27,16 @@ test('both stores carry the same approved common version',()=>{
  assert.deepEqual(mobileVersion('ios'),mobileVersion('android'));
  assert.ok(mobileVersion().versionCode>8);
 });
+
+test('imports disambiguate component/model names on case-insensitive macOS',async()=>{
+ const {readdirSync,readFileSync}=await import('node:fs');
+ const {resolve,dirname,extname}=await import('node:path');
+ const walk=dir=>readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(resolve(dir,e.name)):[resolve(dir,e.name)]);
+ const files=walk('src').filter(p=>/\.[jt]sx?$/.test(p)),stems=new Map();
+ for(const file of files){const key=file.slice(0,-extname(file).length).toLowerCase();stems.set(key,(stems.get(key)||0)+1);}
+ for(const file of files){
+  for(const [,specifier]of readFileSync(file,'utf8').matchAll(/(?:from\s*|import\s*)['"](\.[^'"]+)['"]/g)){
+   if(!extname(specifier))assert.ok((stems.get(resolve(dirname(file),specifier).toLowerCase())||0)<2,`Ambiguous macOS import in ${file}: ${specifier}`);
+  }
+ }
+});

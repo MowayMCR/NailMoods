@@ -1,7 +1,7 @@
 import React, { useId, useState } from 'react';
 import { Check } from 'lucide-react';
 import { validHex } from './colorAnalysis';
-import { polishFamilies, collectionSwatches, readRecentColors, rememberColor } from './polishPalette';
+import { polishFamilies, collectionSwatches, readRecentColors, rememberColor } from './polishPalette.js';
 import { useStorage } from './StorageContext';
 import './polishPalette.css';
 

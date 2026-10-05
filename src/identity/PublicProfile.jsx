@@ -1,9 +1,9 @@
 import {UniverseTiles,PreferenceTiles} from '../design/ProfileModules';
 import '../design/profile-experience.css';
 import {Skeleton} from '../design/UI';
-import {readPublicProfile} from './publicProfile';
+import {readPublicProfile} from './publicProfile.js';
 import MoodGlyph from '../MoodGlyph';
-import {preferenceFields} from '../design/onboarding';
+import {preferenceFields} from '../design/onboarding.js';
 import {SafetyActions} from '../support/SafetyActions';
 import ContentImage from '../social/ContentImage';
 import {ConnectionAction} from '../social/SocialHub';

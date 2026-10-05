@@ -20,7 +20,7 @@ import { snapshotIdea } from './inspirations';
 import NailPreview from './NailPreview';
 import RecipeSummary from './RecipeSummary';
 import Sheet from './Sheet';
-import { confirmedScanProduct, generateScannedIdeas, scanEffects, toggleScanEffect } from './scanGenerate';
+import { confirmedScanProduct, generateScannedIdeas, scanEffects, toggleScanEffect } from './scanGenerate.js';
 import { track as trackAnalytics } from './analytics/analytics';
 import './scanGenerate.css';
 

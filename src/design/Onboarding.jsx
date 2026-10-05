@@ -10,7 +10,7 @@ import ProfileNail from '../ProfileNail';
 import {useSocial} from '../social/SocialContext';
 import {MoodPicker,Button} from './UI';
 import {profileMood} from './themes';
-import {preferenceFields,completeOnboarding} from './onboarding';
+import {preferenceFields,completeOnboarding} from './onboarding.js';
 const slides=[['Bienvenue dans NailMoods','Explore, crée et garde toutes tes inspirations nail art. Un espace à ton image.'],['Des idées pour chaque mood','Tes envies et tes univers inspirent tes prochaines créations.'],['Ta créativité, sans limites','Inspire-moi, Scan & Génère, création libre, import photo : choisis ton point de départ.'],['Prête à créer ton univers ?','Quelques préférences, tes univers favoris et une ambiance qui te ressemble.']];
 export default function Onboarding({profile,onChange,onDone,onCancel,identityExtras,appearanceExtras}){
  const [step,setStep]=useState(()=>Math.max(0,Math.min(7,profile.onboarding_step||0))),[query,setQuery]=useState(''),[error,setError]=useState('');

@@ -2,7 +2,7 @@ import {recordRuntimeEvent} from './support/diagnostics';
 import { loadCatalog, catalogCandidate, catalogSelectionPatch } from './catalog';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, ScanLine, Camera, Image as ImageIcon, Check, X } from 'lucide-react';
-import { fetchProduct, shopifyCandidate, inferTraits, normalizeText } from './productImport';
+import { fetchProduct, shopifyCandidate, inferTraits, normalizeText } from './productImport.js';
 import { readProductPhoto, readBarcodeDetails, readBarcodeSource } from './recognition';
 import { imageCanvas } from './recognition';
 import { preparePhoto } from './ProductPhoto';
