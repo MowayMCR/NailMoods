@@ -1,3 +1,4 @@
+import CollectionContext from './engagement/CollectionContext';
 import InternalLab from './aiPlus/InternalLab';
 import Trainer from './trainer/Trainer';
 import {SharedPoseView} from './poseCycle/ProjectShare';
@@ -207,15 +208,16 @@ export default function CreateView({ onProfileChange, onMoodChange, onPublish, o
     <PhotoInspirationFlow onSaveIdea={onSaveIdea} onShareToPro={onShareToPro} items={items} profile={profile} onSaveProject={onSaveProject} onJournalIdea={onJournalIdea} onOpen={onOpen} onProjects={() => onRoute('projects')} />
   </div>;
 
-  return <div className="creationPage">
+  return <div className="creationPage engagementCreation">
     <div className="createHeading"><button className="nmQuiet" onClick={()=>setSourceOpen(true)}>← Changer de source</button><h1>{activeRun&&!editing?'Tes idées':options.intent==='collection'?'Avec ma collection':'Inspiration libre'}</h1></div>
     {activeRun&&!editing && <section className="choicesSummary"><div><b>Tes choix</b><p>{levels[options.level]} · {techniqueSummary} · {durationLabel(options.duration)}</p></div><button onClick={()=>setEditing(true)}>Modifier</button></section>}
     {report.unavailable && <section className="creationNotice" role="status"><b>Modifions un choix</b><p>{report.unavailable}</p><div className="detailActions"><button onClick={() => openPicker('level')}>Changer le niveau</button><button onClick={() => openPicker('technique')}>Changer la technique</button></div></section>}
     {drawingGenerationError&&<p className="formError" role="alert">{drawingGenerationError}</p>}
     <div className="createForm" hidden={activeRun&&!editing}>
+    {options.intent==='collection'&&<CollectionContext options={options} report={report} learning={learning} onChange={change}/>}
     <section className="creationSection">
       <div className="creationSectionTitle"><span>01</span><h2>De quoi as-tu envie ?</h2></div>
-      <div className="creationModes">{modes.map(({ id, title, subtitle, icon: Icon }) => <button key={id} className={options.mode === id ? 'selected' : ''} aria-pressed={options.mode === id} onClick={() => change({ mode: id })}>
+      <div className="creationModes">{modes.map(({ id, title, subtitle, icon: Icon }) => <button key={id} className={options.mode === id ? 'selected' : ''} aria-pressed={options.mode === id} onClick={() => change({ mode: id, escapeBubble:false })}>
         <Icon /><span><b>{title}</b><small>{subtitle}</small></span>{options.mode === id ? <Check className="modeCheck" /> : <ChevronRight className="modeCheck" />}
       </button>)}</div>
       {options.mode === 'surprise' && <div className="surpriseChoices" aria-label="Degré de surprise">
@@ -274,7 +276,7 @@ export default function CreateView({ onProfileChange, onMoodChange, onPublish, o
         <div className="ideaTopline"><span><MoodGlyph value={idea.options?.mood || options.mood} /> ENVIE {String(index + 1).padStart(2, '0')}</span><span><Clock3 />≈ {idea.minutes} min</span></div>
         <TapFavorite aria-label={"Ouvrir "+idea.title+" · double-tap pour le favori"} onOpen={()=>onOpen(idea,idea.options)} onToggle={()=>onFavorite(idea)} saved={library.favorites.some(saved=>saved.key===snapshotIdea(idea).key)}><NailPreview idea={idea} controls /></TapFavorite>
         <div className="ideaBody">{completedKeys.has(snapshotIdea(idea, idea.options).key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3><button className="ideaTitleLink" onClick={event=>{event.stopPropagation();onOpen(idea,idea.options);}}>{idea.title}</button></h3><p>{idea.description}</p>
-          <IdeaProducts idea={idea} items={items} onCollection={onCollection} /><div className="ideaProducts">{idea.palette.map(item => <span key={item.id}><i style={{ background: item.color }} />{item.name}</span>)}</div>
+          {idea.collectionEvidence&&<p className="nmCollectionEvidence">{idea.collectionEvidence.complete?'Les besoins identifiés sont dans ta collection':`${idea.collectionEvidence.owned} référence(s) présente(s) sur ${idea.collectionEvidence.total}`}{idea.collectionEvidence.uncertain?' · Matériel ou protocole à vérifier.':''}</p>}<IdeaProducts idea={idea} items={items} onCollection={onCollection} /><div className="ideaProducts">{idea.palette.map(item => <span key={item.id}><i style={{ background: item.color }} />{item.name}</span>)}</div>
           {idea.resources.filter(isDecoration).map(item => <div className="ideaDecoration" key={item.id}><DecorationPhoto item={item} /><div><small>MA DÉCORATION</small><b>{item.name}</b><span>Motif schématique sur les ongles</span></div></div>)}
           {idea.requirements?.length > 0 && <p className="creationNotice">Pour la réaliser : {idea.requirements.map(r => r.name).join(' · ')}</p>}
           {idea.resources.some(item => !isDecoration(item)) && <div className="ideaEquipment"><small>AVEC MON MATÉRIEL</small><p>{idea.resources.filter(item => !isDecoration(item)).map(item => item.name).join(' · ')}</p></div>}
