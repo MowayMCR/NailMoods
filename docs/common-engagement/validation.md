@@ -51,3 +51,5 @@ Voir `evidence/` : Profil complet dans les quatre moods, zooms Planning, Collect
 Branche dédiée `feat/common-engagement`, proposée en PR brouillon au-dessus de Pro V2. Le workflow construit un sous-chemin recette `validation-pro-v2` et conserve la racine depuis `main` inchangée. Le déploiement doit respecter la protection existante de l’environnement GitHub Pages ; aucun élargissement de règle d’accès n’est fait implicitement.
 
 Aucune migration nouvelle. Rollback : restaurer la révision précédente de la branche de validation. Les données créées restent dans les objets compatibles existants. Aucune suppression de données nécessaire.
+
+Contrôle GitHub du 5 octobre 2026 : le run `37351044249` a réussi les tests, le build recette et la préparation de l’artefact. Le déploiement a été refusé explicitement : la branche `feat/common-engagement` n’est pas autorisée par les règles de protection de `github-pages`. La Web App hébergée n’a donc pas encore reçu ce lot. Capture du refus : `evidence/github-pages-blocked.jpg`. Aucun changement de protection effectué ; une autorisation temporaire et limitée à cette branche est demandée avant publication.
