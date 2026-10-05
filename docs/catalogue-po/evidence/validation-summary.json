@@ -1,0 +1,21 @@
+{
+  "fullTests": {
+    "total": 541,
+    "passed": 539,
+    "failed": 0,
+    "skipped": 2
+  },
+  "recette": {
+    "canonicalProducts": 2812,
+    "authenticatedSqlRoleChecks": "passed",
+    "realPasswordOrJwtLoginTest": false,
+    "transactionRolledBack": true
+  },
+  "productionDatabase": {
+    "canonicalProducts": 2812,
+    "historyEntries": 2812,
+    "authenticatedDirectCatalogueRead": false,
+    "anonymousAdminExecute": false
+  },
+  "nativeTested": false
+}

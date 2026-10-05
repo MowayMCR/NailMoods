@@ -1,3 +1,5 @@
+import ProManager from '../professional/ProManager.jsx';
+import {proV2Enabled} from '../professional/service.js';
 import React,{useEffect,useMemo,useState} from 'react';
 import {Building2,Check,ChevronRight,Eye,Scissors,ShieldCheck,UsersRound} from 'lucide-react';
 import Sheet from '../Sheet';
@@ -11,7 +13,8 @@ import './professional.css';
 
 const emptyForm={name:'',handle:'',bio:'',city:'',isPublic:false,avatarUrl:null};
 
-export default function ProfessionalProfilePanel({client,userId,tier}){
+export default function ProfessionalProfilePanel(props){return proV2Enabled()?<ProManager {...props}/>:<LegacyProfessionalProfilePanel {...props}/>;}
+function LegacyProfessionalProfilePanel({client,userId,tier}){
  const [state,setState]=useState(null),[status,setStatus]=useState(''),[form,setForm]=useState(emptyForm),[createName,setCreateName]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[closeOpen,setCloseOpen]=useState(false),[confirmation,setConfirmation]=useState(''),[previewHandle,setPreviewHandle]=useState('');
  const service=useMemo(()=>userId?professionalService(client,userId):null,[client,userId]);
  async function load(){if(!service)return;const next=await service.state();setState(next);setStatus(professionalStatus(next.status));return next;}

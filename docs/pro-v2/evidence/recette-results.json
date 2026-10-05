@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-05",
+  "project": "NailMoods-Recette",
+  "productionChanged": false,
+  "migrations": [
+    "apple_ugc_prepublication_review (prérequis manquant)",
+    "pro_v2_showcases",
+    "pro_v2_editorial_review",
+    "pro_v2_legacy_visibility"
+  ],
+  "accounts": 2,
+  "method": "Comptes de recette existants ; transactions SQL sous rôle authenticated avec identité JWT contrôlée ; rollback des données de test. Ce contrôle ne remplace pas une connexion OAuth dans un navigateur.",
+  "checks": [
+    "Création d’une structure par le compte Pro",
+    "Création d’un produit",
+    "Refus de la modification par le second compte Plus",
+    "Ville privée absente de la projection publique",
+    "Auto-attribution du statut vérifié neutralisée",
+    "Deux profils historiques migrés sans suppression",
+    "Aucun grant direct anon/authenticated sur les tables privées Pro V2",
+    "RPC public de modération SECURITY INVOKER",
+    "Données transactionnelles de test retirées par rollback"
+  ],
+  "passed": true,
+  "advisors": "Tables privées en refus par défaut, aucune table privée accessible directement. Les avertissements préexistants de recette sont documentés dans le rapport."
+}

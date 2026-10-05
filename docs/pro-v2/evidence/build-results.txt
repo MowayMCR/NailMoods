@@ -1,0 +1,20 @@
+dist/assets/entry-DgzoOVzL.js                 0.52 kB │ gzip:   0.33 kB
+dist/assets/index-Dem3mzqy.js                 0.98 kB │ gzip:   0.56 kB
+dist/assets/esm-BmaTNuSF.js                   1.15 kB │ gzip:   0.58 kB
+dist/assets/preload-helper-BZ1Pz5am.js        1.21 kB │ gzip:   0.69 kB
+dist/assets/rolldown-runtime-C0FnF6B9.js      1.29 kB │ gzip:   0.71 kB
+dist/assets/themes-UbfXNgdY.js                3.36 kB │ gzip:   1.68 kB
+dist/assets/web-CmMx-o7-.js                   4.43 kB │ gzip:   1.28 kB
+dist/assets/dist-BUaBGHqH.js                  7.78 kB │ gzip:   3.11 kB
+dist/assets/web-Bf8UF6Oi.js                   8.47 kB │ gzip:   2.83 kB
+dist/assets/src-SuYvKHvm.js                  17.24 kB │ gzip:   7.31 kB
+dist/assets/reader-Cx5cFgjW.js               36.38 kB │ gzip:  12.92 kB
+dist/assets/bwip-js-DCq2KRcK.js             929.14 kB │ gzip: 255.72 kB
+dist/assets/main-Bufjv73H.js              1,372.02 kB │ gzip: 403.85 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 677ms

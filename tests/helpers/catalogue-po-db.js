@@ -1,0 +1,23 @@
+import {readFileSync} from 'node:fs';import {setup as proSetup,login,rpc,A,B,C,draft} from './pro-db.js';export {login,rpc,A,B,C};
+export const WA='20000000-0000-4000-8000-000000000001',WB='20000000-0000-4000-8000-000000000002',BRIEF='30000000-0000-4000-8000-000000000001';
+export async function setup(){const db=await proSetup();await db.exec(`create role service_role;create table private.social_connections(requester uuid,recipient uuid,status text);insert into private.social_connections values('${A}','${B}','accepted');
+ update public.profiles set account_tier='plus' where id='${A}';
+ insert into public.workspaces(id,owner_user_id,kind,name) values('${WA}','${A}','personal','Cliente'),('${WB}','${B}','personal','PO');
+ create table public.inspiration_shares(id uuid primary key default gen_random_uuid(),sender_id uuid references auth.users on delete cascade,recipient_id uuid references auth.users on delete cascade,recipient_workspace_id uuid,source_local_id text,snapshot jsonb,client_id uuid,created_at timestamptz default now(),unique(sender_id,client_id));
+ alter table public.inspiration_shares enable row level security;grant select,update on public.inspiration_shares to authenticated;
+ create policy share_select on public.inspiration_shares for select to authenticated using(auth.uid() in(sender_id,recipient_id));create policy share_update on public.inspiration_shares for update to authenticated using(auth.uid()=recipient_id);
+ create table public.messages(id uuid default gen_random_uuid(),conversation_id uuid,sender_id uuid,share_id uuid references inspiration_shares on delete cascade);
+ alter table public.user_notifications add column actor_id uuid;
+ create function private.nm_social(a text,d jsonb) returns jsonb language plpgsql security definer set search_path='' as $$begin if not exists(select 1 from private.social_connections where status='accepted' and least(requester,recipient)=least(auth.uid(),(d->>'user_id')::uuid) and greatest(requester,recipient)=greatest(auth.uid(),(d->>'user_id')::uuid)) then raise exception 'connection_required';end if;return jsonb_build_object('conversation_id','40000000-0000-4000-8000-000000000001');end$$;
+ `);
+ await db.exec(readFileSync('supabase/migrations/20261004125620_pose_cycle_foundations.sql','utf8'));await db.exec('drop function private.discovery_preview(jsonb)');
+ for(const [f,re] of [['phase12/p3-safety-guards.sql',/CREATE OR REPLACE FUNCTION private.nm_share_detail[\s\S]*?\$function\$\s*;/],['phase12/p2-rich-sharing.sql',/create function private.share_product[\s\S]*?\$\$;/],['phase12/discovery-preview.sql',/create or replace function private.discovery_preview[\s\S]*?\$\$;/]])await db.exec(readFileSync(f,'utf8').match(re)[0].replace('create function private.share_product','create or replace function private.share_product'));
+ await db.exec("create function public.nm_share_detail(p_id uuid) returns jsonb language sql security invoker as $$select private.nm_share_detail(p_id)$$;grant execute on function public.nm_share_detail(uuid) to authenticated;");
+ await db.exec(readFileSync('phase12/p2-proposals.sql','utf8'));await db.exec(readFileSync('phase12/p2-proposal-save.sql','utf8'));
+ await db.exec(readFileSync('supabase/migrations/20261005192257_catalogue_admin_cycle.sql','utf8'));await db.exec(readFileSync('supabase/migrations/20261005192836_client_po_loop.sql','utf8'));
+ await db.exec(readFileSync('supabase/migrations/20261005194116_shared_preview_null_decoration.sql','utf8'));
+ await db.query('insert into private.staff values($1)',[C]);
+ await login(db,B);const wid=await rpc(db,'nm_pro_save',[null,{...draft('Maison Cassis','maison.cassis'),professionalType:'brand'}]);
+ await rpc(db,'nm_pro_item',[wid,null,'product',{title:'Cassis velours',details:{hex:'#773b59'},visibility:'private'}]);
+ await db.exec('reset role');return {db,wid};
+}
