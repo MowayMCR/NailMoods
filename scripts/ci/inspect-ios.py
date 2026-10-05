@@ -14,7 +14,7 @@ def inspect(app, signed=False):
     assert 'UIInterfaceOrientationLandscapeLeft' in info['UISupportedInterfaceOrientations~ipad']
     manifest = plistlib.loads((app/'PrivacyInfo.xcprivacy').read_bytes())
     assert manifest['NSPrivacyTracking'] is False
-    approved_data_types = {'Name','EmailAddress','UserID','Contacts','PhotosorVideos','EmailsOrTextMessages',
+    approved_data_types = {'Name','EmailAddress','UserID','Contacts','Health','PhotosorVideos','EmailsOrTextMessages',
                            'OtherUserContent','PurchaseHistory','ProductInteraction','OtherDiagnosticData',
                            'CoarseLocation','CustomerSupport','OtherDataTypes'}
     declared_types = {d['NSPrivacyCollectedDataType'] for d in manifest['NSPrivacyCollectedDataTypes']}
