@@ -28,3 +28,4 @@ Les exigences Apple sont fondées sur Apple ; GitHub, Capacitor, Supabase et Mic
 | Export P12/PFX Windows | https://learn.microsoft.com/en-us/powershell/module/pki/export-pfxcertificate |
 
 Les sources décrivent des règles et outils, pas l'état du compte Apple de Marie. Les preuves de compilation/backend sont dans les logs du dossier ; les identités, produits, contrats et secrets Apple restent à vérifier dans ses comptes.
+# Signature manuelle par cible : https://help.apple.com/xcode/mac/current/en.lproj/dev1bf96f17e.html

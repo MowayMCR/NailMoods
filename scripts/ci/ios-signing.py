@@ -1,6 +1,28 @@
 """Install CI signing assets. Never print keys, profile contents or passwords."""
 import base64, datetime, hashlib, json, os, pathlib, plistlib, re, secrets, subprocess
 
+def configure_app_profile(text, bundle, team, uuid):
+    """Apply an app profile only to App, never SPM frameworks or XCTest."""
+    count = 0
+    def update(match):
+        nonlocal count
+        settings = match.group(2)
+        if 'INFOPLIST_FILE = App/Info.plist;' not in settings:
+            return match.group(0)
+        if not re.search(r'PRODUCT_BUNDLE_IDENTIFIER = "?' + re.escape(bundle) + r'"?;', settings):
+            raise SystemExit('App build settings do not match the confirmed Bundle ID')
+        if 'PROVISIONING_PROFILE' in settings:
+            raise SystemExit('App already has a profile override; review it before CI signing')
+        settings = settings.replace('CODE_SIGN_STYLE = Automatic;', 'CODE_SIGN_STYLE = Manual;')
+        settings += '\n\t\t\t\tDEVELOPMENT_TEAM = "' + team + '";'
+        settings += '\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "' + uuid + '";'
+        count += 1
+        return match.group(1) + settings + match.group(3)
+    result = re.sub(r'(buildSettings = \{)(.*?)(\n\t{3}\};)', update, text, flags=re.S)
+    if count != 2:
+        raise SystemExit('Expected exactly two App build configurations for manual signing')
+    return result
+
 def run(*args, **kwargs):
     try:
         return subprocess.check_output(args, stderr=subprocess.PIPE, **kwargs)
@@ -49,13 +71,15 @@ run('security', 'list-keychains', '-d', 'user', '-s', str(keychain), str(pathlib
 uuid = data['UUID']
 if not re.fullmatch(r'[A-Fa-f0-9-]{36}', uuid):
     raise SystemExit('Invalid profile UUID')
+api_directory = pathlib.Path.home() / '.appstoreconnect/private_keys'
+api_path = api_directory / ('AuthKey_' + key_id + '.p8')
+# Register every external path before creating it, so partial failures clean up.
+(root/'cleanup.json').write_text(json.dumps({'uuid':uuid,'api_path':str(api_path)}))
 for directory in ['Library/MobileDevice/Provisioning Profiles', 'Library/Developer/Xcode/UserData/Provisioning Profiles']:
     destination = pathlib.Path.home() / directory
     destination.mkdir(parents=True, exist_ok=True)
     (destination / (uuid + '.mobileprovision')).write_bytes(profile.read_bytes())
-api_directory = pathlib.Path.home() / '.appstoreconnect/private_keys'
 api_directory.mkdir(mode=0o700, parents=True, exist_ok=True)
-api_path = api_directory / ('AuthKey_' + key_id + '.p8')
 key = os.environ['APP_STORE_CONNECT_PRIVATE_KEY'].replace('\\n', '\n')
 if not key.startswith('-----BEGIN PRIVATE KEY-----'):
     raise SystemExit('API private key must contain the original PEM .p8 content')
@@ -65,8 +89,9 @@ plistlib.dump({'method':'app-store-connect','destination':'export','signingStyle
               'signingCertificate':'Apple Distribution','provisioningProfiles':{bundle:uuid},
               'manageAppVersionAndBuildNumber':False,'uploadSymbols':True,'stripSwiftSymbols':True},
              (root/'ExportOptions.plist').open('wb'))
-# Non-secret outputs only. Exact installed paths are retained for cleanup even on failure.
-(root/'cleanup.json').write_text(json.dumps({'uuid':uuid,'api_path':str(api_path)}))
+project = pathlib.Path('ios/App/App.xcodeproj/project.pbxproj')
+project.write_text(configure_app_profile(project.read_text(), bundle, team, uuid))
+# Non-secret outputs only.
 with open(os.environ['GITHUB_ENV'], 'a') as output:
     output.write('NM_PROFILE_UUID=' + uuid + '\nNM_SIGNING_DIR=' + str(root) + '\n')
 print('Distribution identity, profile and API key installed in the temporary runner.')

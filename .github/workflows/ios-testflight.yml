@@ -1,8 +1,6 @@
 name: Build NailMoods iOS / TestFlight
 
 on:
-  push:
-    branches: [feat/ios-testflight-beta1]
   pull_request:
     branches: [feat/apple-storekit-ios]
   workflow_dispatch:
@@ -215,7 +213,7 @@ jobs:
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/NailMoods.xcarchive" -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER="$NM_PROFILE_UUID" archive > artifacts/ios/archive.log 2>&1 || { tail -80 artifacts/ios/archive.log; exit 1; }
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/NailMoods.xcarchive" -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' archive > artifacts/ios/archive.log 2>&1 || { tail -80 artifacts/ios/archive.log; exit 1; }
           python3 scripts/ci/inspect-ios.py "$RUNNER_TEMP/NailMoods.xcarchive/Products/Applications/App.app" --signed > artifacts/ios/archive-inspection.json
           xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/NailMoods.xcarchive" -exportOptionsPlist "$NM_SIGNING_DIR/ExportOptions.plist" -exportPath artifacts/ios/export > artifacts/ios/export.log 2>&1 || { tail -80 artifacts/ios/export.log; exit 1; }
           ipa=(artifacts/ios/export/*.ipa)
