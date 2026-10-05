@@ -46,7 +46,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: ios-testflight-${{ github.ref }}
+  group: ios-testflight-${{ github.ref }}-${{ inputs.mode || 'verify' }}
   cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' || inputs.mode != 'testflight' }}
 
 jobs:

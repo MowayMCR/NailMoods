@@ -14,6 +14,11 @@ def inspect(app, signed=False):
     assert 'UIInterfaceOrientationLandscapeLeft' in info['UISupportedInterfaceOrientations~ipad']
     manifest = plistlib.loads((app/'PrivacyInfo.xcprivacy').read_bytes())
     assert manifest['NSPrivacyTracking'] is False
+    approved_data_types = {'Name','EmailAddress','UserID','Contacts','PhotosorVideos','EmailsOrTextMessages',
+                           'OtherUserContent','PurchaseHistory','ProductInteraction','OtherDiagnosticData',
+                           'CoarseLocation','CustomerSupport','OtherDataTypes'}
+    declared_types = {d['NSPrivacyCollectedDataType'] for d in manifest['NSPrivacyCollectedDataTypes']}
+    assert declared_types == {'NSPrivacyCollectedDataType'+t for t in approved_data_types}, 'Unexpected or invalid Apple privacy data type'
     sdk_manifests = list(app.rglob('PrivacyInfo.xcprivacy'))
     assert len(sdk_manifests) > 1, 'Missing embedded SDK privacy manifests'
     privacy_resources = [{'path':str(p.relative_to(app)),
