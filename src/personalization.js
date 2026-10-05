@@ -102,14 +102,15 @@ export function personalAdjustment(idea, options, model) {
   const affinity = average(values, 'affinity') + average(array(idea.resources).filter(isDecoration).map(lookup), 'affinity') * .35;
   const key = personalRecipeKey(idea), remembered = Object.hasOwn(model.recipes, key) ? model.recipes[key] : null;
   const change = options.mode === 'change', surprise = options.mode === 'surprise';
-  const weight = change ? .35 : surprise ? options.surprise === 'Chaos' ? .25 : options.surprise === 'Creative' ? .5 : .8 : 1.2;
+  const weight = options.escapeBubble ? 0 : change ? .35 : surprise ? options.surprise === 'Chaos' ? .25 : options.surprise === 'Creative' ? .5 : .8 : 1.2;
   let score = affinity * weight;
   if (model.poseCount) score += change || surprise ? values.reduce((sum, value) => sum + 12 / (1 + value.uses), 0) / Math.max(1, values.length) : Math.min(6, average(values, 'uses') * 2);
   const reasons = [];
+  if(options.escapeBubble && remembered?.uses) score -= 24;
   if (remembered?.repeat) { score += change ? 4 : 16; reasons.push('Une association que tu veux refaire'); }
   else if (remembered?.feeling === 'love' || remembered?.feeling === 'like') reasons.push('Une composition appréciée dans ton journal');
   else if (remembered?.favorite) reasons.push('Une de tes inspirations favorites');
-  if (remembered?.favorite) score += change ? 4 : 10;
+  if (remembered?.favorite) score += options.escapeBubble ? -18 : change ? 4 : 10;
   if (remembered?.feeling === 'love') score += 8;
   if (remembered?.feeling === 'like') score += 4;
   if (remembered?.feeling === 'adjust') score -= remembered.repeat ? 6 : 14;

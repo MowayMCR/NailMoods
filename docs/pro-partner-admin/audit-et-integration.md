@@ -2,6 +2,8 @@
 
 Audit du 5 octobre 2026, après lecture du nouveau cahier des charges « Markdown collé(2).md ». Document de préparation uniquement : aucune fonctionnalité nouvelle ni migration appliquée par ce lot.
 
+> **Actualisation du 5 octobre, instruction Marie :** l’attente Apple est levée. Continuer le tronc commun sur une branche dédiée avec validation Web ; les adaptations Stores seront propagées ultérieurement. L’état historique ci-dessous reste une trace d’audit, pas un blocage actuel. Voir `../common-engagement/audit-et-lots.md`.
+
 ## Condition préalable Apple
 
 Le cahier des charges impose de vérifier la fin du chantier Apple avant développement. Au contrôle GitHub :

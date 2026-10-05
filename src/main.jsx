@@ -1,3 +1,5 @@
+import useUndoNotice from './engagement/useUndoNotice';
+import {restoreFavorite,restoreProduct} from './engagement/undo.js';
 import {catalogCandidate,catalogSelectionPatch} from './catalog.js';
 import ProductKnowledge from './productKnowledge/ProductKnowledge';
 import TutorialTimerRuntime from './poseCycle/TutorialTimerRuntime';
@@ -78,6 +80,7 @@ const saveThemeBackup = (storage, theme) => { try { window.localStorage.setItem(
 
 function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, syncNotice, profileExtras, media, onShareToPro }) {
   const browserStorage=useStorage();
+  const undoNotice=useUndoNotice(browserStorage);
   const limited=import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && browserStorage.accountScoped && !tierCapabilities(browserStorage.accountTier).personal;
   const [tab, setTab] = useState(tabFromHash);
   const [creationEntry, setCreationEntry] = useState(null);
@@ -180,7 +183,12 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   function renameIdea(key, title) { return saveLibrary(renameInspiration(library, key, title)); }
   function saveIdea(idea) { const saved=saveLibrary(saveInspiration(library, idea));if(saved)track('generation_saved',{technique:idea?.technique||'mixed',render_mode:'illustrated',used_collection:Boolean(idea?.options?.intent==='collection')},{screen:'create'});return saved; }
   function saveProjectIdea(idea) { const ok=saveLibrary(saveIdeaProject(library, idea));if(ok)track('project_created',{});return ok; }
-  function favoriteIdea(idea) { return saveLibrary(toggleFavorite(library, snapshotIdea(idea))); }
+  function favoriteIdea(idea) {
+    const snapshot=snapshotIdea(idea),previous=library.favorites.find(row=>row.key===snapshot.key);
+    const ok=saveLibrary(toggleFavorite(library,snapshot));
+    if(ok)undoNotice.show(previous?'Inspiration retirée des favoris':'Inspiration enregistrée',previous?()=>saveLibrary(restoreFavorite(readInspirations(browserStorage),previous)):null);
+    return ok;
+  }
   function selectIdea(idea, clear = false) { return saveLibrary({ ...rememberIdea(library, idea), selected: clear ? null : idea }); }
   function saveTutorials(next) {
     if(limited){setAppError('Les poses guidées sauvegardées sont disponibles avec Plus.');return false;}
@@ -382,7 +390,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
           <p>{items.length ? 'Essaie un autre nom ou efface les filtres.' : filter === 'Matériel' ? 'Lampes, stickers, pinceaux, limes… Rassemble ici ce que tu possèdes.' : 'Ta collection personnalise tes idées. Tu peux aussi créer sans ajouter de produit.'}</p>
           {!items.length?<><button onClick={()=>setImporter(true)}><Plus/>Ajouter mon premier produit</button><button className="nmQuiet" onClick={()=>navigate('create')}>Créer sans collection</button></>:<button onClick={()=>{setSearch('');setFilter('Tous');setCollectionFilters({...emptyFilters});}}>Réinitialiser les filtres</button>}
         </section>}
-      </> : tab === 'profile' ? <ProfileView media={media} journal={journal} library={library} onJournal={openJournal} onOpen={openIdea} onRestartOnboarding={()=>{if(changeProfile({...profile,onboarding_step:0,onboarding_completed:false}))setOnboarding(true);}} route={route} onHelp={()=>setFeedbackOpen(true)} accountAccess={accountAccess} identityExtras={identityExtras} extras={profileExtras} appearanceExtras={appearanceExtras} onCreate={() => { setCreationEntry(profileDefaults(profile)); navigate('create'); }} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView onScan={() => navigate('scan')} onCreate={() => { setCreationEntry({ intent: 'inspire' }); navigate('create'); }} profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView onShareToPro={onShareToPro} media={media} onFavorites={() => navigate('favorites')} library={library} profile={profile} journal={journal} sessions={tutorials.sessions} items={items} route={route} draftIdea={journalDraftIdea} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
+      </> : tab === 'profile' ? <ProfileView onExplore={() => { setCreationEntry({...profileDefaults(profile),intent:items.length?'collection':'inspire',mode:'change',escapeBubble:true}); navigate('create'); }} media={media} journal={journal} library={library} onJournal={openJournal} onOpen={openIdea} onRestartOnboarding={()=>{if(changeProfile({...profile,onboarding_step:0,onboarding_completed:false}))setOnboarding(true);}} route={route} onHelp={()=>setFeedbackOpen(true)} accountAccess={accountAccess} identityExtras={identityExtras} extras={profileExtras} appearanceExtras={appearanceExtras} onCreate={() => { setCreationEntry(profileDefaults(profile)); navigate('create'); }} onEquipment={() => navigate('equipment')} onFavorites={() => navigate('favorites')} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} profile={profile} items={items} onChange={changeProfile} onCollection={() => navigate('collection')} /> : tab === 'home' ? <HomeView onScan={() => navigate('scan')} onCreate={() => { setCreationEntry({ intent: 'inspire' }); navigate('create'); }} profile={profile} items={items} library={library} journal={journal} tutorials={tutorials} personalModel={personalModel} personalSettings={personalSettings} onNavigate={navigate} onOpen={openIdea} onResume={resumeFromHome} onJournal={openJournal} onJournalSession={journalForSession} onCollection={openCollection} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} /> : <JournalView onShareToPro={onShareToPro} media={media} onFavorites={() => navigate('favorites')} library={library} profile={profile} journal={journal} sessions={tutorials.sessions} items={items} route={route} draftIdea={journalDraftIdea} onNavigate={openJournal} onSave={saveJournalEntry} onDelete={deleteJournalEntry} onDismiss={dismissJournalPose} onIdea={openIdea} onCollection={openCollection} onCreate={() => navigate('create')} />}
     <button className="betaFeedbackLink" onClick={()=>setTour(true)}>Visiter NailMoods</button>
     <button className="betaFeedbackLink" onClick={()=>setFeedbackOpen(true)}>Aide & Support</button>
     </main>
@@ -393,6 +401,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
 
     <TutorialTimerRuntime tutorials={tutorials} onOpen={openTutorial}/>{import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&<PlanningRuntime preferences={profile.planningNotifications}/>}
     {tour&&<CoachTour onNavigate={navigate} onFinish={()=>{if(changeProfile({...profile,guide_completed:true,guide_pending:false}))setTour(false);}}/>}
+    {undoNotice.element}
     {personalOpen && <PersonalizationPanel model={personalModel} settings={personalSettings} onChange={changePersonalization} onClose={() => setPersonalOpen(false)} error={personalError} onJournal={() => { setPersonalOpen(false); navigate('journal'); }} onFavorites={() => { setPersonalOpen(false); navigate('favorites'); }} />}
 
     {equipmentOpen&&<EquipmentLibrary items={items} onSetOwned={setOwned} onCustom={()=>{setEquipmentOpen(false);setAddCategory('material');start('manual','Matériel');}} onClose={()=>setEquipmentOpen(false)}/>}
@@ -466,7 +475,8 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
           <button className="saveProduct" disabled={!edit.name.trim() || photoBusy || importBusy} onClick={() => save()}><Check />{photoBusy ? 'Préparation de la photo…' : importBusy ? 'Recherche en cours…' : 'Enregistrer'}</button>
           {!edit.name.trim() && <p className="fieldHelp">Renseigne un nom pour enregistrer.</p>}
         </div>
-        {edit.id && <button className="deleteProduct" onClick={() => {if(!window.confirm('Supprimer ce produit de la collection ? Les recettes historiques restent conservées.'))return;const category=edit.type;if(persist(items.filter(item => item.id !== edit.id)))track('product_deleted',{category},{screen:'collection'});}}><Trash2 /> Supprimer</button>}
+        {edit.id && <button className="deleteProduct" onClick={() => {const removed=items.find(item=>item.id===edit.id),category=edit.type;
+          if(removed&&persist(items.filter(item=>item.id!==removed.id))){track('product_deleted',{category},{screen:'collection'});undoNotice.show('Produit retiré de la collection',()=>{try{return persist(restoreProduct(JSON.parse(browserStorage.getItem('nm-collection-v2')||'[]'),removed));}catch(e){setAppError(e.message);return false;}});}}}><Trash2 /> Supprimer</button>}
     </Sheet>}
   </div>;
 }

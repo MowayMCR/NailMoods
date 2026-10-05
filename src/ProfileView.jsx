@@ -1,3 +1,5 @@
+import ProfilePlanning from './engagement/ProfilePlanning';
+import CreativeProfile from './engagement/CreativeProfile';
 import LifestyleProfile,{LifestyleSummary} from './lifestyle/LifestyleProfile';
 import {UniverseTiles,PreferenceTiles,ProfileEmpty} from './design/ProfileModules';
 import {JournalVisual} from './JournalView';
@@ -23,7 +25,7 @@ const universeGroups = [
   ['Styles', 'style'], ['Envies', 'envie'], ['Ambiances', 'ambiance'], ['Techniques', 'technique'], ['Effets', 'finish'], ['Thèmes', 'theme'],
 ].map(([label, category]) => [label, TAGS.filter(tag => tag.category === category).map(tag => tag.label)]);
 
-export default function ProfileView({ media, journal,library,onJournal,onOpen,onRestartOnboarding,route, onHelp, accountAccess, identityExtras, extras, appearanceExtras, onCreate, onEquipment, onFavorites, profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
+export default function ProfileView({ media, journal,library,onJournal,onOpen,onRestartOnboarding,route, onHelp, accountAccess, identityExtras, extras, appearanceExtras, onCreate, onExplore, onEquipment, onFavorites, profile, items, onChange, onCollection, personalModel, personalSettings, onPersonalization }) {
   const section = route?.split('/')[1] || '';
   const titles = {lifestyle:'Mes repères personnels',preferences:'Mes préférences',ambiance:'Mon ambiance',account:'Réglages',offer:'Mon offre',privacy:'Confidentialité & données',social:'Connexions et comptes bloqués',pro:'Espace Pro',staff:'Journal staff'};
   const openSection = key => { window.location.hash = 'profil' + (key ? '/' + key : ''); window.scrollTo({top:0}); };
@@ -39,6 +41,8 @@ export default function ProfileView({ media, journal,library,onJournal,onOpen,on
   return <div className="profilePage">
     {!section ? <>    <section className="profileHero"><button className="profileAvatarButton" aria-label="Modifier mon avatar et le thème" aria-haspopup="dialog" onClick={() => setPanel('appearance')}>{avatar(true)}<span className="avatarEditHint" aria-hidden="true"><Pencil size={12} /></span></button><div><small>MON UNIVERS</small><h1>{profile.name || 'Mon profil'}</h1><ProfileIdentity /><p>{profile.bio||"Ton profil guide tes inspirations."}</p><button className="nmEditProfile" onClick={()=>openSection('account')}><Pencil size={14}/>Modifier mon profil</button></div><div className="nmProfileStats"><span><b>{profile.styles.length}</b>univers</span><span><b>{journal?.entries?.length||0}</b>poses</span><span><b>{library?.favorites?.length||0}</b>inspirations</span></div></section>
 <div className="nmProfileBento">
+<ProfilePlanning/>
+<CreativeProfile library={library} journal={journal} profile={profile} settings={personalSettings} onSettings={onPersonalization} onExplore={onExplore||onCreate}/>
 <LifestyleSummary profile={profile} onOpen={()=>openSection('lifestyle')}/>
 <section className="nmBento nmProfileUniverses"><div className="nmSectionHead"><div><small className="nmEyebrow">CE QUI M’INSPIRE</small><h2>Mes univers</h2></div><button onClick={()=>setUniverses(true)}>Modifier</button></div>{profile.styles.length?<UniverseTiles values={profile.styles}/>:<ProfileEmpty onClick={()=>setUniverses(true)} action="Choisir mes univers">Compose un univers qui n’appartient qu’à toi.</ProfileEmpty>}</section>
 <section className="nmBento nmProfilePreferences"><div className="nmSectionHead"><h2>Mes préférences</h2><button onClick={()=>openSection('preferences')}>Modifier</button></div><PreferenceTiles profile={profile}/></section>
