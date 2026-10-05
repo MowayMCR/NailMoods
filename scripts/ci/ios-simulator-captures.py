@@ -4,11 +4,13 @@ app = sys.argv[1]
 out = pathlib.Path('artifacts/ios/simulator')
 out.mkdir(parents=True, exist_ok=True)
 def run(*args):
-    return subprocess.check_output(['xcrun','simctl',*args])
+    return subprocess.check_output(['xcrun','simctl',*args],timeout=300)
 inventory = json.loads(run('list','devices','available','-j'))['devices']
 groups = [(runtime,devices) for runtime,devices in inventory.items() if 'iOS-26' in runtime]
 assert groups, 'No iOS 26 simulator runtime installed'
 runtime, devices = sorted(groups)[-1]
+(out/'inventory.json').write_text(json.dumps({'runtime':runtime,'devices':devices},indent=2))
+print('Native capture runtime: '+runtime,flush=True)
 selections=[]
 for label, needle in [('iphone','iPhone'),('ipad-mini','iPad mini'),('ipad-standard','iPad (A16)'),('ipad-large','iPad Pro 13')]:
     match = next((device for device in devices if needle in device['name']),None)
@@ -19,6 +21,7 @@ for label, needle in [('iphone','iPhone'),('ipad-mini','iPad mini'),('ipad-stand
 results=[]
 for label, device in selections:
     udid=device['udid']
+    print('Launching native check: '+label+' / '+device['name'],flush=True)
     try:
         if device['state']!='Booted': run('boot',udid)
         run('bootstatus',udid,'-b')
@@ -31,7 +34,7 @@ for label, device in selections:
                 '-configuration','Release','-destination','id='+udid,
                 '-derivedDataPath',os.environ['RUNNER_TEMP']+'/nm-simulator',
                 '-clonedSourcePackagesDirPath',os.environ['RUNNER_TEMP']+'/nm-spm',
-                '-resultBundlePath',str(result_path),'CODE_SIGNING_ALLOWED=NO'],stdout=log,stderr=subprocess.STDOUT)
+                '-resultBundlePath',str(result_path),'-parallel-testing-enabled','NO','CODE_SIGNING_ALLOWED=NO'],stdout=log,stderr=subprocess.STDOUT,timeout=420)
         subprocess.check_call(['xcrun','xcresulttool','export','attachments','--path',str(result_path),'--output-path',str(out/(label+'-attachments'))])
         run('launch',udid,os.environ['NAILMOODS_IOS_BUNDLE_ID'])
         time.sleep(2)

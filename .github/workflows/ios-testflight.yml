@@ -47,7 +47,7 @@ permissions:
   contents: read
 concurrency:
   group: ios-testflight-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' || inputs.mode != 'testflight' }}
 
 jobs:
   shared-tests:
@@ -73,6 +73,10 @@ jobs:
           node --check scripts/mobile-version.mjs
           node scripts/build-theme-css.mjs
           npm run build
+      - name: iPad responsive browser checks (distinct from native simulators)
+        run: |
+          npx --no-install playwright install --with-deps chromium
+          node scripts/test-ipad-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -155,7 +159,10 @@ jobs:
           cp dist-mobile/mobile-build.json artifacts/ios/
           plutil -lint ios/App/App/Info.plist ios/App/App/PrivacyInfo.xcprivacy
       - name: Resolve pinned native dependencies
-        run: xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" | tee artifacts/ios/spm.log
+        run: |
+          set -o pipefail
+          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" | tee artifacts/ios/spm.log
+          cp ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved artifacts/ios/Package.resolved
       - name: Release simulator build
         run: |
           set -o pipefail
