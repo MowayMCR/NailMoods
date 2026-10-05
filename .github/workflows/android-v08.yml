@@ -1,4 +1,4 @@
-name: Android v0.8 validated DA06 (build only)
+name: Android v0.8 complete pose cycle (build only)
 on:
   push:
     branches: [build/v0.8-da06]
@@ -24,9 +24,11 @@ jobs:
       - name: Embed approved Production UI
         env:
           NAILMOODS_MOBILE_ENV: production
+          VITE_POSE_CYCLE_ENABLED: 'true'
         run: |
           node scripts/build-theme-css.mjs
           npm run mobile:production
+          node scripts/check-mobile-build.mjs dist-mobile production
           npx cap sync android
           npm run mobile:assets
       - name: Build release bundle and inspect available native symbols

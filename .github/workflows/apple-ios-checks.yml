@@ -18,7 +18,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Validate shared Production web payload
+        run: |
+          npm run mobile:production
+          node scripts/check-mobile-build.mjs dist-mobile production
       - run: npm run ios:recette
+      - run: node scripts/check-mobile-build.mjs dist-mobile recette
       - name: Toolchain and unsigned simulator build
         run: |
           xcodebuild -version
