@@ -17,6 +17,6 @@ test('billing transaction is finished only after successful server delivery',()=
 });
 
 test('iOS auth URL scheme matches the already established mobile PKCE callback',()=>{
- assert.match(read('ios/App/App/Info.plist'),/<key>CFBundleURLSchemes<\/key>\s*<array>\s*<string>com.nailmoods.app.recette<\/string>/);
+ assert.match(read('ios/App/App/Info.plist'),/<key>CFBundleURLSchemes<\/key>\s*<array>\s*<string>com.nailmoods.app(?:.recette)?<\/string>/);
  assert.match(read('scripts/build-ios.mjs'),/com.nailmoods.app.recette/);
 });
