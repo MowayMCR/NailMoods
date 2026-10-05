@@ -10,7 +10,7 @@ final class LaunchTests: XCTestCase {
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 30))
         let create = app.buttons["Créer"].firstMatch
         XCTAssertTrue(create.waitForExistence(timeout: 30), "Expected the actual NailMoods navigation, not just the launch screen")
-        let portrait = XCTAttachment(screenshot: app.screenshot())
+        let portrait = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         portrait.name = "NailMoods-native-portrait"
         portrait.lifetime = .keepAlways
         add(portrait)
@@ -20,7 +20,11 @@ final class LaunchTests: XCTestCase {
             expectation(for: wide, evaluatedWith: app.windows.firstMatch)
             waitForExpectations(timeout: 10)
             XCTAssertTrue(create.exists)
-            let landscape = XCTAttachment(screenshot: app.screenshot())
+            // UIKit updates the frame before the rotation animation finishes.
+            Thread.sleep(forTimeInterval: 2)
+            let shot = XCUIScreen.main.screenshot()
+            XCTAssertGreaterThan(shot.image.size.width, shot.image.size.height)
+            let landscape = XCTAttachment(screenshot: shot)
             landscape.name = "NailMoods-native-landscape"
             landscape.lifetime = .keepAlways
             add(landscape)

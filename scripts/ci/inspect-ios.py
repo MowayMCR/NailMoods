@@ -16,6 +16,9 @@ def inspect(app, signed=False):
     assert manifest['NSPrivacyTracking'] is False
     sdk_manifests = list(app.rglob('PrivacyInfo.xcprivacy'))
     assert len(sdk_manifests) > 1, 'Missing embedded SDK privacy manifests'
+    privacy_resources = [{'path':str(p.relative_to(app)),
+                          'accessedAPIs':plistlib.loads(p.read_bytes()).get('NSPrivacyAccessedAPITypes',[])}
+                         for p in sdk_manifests]
     public = app/'public'
     build = json.loads((public/'mobile-build.json').read_text())
     assert build['appId'] == expected_bundle and build['environment'] == 'production'
@@ -36,7 +39,8 @@ def inspect(app, signed=False):
         assert entitlements.get('get-task-allow',False) is False
     return {'bundle':info['CFBundleIdentifier'],'version':info['CFBundleShortVersionString'],
             'build':info['CFBundleVersion'],'sdk':info['DTSDKName'],'devices':info['UIDeviceFamily'],
-            'sdkPrivacyManifests':len(sdk_manifests),'signatureVerified':signed,'IAPlus':'compiled closed'}
+            'sdkPrivacyManifests':len(sdk_manifests),'privacyResources':privacy_resources,
+            'signatureVerified':signed,'IAPlus':'compiled closed'}
 
 path = pathlib.Path(sys.argv[1])
 signed = '--signed' in sys.argv
