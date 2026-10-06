@@ -157,3 +157,13 @@
 .app .nmPoseLanding .journalVisual.compact .nailPreview,.app .nmPoseLanding .poseSavedCard .nailPreview{display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;overflow:hidden}
 .app .nmPoseLanding .journalVisual.compact .nailPreview>svg,.app .nmPoseLanding .poseSavedCard .nailPreview>svg{width:20%;max-width:20%;min-width:0;max-height:88px;flex:0 1 20%}
 .app .nmPoseLanding .journalVisual.compact>small{display:block;padding:0 4px 5px;font-size:.625rem;line-height:1.3;color:var(--textSecondary)}
+
+/* Larger artwork, as on the approved design boards. */
+.app .nmAtelierSources .sourceCardGrid .sourceCard{grid-template-rows:108px minmax(2.4em,auto) minmax(2em,auto);gap:3px;padding-top:6px}
+.app .nmAtelierSources .sourceCardGrid .sourceCard>.nmAtelierArt{height:108px}
+.nmHomeTileGrid .nmIllustratedTile,.nmPoseQuickGrid>.nmIllustratedTile:not(:only-child){grid-template-rows:130px auto 1fr;gap:4px;padding-top:6px}
+.nmHomeTileGrid .nmIllustratedTile>.nmAtelierArt,.nmPoseQuickGrid>.nmIllustratedTile:not(:only-child)>.nmAtelierArt{height:130px}
+.nmHomeInspire>.nmAtelierArt{height:178px}
+.app .nmAtelierSources .sourceFollowGrid .sourceCard{grid-template-rows:96px minmax(2.6em,auto);padding-top:3px}
+.app .nmAtelierSources .sourceFollowGrid .nmAtelierArt{height:96px}
+@media(max-width:359px){.app .nmAtelierSources .sourceCardGrid .sourceCard{grid-template-rows:104px minmax(2.6em,auto) minmax(2.4em,auto)}.app .nmAtelierSources .sourceCardGrid .sourceCard>.nmAtelierArt{height:104px}.nmHomeTileGrid .nmIllustratedTile,.nmPoseQuickGrid>.nmIllustratedTile:not(:only-child){grid-template-rows:110px auto 1fr}.nmHomeTileGrid .nmIllustratedTile>.nmAtelierArt,.nmPoseQuickGrid>.nmIllustratedTile:not(:only-child)>.nmAtelierArt{height:110px}.app .nmAtelierSources .sourceFollowGrid .sourceCard{grid-template-rows:74px minmax(2.8em,auto)}.app .nmAtelierSources .sourceFollowGrid .nmAtelierArt{height:74px}}
