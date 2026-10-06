@@ -3,6 +3,11 @@
 [data-mood="dark-feminine"]{--shelf-wall:#402434;--shelf-glow:#63394c;--shelf-plank:#b38776;--shelf-edge:#76505b;--shelf-line:#785267;--shelf-leaf:#b39f7e;--shelf-shadow:#0c07105c;--shelf-radius:66px 66px 16px 16px}
 [data-mood="cottagecore"]{--shelf-wall:#e5e6d5;--shelf-glow:#fbf3df;--shelf-plank:#cdb28d;--shelf-edge:#a88e6b;--shelf-line:#c4c4a5;--shelf-leaf:#748651;--shelf-shadow:#48503729;--shelf-radius:62px 62px 20px 20px}
 [data-mood="pop-pastel"]{--shelf-wall:#eadcf5;--shelf-glow:#fff0f7;--shelf-plank:#c9b2df;--shelf-edge:#a18aba;--shelf-line:#d2bfe5;--shelf-leaf:#7daa9a;--shelf-shadow:#79648829;--shelf-radius:66px 66px 22px 22px}
+/* Outlined bottle details follow the mood, never the product pigment. */
+.app,.nmDialogHost{--bottle-cap:#713552;--bottle-cap-line:#4e233b;--bottle-cap-light:#c890ae;--bottle-ink:#713d57;--bottle-rim:#fff3ed;--bottle-shadow:#d9b0ba}
+[data-mood="dark-feminine"]{--bottle-cap:#662943;--bottle-cap-line:#bd82a0;--bottle-cap-light:#c889ad;--bottle-ink:#783a5a;--bottle-rim:#f8e4ee;--bottle-shadow:#1e0e1c}
+[data-mood="cottagecore"]{--bottle-cap:#765463;--bottle-cap-line:#523b45;--bottle-cap-light:#c4a6b3;--bottle-ink:#795866;--bottle-rim:#fcf5e7;--bottle-shadow:#c6b99e}
+[data-mood="pop-pastel"]{--bottle-cap:#8553a0;--bottle-cap-line:#59356e;--bottle-cap-light:#d6acdf;--bottle-ink:#794e88;--bottle-rim:#fcf0ff;--bottle-shadow:#cbb3da}
 .nmVisuallyHidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .app .collectionExperience{padding:12px 20px 24px;min-width:0}
 .nmCollectionHeading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 10px}
