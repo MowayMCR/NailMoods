@@ -1,6 +1,8 @@
 import React from 'react';
 import {ArrowUpRight, Heart, Play, Sparkles} from 'lucide-react';
 import MoodGlyph from '../MoodGlyph';
+import AtelierArt from './AtelierArt';
+import Bottle from '../shelf/Bottle';
 import {productColor} from '../colorAnalysis';
 import {profileMood} from './themes';
 
@@ -18,19 +20,19 @@ export default function HomeBento({profile, items, resume, onCreate, onNavigate}
     </button>
     <button className="nmPaletteCard" onClick={onCreate}>
       <span className="nmEyebrow">INSPIRATION EXPRESS</span>
-      <div className="nmMoodCollage" aria-hidden="true"><span className="nmMoodPaper"><Sparkles/><i>mood<br/>du jour</i></span><span className="nmMoodRibbon"/><div className="nmMoodSwatches">{mood.colors.map(c=><i key={c} style={{background:c}}/>)}</div><Heart className="nmMoodHeart"/></div>
+      <div className="nmMoodCollage"><AtelierArt source="inspire"/></div>
       <b>Place à ton mood</b><small>{mood.name}</small><span className="nmBentoFoot"><span>Une nouvelle idée</span><ArrowUpRight aria-hidden="true"/></span>
     </button>
     <button className="nmTutorialCard" onClick={()=>onNavigate('tutorials')}>
       <span className="nmEyebrow">POSES GUIDÉES</span>
-      <div className="nmGuideArt" aria-hidden="true"><span className="nmGuideBook"><MoodGlyph value="French"/><Play/></span><span className="nmGuideSteps">{[1,2,3].map(n=><i key={n}>{n}</i>)}</span></div>
+      <div className="nmGuideArt"><AtelierArt source="trainer"/></div>
       <b>Un geste<br/>après l’autre</b><small>{resume?`${resume.completed.length} / ${resume.steps.length} étapes terminées`:'Préparer · créer · admirer'}</small>
       {resume && <progress value={resume.completed.length} max={resume.steps.length} aria-label="Progression de ma pose"/>}
       <span className="nmBentoFoot"><span>{resume?'Reprendre ma pose':'Voir mes guides'}</span><ArrowUpRight aria-hidden="true"/></span>
     </button>
     <button className="nmCollectionBento" onClick={()=>onNavigate('collection')}>
       <span className="nmCollectionCopy"><span className="nmEyebrow">MA COLLECTION</span><b>Mes petits<br/>trésors.</b><small>{items.length?`${items.length} produit${items.length>1?'s':''} à retrouver`:'Tes couleurs commencent ici'}</small><span className="nmBentoFoot"><span>{items.length?'Ouvrir ma collection':'Ajouter un produit'}</span><ArrowUpRight aria-hidden="true"/></span></span>
-      <span className="nmCollectionStillLife" aria-label={colors.length?'Quelques couleurs de ta collection':'Ta future collection'}>{colors.length ? colors.map(p=><span className="nmMiniProduct" key={p.id} title={`${p.brand || ''} ${p.name}`}><span className="nmMiniBottle"><span style={{background:productColor(p)}} data-product-hex={productColor(p)}/></span><i style={{background:productColor(p)}} data-product-hex={productColor(p)}/></span>) : <span className="nmCollectionEmpty"><Heart aria-hidden="true"/><span>{items.length?'Vernis, matériel et accessoires':'À remplir de tes envies'}</span></span>}</span>
+      <span className="nmCollectionStillLife" aria-label={colors.length?'Quelques couleurs de ta collection':'Ta future collection'}>{colors.length ? colors.map(p=><span className="nmMiniProduct" key={p.id} title={`${p.brand || ''} ${p.name}`}><Bottle product={p}/><i style={{background:productColor(p)}} data-product-hex={productColor(p)}/></span>) : <span className="nmCollectionEmpty"><AtelierArt source="collection"/><span>{items.length?'Vernis, matériel et accessoires':'À remplir de tes envies'}</span></span>}</span>
     </button>
   </div>;
 }

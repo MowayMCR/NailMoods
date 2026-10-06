@@ -1,0 +1,55 @@
+/* Atelier illustré: the approved board, rendered as real interactive controls. */
+.nmAtelierArt{display:block;width:100%;height:100%;overflow:hidden;pointer-events:none}
+.app .nmAtelierSources{padding:12px 16px 24px;max-width:560px}
+.app .nmAtelierSources .sourceHeading{margin:0 0 14px}
+.app .nmAtelierSources .sourceHeading h1{font-size:2.5rem;letter-spacing:-.035em;margin:0 0 4px;font-weight:400}
+.app .nmAtelierSources .sourceHeading p{font-size:.9375rem;line-height:1.45;color:var(--textSecondary)}
+.app .nmAtelierSources .sourceCardGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;grid-auto-rows:1fr}
+.app .nmAtelierSources .sourceCard{display:grid;grid-template-rows:88px minmax(2.6em,auto) minmax(2.4em,auto);gap:4px;align-content:start;align-items:start;padding:8px 10px 10px;border-radius:15px;border:1px solid color-mix(in srgb,var(--borderDefault) 72%,var(--surfacePrimary));background:linear-gradient(140deg,color-mix(in srgb,var(--accentSoft) 12%,var(--surfacePrimary)),color-mix(in srgb,var(--accentSoft) 24%,var(--surfacePrimary)));box-shadow:none;text-align:left;color:var(--textPrimary);font-family:inherit;font-size:.9375rem}
+.app .nmAtelierSources .sourceCard .nmAtelierArt{height:88px;align-self:center;filter:drop-shadow(0 2px 2px color-mix(in srgb,var(--accentPrimary) 8%,transparent))}
+.app .nmAtelierSources .sourceCard>b{font-size:.9375rem;font-weight:650;line-height:1.3;letter-spacing:-.02em}
+.app .nmAtelierSources .sourceCard>small{font-size:.875rem;line-height:1.35;color:var(--textSecondary)}
+.app .nmAtelierSources .sourceAtelier{min-height:76px;margin-top:8px;padding:8px 10px;gap:10px;border-radius:15px;border:1px solid var(--borderDefault);background:linear-gradient(110deg,var(--accentSoft),color-mix(in srgb,var(--accentSoft) 65%,var(--surfacePrimary)))}
+.app .nmAtelierSources .sourceAtelier>.nmAtelierArt{width:88px;height:58px;flex:0 0 88px}
+.app .nmAtelierSources .sourceAtelier>span{flex:1;gap:5px;min-width:0}
+.app .nmAtelierSources .sourceAtelierTitle{gap:7px}
+.app .nmAtelierSources .sourceAtelierTitle b{font-size:.9375rem;line-height:1.3;font-weight:650}
+.app .nmAtelierSources .sourceAtelierTitle em{font-size:.6875rem;font-weight:600;padding:3px 7px}
+.app .nmAtelierSources .sourceAtelier small{font-size:.8125rem;line-height:1.4}
+.sourceFollowGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+.app .nmAtelierSources .sourceFollowGrid .sourceCard{grid-template-rows:84px minmax(2.8em,auto);padding:6px 5px 8px;gap:4px;text-align:center;border-radius:13px}
+.app .nmAtelierSources .sourceFollowGrid .nmAtelierArt{height:84px}
+.app .nmAtelierSources .sourceFollowGrid .sourceCard>b{font-size:.8125rem;font-weight:600;line-height:1.3;letter-spacing:-.02em;align-self:center}
+.app .nmAtelierSources :is(.sourceCard,.sourceAtelier):focus-visible{outline:3px solid var(--accentPrimary);outline-offset:3px}
+@media(hover:hover){.app .nmAtelierSources :is(.sourceCard,.sourceAtelier):hover{border-color:var(--borderActive);box-shadow:0 3px 12px color-mix(in srgb,var(--accentPrimary) 8%,transparent)}}
+/* The slim navigation is shared by every existing tab. */
+.app{padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+.app>header{height:72px;padding:6px 16px;gap:8px}
+.app>nav{height:calc(68px + env(safe-area-inset-bottom,0px));padding:5px 8px env(safe-area-inset-bottom,0px);box-shadow:0 -2px 10px color-mix(in srgb,var(--overlay) 3%,transparent);border-top:1px solid var(--borderDefault)}
+.app>nav button{position:relative;min-height:54px;padding:3px 2px;gap:5px;font-size:.6875rem;border-radius:0;background:transparent}
+.app>nav button.on{background:transparent;color:var(--accentPrimary);font-weight:650}
+.app>nav button svg{width:20px;height:20px;stroke-width:1.6}
+.app>nav button[data-tour=create] svg{box-sizing:border-box;width:24px;height:24px;padding:4px;margin:0;border-radius:50%;background:var(--accentPrimary);color:var(--textOnAccent)}
+.app>nav button[aria-current=page]:after{content:'';position:absolute;bottom:0;width:22px;height:2px;border-radius:2px;background:var(--accentPrimary)}
+/* Home uses the same editorial artwork; saved product pigments stay literal. */
+.app .smartHome{padding-inline:16px}
+.app .smartHome .homeGreeting{padding-top:12px}
+.app .smartHome .homeGreeting:after{display:none}
+.app .smartHome .homeGreeting .homeBotanical{position:absolute;right:0;top:14px;width:104px;height:104px;opacity:.4;z-index:-1}
+.app .smartHome .homeGreeting h1{font-size:2.35rem;line-height:1.08}
+.app .smartHome .nmHomeBento>button{border-radius:16px!important;box-shadow:none;background:linear-gradient(145deg,var(--surfacePrimary),color-mix(in srgb,var(--accentSoft) 25%,var(--surfacePrimary)))}
+.app .smartHome .nmHomeBento .nmEyebrow{font-size:.6875rem}
+.app .smartHome .nmHomeBento small{font-size:.8125rem}
+.app .smartHome .nmBentoFoot{font-size:.75rem}
+.app .smartHome .nmMoodCollage,.app .smartHome .nmGuideArt{display:block;position:relative;min-height:0;height:110px;margin:8px 0}
+.app .smartHome .nmCollectionStillLife{background:transparent;padding:6px;gap:0}
+.app .smartHome .nmMiniProduct>.nmBottle{width:64px;height:96px;max-width:100%}
+.app .smartHome .nmMiniProduct>i{width:20px;height:20px}
+.app .smartHome .nmCollectionEmpty .nmAtelierArt{height:116px;width:100%}
+.app .smartHome .scanHomeCard{grid-template-columns:minmax(0,1fr) 110px;border-radius:16px;background:linear-gradient(130deg,var(--surfacePrimary),var(--accentSoft))}
+.app .smartHome .homeScanArt{height:112px;width:110px}
+.app .smartHome .communityEntry{border-radius:16px;padding:18px 16px}
+@media(max-width:359px){.app .nmAtelierSources .sourceCard{grid-template-rows:92px minmax(2.6em,auto) minmax(2.6em,auto);padding-inline:8px}.app .nmAtelierSources .sourceCard .nmAtelierArt{height:92px}.app .nmAtelierSources .sourceAtelier>.nmAtelierArt{width:62px;flex-basis:62px}.app .nmAtelierSources .sourceFollowGrid .sourceCard{padding-inline:3px;grid-template-rows:62px minmax(2.8em,auto)}.app .nmAtelierSources .sourceFollowGrid .nmAtelierArt{height:62px}.app .nmAtelierSources .sourceFollowGrid .sourceCard>b{font-size:.75rem}}
+@media(prefers-reduced-motion:reduce){.app .nmAtelierSources :is(.sourceCard,.sourceAtelier){transition:none}}
+
+.app[data-page=create] main>.betaFeedbackLink{display:none}
