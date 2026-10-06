@@ -1,0 +1,9 @@
+/* The validated drawing appears in every shared idea preview. */
+.app .drawnNails{background:radial-gradient(ellipse at 50% 45%,#fffaf6 0%,#fbf2ed 100%);gap:2px}
+.app .drawnNails>svg{filter:drop-shadow(1px 7px 4px #87515e20)}
+.app .engagementCreation .ideaCard .drawnNails,.app .inspirationPage>.renderPreview>.drawnNails{padding:16px 7px 12px;min-height:170px}
+.app .engagementCreation .ideaCard .drawnNails>svg{width:22%;max-width:100px;flex-shrink:1}
+.app .drawnNails.interactiveNails button{min-width:0}
+.app .drawnNails.interactiveNails button>svg{width:100%;max-width:100px;height:auto}
+.app .drawnNails.interactiveNails button>span{font-size:11px}
+.app .inspirationPage .drawnNails{padding:17px 5px 12px;gap:1px}

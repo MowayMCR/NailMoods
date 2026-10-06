@@ -19,6 +19,8 @@ export function nailPath(shape='Amande'){
  }
 }
 export function frenchPath(technique){
+ if(technique==='side-french')return 'M 0 0 H100 V19 Q61 45 0 72Z';
+ if(technique==='deep-french')return 'M0 0 H100 V85 Q50 40 0 85Z';
  if(technique==='reverse-french')return 'M 4 146 Q 50 172 96 146 L 96 180 L 4 180 Z';
  if(technique==='micro-french')return 'M 0 0 H 100 V 38 Q 50 17 0 38 Z';
  if(technique==='v-french')return 'M 0 0 H 100 V 51 L 50 20 L 0 51 Z';
