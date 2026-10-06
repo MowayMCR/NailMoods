@@ -29,12 +29,20 @@ for label, device in selections:
         # XCTest installs and launches the built application itself. A separate
         # simctl launch can stall on a cold hosted simulator before XCTest starts.
         result_path = out/(label+'.xcresult')
-        with (out/(label+'-uitest.log')).open('w') as log:
-            subprocess.check_call(['xcodebuild','test','-project','ios/App/App.xcodeproj','-scheme','App',
-                '-configuration','Release','-destination','id='+udid,
-                '-derivedDataPath',os.environ['RUNNER_TEMP']+'/nm-simulator',
-                '-clonedSourcePackagesDirPath',os.environ['RUNNER_TEMP']+'/nm-spm',
-                '-resultBundlePath',str(result_path),'-parallel-testing-enabled','NO','CODE_SIGNING_ALLOWED=NO'],stdout=log,stderr=subprocess.STDOUT,timeout=900)
+        try:
+            with (out/(label+'-uitest.log')).open('w') as log:
+                subprocess.check_call(['xcodebuild','test','-project','ios/App/App.xcodeproj','-scheme','App',
+                    '-configuration','Release','-destination','id='+udid,
+                    '-derivedDataPath',os.environ['RUNNER_TEMP']+'/nm-simulator',
+                    '-clonedSourcePackagesDirPath',os.environ['RUNNER_TEMP']+'/nm-spm',
+                    '-resultBundlePath',str(result_path),'-parallel-testing-enabled','NO','CODE_SIGNING_ALLOWED=NO'],stdout=log,stderr=subprocess.STDOUT,timeout=900)
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            # Surface the XCTest reason in job logs before failing the required gate.
+            log_path = out/(label+'-uitest.log')
+            print('Native simulator check failed: '+label, flush=True)
+            if log_path.exists():
+                print('\n'.join(log_path.read_text(errors='replace').splitlines()[-100:]), flush=True)
+            raise
         subprocess.check_call(['xcrun','xcresulttool','export','attachments','--path',str(result_path),'--output-path',str(out/(label+'-attachments'))])
         results.append({'label':label,'device':device['name'],'runtime':runtime,'screenshot':'portrait and iPad landscape in XCTest attachments','scope':'Native navigation launch and supported orientation; no login, camera or purchase validation'})
     finally:
