@@ -43,6 +43,15 @@ function Motif({technique,base,accent,id,seed,light,shape,withGlassMotif=true}){
  if(technique==='gel-3d')return <Flower x={51} y={92} r={1.08} color={tint(accent,cream,.25)} raised/>;
  return null;
 }
+// Existing decorations retain their motif and placement, using the same drawn vocabulary.
+export function DrawnDecoration({motif,color,x=50,y=91}){
+ if(motif==='flower')return <Flower x={x} y={y} r={.65} color={color}/>;
+ if(motif==='leaf')return <g transform={`translate(${x-46} ${y-98}) scale(.8)`}><Branch color={color} x={46} y={143}/></g>;
+ if(motif==='heart')return <Heart x={x} y={y} r={1} color={color}/>;
+ if(motif==='star')return <g transform={`translate(${x} ${y})`}><path d="M0 -17 L5 -6 L17 -5 L8 4 L11 17 L0 10 L-12 17 L-8 4 L-17 -5 L-5 -6Z" fill={color} stroke={tint(color,ink,.3)} strokeWidth=".6"/><path d="M0 -15 L0 9 L-10 15 M-14 -5 L0 9 L14 -5" stroke={cream} strokeWidth=".8" opacity=".4" fill="none"/></g>;
+ if(motif==='moon')return <path transform={`translate(${x} ${y})`} d="M7 -18 C-17 -24 -30 19 -3 22 Q11 24 18 11 C-8 22 -15 -11 7 -18Z" fill={color} stroke={tint(color,ink,.3)} strokeWidth=".6"/>;
+ return null;
+}
 export default function DrawnNail({base,accent,shape='Amande',length='Moyenne',technique='gloss',light=0,seed=0,label,children,frenchVariant,tipTechnique,matte=false,style,ariaHidden=false,withGlassMotif=true}){
  const id='nm-draw-'+useId().replace(/[^a-zA-Z0-9-]/g,''),path=nailPath(shape),deep=tint(base,ink,.36),pale=tint(base,cream,.62);
  const transparent=['jelly','glass'].includes(technique),body=technique==='milky'?tint(base,cream,.56):transparent?tint(base,cream,technique==='glass'?.77:.43):base;
@@ -51,7 +60,7 @@ export default function DrawnNail({base,accent,shape='Amande',length='Moyenne',t
  <defs>
   <clipPath id={id+'-clip'}><path d={path}/></clipPath>
   {frenchVariant&&<clipPath id={id+'-tip'}><path d={frenchPath(frenchVariant)}/></clipPath>}
-  <linearGradient id={id+'-wash'} x1="0" x2="1" y1=".1" y2=".75"><stop stopColor={pale}/><stop offset=".38" stopColor={body}/><stop offset=".78" stopColor={body}/><stop offset="1" stopColor={deep} stopOpacity={transparent?.22:.48}/></linearGradient>
+  <linearGradient id={id+'-wash'} x1="0" x2="1" y1=".1" y2=".75"><stop stopColor={pale}/><stop offset=".27" stopColor={body}/><stop offset=".73" stopColor={body}/><stop offset="1" stopColor={deep} stopOpacity={transparent?.32:.8}/></linearGradient>
   <linearGradient id={id+'-ombre'} x1="0" x2="0" y1="0" y2="1"><stop stopColor={accent}/><stop offset=".8" stopColor={accent} stopOpacity="0"/></linearGradient>
   <radialGradient id={id+'-aura'}><stop stopColor={accent} stopOpacity=".9"/><stop offset=".55" stopColor={accent} stopOpacity=".45"/><stop offset="1" stopColor={accent} stopOpacity="0"/></radialGradient>
   <linearGradient id={id+'-beam'}><stop stopColor={accent} stopOpacity="0"/><stop offset=".45" stopColor={tint(accent,cream,.55)} stopOpacity=".9"/><stop offset=".6" stopColor={accent} stopOpacity=".6"/><stop offset="1" stopColor={accent} stopOpacity="0"/></linearGradient>
@@ -65,14 +74,16 @@ export default function DrawnNail({base,accent,shape='Amande',length='Moyenne',t
   <path d={path} fill={body} opacity={transparent?.5:1}/>
   <g clipPath={`url(#${id}-clip)`}>
    <path d={path} fill={`url(#${id}-wash)`} opacity={transparent?.65:1}/>
-   <g opacity=".1" fill={cream} filter={`url(#${id}-water)`}><path d="M29 16 C15 44 23 119 35 155 C28 111 28 52 38 23Z"/><path d="M68 24 Q80 86 72 150 Q88 102 79 45Z" opacity=".45"/></g>
+   <g opacity=".18" stroke={cream} strokeLinecap="round" fill="none" filter={`url(#${id}-water)`}><path d="M31 13 C18 48 22 125 37 162" strokeWidth="13"/><path d="M55 24 Q67 85 60 154" strokeWidth="7"/></g>
    <Motif technique={technique} base={base} accent={accent} id={id} seed={seed} light={light} shape={shape} withGlassMotif={withGlassMotif}/>
    {frenchVariant&&<g clipPath={`url(#${id}-tip)`}><Motif technique={frenchVariant} base={base} accent={accent} id={id} seed={seed} light={light} shape={shape} withGlassMotif={withGlassMotif}/>{tipTechnique&&<Motif technique={tipTechnique} base={accent} accent={base} id={id} seed={seed} light={light} shape={shape} withGlassMotif={withGlassMotif}/>}</g>}
    {children}
    <path d={path} fill={deep} opacity=".12" filter={`url(#${id}-grain)`}/>
-   {!matte&&<g transform={`translate(${reflect} 0)`} fill={cream} opacity={technique==='velvet'?.25:.7} data-painted-reflection>
-    <path d="M29 28 C23 43 22 71 25 91 C26 94 27 87 27 81 C26 55 30 39 31 33 Q32 26 29 28Z"/>
-    <path d="M27 99 Q26 122 32 138 Q34 142 32 135 Q29 117 29 104 Q30 98 27 99Z" opacity=".35"/>
+   {!matte&&<g transform={`translate(${reflect} 0)`} fill={cream} opacity={technique==='velvet'?.37:.76}>
+    <path d="M30 31 C23 47 24 69 25 84 C26 86 28 83 28 78 C27 55 32 40 33 34 Q33 29 30 31Z"/>
+    <path d="M27 92 Q25 116 32 133 Q36 139 34 129 Q29 108 30 96 Q30 89 27 92Z" opacity=".55"/>
+    <path d="M70 31 Q79 51 77 76 Q76 80 74 75 Q76 49 68 34Z" opacity=".2"/>
+    <path d="M33 155 Q45 163 58 157 Q60 156 58 161 Q44 169 33 159Z" opacity=".38"/>
    </g>}
   </g>
   <path d={path} fill="none" stroke={tint(base,ink,.65)} strokeWidth="1.05" strokeLinejoin="round"/>
