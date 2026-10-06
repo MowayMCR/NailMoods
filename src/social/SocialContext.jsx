@@ -1,3 +1,4 @@
+import AtelierArt from '../design/AtelierArt';
 import {identityService} from '../identity/service';
 import {track} from '../analytics/analytics';
 import React, {createContext,useContext,useEffect,useState,useRef,useCallback} from 'react';
@@ -27,4 +28,4 @@ export function SocialProvider({client,userId,tier,children}) {
  return <SocialContext.Provider value={{discovery,setDiscovery,activePeer,setActivePeer,conversationCache:conversationCache.current,client,userId,tier,rows,notifications,count,unread,error,busy,refresh,markRead,view,setView,identity,refreshIdentity,identityOpen,setIdentityOpen}}>{children}</SocialContext.Provider>;
 }
 export function NotificationButton(){const s=useSocial();if(!s?.userId||!['plus','pro'].includes(s.tier))return null;return <button className="round notificationButton" aria-label={`Notifications${s.count?`, ${s.count} non lues`:''}`} onClick={()=>s.setView('notifications')}><Bell/>{s.count>0&&<span className="nmBadge">{s.count>99?'99+':s.count}</span>}</button>;}
-export function MessengerTile(){const s=useSocial();if(!s?.userId||!['plus','pro'].includes(s.tier))return null;return <button className="nmShortcut messengerTile" onClick={()=>s.setView('conversations')}><MessageCircle/><span><b>Messagerie</b><small>{s.unread?`${s.unread} message${s.unread>1?'s':''} non lu${s.unread>1?'s':''}`:'Mes échanges et les projets partagés'}</small></span>{s.unread>0&&<span className="nmBadge">{s.unread>99?'99+':s.unread}</span>}<ChevronRight/></button>;}
+export function MessengerTile({illustrated=false}){const s=useSocial();if(!s?.userId||!['plus','pro'].includes(s.tier))return null;return <button className={illustrated?"nmIllustratedTile nmMessengerArt messengerTile":"nmShortcut messengerTile"} onClick={()=>s.setView('conversations')}>{illustrated?<AtelierArt source="messages"/>:<MessageCircle/>}<span><b>Messagerie</b><small>{s.unread?`${s.unread} message${s.unread>1?'s':''} non lu${s.unread>1?'s':''}`:'Mes échanges et les projets partagés'}</small></span>{s.unread>0&&<span className="nmBadge">{s.unread>99?'99+':s.unread}</span>}{!illustrated&&<ChevronRight/>}</button>;}

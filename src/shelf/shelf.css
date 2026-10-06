@@ -1,0 +1,109 @@
+/* Shared illustrated furniture. Pigment is deliberately outside these mood tokens. */
+.app,.nmDialogHost{--shelf-wall:#f2dfd8;--shelf-glow:#fff4e9;--shelf-plank:#e8c2b0;--shelf-edge:#bb9382;--shelf-line:#dfc1b7;--shelf-leaf:#82916c;--shelf-shadow:#6d40302b;--shelf-radius:66px 66px 18px 18px}
+[data-mood="dark-feminine"]{--shelf-wall:#402434;--shelf-glow:#63394c;--shelf-plank:#b38776;--shelf-edge:#76505b;--shelf-line:#785267;--shelf-leaf:#b39f7e;--shelf-shadow:#0c07105c;--shelf-radius:66px 66px 16px 16px}
+[data-mood="cottagecore"]{--shelf-wall:#e5e6d5;--shelf-glow:#fbf3df;--shelf-plank:#cdb28d;--shelf-edge:#a88e6b;--shelf-line:#c4c4a5;--shelf-leaf:#748651;--shelf-shadow:#48503729;--shelf-radius:62px 62px 20px 20px}
+[data-mood="pop-pastel"]{--shelf-wall:#eadcf5;--shelf-glow:#fff0f7;--shelf-plank:#c9b2df;--shelf-edge:#a18aba;--shelf-line:#d2bfe5;--shelf-leaf:#7daa9a;--shelf-shadow:#79648829;--shelf-radius:66px 66px 22px 22px}
+/* Outlined bottle details follow the mood, never the product pigment. */
+.app,.nmDialogHost{--bottle-cap:#713552;--bottle-cap-line:#4e233b;--bottle-cap-light:#c890ae;--bottle-ink:#713d57;--bottle-rim:#fff3ed;--bottle-shadow:#d9b0ba}
+[data-mood="dark-feminine"]{--bottle-cap:#662943;--bottle-cap-line:#bd82a0;--bottle-cap-light:#c889ad;--bottle-ink:#783a5a;--bottle-rim:#f8e4ee;--bottle-shadow:#1e0e1c}
+[data-mood="cottagecore"]{--bottle-cap:#765463;--bottle-cap-line:#523b45;--bottle-cap-light:#c4a6b3;--bottle-ink:#795866;--bottle-rim:#fcf5e7;--bottle-shadow:#c6b99e}
+[data-mood="pop-pastel"]{--bottle-cap:#8553a0;--bottle-cap-line:#59356e;--bottle-cap-light:#d6acdf;--bottle-ink:#794e88;--bottle-rim:#fcf0ff;--bottle-shadow:#cbb3da}
+.nmVisuallyHidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.app .collectionExperience{padding:12px 20px 24px;min-width:0}
+.nmCollectionHeading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 10px}
+.nmCollectionHeading h1{font:500 27px/1.2 Georgia,serif;letter-spacing:-.025em;margin:0;color:var(--textPrimary)}
+.nmCollectionHeading>span{font-size:12px;color:var(--textSecondary);white-space:nowrap}
+.nmCollectionActions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px}
+.nmCollectionModes{display:flex;align-items:center;gap:4px;background:var(--surfaceSecondary);border:1px solid var(--borderDefault);border-radius:28px;padding:3px}
+.nmShelfSwitch{display:flex;gap:4px}
+.nmShelfSwitch button{display:grid;place-items:center;background:transparent;border:0;border-radius:50%;width:46px;min-height:46px;color:var(--textSecondary);padding:0}
+.nmShelfSwitch button[aria-pressed=true]{background:var(--accentPrimary);color:var(--textOnAccent);box-shadow:0 2px 5px var(--shelf-shadow)}
+.app .collectionExperience .addProduct{width:44px;height:44px;padding:0;display:grid;place-items:center;border-radius:50%;min-width:44px}
+.app .collectionExperience .addProduct svg{width:21px;height:21px}
+.app .nmCollectionSettings .collectionSearch{height:46px;border-radius:23px;padding:0 13px}
+.app .nmCollectionSettings .collectionSearch input{border:0;padding:0;background:transparent;font-size:16px;color:var(--textPrimary)}
+.app .nmCollectionSettings>.filterRow{padding:0;margin:12px 0;display:flex;gap:5px;flex-wrap:wrap}
+.app .nmCollectionSettings>.filterRow button{padding:7px 10px;min-height:44px;font-size:12px;flex:1 0 auto;border-radius:22px}
+.app .nmCollectionSettings .collectionFilters{margin:0 0 14px;padding:0;background:transparent!important;box-shadow:none!important}
+.app .nmCollectionSettings .collectionFilters summary{display:none}
+.app .nmCollectionSettings .collectionViewBar{padding:0;margin:0 0 12px}
+.nmShelfToolbar{display:flex;align-items:center;gap:7px;margin:7px 0;flex-wrap:wrap}
+.nmShelfSort{flex:1;min-width:0;display:block;color:var(--textSecondary);margin:0}
+.nmShelfSort select{height:42px;min-height:42px;width:100%;border:1px solid var(--borderDefault);border-radius:22px;color:var(--textPrimary);background:var(--surfacePrimary);padding:7px 24px 7px 12px;font:inherit;font-size:13px}
+.nmShelfSummary{font-size:13px;color:var(--textSecondary)}
+.nmCollectionFilterButton{position:relative;display:grid;place-items:center;width:46px;height:46px;min-width:46px;border:0;border-radius:50%;background:transparent;color:var(--textPrimary)}
+.nmCollectionFilterButton i{position:absolute;width:6px;height:6px;right:7px;top:6px;border-radius:50%;background:var(--accentPrimary)}
+.nmProShelfShortcut{display:flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:7px 9px;border:1px solid var(--borderDefault);border-radius:22px;background:var(--surfaceSecondary);color:var(--textPrimary);font-size:11px}
+.nmShelfToneFilter{display:flex;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none;padding:0 1px;margin:2px 0 7px}
+.nmShelfToneFilter::-webkit-scrollbar{display:none}
+.nmShelfToneFilter button{display:grid;place-items:center;position:relative;flex:0 0 38px;min-width:38px;min-height:42px;padding:4px;background:none;border:0;border-radius:50%;color:var(--textSecondary)}
+.nmShelfToneFilter button i{display:block;width:27px;height:27px;border-radius:50%;border:1px solid color-mix(in srgb,var(--textPrimary) 15%,transparent);box-shadow:inset 0 1px 2px #ffffff4d}
+.nmShelfToneFilter button[aria-pressed=true]:after{content:'';position:absolute;inset:3px 1px;border:1.5px solid var(--accentPrimary);border-radius:50%}
+.nmToneUnknown{background:repeating-linear-gradient(135deg,transparent 0 3px,var(--borderDefault) 3px 4px)!important}
+.nmShelf{container-type:inline-size;width:100%;min-width:0;margin:4px 0 12px}
+.nmShelfNiche{position:relative;border-radius:var(--shelf-radius);padding:24px 9px 9px;background:radial-gradient(ellipse at 50% 18%,var(--shelf-glow),var(--shelf-wall) 83%);box-shadow:inset 0 5px 12px var(--shelf-shadow),inset 0 0 0 7px color-mix(in srgb,var(--shelf-line) 37%,transparent);border:1px solid var(--shelf-line);overflow:hidden}
+.nmShelfNiche:before{content:'';position:absolute;inset:7px 7px 0;border:1px solid color-mix(in srgb,var(--shelf-glow) 70%,transparent);border-bottom:0;border-radius:calc(66px - 7px) calc(66px - 7px) 14px 14px;pointer-events:none}
+.nmShelfRow{--bottle-height:clamp(76px,27cqw,128px);position:relative;padding:0 0 8px;isolation:isolate}
+.nmShelfRow:after{content:'';position:absolute;left:-2px;right:-2px;top:calc(var(--bottle-height) - 4px);height:10px;border-radius:2px 2px 3px 3px;background:linear-gradient(180deg,color-mix(in srgb,var(--shelf-plank) 65%,white),var(--shelf-plank) 30%,var(--shelf-plank) 75%,var(--shelf-edge));box-shadow:0 6px 7px var(--shelf-shadow);z-index:-1}
+.nmShelfBottles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;position:relative}
+.nmShelfProduct{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;min-width:0;background:none!important;border:0!important;padding:0 1px 0!important;box-shadow:none!important;border-radius:10px!important;color:var(--textPrimary)!important;cursor:pointer}
+.nmShelfProduct:focus-visible{outline:2px solid var(--accentPrimary);outline-offset:1px}
+.nmBottle{display:block;width:120px;height:180px;max-width:100%;flex:none;overflow:visible}
+.nmShelfProduct>.nmBottle{width:100%;height:var(--bottle-height);transition:transform .18s ease-out}
+.nmShelfProduct.isSelected>.nmBottle{opacity:0}
+@media(hover:hover){.nmShelfProduct:hover>.nmBottle{transform:translateY(-3px)}}
+.nmShelfProductLabel{display:block;width:100%;padding:8px 1px 3px;min-height:24px;line-height:1.2;text-align:center}
+.nmShelfProductLabel b{display:block;font-size:10px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nmShelfFavorite{position:absolute;top:5px;right:1px;color:var(--accentPrimary)}
+.nmShelfCommon{position:absolute;top:5px;left:1px;width:15px;height:15px;display:grid;place-items:center;border-radius:50%;background:var(--surfacePrimary);color:var(--accentPrimary)}
+.nmShelfDecor{position:absolute;width:53px;height:77px;right:-5px;top:-5px;opacity:.68;pointer-events:none;z-index:0}
+.nmShelfMini .nmShelfNiche{padding:8px 6px 0;border-radius:30px 30px 8px 8px}
+.nmShelfMini .nmShelfRow{--bottle-height:72px;padding-bottom:12px}
+.nmShelfMini .nmShelfProductLabel,.nmShelfMini .nmShelfFavorite,.nmShelfMini .nmShelfCommon{display:none}
+.nmShelfMini .nmShelfProduct{pointer-events:none}
+.nmShelfNiche[data-variant="minimal"]{border-radius:16px;background:linear-gradient(180deg,var(--surfacePrimary),var(--shelf-wall));box-shadow:none}
+.nmShelfNiche[data-variant="minimal"]:before{display:none}
+.app .collectionExperience .collectionGrid{padding:4px 0 12px}
+.app .collectionExperience .collectionGrid:empty{display:none}
+.app .collectionExperience .collectionViewBar{padding:3px 0 10px;margin:0}
+.nmColorAccuracy{font-size:12px;line-height:1.5;color:var(--textSecondary);margin:9px 0}
+@media(max-width:350px){.app .collectionExperience{padding-left:16px;padding-right:16px}.nmProShelfShortcut{font-size:10px;padding:7px}}
+
+.nmFocusSheet{max-width:490px!important;overflow-x:hidden!important}.nmFocusSheet .sheetTitle h2{font-family:Georgia,serif;font-size:24px}.nmFocusStage{position:relative;display:grid;place-items:center;height:285px;overflow:visible}.nmFocusHalo{position:absolute;inset:5px 8px 12px;border-radius:110px 110px 24px 24px;background:radial-gradient(ellipse at center,var(--shelf-glow),var(--shelf-wall));border:1px solid var(--shelf-line)}.nmFocusBottle{position:relative;width:177px;height:266px;z-index:3;transform-origin:50% 50%;will-change:transform}.nmFocusBottle .nmBottle{width:177px;height:266px}.nmFocusHeart{position:absolute;right:20px;top:20px;border-radius:50%!important;width:44px;height:44px;background:var(--surfaceElevated)!important;display:grid;place-items:center;color:var(--accentPrimary)!important;border:1px solid var(--borderDefault)!important;z-index:4}.nmFocusInfo{position:relative;padding:5px 7px 16px;color:var(--textPrimary);animation:nmFocusCopy .3s ease-out}.nmFocusBrand{font-size:16px;font-weight:650;margin:0 0 4px}.nmFocusReference{font-size:14px;color:var(--textSecondary);margin:3px 0 13px}.nmShelfTags{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.nmShelfTags>span{font-size:13px;background:var(--chipBackground);border:1px solid var(--borderDefault);border-radius:20px;padding:6px 10px;display:flex;align-items:center;gap:6px}.nmShelfTags i{width:13px;height:13px;border-radius:50%;border:1px solid var(--borderDefault)}.nmFocusStats{display:grid;grid-template-columns:1fr 1fr;border-block:1px solid var(--borderDefault);margin:18px 0;padding:14px 0;gap:12px}.nmFocusStats>div{display:flex;flex-direction:column;justify-content:center;gap:4px;position:relative}.nmFocusStats svg{display:none}.nmFocusStats b{font-size:14px;font-weight:600}.nmFocusStats small{font-size:12px;color:var(--textSecondary)}.nmFocusActions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.nmFocusActions button{min-height:46px;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--borderDefault)!important;border-radius:22px!important;background:var(--surfacePrimary)!important;color:var(--textPrimary)!important;font-size:14px!important;padding:10px!important}.nmFocusActions button.nmShelfPrimary{grid-column:1/-1;background:var(--accentPrimary)!important;color:var(--textOnAccent)!important;border-color:var(--accentPrimary)!important}.nmFocusActions button:last-child{grid-column:1/-1}.nmProductFacts{display:grid;grid-template-columns:1fr 1.5fr;gap:9px;font-size:14px;padding:18px 0}.nmProductFacts dt{color:var(--textSecondary)}.nmProductFacts dd{margin:0;overflow-wrap:anywhere}.nmLinkedPoses{margin-top:22px}.nmLinkedPoses h3{font-size:18px}.nmLinkedPoses>button{display:flex;width:100%;align-items:center;gap:12px;border:1px solid var(--borderDefault);padding:10px;margin-top:8px;background:var(--surfacePrimary);border-radius:14px;color:var(--textPrimary);text-align:left}.nmLinkedPoses>button img,.nmLinkedPoses>button>.socialContentImage{max-width:70px;height:70px;object-fit:cover}.nmLinkedPoses>button span{display:flex;flex-direction:column;gap:5px;font-size:14px}.nmCommonNotice{display:flex;align-items:center;gap:7px;color:var(--accentPrimary);font-size:14px}.nmShelfEntry{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--borderDefault);padding:14px 16px;border-radius:18px;background:var(--surfaceSecondary);color:var(--textPrimary);margin:16px 0;font-size:15px}.nmShelfEntry span{display:flex;flex-direction:column;gap:5px;text-align:left}.nmShelfEntry small{font-size:12px;color:var(--textSecondary)}
+.nmProShelves h2,.nmProShelf h3{font-family:Georgia,serif;font-weight:500}.nmProShelves{margin:24px 0}.nmProShelfCards{display:grid;gap:14px}.nmProShelfCard{background:var(--surfacePrimary);border:1px solid var(--borderDefault);border-radius:24px;padding:16px;color:var(--textPrimary)}.nmProShelfIdentity{display:flex;align-items:center;gap:10px;margin-bottom:12px}.nmProShelfIdentity>div:first-child{width:46px;height:46px;flex:none;overflow:hidden;border-radius:50%;background:var(--surfaceSecondary);display:grid;place-items:center}.nmProShelfIdentity img{width:100%;height:100%;object-fit:cover}.nmProShelfIdentity span{display:flex;flex-direction:column;gap:4px}.nmProShelfIdentity small{font-size:12px;color:var(--textSecondary)}.nmProShelfCard>button{margin-top:14px;min-height:42px;width:100%;border-radius:22px;border:1px solid var(--borderDefault);background:var(--accentPrimary);color:var(--textOnAccent);font-size:14px}.nmProShelfTabs{display:flex;gap:5px;border-bottom:1px solid var(--borderDefault);margin:18px 0}.nmProShelfTabs button{flex:1;border:0;border-radius:0;background:none;padding:12px 4px;color:var(--textSecondary);font-size:14px}.nmProShelfTabs button[aria-selected=true]{color:var(--accentPrimary);border-bottom:3px solid var(--accentPrimary);font-weight:650}.nmShelfNotice{font-size:14px;line-height:1.6;color:var(--textSecondary);padding:18px;background:var(--surfaceSecondary);border-radius:16px}.nmShelfVisibility{margin:22px 0;padding:20px;border:1px solid var(--borderDefault);border-radius:22px;background:var(--surfacePrimary);color:var(--textPrimary)}.nmShelfVisibility h3{margin:0 0 10px}.nmShelfVisibility p{font-size:14px;line-height:1.5;color:var(--textSecondary)}.nmShelfVisibility label{display:flex;flex-direction:column;gap:7px;margin:14px 0;font-size:14px}.nmShelfVisibility select{min-height:46px;width:100%;max-width:100%;border-radius:12px;border:1px solid var(--borderDefault);background:var(--surfaceSecondary);color:var(--textPrimary);padding:10px;font-size:14px}.nmShelfVisibility button{min-height:44px;border-radius:24px;border:0;padding:10px 18px;background:var(--accentPrimary);color:var(--textOnAccent)}.nmShelfPoseGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.nmShelfPoseGrid article{min-width:0;overflow:hidden;border-radius:18px;border:1px solid var(--borderDefault);background:var(--surfacePrimary);padding:8px}.nmShelfPoseGrid img{width:100%;height:150px;object-fit:cover}.nmShelfPoseGrid h4{font-size:15px;margin:10px 0}.nmShelfPoseGrid small{font-size:12px;color:var(--textSecondary)}.nmShelfPoseGrid button{background:var(--surfaceSecondary);color:var(--textPrimary);border:1px solid var(--borderDefault);border-radius:15px;font-size:13px;padding:9px;width:100%;margin-top:8px}
+@media(min-width:760px){.nmProShelfCards{grid-template-columns:repeat(2,minmax(0,1fr))}.nmShelfPoseGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@keyframes nmFocusCopy{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.nmFocusInfo,.nmBottle{animation:none!important;transition:none!important;transform:none!important}}
+
+/* Approved illustrated assets: furniture is separate from saved product pigment. */
+.nmShelfNiche[data-variant="open"],.nmShelfNiche[data-variant="botanical"]{background:radial-gradient(ellipse at center,#fff8f0aa,transparent 75%);border:0;box-shadow:none;border-radius:18px;padding:34px 10px 20px;isolation:isolate;overflow:hidden}
+.nmShelfNiche[data-variant="open"]:before,.nmShelfNiche[data-variant="botanical"]:before{display:none}
+.nmDrawnFrame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1}
+.nmDrawnShelfDecor{position:absolute;left:0;top:40px;width:42px;height:120px;object-fit:contain;pointer-events:none;opacity:.85}
+.nmShelfRow{--bottle-height:clamp(100px,34cqw,150px);padding-bottom:20px}
+.nmShelfRow:after{display:none}
+.nmDrawnPlank{position:absolute;left:-5px;width:calc(100% + 10px);top:calc(var(--bottle-height) - 6px);height:29px;z-index:-1;pointer-events:none}
+.nmShelfProductLabel{padding-top:4px;min-height:23px}
+.nmShelfProductLabel b{font-family:Georgia,serif;font-size:10px}
+.nmShelfMini .nmShelfRow{--bottle-height:80px}
+.nmShelfMini .nmDrawnPlank{height:17px}
+.nmShelfStyleChoice{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:0;padding:0;margin:5px 0 22px;min-width:0}
+.nmShelfStyleChoice legend{margin-bottom:12px;font-family:Georgia,serif;font-size:22px}
+.nmShelfStyleChoice button{min-width:0;border:1px solid var(--borderDefault);background:var(--surfacePrimary);border-radius:18px;padding:12px;color:var(--textPrimary);display:flex;flex-direction:column;align-items:center;gap:10px;font-size:13px;min-height:110px}
+.nmShelfStyleChoice button[aria-pressed=true]{border:2px solid var(--accentPrimary);background:var(--surfaceSecondary)}
+.nmShelfStyleChoice img{width:100%;height:70px;object-fit:contain}
+.nmFocusStage{height:320px}
+.nmFocusHalo{border:0;border-radius:0;background:radial-gradient(ellipse,#f4caca50,transparent 70%)}
+.nmFocusFlowers{position:absolute;width:95%;height:260px;object-fit:contain;bottom:5px;pointer-events:none;z-index:1}
+.nmFocusBottle,.nmFocusBottle .nmBottle{width:148px;height:318px}
+.nmFocusInfo .nmFocusBrand{text-align:center;font-family:Georgia,serif;font-size:20px;font-weight:400}
+.nmFocusReference{text-align:center}
+.nmVernisPalette{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--borderDefault);border-radius:20px;margin:18px 0;padding:14px 8px}
+.nmVernisPalette>div{display:flex;flex-direction:column;align-items:center;gap:9px;font-family:Georgia,serif}
+.nmVernisPalette>div+div{border-left:1px solid var(--borderDefault)}
+.nmVernisPalette i{width:48px;height:48px;border-radius:50%;border:1px solid #713d5733;box-shadow:inset 0 1px 3px #ffffff60}
+.nmVernisPalette small{font:12px/1.4 system-ui;color:var(--textSecondary)}
+.nmFinishSwatch{background-image:linear-gradient(120deg,transparent 30%,#ffffff99 45%,transparent 58%)}
+.nmFinishSwatch.glitter{background-image:radial-gradient(circle,#fff6bd 1px,transparent 2px),linear-gradient(120deg,transparent,#ffffff44);background-size:7px 9px,100% 100%}
+
+.nmFocusProductName{text-align:center;font:500 28px/1.15 Georgia,serif;margin:8px 0}.nmFocusInfo .nmFocusBrand{font-size:15px;color:var(--textSecondary)}

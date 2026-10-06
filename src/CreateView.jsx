@@ -1,4 +1,6 @@
+import CollectionContext from './engagement/CollectionContext.jsx';
 import InternalLab from './aiPlus/InternalLab';
+import RenderPrototype from './renderPrototype/RenderPrototype';
 import Trainer from './trainer/Trainer';
 import {SharedPoseView} from './poseCycle/ProjectShare';
 import DiyView from './poseCycle/DiyView';
@@ -186,14 +188,16 @@ export default function CreateView({ onProfileChange, onMoodChange, onPublish, o
   if ((proDrawing || route === '#creer/atelier') && canDrawPro) return <div className="creationPage proDrawingPage"><button type="button" className="quietButton" onClick={()=>{setProDrawing(null);onRoute('create');}}>Revenir à Créer</button><h1>Mon Atelier</h1><p>Dessine, retrouve ta bibliothèque et crée une pose à partir de tes dessins.</p><ProCreationsPanel client={social.client} userId={social.userId} workspaceId={browserStorage.workspaceId} defaultShape={profile.shape} defaultLength={profile.length} onUse={useSavedDrawing} startDrawing={proDrawing==='draw'}/></div>;
   const drawingAction = canDrawPro && <button type="button" className="manualSetAction proDrawAction" onClick={()=>setProDrawing('draw')}><Brush/><span><b>Dessiner sur un ongle · Pro</b><small>Pinceau, gomme et couleurs au choix</small></span><ChevronRight/></button>;
 
+  if(route==='#creer/prototype-rendus')return <RenderPrototype items={items} profile={profile} onBack={()=>{setSourceOpen(true);window.location.hash='creer';}}/>;
   if(route==='#creer/ia-interne')return <InternalLab/>;
   if(route==='#creer/entrainement')return <Trainer/>;
   if(outfitEnabled() && route.startsWith('#partage/'))return <SharedPoseView route={route}/>;
   if(outfitEnabled() && route.startsWith('#creer/diy/'))return <DiyView route={route} items={items} profile={profile} onMoodChange={onMoodChange} onCollection={onCollection} onTutorial={onTutorial}/>;
   if(outfitEnabled() && route.startsWith('#creer/planning'))return <PlanningView profile={profile} onChange={onProfileChange} route={route}/>;
   if(outfitEnabled() && /^#creer\/(tenue|pose\/|projets-pose)/.test(route)) return <OutfitFlow onVariant={idea=>onOpen(idea,undefined,'variant')} items={items} profile={profile} route={route} onMoodChange={onMoodChange} onBack={()=>{window.location.hash='creer';setSourceOpen(true);}}/>;
-  if(sourceOpen && route!=='#creer/atelier') return <CreationSources onPlanning={()=>{window.location.hash='creer/planning';}} outfit={outfitEnabled()} onPoseProjects={()=>{window.location.hash='creer/projets-pose';}} onJournal={()=>onRoute('journal')} onChoose={id=>{
+  if(sourceOpen && route!=='#creer/atelier') return <CreationSources items={items} onPlanning={()=>{window.location.hash='creer/planning';}} outfit={outfitEnabled()} onPoseProjects={()=>{window.location.hash='creer/projets-pose';}} onJournal={()=>onRoute('journal')} onChoose={id=>{
     if(id==='trainer'){window.location.hash='creer/entrainement';return;}
+    if(id==='prototype'){window.location.hash='creer/prototype-rendus';return;}
     if(id==='outfit'){window.location.hash='creer/tenue';return;}
     if(id==='atelier'){window.location.hash='creer/atelier';return;}
     setSourceOpen(false);
@@ -207,15 +211,16 @@ export default function CreateView({ onProfileChange, onMoodChange, onPublish, o
     <PhotoInspirationFlow onSaveIdea={onSaveIdea} onShareToPro={onShareToPro} items={items} profile={profile} onSaveProject={onSaveProject} onJournalIdea={onJournalIdea} onOpen={onOpen} onProjects={() => onRoute('projects')} />
   </div>;
 
-  return <div className="creationPage">
+  return <div className="creationPage engagementCreation">
     <div className="createHeading"><button className="nmQuiet" onClick={()=>setSourceOpen(true)}>← Changer de source</button><h1>{activeRun&&!editing?'Tes idées':options.intent==='collection'?'Avec ma collection':'Inspiration libre'}</h1></div>
     {activeRun&&!editing && <section className="choicesSummary"><div><b>Tes choix</b><p>{levels[options.level]} · {techniqueSummary} · {durationLabel(options.duration)}</p></div><button onClick={()=>setEditing(true)}>Modifier</button></section>}
     {report.unavailable && <section className="creationNotice" role="status"><b>Modifions un choix</b><p>{report.unavailable}</p><div className="detailActions"><button onClick={() => openPicker('level')}>Changer le niveau</button><button onClick={() => openPicker('technique')}>Changer la technique</button></div></section>}
     {drawingGenerationError&&<p className="formError" role="alert">{drawingGenerationError}</p>}
     <div className="createForm" hidden={activeRun&&!editing}>
+    {options.intent==='collection'&&<CollectionContext options={options} report={report} learning={learning} onChange={change}/>}
     <section className="creationSection">
       <div className="creationSectionTitle"><span>01</span><h2>De quoi as-tu envie ?</h2></div>
-      <div className="creationModes">{modes.map(({ id, title, subtitle, icon: Icon }) => <button key={id} className={options.mode === id ? 'selected' : ''} aria-pressed={options.mode === id} onClick={() => change({ mode: id })}>
+      <div className="creationModes">{modes.map(({ id, title, subtitle, icon: Icon }) => <button key={id} className={options.mode === id ? 'selected' : ''} aria-pressed={options.mode === id} onClick={() => change({ mode: id, escapeBubble:false })}>
         <Icon /><span><b>{title}</b><small>{subtitle}</small></span>{options.mode === id ? <Check className="modeCheck" /> : <ChevronRight className="modeCheck" />}
       </button>)}</div>
       {options.mode === 'surprise' && <div className="surpriseChoices" aria-label="Degré de surprise">
@@ -268,18 +273,23 @@ export default function CreateView({ onProfileChange, onMoodChange, onPublish, o
     {activeRun && <section className="creationResults" ref={resultAnchor} aria-labelledby="ideas-title">
       <div className="creationSectionTitle"><span>03</span><div><small>{report.intent === 'inspire' ? 'INSPIRATIONS LIBRES · COULEURS DE STYLE' : 'AVEC LES TEINTES DE TA COLLECTION'}</small><h2 id="ideas-title">{report.results.length} idée{report.results.length > 1 ? 's' : ''} pour toi</h2></div></div>
       {report.results.length < 4 && <p className="creationNotice">Ta collection et tes choix permettent {report.results.length} proposition{report.results.length > 1 ? 's' : ''} distincte{report.results.length > 1 ? 's' : ''} pour le moment. Aucun produit n’a été ajouté à ta collection.</p>}
-      <p className="creationHint">{report.intent === 'inspire' ? 'Couleurs d’inspiration, sans référence commerciale ni produit ajouté à ta collection.' : 'Aperçus avec tes teintes enregistrées.'} Le rendu bascule automatiquement vers le réalisme quand la matière, la lumière ou le relief le demandent. Vérifie le protocole des produits.</p>
+      <p className="creationHint">{report.intent === 'inspire' ? 'Couleurs d’inspiration, sans référence commerciale ni produit ajouté à ta collection.' : 'Aperçus avec tes teintes enregistrées.'} Les techniques et les matières sont interprétées en dessin. Vérifie le protocole des produits.</p>
       {chosen && <button className="chosenIdea" onClick={() => onOpen(chosen, chosen.options)}><BookmarkCheck /><span><b>Ton idée retenue</b><small>{chosen.title} · {chosen.palette.map(item => item.name).join(' + ')}</small></span><ChevronRight /></button>}
-      <div className="ideaList">{generatedIdeas.map((idea, index) => <article className={'ideaCard ideaCardOpenable ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id} onClick={() => onOpen(idea, idea.options)}>
+      <div className="ideaList">{generatedIdeas.map((idea, index) => <article className={'ideaCard ideaCardOpenable drawingIdeaCard ' + (chosen?.id === idea.id ? 'chosen' : '')} key={idea.id} onClick={() => onOpen(idea, idea.options)}>
         <div className="ideaTopline"><span><MoodGlyph value={idea.options?.mood || options.mood} /> ENVIE {String(index + 1).padStart(2, '0')}</span><span><Clock3 />≈ {idea.minutes} min</span></div>
-        <TapFavorite aria-label={"Ouvrir "+idea.title+" · double-tap pour le favori"} onOpen={()=>onOpen(idea,idea.options)} onToggle={()=>onFavorite(idea)} saved={library.favorites.some(saved=>saved.key===snapshotIdea(idea).key)}><NailPreview idea={idea} controls /></TapFavorite>
-        <div className="ideaBody">{completedKeys.has(snapshotIdea(idea, idea.options).key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div><h3><button className="ideaTitleLink" onClick={event=>{event.stopPropagation();onOpen(idea,idea.options);}}>{idea.title}</button></h3><p>{idea.description}</p>
-          <IdeaProducts idea={idea} items={items} onCollection={onCollection} /><div className="ideaProducts">{idea.palette.map(item => <span key={item.id}><i style={{ background: item.color }} />{item.name}</span>)}</div>
+        <TapFavorite aria-label={"Ouvrir "+idea.title+" · double-tap pour le favori"} onOpen={()=>onOpen(idea,idea.options)} onToggle={()=>onFavorite(idea)} saved={library.favorites.some(saved=>saved.key===snapshotIdea(idea).key)}><NailPreview idea={idea} /></TapFavorite>
+        <div className="ideaBody">{completedKeys.has(snapshotIdea(idea, idea.options).key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}
+          <h3><button className="ideaTitleLink" onClick={event=>{event.stopPropagation();onOpen(idea,idea.options);}}>{idea.title}</button></h3>
+          <div className="drawingIdeaSummary"><div className="drawingIdeaSwatches" aria-label="Couleurs de l’idée">{idea.palette.map(item=><i key={item.id} style={{background:item.color}} role="img" aria-label={item.name} title={item.name}/>)}</div><div className="ideaBadges"><span className="ideaDifficulty">{levels[idea.rank]}</span><span className="ideaPolishCount">{polishCountLabel(idea.polishCount)}</span></div></div>
+          <details className="drawingIdeaDetails" onClick={event=>event.stopPropagation()}><summary>Composition & matériel <ChevronRight size={15}/></summary><p>{idea.description}</p>
+          {idea.collectionEvidence&&<p className="nmCollectionEvidence">{idea.collectionEvidence.complete?'Les besoins identifiés sont dans ta collection':`${idea.collectionEvidence.owned} référence(s) présente(s) sur ${idea.collectionEvidence.total}`}{idea.collectionEvidence.uncertain?' · Matériel ou protocole à vérifier.':''}</p>}<IdeaProducts idea={idea} items={items} onCollection={onCollection} />
+          <div className="ideaProducts">{idea.palette.map(item=><span key={item.id}><i style={{background:item.color}}/>{item.name}</span>)}</div>
           {idea.resources.filter(isDecoration).map(item => <div className="ideaDecoration" key={item.id}><DecorationPhoto item={item} /><div><small>MA DÉCORATION</small><b>{item.name}</b><span>Motif schématique sur les ongles</span></div></div>)}
           {idea.requirements?.length > 0 && <p className="creationNotice">Pour la réaliser : {idea.requirements.map(r => r.name).join(' · ')}</p>}
           {idea.resources.some(item => !isDecoration(item)) && <div className="ideaEquipment"><small>AVEC MON MATÉRIEL</small><p>{idea.resources.filter(item => !isDecoration(item)).map(item => item.name).join(' · ')}</p></div>}
           <ul className="ideaReasons">{idea.reasons.map(reason => <li key={reason}><Check />{reason}</li>)}</ul>
-          <div className="ideaCardActions"><button className="chooseIdea" disabled={library.favorites.some(saved=>saved.key===snapshotIdea(idea).key)} onClick={event=>{event.stopPropagation();onSaveIdea(idea);}}><BookmarkCheck/>{library.favorites.some(saved=>saved.key===snapshotIdea(idea).key)?'Idée enregistrée':'Enregistrer l’idée'}</button><button className="nmQuiet" onClick={event=>{event.stopPropagation();onOpen(idea,idea.options);}}>Voir la fiche</button></div>
+          </details>
+          <div className="ideaCardActions"><button className="chooseIdea" disabled={library.favorites.some(saved=>saved.key===snapshotIdea(idea).key)} onClick={event=>{event.stopPropagation();onSaveIdea(idea);}}><BookmarkCheck/>{library.favorites.some(saved=>saved.key===snapshotIdea(idea).key)?'Enregistrée':'Enregistrer'}</button><button className="nmQuiet" onClick={event=>{event.stopPropagation();onOpen(idea,idea.options);}}>Voir la fiche</button></div>
 
         </div>
       </article>)}</div>

@@ -188,7 +188,7 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
   const primaryScore = item => {
     let score = preferred.includes(item.family) ? 18 : 0;
     score += moodScore(item);
-    if (options.mode === 'usual') score += (item.fav ? 22 : 0) + (familiar.has(item.family) ? 6 : 0);
+    if (options.mode === 'usual' && !options.escapeBubble) score += (item.fav ? 22 : 0) + (familiar.has(item.family) ? 6 : 0);
     if (options.mode === 'change') score += (!item.fav ? 16 : 0) + (!familiar.has(item.family) ? 6 : 0);
     if ((profile.technique === item.type) || (profile.technique === 'Vernis classique' && item.type === 'Vernis')) score += 5;
     return score;
@@ -210,6 +210,8 @@ export function createSuggestions(items = [], profile = {}, supplied = {}, seed 
     if (!requiredIds.size && !explicitPalette && (palette.every(p=>p.conceptual)||supplied.mood&&requestedPolishCount==='auto') && !harmoniousPalette(palette, options.mood)) return;
     if ([...requiredIds].some(id => !palette.some(item => String(item.id) === id))) return;
     if (requestedPolishCount !== 'auto' && palette.length !== requestedPolishCount) return;
+    if (options.maxPolishes === 3 && palette.length > 3) return;
+    if (options.rediscover && personalModel?.poseCount && !palette.some(p => (personalModel.products[String(p.id)]?.uses || 0) === Math.min(...usable.map(v => personalModel.products[String(v.id)]?.uses || 0)))) return;
     const decorated = pattern === 'sticker' || pattern === 'paletteSticker';
     if (decoration.mode === 'with' && !decorated || decoration.mode === 'without' && decorated) return;
     if (constraints.has('noDrawing') && drawing.has(pattern)) return;

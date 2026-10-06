@@ -1,0 +1,8 @@
+import {snapshotIdea} from '../inspirations';
+import {normaliseProNailDesign} from '../workspaces/proNailEditorModel';
+import {shareSnapshot} from './poShareService';
+export const poLoopEnabled=()=>import.meta.env?.VITE_PO_LOOP_ENABLED==='true';
+export const poLoopService=client=>({async run(action,id,data={}){const r=await client.rpc('nm_po_loop',{p_action:action,p_id:id,p_data:data});if(r.error)throw r.error;return r.data;}});
+export function briefDesign(idea){return normaliseProNailDesign({version:2,scope:'set',shape:idea.shape,length:idea.length,focalFinger:3,nails:idea.nails.map(n=>({base:n.color,strokes:n.proDesign?.strokes||[]}))});}
+export function applyBriefDesign(idea,input){const design=normaliseProNailDesign(input);const palette=[...new Set(design.nails.map(n=>n.base))].map((c,i)=>{const prior=idea.palette.find(p=>p.color?.toLowerCase()===c);return prior?{...prior,id:'po-'+i}:{id:'po-'+i,name:'Teinte de la proposition',color:c,type:'Vernis',conceptual:true};});return snapshotIdea({...idea,title:idea.title,shape:design.shape,length:design.length,nails:idea.nails.map((n,i)=>{const painted=design.nails[i];return {...n,color:painted.base,productId:palette.find(p=>p.color.toLowerCase()===painted.base).id,accentProductId:null,...(painted.strokes.length?{drawing:null,decoration:null,proDesign:painted}:n.proDesign?{proDesign:painted}:{})};}),palette,resources:[],isPublic:false});}
+export function replySnapshot(idea){const s=shareSnapshot(idea);return {...s,preview:{...s.preview,nails:s.preview.nails.map((n,i)=>({...n,...(idea.nails[i].proDesign?{proDesign:idea.nails[i].proDesign}:{})}))}};}

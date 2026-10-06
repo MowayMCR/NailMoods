@@ -1,0 +1,10 @@
+✔ a pose completed without the guide can prefill the optional journal with the original inspiration (1.67945ms)
+✔ Publication SQL keeps uploaded photos private until staff review; changed photos require a new review (2417.283163ms)
+ℹ tests 527
+ℹ suites 0
+ℹ pass 525
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 2
+ℹ todo 0
+ℹ duration_ms 20834.201964

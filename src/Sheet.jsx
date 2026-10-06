@@ -8,9 +8,9 @@ let originalOverflow = '', originalInert = false;
 const controls = panel => [...panel.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href],summary,[tabindex="0"]')].filter(el => el.getClientRects().length);
 function revealTop() {
   const top = dialogs.at(-1);
-  dialogs.forEach(item => { item.host.hidden = item !== top; item.host.inert = item !== top; });
+  dialogs.forEach(item => { item.host.hidden = item !== top && !top?.keepBehind; item.host.inert = item !== top; });
 }
-export default function Sheet({ title, eyebrow = 'MON NAILMOODS', children, onClose, className = '' }) {
+export default function Sheet({ title, eyebrow = 'MON NAILMOODS', children, onClose, className = '', keepBehind = false }) {
   const panel = useRef(null), host = useRef(null), close = useRef(onClose), titleId = useId();
   close.current = onClose;
   if (!host.current) { host.current = document.createElement('div'); host.current.className = 'app nmDialogHost'; }
@@ -20,7 +20,7 @@ export default function Sheet({ title, eyebrow = 'MON NAILMOODS', children, onCl
     for (const name of theme) if (name.startsWith('--')) host.current.style.setProperty(name, theme.getPropertyValue(name));
     host.current.dataset.mood=document.documentElement.dataset.mood||'soft-glam';
     document.body.appendChild(host.current);
-    const id = titleId, item = { id, host: host.current };
+    const id = titleId, item = { id, host: host.current, keepBehind };
     // Replacing a chooser with an editor keeps the same history level.
     const replacing = history.state?.[marker] && !dialogs.some(d => d.id === history.state[marker]);
     history[replacing ? 'replaceState' : 'pushState']({ ...history.state, [marker]: id }, '', url);

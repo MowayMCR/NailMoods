@@ -1,30 +1,26 @@
 import {InternalAIEntry} from './aiPlus/InternalLab';
 import React from 'react';
-import {Sparkles, Library, Images, ScanLine, Palette, Brush, ArrowRight, ChevronRight, BookHeart,Shirt,CalendarDays} from 'lucide-react';
-import {DiscoveryShortcut} from './social/Discovery';
+import {ChevronRight} from 'lucide-react';
+import AtelierArt from './design/AtelierArt';
 
-const sources = [
-  ['trainer', Brush, 'Nail Art Trainer', 'Huit gestes à explorer · pour toutes'],
-  ['collection', Library, 'Ma collection', 'Avec mes produits et mes couleurs'],
-  ['photos', Images, 'Photos d’inspiration', 'Une pose ou une image à réinventer'],
-  ['scan', ScanLine, 'Scan & Génère', 'Partir de tes vernis et de leurs couleurs'],
-  ['manual', Palette, 'Composition manuelle', 'Choisir chaque ongle, un à un'],
-];
-
-export default function CreationSources({onChoose, onJournal,outfit=false,onPlanning,onPoseProjects}) {
-  return <div className="creationPage sourcePage creativeSources">
-    <div className="sourceHeading"><small>LE STUDIO CRÉATIF</small><h1>D’où part ton idée ?</h1><p>Une envie, une couleur, un dessin…<br/>Choisis ton point de départ.</p></div>
-    <button className="sourceFree" onClick={()=>onChoose('inspire')}>
-      <span className="sourceFreeIcon" aria-hidden="true"><Sparkles/></span>
-      <span className="sourceFreeCopy"><b>Inspire-moi</b><small>Laisse venir les idées, avec ou sans collection.</small><span>Créer une idée <ArrowRight/></span></span>
-    </button>
-    <div className="sourceSectionLabel">OU AVEC CE QUI T’INSPIRE</div>
-    <div className="sourceCardGrid">{(outfit?[["outfit",Shirt,"Ma tenue, mes nails","Ton look, jusqu’au bout des ongles · Plus / Pro"],...sources]:sources).map(([id,Icon,title,description])=><button className={'sourceCard sourceCard--'+id} key={id} onClick={()=>onChoose(id)}><span className="sourceCardIcon" aria-hidden="true"><Icon/></span><b>{title}</b><small>{description}</small><ChevronRight className="sourceCardArrow" aria-hidden="true"/></button>)}</div>
-    <button className="sourceAtelier" onClick={()=>onChoose('atelier')}><span className="sourceAtelierIcon" aria-hidden="true"><Brush/></span><span><span className="sourceAtelierTitle"><b>Dessin sur ongles</b><em>PRO</em></span><small>Dessine sur les 5 ongles ou reprends un dessin de ton Atelier.</small></span><ChevronRight aria-hidden="true"/></button>
-    {outfit&&<button className="sourceJournalLink" onClick={onPlanning}><CalendarDays/><span>Mon Planning</span><ChevronRight/></button>}
-    {outfit&&<button className="sourceJournalLink" onClick={onPoseProjects}><BookHeart/><span>Mes projets de pose</span><ChevronRight/></button>}
+export function CreateTile({id,title,subtitle,onChoose,onClick,secondary=false}) {
+  return <button type="button" className={'sourceCard sourceCard--'+id+(secondary?' sourceCard--secondary':'')} onClick={onClick||(()=>onChoose(id))}><AtelierArt source={id}/><b>{title}</b>{subtitle&&<small>{subtitle}</small>}</button>;
+}
+export function CreateWideTile({id,title,subtitle,badge,onChoose}) {
+  return <button type="button" className="sourceAtelier" onClick={()=>onChoose(id)}><AtelierArt source={id}/><span><span className="sourceAtelierTitle"><b>{title}</b>{badge&&<em>{badge}</em>}</span><small>{subtitle}</small></span><ChevronRight aria-hidden="true"/></button>;
+}
+export default function CreationSources({onChoose,onJournal,outfit=false,onPlanning}) {
+  const sources=[['inspire','Inspire-moi','Des idées selon ton mood'],['collection','Avec ma collection','Tes produits, tes couleurs'],['scan','Scan & Génère','Un produit, des idées'],['manual','Composition manuelle','Choisis chaque ongle'],...(outfit?[['outfit','Ma tenue, mes nails','Un look complet']]:[]),['trainer','Nail Art Trainer','Apprends et progresse']];
+  return <div className="creationPage sourcePage creativeSources nmAtelierSources">
+    <div className="sourceHeading"><h1>Créer</h1><p>Imagine, explore, crée.</p></div>
+    <div className="sourceCardGrid">{sources.map(([id,title,subtitle])=><CreateTile key={id} id={id} title={title} subtitle={subtitle} onChoose={onChoose}/>)}</div>
+    <CreateWideTile id="atelier" title="Dessin sur ongles" subtitle="Dessine sur les 5 ongles" badge="PRO" onChoose={onChoose}/>
+    <div className="sourceFollowGrid" role="group" aria-label="Inspirations et suivi">
+      <CreateTile secondary id="photos" title="Photos d’inspiration" onChoose={onChoose}/>
+      {outfit&&<CreateTile secondary id="planning" title="Mon calendrier" onClick={onPlanning}/>}
+      <CreateTile secondary id="journal" title="Mes poses" onClick={onJournal}/>
+    </div>
+    <button type="button" className="nmPrototypeEntry" onClick={()=>onChoose('prototype')}><span><b>Prototype des rendus</b><small>Explore les formes, les teintes et les matières</small></span><ChevronRight aria-hidden="true"/></button>
     <InternalAIEntry/>
-    <DiscoveryShortcut featured/>
-    <button className="sourceJournalLink" onClick={onJournal}><BookHeart/><span>Retrouver mes idées dans <b>Mes poses</b></span><ChevronRight/></button>
   </div>;
 }

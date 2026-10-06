@@ -1,0 +1,17 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {sortShelf,sameReference,shelfColor,shelfColorStatus,shelfFinish,usageFor,toneOf} from '../src/shelf/model.js';
+const p={id:'local',name:'Rose',brand:'Brand',reference:'A12',collection:'Gamme',color:'#edb0c6'};
+test('usage derives from realised journal entries once per pose, not duplicate ingredients',()=>{const entries=[{id:'one',date:'2026-09-04',products:[p,p]},{id:'two',date:'2026-10-02',products:[{...p,id:'other'}]},{id:'private',date:'2026-10-03',products:[]}];const u=usageFor(p,entries);assert.equal(u.count,2);assert.equal(u.last,'2026-10-02');assert.equal(usageFor({...p,id:'never',reference:'Z'},entries).count,0);});
+test('common collection matching never guesses from colour, name or a personal ID',()=>{assert.equal(sameReference({id:'x',name:'rose',color:'#ffffff'},{id:'x',name:'rose',color:'#ffffff'}),false);assert.equal(sameReference(p,{...p,id:'foreign'}),true);assert.equal(sameReference(p,{...p,collection:'Other'}),false);assert.equal(sameReference({...p,catalogId:'a'},{...p,catalogId:'b'}),false);});
+test('exact recorded shade and known finishes only',()=>{assert.equal(shelfColor({family:'Rose'}),null);assert.equal(shelfColor({color:'#ffffff',colorSource:'palette'}),'#ffffff');assert.equal(shelfColorStatus({color:'#ffffff',colorSource:'palette'}),'indicative');assert.equal(shelfColor({color:'#ffffff',catalogColor:'#123456',catalogColorValidated:true}),'#123456');for(const [finish,expected] of [['Crème','cream'],['Jelly','jelly'],['Chrome','chrome'],['Paillettes','glitter'],['Cat Eye','cat-eye'],['Nacré','shimmer']])assert.equal(shelfFinish({finish}),expected);});
+test('colour gradients, recent and usage sorting are stable and do not mutate records',()=>{const items=[{...p,id:'red',color:'#b81226',createdAt:100,shelfUsage:{count:2}},{...p,id:'green',color:'#408842',createdAt:300,shelfUsage:{count:0}},{...p,id:'pink',color:'#f0bada',createdAt:200,shelfUsage:{count:4}}];assert.deepEqual(sortShelf(items,'recent').map(p=>p.id),['green','pink','red']);assert.deepEqual(sortShelf(items,'used').map(p=>p.id),['pink','red','green']);assert.deepEqual(sortShelf(items,'color').map(p=>p.id),['pink','red','green']);assert.equal(items[0].id,'red');assert.equal(toneOf({}), 'Teinte à préciser');assert.deepEqual(sortShelf([{id:1},{id:2},{id:3}],'recent').map(p=>p.id),[3,2,1]);});
+test('large collection keeps all references and real usage while sorting',()=>{const items=Array.from({length:2000},(_,i)=>({...p,id:String(i),createdAt:i,color:'#'+(i*7867%16777216).toString(16).padStart(6,'0')}));const begin=performance.now();const sorted=sortShelf(items,'color');assert.equal(new Set(sorted.map(p=>p.id)).size,2000);assert.ok(performance.now()-begin<3000);});
+
+test('a stored family swatch remains visible without pretending to be an exact catalogue shade',()=>{
+ const saved={name:'Cassis',family:'Violet',color:'#76334b',colorSource:'palette'};
+ assert.equal(shelfColor(saved),'#76334b');assert.equal(shelfColorStatus(saved),'indicative');
+ assert.equal(shelfColor({...saved,shade:'#72314a'}),'#72314a');assert.equal(shelfColorStatus({...saved,shade:'#72314a'}),'recorded');
+ assert.equal(shelfColor({...saved,catalogColor:'#682d42',catalogColorValidated:true}),'#682d42');
+ assert.equal(shelfColor({family:'Violet',colorSource:'palette'}),null);
+ assert.deepEqual(saved,{name:'Cassis',family:'Violet',color:'#76334b',colorSource:'palette'});
+});
