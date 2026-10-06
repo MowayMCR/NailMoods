@@ -1,12 +1,61 @@
 import React from 'react';
-import {Heart,Library,Images} from 'lucide-react';
+import {Heart, Library, Images, Check, Palette} from 'lucide-react';
 import Bottle from './Bottle.jsx';
-import {toneOf,shelfSorts,toneGroups} from './model.js';
+import {toneOf, shelfSorts, toneGroups} from './model.js';
 import './shelf.css';
-export function ViewSwitch({value,onChange}){return <div className="nmShelfSwitch" role="group" aria-label="Affichage de la collection">{[['shelf','Vue étagère',Library],['photos','Vue photos',Images]].map(([id,label,Icon])=><button key={id} aria-pressed={value===id} onClick={()=>onChange(id)}><Icon size={18}/>{label}</button>)}</div>;}
-export function ShelfSort({value,onChange}){return <label className="nmShelfSort">Ranger par<select aria-label="Ranger par" value={value} onChange={e=>onChange(e.target.value)}>{shelfSorts.map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>;}
-export function ShelfDecor(){return <svg className="nmShelfDecor" viewBox="0 0 80 110" aria-hidden="true"><path d="M42 96Q20 62 43 12M37 65Q58 51 65 27" stroke="var(--shelf-leaf)" strokeWidth="2" fill="none"/>{[[40,25,-35],[29,39,-65],[33,60,-40],[48,51,30],[61,36,35]].map(([x,y,r],i)=><ellipse key={i} cx={x} cy={y} rx="6" ry="13" transform={`rotate(${r} ${x} ${y})`} fill="var(--shelf-leaf)" opacity={.5+i*.09}/>)}<path d="M22 81Q18 108 40 108Q59 106 55 81Z" fill="var(--shelf-vase)" stroke="var(--shelf-line)"/></svg>;}
-export default function Shelf({items=[],sort='color',onSelect,selectedId,mini=false,variant='niche',commonIds=new Set()}){
- const groups=[];for(const item of items){const label=sort==='color'?toneOf(item):sort==='brand'?item.brand||'Sans marque':sort==='finish'?item.finish||'Finition non renseignée':'Mes couleurs';if(groups.at(-1)?.label===label)groups.at(-1).items.push(item);else groups.push({label,items:[item]});}
- return <div className={'nmShelf '+(mini?'nmShelfMini':'')} data-testid="illustrated-shelf">{groups.map((group,g)=><section className="nmShelfGroup" key={group.label+g}>{!mini&&<div className="nmShelfHeading"><h3>{group.label}</h3><span>{group.items.length} produit{group.items.length>1?'s':''}</span></div>}<div className="nmShelfNiche" data-variant={mini?'simple':g===0?variant:'minimal'}>{!mini&&g===0&&<ShelfDecor/>}<div className="nmShelfBottles">{group.items.map(p=><button className={'nmShelfProduct '+(String(p.id)===String(selectedId)?'isSelected':'')} key={p.id} onClick={e=>onSelect?.(p,e.currentTarget.querySelector('.nmBottle'),e.currentTarget)} aria-label={'Voir '+p.name+(p.brand?' · '+p.brand:'')}><Bottle product={p}/><span className="nmShelfProductLabel"><b>{p.name}</b><small>{p.brand||p.reference||'Ma couleur'}</small></span>{p.fav&&<Heart className="nmShelfFavorite" size={13} fill="currentColor"/>}{commonIds.has(String(p.id))&&<span className="nmShelfCommon">En commun</span>}</button>)}</div></div></section>)}</div>;
+
+export function ViewSwitch({value, onChange}) {
+  return <div className="nmShelfSwitch" role="group" aria-label="Affichage de la collection">
+    {[['shelf','Vue étagère',Library],['photos','Vue photos',Images]].map(([id,label,Icon]) =>
+      <button key={id} aria-pressed={value===id} onClick={()=>onChange(id)}><Icon size={17}/>{label}</button>)}
+  </div>;
+}
+export function ShelfSort({value,onChange}) {
+  return <label className="nmShelfSort"><span className="nmVisuallyHidden">Ranger par</span>
+    <select aria-label="Ranger par" value={value} onChange={e=>onChange(e.target.value)}>
+      {shelfSorts.map(([id,label])=><option key={id} value={id}>{label}</option>)}
+    </select>
+  </label>;
+}
+const toneSwatches = ['#d5b6a0','#e6a2b6','#e19b79','#a94053','#906193','#6d87b0','#8b9a80','#d7ba65','#3c343d',null];
+export function ShelfToneFilter({items, value, onChange}) {
+  return <div className="nmShelfToneFilter" aria-label="Familles de teintes">
+    <button className="nmToneAll" aria-label="Toutes les teintes" title="Toutes les teintes" aria-pressed={!value} onClick={()=>onChange('')}><Palette size={19}/></button>
+    {toneGroups.map((tone,index)=>items.some(p=>p.type!=='Matériel'&&toneOf(p)===tone)&&
+      <button key={tone} title={tone} aria-label={tone} aria-pressed={value===tone} onClick={()=>onChange(tone)}>
+        <i className={toneSwatches[index]?'':'nmToneUnknown'} style={{background:toneSwatches[index]||'transparent'}}/>
+      </button>)}
+  </div>;
+}
+export function ShelfDecor() {
+  return <svg className="nmShelfDecor" viewBox="0 0 80 110" aria-hidden="true">
+    <path d="M68 102Q40 71 32 5M48 67Q19 55 10 30" stroke="var(--shelf-leaf)" strokeWidth="1.4" fill="none"/>
+    {[[34,19,-25],[27,40,-62],[41,54,-25],[52,79,-25],[57,62,34],[47,34,38],[17,38,-40]].map(([x,y,r],i)=>
+      <ellipse key={i} cx={x} cy={y} rx="5.2" ry="12" transform={`rotate(${r} ${x} ${y})`} fill="var(--shelf-leaf)" opacity={.4+(i%4)*.12}/>)}
+  </svg>;
+}
+const shortLabel = p => p.reference && String(p.reference).length<=10 ? p.reference :
+  String(p.name||'Mon produit').replace(/\s*[-–·]\s*(gel|led|nail|vernis|polish).*$/i,'');
+
+export default function Shelf({items=[], onSelect, selectedId, mini=false, variant='niche', commonIds=new Set()}) {
+  const rows=Array.from({length:Math.ceil(items.length/5)},(_,i)=>items.slice(i*5,i*5+5));
+  if(!rows.length)return null;
+  return <div className={'nmShelf '+(mini?'nmShelfMini':'')} data-testid="illustrated-shelf">
+    <div className="nmShelfNiche" data-variant={mini?'simple':variant}>
+      {!mini&&<ShelfDecor/>}
+      {rows.map((row,index)=><div className="nmShelfRow" key={index} role="group" aria-label={'Étagère '+(index+1)}>
+        <div className="nmShelfBottles">{row.map(p=>{
+          const shared=commonIds.has(String(p.id)),label='Voir '+p.name+(p.brand?' · '+p.brand:'');
+          return <button className={'nmShelfProduct '+(String(p.id)===String(selectedId)?'isSelected':'')}
+            key={p.id} title={p.name+(p.brand?' · '+p.brand:'')} tabIndex={mini?-1:0}
+            onClick={e=>onSelect?.(p,e.currentTarget.querySelector('.nmBottle'),e.currentTarget)}
+            aria-label={label+(shared?' · Tu possèdes aussi ce vernis':'')}>
+            <Bottle product={p}/><span className="nmShelfProductLabel"><b>{shortLabel(p)}</b></span>
+            {p.fav&&<Heart className="nmShelfFavorite" size={11} fill="currentColor"/>}
+            {shared&&<span className="nmShelfCommon" title="Tu possèdes aussi ce vernis"><Check size={11}/></span>}
+          </button>;
+        })}</div>
+      </div>)}
+    </div>
+  </div>;
 }

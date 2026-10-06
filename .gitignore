@@ -61,3 +61,5 @@ docs/trainer-ai-lots10-11/evidence/*.png
 
 # Illustrated shelf review captures are delivered in the validation dossier.
 /docs/illustrated-shelf/evidence/*.png
+
+/docs/illustrated-shelf-refinement/evidence/*.png

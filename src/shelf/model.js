@@ -3,7 +3,13 @@ import {identityText,canonicalBrand,productBarcodes} from '../productIdentity.js
 
 export const shelfSorts=[['color','Ton de couleur'],['recent','Plus récents'],['used','Plus utilisés'],['brand','Marque A–Z'],['name','Nom A–Z'],['finish','Finition']];
 export const toneGroups=['Nudes & beiges','Roses','Corails & oranges','Rouges & cassis','Violets & mauves','Bleus','Verts','Jaunes & ors','Neutres & foncés','Teinte à préciser'];
-export function shelfColor(p={}){if(p.colorSource==='palette'&&!p.catalogColorValidated&&!validHex(p.shade)&&!validHex(p.confirmedColor))return null;return preciseShade(p)||(validHex(p.color)?p.color.toLowerCase():null);}
+// Keep stored palette swatches visible, while explicitly distinguishing them from precise shades.
+export function shelfColor(p={}){return preciseShade(p)||(validHex(p.color)?p.color.toLowerCase():null);}
+export function shelfColorStatus(p={}){
+ if(!shelfColor(p))return 'unknown';
+ if(preciseShade(p))return p.catalogColorValidated?'catalog':'recorded';
+ return p.colorSource==='palette'?'indicative':'recorded';
+}
 export function shelfFinish(p={}){const v=identityText([p.finishDetail,p.finish,p.effect].filter(Boolean).join(' '));return /cat eye|cat.*eye|magnet/.test(v)?'cat-eye':/glitter|paillet/.test(v)?'glitter':/chrome|metall|miroir/.test(v)?'chrome':/jelly|transluc/.test(v)?'jelly':/shimmer|pearl|nacr|irise/.test(v)?'shimmer':'cream';}
 export function toneOf(p){
  const color=shelfColor(p);if(!color)return toneGroups[9];
