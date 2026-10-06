@@ -60,7 +60,7 @@ export default function InspirationView({ initialVariant=false, onPublish, onSav
       <p className="detailMuted">Touche un ongle pour voir sa composition. La même répartition est prévue sur les deux mains.</p>
       <NailPreview idea={idea} onSelect={setFinger} selectedIndex={finger} labels={fingers} controls />
       <details className="fingerInspection"><summary>Détails du doigt sélectionné</summary><div className="fingerDetail" aria-live="polite"><div><small>LES DEUX MAINS</small><h3>{fingers[finger]}</h3></div><ul>{nailDetails(idea, finger).map(({ label, item }) => <li key={label}><i style={{ background: item.type === 'Matériel' ? idea.nails[finger].decoration?.color : item.color }} /><span><small>{label}</small><b>{item.name}</b></span></li>)}</ul></div></details>
-      <p className="detailFootnote">{idea.intent === 'scan' ? 'Aperçu avec les couleurs que tu as confirmées dans Scan & Génère.' : idea.intent === 'inspire' ? 'Couleurs de style : choisis des produits adaptés pour réaliser cette inspiration.' : 'Aperçu avec les teintes enregistrées dans ta collection.'} Utilise la bascule pour comparer l’intention illustrée au rendu de matière réaliste.</p>
+      <p className="detailFootnote">{idea.intent === 'scan' ? 'Aperçu avec les couleurs que tu as confirmées dans Scan & Génère.' : idea.intent === 'inspire' ? 'Couleurs de style : choisis des produits adaptés pour réaliser cette inspiration.' : 'Aperçu avec les teintes enregistrées dans ta collection.'} Le dessin illustre la composition et les effets des produits.</p>
     </section>
     <AdaptCollection idea={idea} items={items} onOpen={onOpen} onCollection={onCollection}/>
     <DiyEntry idea={idea}/>

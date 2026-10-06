@@ -1,7 +1,9 @@
-import React, { useEffect, useId, useState } from 'react';
+import React, { useId } from 'react';
 import { normalize } from './creationEngine';
 import { renderingForIdea } from './techniqueRendering';
-import PhotorealNailPreview from './PhotorealNailPreview';
+import DrawnNail from './renderPrototype/DrawnNail';
+import {drawnNailSettings} from './renderPrototype/ideaDrawing';
+import './renderPrototype/ideas.css';
 import {ProNailArtwork} from './workspaces/ProNailArtwork';
 
 function Decor({ motif, color }) {
@@ -27,24 +29,6 @@ function mix(value, target, amount) {
 
 function Gem({ x, y, color = '#d8f6ff', size = 6 }) {
   return <g><path d={`M${x} ${y-size} ${x+size} ${y} ${x} ${y+size} ${x-size} ${y}Z`} fill={color} stroke="#fff" strokeWidth=".8" /><path d={`M${x} ${y-size+2} ${x+size-2} ${y} ${x} ${y+1} ${x-size+2} ${y}Z`} fill="#fff" opacity=".55" /></g>;
-}
-
-function FrenchTip({ nail }) {
-  const technique = nail.drawingTechnique;
-  const variant = nail.drawing || 'french';
-  const fill = technique === 'tortoiseshell' ? '#c88235' : technique === 'leopard' ? '#d7aa5f' : technique === 'chrome' ? '#c8ccd5' : nail.accentColor;
-  const tip = variant === 'reverse-french' ? <path d="M0 104H64V82Q32 68 0 82Z" fill={fill} />
-    : variant === 'side-french' ? <path d="M0 0H64V34Q38 44 0 26Z" fill={fill} />
-      : variant === 'v-french' ? <path d="M0 0H64V19L32 39 0 19Z" fill={fill} />
-        : <path d={variant === 'deep-french' ? 'M0 0H64V38Q32 55 0 38Z' : 'M0 0H64V26Q32 40 0 26Z'} fill={fill} />;
-  return <g>{tip}{variant === 'double-french' && <path d="M4 31Q32 46 60 31" fill="none" stroke={fill} strokeWidth="4" />}
-    {nail.drawingTechnique === 'leopard' && [[15,14,5],[32,20,4],[49,14,5],[25,30,3]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} fill="none" stroke="#3a2418" strokeWidth="2" />)}
-    {nail.drawingTechnique === 'tortoiseshell' && [[16,15,8],[38,16,9],[28,28,7]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} fill="#5b2d1c" opacity=".72" />)}
-    {['crocodile','snake','zebra','cow'].includes(technique) && <path d={technique === 'zebra' ? 'M5 3 18 33M22 1 34 36M42 2 56 31' : technique === 'snake' ? 'M4 12Q16 1 28 12T52 12M4 26Q16 15 28 26T52 26' : technique === 'cow' ? 'M7 13q7-9 15 0t-3 14q-12 1-12-14M35 6q10-5 18 5t-5 14q-14-4-13-19' : 'M5 6H58M4 17H59M5 28H58'} fill="none" stroke={technique === 'zebra' || technique === 'cow' ? '#3a2418' : '#66432c'} strokeWidth={technique === 'crocodile' ? '2.5' : '3'} opacity=".9" />}
-    {technique === 'chrome' && <path d="M5 9H59M7 17H57M10 26H54" stroke="#fff" strokeWidth="2" opacity=".75" />}
-    {['aura','blooming','ombre','babyboomer'].includes(technique) && <ellipse cx="32" cy="17" rx="18" ry="12" fill={nail.color} opacity=".48" />}
-    {['glitter','flakes','foil'].includes(technique) && [[13,11],[28,23],[44,13],[52,28]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i%2?2.3:1.5} fill="#fff4bd" />)}
-  </g>;
 }
 
 // The ambience owns the palette. The style is a small, repeatable graphic
@@ -100,94 +84,27 @@ function IllustratedTechniqueLayer({ technique, nail, ids }) {
   return null;
 }
 
-function MaterialLayer({ technique, nail, index, ids }) {
-  technique = ({ crocodile: 'leopard', snake: 'leopard', cow: 'leopard', zebra: 'leopard', foil: 'glitter', flakes: 'glitter', encapsulated: 'glass-nails', milky: 'glazed', babyboomer: 'aura', ombre: 'aura', 'color-block': 'chrome', 'negative-space': 'jelly', 'half-moon': 'micro-french', ruffian: 'micro-french', outline: 'micro-french', 'one-stroke': 'gel-3d' })[technique] || technique;
-  const color = nail.color || '#b88699';
-  const light = mix(color, '#ffffff', .7), dark = mix(color, '#120914', .55);
-  if (technique === 'cat-eye') return <>
-    <rect width="64" height="104" fill={`url(#${ids.depth})`} />
-    <ellipse cx={index % 2 ? 38 : 29} cy="53" rx="23" ry="48" fill={`url(#${ids.halo})`} transform={index % 2 ? 'rotate(-18 32 52)' : 'rotate(18 32 52)'} />
-    <path d={index % 2 ? 'M5 88 58 13' : 'M9 15 56 91'} stroke={light} opacity=".72" strokeWidth="5.5" filter={`url(#${ids.blur})`} />
-    <path d={index % 2 ? 'M8 91 58 20' : 'M12 18 55 91'} stroke="#fff" opacity=".65" strokeWidth="1.25" />
-  </>;
-  if (technique === 'velvet-magnetic') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><ellipse cx="32" cy="49" rx="25" ry="45" fill={`url(#${ids.velvet})`} /><g fill={light} opacity=".5">{[[22,30],[39,35],[27,48],[43,56],[20,66],[35,74]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r=".75" />)}</g></>;
-  if (technique === 'chrome') return <rect width="64" height="104" fill={`url(#${ids.chrome})`} />;
-  if (technique === 'jelly') return <><rect width="64" height="104" fill={`url(#${ids.natural})`} /><rect width="64" height="104" fill={color} opacity=".58" /><path d="M19 30Q16 52 20 73" stroke="#fff" opacity=".52" strokeWidth="4" fill="none" strokeLinecap="round" /></>;
-  if (technique === 'glazed') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><rect width="64" height="104" fill={`url(#${ids.pearl})`} opacity=".68" /><path d="M20 29Q16 49 20 70" stroke="#fff" opacity=".5" strokeWidth="4" fill="none" strokeLinecap="round" /></>;
-  if (technique === 'aurora-holographic') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><rect width="64" height="104" fill={`url(#${ids.holo})`} opacity=".58" /><g>{[[21,32],[42,44],[28,61],[38,76]].map(([x,y],i)=><path key={i} d={`M${x-2} ${y}h4M${x} ${y-2}v4`} stroke="#fff" strokeWidth=".9" opacity=".85" />)}</g></>;
-  if (technique === 'glitter') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><g>{[[19,29,2],[32,25,1],[43,36,2.5],[25,45,1.6],[38,53,1.2],[19,61,2.2],[46,68,1.5],[30,76,2.6],[40,84,1]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} fill={i%3===0?'#fff6be':i%3===1?'#fff':'#f6bfff'} opacity=".86" />)}</g></>;
-  if (technique === 'aura') return <><rect width="64" height="104" fill={dark} /><ellipse cx="32" cy="50" rx="28" ry="38" fill={`url(#${ids.aura})`} /></>;
-  if (technique === 'blooming') return <><rect width="64" height="104" fill={mix(color,'#ffffff',.42)} /><g filter={`url(#${ids.blur})`} opacity=".8"><circle cx="24" cy="38" r="16" fill={color}/><circle cx="42" cy="54" r="18" fill={light}/><circle cx="25" cy="72" r="15" fill={dark}/></g></>;
-  if (technique === 'marble') return <><rect width="64" height="104" fill={mix(color,'#ffffff',.55)} /><path d="M7 24C26 30 18 42 49 47S37 67 58 80" fill="none" stroke={dark} strokeWidth="5" opacity=".3" filter={`url(#${ids.blur})`} /><path d="M5 23C26 30 17 41 50 47S38 67 59 79" fill="none" stroke={mix(color,'#ffffff',.1)} strokeWidth="1.6" /><path d="M11 67c18-12 25 4 41-8" fill="none" stroke="#fff" strokeWidth="2" opacity=".55" /></>;
-  if (technique === 'tortoiseshell') return <><rect width="64" height="104" fill="#d38b3c" opacity=".88" /><g fill="#59301e" opacity=".78">{[[18,31,13],[43,38,16],[26,61,15],[47,75,12],[14,82,10]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} />)}</g><path d="M18 30Q15 49 19 67" stroke="#fff3c2" opacity=".45" strokeWidth="4" fill="none" strokeLinecap="round" /></>;
-  if (technique === 'leopard') return <><rect width="64" height="104" fill={mix(color,'#f4cf85',.55)} /><g fill="none" stroke="#3a2418" strokeWidth="3">{[[20,30,8],[42,42,9],[23,63,8],[43,77,8],[34,89,5]].map(([x,y,r],i)=><circle key={i} cx={x} cy={y} r={r} strokeDasharray="12 6" />)}</g><g fill="#5a3020">{[[26,33],[36,48],[19,71],[47,69],[34,86]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r="2" />)}</g></>;
-  if (technique === 'gel-3d') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><g filter={`url(#${ids.relief})`}><path d="M15 68C22 51 20 34 31 29c11 8 7 22 18 31-4 13-13 21-22 19-7-1-11-5-12-11Z" fill={light} opacity=".8" stroke="#fff" strokeOpacity=".55" strokeWidth="1.2" /><path d="M23 63c5-9 3-20 9-25 6 7 4 17 10 23" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" opacity=".7" /></g></>;
-  if (technique === 'rhinestones') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><Gem x={32} y={42} size={7}/><Gem x={25} y={57} color="#ffd9f7" size={4}/><Gem x={39} y={62} color="#fff2ba" size={5}/></>;
-  if (technique === 'charms') return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><g filter={`url(#${ids.relief})`}><circle cx="32" cy="53" r="12" fill={`url(#${ids.gold})`} stroke="#fff3bf" strokeWidth="1"/><path d="m32 44 2.5 6 6.5.5-5 4 1.5 6.5-5.5-3.5-5.5 3.5 1.5-6.5-5-4 6.5-.5Z" fill="#fff1bd"/></g></>;
-  if (technique === 'glass-nails') return <><rect width="64" height="104" fill={`url(#${ids.natural})`} /><rect width="64" height="104" fill={color} opacity=".22" /><path d="M16 83V39C16 16 48 16 48 39V83" fill="none" stroke="#fff" strokeWidth="2" opacity=".65" /><path d="M22 30Q17 50 21 68" stroke="#fff" strokeWidth="4" opacity=".45" fill="none" strokeLinecap="round" /></>;
-  if (technique === 'stamping') return <><rect width="64" height="104" fill={color} /><g fill="none" stroke={nail.accentColor || light} strokeWidth="1.2" opacity=".9">{[31,47,63,79].map(y=><g key={y}><circle cx="25" cy={y} r="6"/><circle cx="39" cy={y} r="6"/><path d={`M19 ${y}h26`}/></g>)}</g></>;
-  return <><rect width="64" height="104" fill={`url(#${ids.depth})`} /><path d="M20 34Q17 46 19 62" stroke="#fff" opacity=".3" strokeWidth="4" fill="none" strokeLinecap="round" /></>;
-}
-
-export default function NailPreview({ idea, onSelect, selectedIndex = 0, labels = [], highlightedIndices, compact = false, controls = false }) {
-  const id = useId().replace(/:/g, '');
-  const rendering = renderingForIdea(idea);
-  const [mode, setMode] = useState('illustrated');
-  useEffect(() => setMode('illustrated'), [idea.id, idea.key]);
-  const shape = normalize(idea.shape);
-  const path = shape.includes('stiletto') ? 'M13 82 32 6 51 82C50 93 43 98 32 98S14 93 13 82Z'
-    : /coffin|ballerine/.test(shape) ? 'M13 81 20 14H44L51 81C50 93 43 98 32 98S14 93 13 81Z'
-      : shape.includes('amande') ? 'M15 80C14 55 20 25 32 12C44 25 50 55 49 80C48 93 42 98 32 98S16 93 15 80Z'
-        : shape.includes('ovale') ? 'M14 80C13 55 18 27 32 15C46 27 51 55 50 80C49 93 42 98 32 98S15 93 14 80Z'
-          : shape.includes('ronde') ? 'M13 79V39C13 20 21 11 32 11S51 20 51 39V79C50 92 43 97 32 97S14 92 13 79Z'
-            : shape.includes('carre') ? 'M13 81V22C13 16 17 13 22 13H42C47 13 51 16 51 22V81C50 93 43 97 32 97S14 93 13 81Z'
-              : 'M14 80C14 54 18 27 32 15C46 27 50 54 50 80C49 93 42 98 32 98S15 93 14 80Z';
-  const illustratedPreview = <div className={'nailPreview illustratedNails ' + (/courte/.test(normalize(idea.length)) ? 'shortNails ' : '') + (compact ? 'compactNails ' : '') + (onSelect ? 'interactiveNails ' : '')} role={onSelect ? 'group' : 'img'} aria-label={onSelect ? 'Choisir un ongle' : 'Inspiration illustrée : ' + idea.description}>
-    {idea.nails.map((nail, index) => {
-      const color = nail.color || '#b88699', light = mix(color, '#ffffff', .45), dark = mix(color, '#100711', .18);
-      const ids = { clip: id+'clip'+index, depth:id+'depth'+index, halo:id+'halo'+index, velvet:id+'velvet'+index, chrome:id+'chrome'+index, natural:id+'natural'+index, pearl:id+'pearl'+index, holo:id+'holo'+index, aura:id+'aura'+index, gold:id+'gold'+index, blur:id+'blur'+index, relief:id+'relief'+index, decorHalo:id+'decorHalo'+index };
-      const nailSvg = nail.proDesign ? <svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={highlightedIndices ? {opacity:highlightedIndices.includes(index)?1:.16}:undefined}><g transform="scale(.64 .57777778)"><ProNailArtwork nail={nail.proDesign} shape={idea.shape} length={idea.length}/></g></svg> : <svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={highlightedIndices ? { opacity: highlightedIndices.includes(index) ? 1 : 0.16 } : undefined}>
-        <defs>
-          <clipPath id={ids.clip}><path d={path} /></clipPath>
-          <radialGradient id={ids.decorHalo}><stop stopColor={nail.accentColor||light}/><stop offset=".4" stopColor={nail.accentColor||light} stopOpacity=".9"/><stop offset="1" stopColor={nail.accentColor||light} stopOpacity="0"/></radialGradient>
-          <linearGradient id={ids.depth} x1="0" y1="0" x2="1" y2="1"><stop stopColor={light}/><stop offset=".22" stopColor={color}/><stop offset=".65" stopColor={color}/><stop offset="1" stopColor={dark}/></linearGradient>
-          <radialGradient id={ids.halo}><stop stopColor="#fff" stopOpacity=".78"/><stop offset=".2" stopColor={light} stopOpacity=".65"/><stop offset=".58" stopColor={color} stopOpacity=".2"/><stop offset="1" stopColor={dark} stopOpacity="0"/></radialGradient>
-          <radialGradient id={ids.velvet}><stop stopColor="#fff" stopOpacity=".72"/><stop offset=".35" stopColor={light} stopOpacity=".48"/><stop offset="1" stopColor={color} stopOpacity="0"/></radialGradient>
-          <linearGradient id={ids.chrome} x1="0" y1="0" x2="1" y2="0"><stop stopColor={dark}/><stop offset=".18" stopColor="#fff"/><stop offset=".36" stopColor={light}/><stop offset=".57" stopColor={dark}/><stop offset=".78" stopColor="#fff"/><stop offset="1" stopColor={color}/></linearGradient>
-          <linearGradient id={ids.natural} x1="0" y1="0" x2="0" y2="1"><stop stopColor="#f8e9e6"/><stop offset="1" stopColor="#d9b8b5"/></linearGradient>
-          <linearGradient id={ids.pearl} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#a9e9ff" stopOpacity=".28"/><stop offset=".35" stopColor="#fff" stopOpacity=".65"/><stop offset=".7" stopColor="#f3b5ff" stopOpacity=".32"/><stop offset="1" stopColor="#fff8c9" stopOpacity=".25"/></linearGradient>
-          <linearGradient id={ids.holo} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff6d8e"/><stop offset=".25" stopColor="#ffe26c"/><stop offset=".5" stopColor="#65e7c5"/><stop offset=".72" stopColor="#67a9ff"/><stop offset="1" stopColor="#e57aff"/></linearGradient>
-          <radialGradient id={ids.aura}><stop stopColor={light}/><stop offset=".35" stopColor={color}/><stop offset="1" stopColor={dark}/></radialGradient>
-          <linearGradient id={ids.gold}><stop stopColor="#79551d"/><stop offset=".3" stopColor="#fff0a2"/><stop offset=".58" stopColor="#b77a27"/><stop offset="1" stopColor="#fff5bc"/></linearGradient>
-          <filter id={ids.blur}><feGaussianBlur stdDeviation="4"/></filter>
-          <filter id={ids.relief} x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1.5" dy="3" stdDeviation="2" floodColor="#25111d" floodOpacity=".55"/></filter>
-        </defs>
-        {/* One silhouette: the CSS drop-shadow follows this contour. No detached base or cuticle seam. */}
-        <path d={path} fill={mode === 'realistic' ? dark : `url(#${ids.depth})`} stroke={mix(color, '#381728', .42)} strokeOpacity=".32" strokeWidth=".85" />
-        <g clipPath={'url(#' + ids.clip + ')'}>
-          {mode === 'realistic' ? <MaterialLayer technique={nail.technique || rendering.technique} nail={nail} index={index} ids={ids} /> : <>
-            <IllustratedTechniqueLayer technique={nail.technique} nail={nail} ids={ids} />
-            <StyleLayer style={nail.visualStyle} index={index} color={color} />
-            {nail.finish !== 'Mat' && <><path d="M20 31Q16 46 19 64" stroke="#fff" opacity=".52" strokeWidth="4.2" fill="none" strokeLinecap="round" /><path d="M23 27Q20 36 21 43" stroke="#fff" opacity=".75" strokeWidth="1.4" fill="none" strokeLinecap="round" /></>}
-            {/paillet|holograph|irise/.test(normalize(nail.finish + nail.effect)) && <g fill="#fff" opacity=".65">{[[27, 30], [43, 47], [22, 70], [38, 77], [32, 55]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="1.3" />)}</g>}
-            {/cat.?eye|magnetique/.test(normalize(nail.finish + nail.effect)) && <path d="M8 80 60 20" stroke="#fff" opacity=".3" strokeWidth="6" />}
-          </>}
-          {['french','micro-french','reverse-french','double-french','side-french','deep-french','v-french'].includes(nail.drawing) && <FrenchTip nail={nail} />}
-          {nail.drawing === 'line' && <path d="M31 23Q25 54 35 81" stroke={nail.accentColor} strokeWidth="3" fill="none" />}
-          {nail.drawing === 'dots' && <g fill={nail.accentColor}>{[[28, 34], [37, 46], [28, 60], [37, 74]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="3" />)}</g>}
-          {nail.decoration && <Decor {...nail.decoration} />}
-        </g>
-        {mode === 'realistic' && <path d={path} fill="none" stroke="#fff" strokeOpacity=".26" strokeWidth="1.2" />}
-      </svg>;
-      return onSelect ? <button key={index} aria-label={'Voir ' + labels[index]} aria-pressed={index === selectedIndex} onClick={() => onSelect(index)}>{nailSvg}<span>{labels[index]}</span></button> : nailSvg;
-    })}
-  </div>;
-  const preview = mode === 'realistic'
-    ? <PhotorealNailPreview idea={idea} onSelect={onSelect} selectedIndex={selectedIndex} labels={labels} highlightedIndices={highlightedIndices} compact={compact} />
-    : illustratedPreview;
-  if (!controls) return preview;
-  return <div className="renderPreview">
-    <div className="renderPreviewHead"><span><b>{idea.options?.proDrawing?'Dessin · '+idea.proCreation.title:rendering.label}</b><small>{idea.options?.proDrawing?'Composition personnalisée':rendering.finish} · relief {rendering.relief}</small></span><div className="illustratedModeBadge" aria-label="Mode illustré validé">Illustration NailMoods</div></div>
-    {preview}
-  </div>;
+export default function NailPreview({idea,onSelect,selectedIndex=0,labels=[],highlightedIndices,compact=false,controls=false}) {
+ const id=useId().replace(/:/g,'');
+ const rendering=renderingForIdea(idea);
+ const preview=<div className={'nailPreview illustratedNails drawnNails '+(compact?'compactNails ':'')+(onSelect?'interactiveNails ':'')} role={onSelect?'group':'img'} aria-label={onSelect?'Choisir un ongle':'Inspiration dessinée : '+(idea.description||idea.title||'')}>
+ {idea.nails.map((nail,index)=>{
+  const settings=drawnNailSettings(nail,idea),opacity=highlightedIndices?{opacity:highlightedIndices.includes(index)?1:.16}:undefined;
+  const ids={decorHalo:id+'decorHalo'+index};
+  const svg=nail.proDesign?<svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={opacity}><g transform="scale(.64 .57777778)"><ProNailArtwork nail={nail.proDesign} shape={idea.shape} length={idea.length}/></g></svg>:
+   <DrawnNail key={index} {...settings} style={opacity} seed={index} ariaHidden>
+    <defs><radialGradient id={ids.decorHalo}><stop stopColor={settings.accent}/><stop offset="1" stopColor={settings.accent} stopOpacity="0"/></radialGradient></defs>
+    <g transform="scale(1.5625 1.73076923)">
+     {settings.legacyTechnique&&<IllustratedTechniqueLayer technique={settings.legacyTechnique} nail={nail} ids={ids}/>}
+     <StyleLayer style={nail.visualStyle} index={index} color={settings.base}/>
+     {nail.drawing==='line'&&nail.technique!=='line'&&<path d="M31 23Q25 54 35 81" stroke={settings.accent} strokeWidth="1.5" fill="none"/>}
+     {nail.drawing==='dots'&&nail.technique!=='dots'&&<g fill={settings.accent}>{[[28,34],[37,46],[28,60],[37,74]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r="2"/>)}</g>}
+     {nail.decoration&&<Decor {...nail.decoration} color={nail.decoration.color||settings.accent}/>}
+    </g>
+   </DrawnNail>;
+  return onSelect?<button key={index} type="button" aria-label={'Voir '+(labels[index]||'l’ongle '+(index+1))} aria-pressed={index===selectedIndex} onClick={()=>onSelect(index)}>{svg}<span>{labels[index]}</span></button>:svg;
+ })}
+ </div>;
+ if(!controls)return preview;
+ return <div className="renderPreview"><div className="renderPreviewHead"><span><b>{idea.options?.proDrawing?'Dessin · '+idea.proCreation.title:rendering.label}</b><small>{idea.options?.proDrawing?'Composition personnalisée':rendering.finish} · relief {rendering.relief}</small></span><div className="illustratedModeBadge" aria-label="Mode dessin validé">Dessin NailMoods</div></div>{preview}</div>;
 }
