@@ -2,6 +2,7 @@ import React, { useId } from 'react';
 import { normalize } from './creationEngine';
 import { renderingForIdea } from './techniqueRendering';
 import DrawnNail from './renderPrototype/DrawnNail';
+import AtelierArt from './design/AtelierArt';
 import {drawnNailSettings} from './renderPrototype/ideaDrawing';
 import './renderPrototype/ideas.css';
 import {ProNailArtwork} from './workspaces/ProNailArtwork';
@@ -88,6 +89,7 @@ export default function NailPreview({idea,onSelect,selectedIndex=0,labels=[],hig
  const id=useId().replace(/:/g,'');
  const rendering=renderingForIdea(idea);
  const preview=<div className={'nailPreview illustratedNails drawnNails '+(compact?'compactNails ':'')+(onSelect?'interactiveNails ':'')} role={onSelect?'group':'img'} aria-label={onSelect?'Choisir un ongle':'Inspiration dessinée : '+(idea.description||idea.title||'')}>
+ {!compact&&<span className="drawnPreviewBotanical"><AtelierArt source="botanical"/></span>}
  {idea.nails.map((nail,index)=>{
   const settings=drawnNailSettings(nail,idea),opacity=highlightedIndices?{opacity:highlightedIndices.includes(index)?1:.16}:undefined;
   const ids={decorHalo:id+'decorHalo'+index};

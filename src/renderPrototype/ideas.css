@@ -7,3 +7,35 @@
 .app .drawnNails.interactiveNails button>svg{width:100%;max-width:100px;height:auto}
 .app .drawnNails.interactiveNails button>span{font-size:11px}
 .app .inspirationPage .drawnNails{padding:17px 5px 12px;gap:1px}
+
+/* Give the live results the same visual hierarchy as the approved drawing board. */
+.app .drawnNails{position:relative;isolation:isolate;align-items:center;overflow:hidden;min-height:0;background:radial-gradient(ellipse at 50% 45%,#fffaf6 0%,#fbf2ed 100%)}
+.app .drawnNails>svg,.app .drawnNails>button{position:relative;z-index:1}
+.app .drawnPreviewBotanical{position:absolute;right:-18px;bottom:-12px;width:95px;height:95px;opacity:.22;pointer-events:none;z-index:0}
+.app .drawnPreviewBotanical .nmAtelierArt{width:100%;max-width:none;height:100%;transform:rotate(-17deg);margin:0;filter:none}
+.app .engagementCreation .drawingIdeaCard{border:1px solid #d9a8b852;border-radius:23px;background:#fffaf6;box-shadow:0 5px 18px #65384b07;overflow:hidden}
+.app .engagementCreation .drawingIdeaCard .ideaTopline{padding:14px 17px 0;font-size:10px}
+.app .engagementCreation .drawingIdeaCard .drawnNails{padding:7px 2px 5px;margin:8px 12px 0;min-height:0;border:0;background:radial-gradient(ellipse,#fff7ef,#fffaf6);border-radius:14px;gap:0}
+.app .engagementCreation .drawingIdeaCard .drawnNails>svg{width:22%;max-width:110px;margin:0 -1%;flex-shrink:1}
+.app .engagementCreation .drawingIdeaCard .drawnNails>svg:first-of-type{transform:rotate(-10deg) translateY(4px)}
+.app .engagementCreation .drawingIdeaCard .drawnNails>svg:nth-of-type(2){transform:rotate(-4deg)}
+.app .engagementCreation .drawingIdeaCard .drawnNails>svg:nth-of-type(3){transform:translateY(-4px)}
+.app .engagementCreation .drawingIdeaCard .drawnNails>svg:nth-of-type(4){transform:rotate(4deg)}
+.app .engagementCreation .drawingIdeaCard .drawnNails>svg:last-of-type{transform:rotate(10deg) translateY(4px)}
+.app .engagementCreation .drawingIdeaCard .ideaBody{padding:8px 17px 16px}
+.app .engagementCreation .drawingIdeaCard h3{margin:0 0 10px;font-size:25px;line-height:1.15}
+.app .drawingIdeaSummary{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.app .drawingIdeaSwatches{display:flex;gap:6px;align-items:center}
+.app .drawingIdeaSwatches i{display:block;width:21px;height:21px;border-radius:50%;border:1px solid #71394d22}
+.app .drawingIdeaSummary .ideaBadges{display:flex;gap:5px;flex-wrap:wrap;margin:0}
+.app .drawingIdeaSummary .ideaBadges span{font-size:10px;padding:5px 8px}
+.app .drawingIdeaDetails{border-top:1px solid #d9a8b835;margin:5px 0 12px;color:var(--textSecondary);font-size:12px;line-height:1.5}
+.app .drawingIdeaDetails>summary{display:flex;align-items:center;justify-content:space-between;min-height:40px;cursor:pointer;color:var(--a);list-style:none;font-size:11px}
+.app .drawingIdeaDetails>summary::-webkit-details-marker{display:none}
+.app .drawingIdeaDetails[open]>summary>svg{transform:rotate(90deg)}
+.app .drawingIdeaDetails>p{margin:0 0 12px}
+.app .engagementCreation .drawingIdeaCard .ideaCardActions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.app .engagementCreation .drawingIdeaCard .ideaCardActions button{min-height:44px;min-width:0;width:100%;margin:0;border:1px solid var(--a);border-radius:12px;font-size:12px;line-height:1.2;white-space:nowrap;padding:8px 5px;display:flex;align-items:center;justify-content:center;gap:6px}
+.app .engagementCreation .drawingIdeaCard .chooseIdea{background:var(--a);color:var(--textOnAccent,#fff)}
+.app .engagementCreation .drawingIdeaCard .chooseIdea:disabled{opacity:.65}
+.app .inspirationPage .drawnNails.interactiveNails button>svg{max-height:150px}
