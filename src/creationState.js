@@ -24,6 +24,8 @@ export function readCreationState(storage, profile = {}) {
     if (options.techniquePlacement === 'mix' && (selectedTechniques(options).length < 2 || Number(options.level) < 2)) options.techniquePlacement = 'auto';
     if (![15, 30, 45, 60, 90].includes(options.duration)) options.duration = fallback.options.duration;
     options.polishCount = normalizePolishCount(options.polishCount);
+    if(Object.hasOwn(options,'maxPolishes')) options.maxPolishes = options.maxPolishes === 3 ? 3 : null;
+    for(const key of ['collectionOnly','rediscover','escapeBubble']) if(Object.hasOwn(options,key)) options[key] = options[key] === true;
     const learning = validPersonalSnapshot(saved.learning) ? saved.learning : null;
     return { ...fallback, ...saved, options, learning, learningStamp: (learning || saved.learning === null) && typeof saved.learningStamp === 'string' ? saved.learningStamp : 'legacy' };
   } catch { return fallback; }

@@ -1,3 +1,5 @@
+import AtelierArt from './design/AtelierArt';
+import AdaptCollection from './engagement/AdaptCollection.jsx';
 import JournalTracking from './poseCycle/JournalTracking';
 import {poseDestinations} from './poseDestinations';
 import {messageId} from './social/messageState';
@@ -28,7 +30,7 @@ export function JournalVisual({ entry, compact = false, media = null }) {
   }, [entry.photo, entry.mediaPath, entry.publicMediaPath, entry.visibility, media]);
   const photo = resolved || (typeof entry.photo === 'string' && entry.photo.startsWith('data:') ? entry.photo : '');
   return <div className={'journalVisual' + (compact ? ' compact' : '')}>
-    {photo && entry.idea && <NailPreview idea={entry.idea} compact />}
+    {photo && entry.idea && !compact && <NailPreview idea={entry.idea} compact />}
     {photo ? <img src={photo} alt={'Résultat de la pose « ' + entry.title + ' »'} loading="lazy" /> : entry.idea ? <><NailPreview idea={entry.idea} /><small>Inspiration · aperçu schématique</small></> : <div className="journalNoPhoto"><Camera /><span>Un souvenir à compléter</span></div>}
   </div>;
 }
@@ -125,6 +127,7 @@ function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDel
     <div className="journalToolbar"><button onClick={() => onNavigate('')}><ArrowLeft />Mon journal</button><button onClick={() => onNavigate(entry.id + '/modifier')}><PenLine />Modifier</button></div>
     <section className="journalHeading"><small>{journalDate(entry.date)}</small><h1 ref={heading} tabIndex={-1}>{entry.title}</h1></section>
     <JournalVisual entry={entry} media={media} /><div className="journalToolbar"><button onClick={() => setVariantsOpen(true)}>Créer une variante<ArrowRight /></button></div>
+    {entry.idea&&<AdaptCollection idea={entry.idea} items={items} onOpen={onIdea} onCollection={onCollection}/>}
     <JournalTracking entry={entry}/><RecipeSummary idea={entry.idea} /><section className="journalDetailBody">
       {error && <p className="formError" role="alert">{error}</p>}
       <div className="journalBadges"><span>{entry.visibility === 'public' ? '🌍 Public' : '🔒 Privé'}</span>{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.ease && <span>Réalisation : {easeLabels[entry.ease].toLocaleLowerCase('fr')}</span>}{entry.wearDays !== '' && <span>Tenue observée : {entry.wearDays} jour{entry.wearDays > 1 ? 's' : ''}</span>}</div>
@@ -172,9 +175,14 @@ export default function JournalView({ onFavorites, library, profile, journal, se
     if (entry) return editing ? <JournalEditor key={id + '/edit'} entry={entry} items={items} onSave={onSave} onNavigate={onNavigate} /> : <JournalDetail profile={profile} key={id} entry={entry} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} onShareToPro={onShareToPro} />;
   }
   if (path) return <div className="journalPage"><section className="journalEmpty"><BookHeart /><h1>Cette pose n’est pas disponible</h1><button className="journalPrimary" onClick={() => onNavigate('')}>Retrouver mon journal</button></section></div>;
-  return <div className="journalPage">
-    <MessengerTile />
-    <section className="journalHero"><small>MON ESPACE PERSONNEL</small><h1>Mes poses</h1><p>Idées à essayer, projets en cours et Journal des poses réalisées.</p><div className="poseTabs" aria-label="Rangement de mes poses">{[['a-essayer','À essayer'],['en-cours','En cours'],['realisees','Réalisées']].map(([key,label])=><button key={key} aria-pressed={listSection===key} onClick={()=>onNavigate(key)}>{label}</button>)}</div>{listSection==='realisees'&&<button className="journalPrimary" onClick={()=>onNavigate('nouveau')}><Plus/>{hasDraft?'Reprendre mon brouillon':'Ajouter une pose réalisée'}</button>}</section>
+  return <div className="journalPage nmPoseLanding">
+    <section className="journalHero"><h1>Mes poses</h1><p>Mes idées et mes souvenirs.</p><div className="poseTabs" aria-label="Rangement de mes poses">{[['a-essayer','À essayer'],['en-cours','En cours'],['realisees','Réalisées']].map(([key,label])=><button key={key} aria-pressed={listSection===key} onClick={()=>onNavigate(key)}>{label}</button>)}</div></section>
+    <div className="nmPoseQuickGrid" aria-label="Mes échanges et mon planning">
+      {import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&<button className="nmIllustratedTile" onClick={()=>{window.location.hash='creer/planning';}}><AtelierArt source="planning"/><b>Mon calendrier</b><small>Mes dates et mes projets</small></button>}
+      <MessengerTile illustrated/>
+    </div>
+    {import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&<button className="nmPoseProjects" onClick={()=>{window.location.hash='creer/projets-pose';}}><AtelierArt source="projects"/><span><b>Mes projets de pose</b><small>Mes idées et leur préparation</small></span><ChevronRight aria-hidden="true"/></button>}
+    <div className="nmPoseSectionTitle"><h2>{listSection==='realisees'?'Mes poses réalisées':listSection==='en-cours'?'Mes poses en cours':'À essayer'}</h2><span>{listSection==='realisees'?journal.entries.length:listSection==='en-cours'?destinations.sessions.length+destinations.projects.length:destinations.toTry.length}</span></div>
     {listSection==='a-essayer'&&<section className="poseSavedList">{destinations.toTry.length?destinations.toTry.map(idea=><button className="poseSavedCard" key={idea.key} onClick={()=>onIdea(idea)}><NailPreview idea={idea} compact/><span><b>{idea.title}</b><small>Idée enregistrée · ouvrir la fiche</small></span><ChevronRight/></button>):<div className="journalEmpty"><h2>Ta prochaine idée t’attend</h2><p>Enregistre une idée depuis Créer pour la retrouver ici.</p><button className="journalPrimary" onClick={onCreate}>Créer une idée</button></div>}</section>}
     {listSection==='en-cours'&&<section className="poseSavedList">{destinations.sessions.map(session=><button className="poseSavedCard" key={session.id} onClick={()=>{window.location.hash='tutoriel/'+session.id;}}><NailPreview idea={session.idea} compact/><span><b>{session.idea.title}</b><small>Tutoriel · {session.completed.length}/{session.steps.length} étapes</small></span><ChevronRight/></button>)}{destinations.projects.map(idea=><button className="poseSavedCard" key={idea.key} onClick={()=>onIdea(idea)}><NailPreview idea={idea} compact/><span><b>{idea.title}</b><small>{idea.isProject?'Projet':'Idée en préparation'}</small></span><ChevronRight/></button>)}{!destinations.projects.length&&!destinations.sessions.length&&<div className="journalEmpty"><h2>Aucun projet en cours</h2><p>Compose une pose ou démarre le tutoriel d’une idée.</p><button className="journalPrimary" onClick={onCreate}>Créer une idée</button></div>}</section>}
     {listSection==='realisees'&&<>
@@ -184,6 +192,7 @@ export default function JournalView({ onFavorites, library, profile, journal, se
     {filtered.length ? <div className="journalList">{filtered.map(entry => <article key={entry.id}><button className="journalEntryCard" onClick={() => onNavigate(entry.id)}><JournalVisual entry={entry} media={media} compact /><div className="journalEntryCopy"><small>{journalDate(entry.date)}</small><h2>{entry.title}</h2><p>{entry.products.slice(0, 3).map(item => item.name).join(' · ') || 'Un souvenir de ta pose'}</p><div><span>{entry.visibility === 'public' ? '🌍 Public' : '🔒 Privé'}</span>{entry.feeling && <span>{feelingLabels[entry.feeling]}</span>}{entry.repeat && <span><Heart fill="currentColor" />À refaire</span>}<ChevronRight /></div></div></button></article>)}</div>
       : journal.entries.length ? <section className="journalEmpty"><Search /><h2>Aucune pose trouvée</h2><p>{repeatOnly ? 'Les poses marquées « à refaire » apparaîtront ici.' : 'Essaie un autre nom, produit ou mot de tes notes.'}</p><button className="journalSecondary" onClick={() => { setQuery(''); setRepeatOnly(false); }}>Voir toutes mes poses</button></section>
         : <section className="journalEmpty"><BookHeart /><h2>Tes prochaines poses apparaîtront ici</h2><p>Ajoute une pose déjà réalisée, avec ou sans photo. Tes idées enregistrées sont dans À essayer.</p><button className="journalSecondary" onClick={onCreate}>Créer ma première idée<ArrowRight /></button></section>}
+    <button className="journalSecondary nmAddRealized" onClick={()=>onNavigate('nouveau')}><Plus/>{hasDraft?'Reprendre mon brouillon':'Ajouter une pose réalisée'}</button>
     </>}
     <p className="journalLocal"><StorageHint guest="Ton journal est conservé dans ce navigateur, sur cet appareil." account="Ton journal est lié à ton compte. L’état de synchronisation est indiqué en haut de la page."/></p>
   </div>;

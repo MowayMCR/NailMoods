@@ -1,0 +1,48 @@
+/* Shared gutters for the existing creation, journal and pose surfaces. */
+.app{--content-gutter:16px;--content-width:680px}
+.app :is(.creativeSources,.engagementCreation,.photoCreationPage,.journalPage,.inspirationPage){box-sizing:border-box;width:100%;max-width:var(--content-width);margin-inline:auto;padding-inline:var(--content-gutter)}
+.app .creativeSources{padding-top:18px;padding-bottom:28px}
+.app .sourceHeading{margin-bottom:18px}
+.app .sourceHeading h1{font-family:var(--nm-serif,Georgia,serif);font-size:2rem;line-height:1.15;margin:0 0 6px;color:var(--textPrimary)}
+.app .sourceHeading p{font-size:1rem;color:var(--textSecondary)}
+.app .sourceCardGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;grid-auto-rows:1fr}
+.app .sourceCard{display:grid;grid-template-rows:72px minmax(2.6em,auto) minmax(2.7em,auto);align-content:start;align-items:center;gap:6px;width:100%;min-width:0;padding:12px;border-radius:22px;border:1px solid var(--borderDefault);background:var(--surfaceSecondary);color:var(--textPrimary);transition:transform .12s ease,box-shadow .12s ease}
+.app .sourceCard:nth-child(3n+1){background:color-mix(in srgb,var(--accentSoft) 55%,var(--surfacePrimary))}
+.app .sourceCard:nth-child(3n+2){background:var(--surfaceSecondary)}
+.app .sourceCard:nth-child(3n){background:color-mix(in srgb,var(--cardHighlight) 35%,var(--surfacePrimary))}
+.app .sourceCard>b{font-size:.9375rem;line-height:1.3;font-weight:650;align-self:start;overflow-wrap:normal}
+.app .sourceCard>small{font-size:.875rem;line-height:1.35;align-self:start;color:var(--textSecondary)}
+.createIllustration{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:72px;gap:0;--bottle-cap:var(--accentPrimary);--bottle-ink:var(--textSecondary);--bottle-cap-line:var(--textPrimary);--bottle-cap-light:var(--accentSecondary);--bottle-rim:var(--surfacePrimary);--bottle-shadow:var(--accentSoft)}
+.createIllustration .illustratedGlyph{width:68px;height:68px;flex:none}
+.createIllustration>.nmBottle{height:72px;width:48px;flex:none}
+.createIllustration--collection>.nmBottle:first-child{transform:rotate(-9deg)}
+.createIllustration--collection>.nmBottle:nth-child(2){transform:rotate(8deg);margin-left:-5px}
+.createIllustration>svg:not(.moodGlyph):not(.nmBottle){height:31px;width:31px;color:var(--accentPrimary);stroke-width:1.5;margin-left:-5px;flex:none}
+.app .sourceAtelier{margin-top:12px;padding:12px;min-height:98px;border-radius:22px;background:var(--accentSoft);border-color:var(--borderDefault);color:var(--textPrimary);transition:transform .12s ease}
+.sourceAtelier>.createIllustration{width:70px;flex:0 0 70px}
+.sourceAtelier .createIllustration .illustratedGlyph{width:50px;height:60px}
+.app .sourceAtelierTitle em{color:var(--textOnAccent);background:var(--accentPrimary)}
+.app .sourceAtelier small{font-size:.875rem;color:var(--textSecondary)}
+.app :is(.sourceCard,.sourceAtelier):active{transform:scale(.98)}
+.app :is(.sourceCard,.sourceAtelier,.sourceJournalLink,.poseTabs>button):focus-visible{outline:3px solid var(--accentPrimary);outline-offset:3px}
+.app .sourceJournalLink{font-size:.875rem;min-height:48px;color:var(--accentPrimary)}
+.app .sourcePhotos{justify-content:flex-start;padding-inline:12px;border:1px solid var(--borderDefault);border-radius:16px;background:var(--surfacePrimary)}
+.sourcePhotos>svg:last-child{margin-left:auto}
+.app .engagementCreation :is(.createHeading,.creationSection,.choicesSummary,.creationNotice,.creationResults){margin-inline:0}
+.app .journalPage :is(.journalHero,.journalList,.journalControls,.journalPending,.journalForm,.journalDetailBody,.journalHeading,.poseSavedList){margin-inline:0}
+.app .journalHero{padding:20px 16px;margin-block:12px 16px;background:var(--surfacePrimary);border-color:var(--borderDefault);border-radius:22px}
+.app .journalHero h1{color:var(--textPrimary);font-size:2rem;line-height:1.15}
+.app .journalHero>p{font-size:.9375rem}
+.app .poseTabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.app .poseTabs>button{width:100%;min-width:0;min-height:48px;padding:10px 4px;font-size:.875rem;line-height:1.3;background:var(--surfaceSecondary);color:var(--textPrimary);border:1px solid var(--borderDefault)}
+.app .poseTabs>button[aria-pressed=true]{background:var(--accentPrimary);color:var(--textOnAccent);border-color:var(--accentPrimary)}
+.app .nmCollectionContext{box-sizing:border-box;max-width:100%;margin:14px 0;padding:16px;border-radius:22px}
+.app .nmCollectionContext h2{font-size:1.5rem;margin-bottom:8px}
+.app .nmCollectionContext p{font-size:.875rem;line-height:1.55;margin-block:8px 12px}
+.app .nmCollectionContext .nmButton{min-height:48px;max-width:100%;white-space:normal}
+.app .inspirationPage :is(.detailToolbar,.detailHero,.detailCanvas,.detailSection,.detailActions,.detailFootnote){margin-inline:0}
+.app .inspirationPage .detailHero{padding-inline:0}
+.app .inspirationPage .detailCanvas{padding:16px}
+.app .outfitPage{--nm-page-gutter:var(--content-gutter);max-width:var(--content-width);margin-inline:auto}
+@media(min-width:600px){.app .sourceCardGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.app :is(.sourceCard,.sourceAtelier){transition:none}}

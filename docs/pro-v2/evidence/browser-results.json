@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-05T13:10:17.305Z",
+  "scope": "Production React components; PGlite-backed RPC; synthetic demonstration data. No native-device claim.",
+  "checks": [
+    "Public showcases no overflow at 320px",
+    "Public showcases no overflow at 360px",
+    "Public showcases no overflow at 390px",
+    "Public showcases no overflow at 430px",
+    "Public showcases no overflow at 768px",
+    "Public showcases no overflow at 1024px",
+    "Editor saves through SQL and restores after reload",
+    "Discovery searches public universe fields"
+  ],
+  "errors": []
+}

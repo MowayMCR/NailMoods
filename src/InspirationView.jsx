@@ -1,3 +1,5 @@
+import {StorageHint} from './StorageContext';
+import AdaptCollection from './engagement/AdaptCollection.jsx';
 import {DiyEntry} from './poseCycle/DiyView';
 import ResultActions from './ResultActions';
 import PhotoReferences from './PhotoReferences';
@@ -58,8 +60,9 @@ export default function InspirationView({ initialVariant=false, onPublish, onSav
       <p className="detailMuted">Touche un ongle pour voir sa composition. La même répartition est prévue sur les deux mains.</p>
       <NailPreview idea={idea} onSelect={setFinger} selectedIndex={finger} labels={fingers} controls />
       <details className="fingerInspection"><summary>Détails du doigt sélectionné</summary><div className="fingerDetail" aria-live="polite"><div><small>LES DEUX MAINS</small><h3>{fingers[finger]}</h3></div><ul>{nailDetails(idea, finger).map(({ label, item }) => <li key={label}><i style={{ background: item.type === 'Matériel' ? idea.nails[finger].decoration?.color : item.color }} /><span><small>{label}</small><b>{item.name}</b></span></li>)}</ul></div></details>
-      <p className="detailFootnote">{idea.intent === 'scan' ? 'Aperçu avec les couleurs que tu as confirmées dans Scan & Génère.' : idea.intent === 'inspire' ? 'Couleurs de style : choisis des produits adaptés pour réaliser cette inspiration.' : 'Aperçu avec les teintes enregistrées dans ta collection.'} Utilise la bascule pour comparer l’intention illustrée au rendu de matière réaliste.</p>
+      <p className="detailFootnote">{idea.intent === 'scan' ? 'Aperçu avec les couleurs que tu as confirmées dans Scan & Génère.' : idea.intent === 'inspire' ? 'Couleurs de style : choisis des produits adaptés pour réaliser cette inspiration.' : 'Aperçu avec les teintes enregistrées dans ta collection.'} Le dessin illustre la composition et les effets des produits.</p>
     </section>
+    <AdaptCollection idea={idea} items={items} onOpen={onOpen} onCollection={onCollection}/>
     <DiyEntry idea={idea}/>
     <ResultActions saved={favorite} onSave={onSaveIdea} onDone={onDone} onVariant={()=>generateVariants()} onShare={onShareToPro?()=>onShareToPro({source:idea,type:'inspiration'}):null}/>
     <details className="nmDisclosure"><summary>Réaliser avec le tutoriel</summary><button className="detailSecondary" onClick={onTutorial}><Play/>{tutorialExists?'Reprendre le tutoriel':'Démarrer le tutoriel'}</button><p>Une étape à la fois, avec ta progression enregistrée.</p></details>
@@ -81,7 +84,7 @@ export default function InspirationView({ initialVariant=false, onPublish, onSav
 }
 
 export function FavoritesView({ favorites, items, onOpen, onFavorite, onBack, completedKeys = new Set() }) {
-  return <div className="inspirationPage favoritesPage"><div className="detailToolbar"><button onClick={onBack}><ArrowLeft />Créer</button></div><section className="detailHero"><small>MES ENVIES À GARDER</small><h1>Mes inspirations<br /><em>favorites</em></h1><p>{favorites.length} inspiration{favorites.length > 1 ? 's' : ''} conservée{favorites.length > 1 ? 's' : ''} sur cet appareil.</p></section>
+  return <div className="inspirationPage favoritesPage"><div className="detailToolbar"><button onClick={onBack}><ArrowLeft />Créer</button></div><section className="detailHero"><small>MES ENVIES À GARDER</small><h1>Mes inspirations<br /><em>favorites</em></h1><p>{favorites.length} inspiration{favorites.length > 1 ? 's' : ''} conservée{favorites.length > 1 ? 's' : ''} <StorageHint guest="sur cet appareil." account="dans ton compte."/></p></section>
     {!favorites.length ? <section className="creationEmpty"><Heart /><h2>Les idées qui te ressemblent</h2><p>Touche le cœur d’une inspiration pour la garder ici, même après avoir créé de nouvelles idées.</p><button onClick={onBack}>Trouver mes idées<ArrowRight /></button></section> : <div className="favoriteIdeaList">{favorites.map(idea => {
       const changed = ideaAvailability(idea, items).some(item => !['available', 'conceptual','scanned'].includes(item.state));
       return <article className="ideaCard" key={idea.key}><div className="ideaTopline"><span>{idea.palette.length} VERNIS · ≈ {idea.minutes} MIN</span><button className="ideaHeart" aria-label={'Retirer ' + idea.title + ' des favoris'} onClick={() => onFavorite(idea)}><Heart fill="currentColor" /></button></div><NailPreview idea={idea} /><div className="ideaBody">{completedKeys.has(idea.key) && <span className="ideaDoneBadge"><Check />Déjà réalisée</span>}<h3>{idea.title}</h3><p>{idea.palette.map(item => item.name).join(' · ')}</p>{changed && <p className="favoriteChanged">Collection modifiée · détails dans la fiche</p>}<button className="detailPrimary" onClick={() => onOpen(idea)}>Ouvrir la fiche<ArrowRight /></button></div></article>;

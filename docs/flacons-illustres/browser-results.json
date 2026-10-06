@@ -1,0 +1,32 @@
+{
+  "scope": "Actual App + PGlite RPC, synthetic data only in test harness, not production",
+  "checks": [
+    "Compact heading, five bottles per shelf and continuous rows",
+    "Three accessible icon controls; tutorial banner absent only in Collection",
+    "soft-glam preserves product HEX",
+    "dark-feminine preserves product HEX",
+    "cottagecore preserves product HEX",
+    "pop-pastel preserves product HEX",
+    "Responsive 320px",
+    "Responsive 360px",
+    "Responsive 390px",
+    "Responsive 430px",
+    "Responsive 768px",
+    "Responsive 1024px",
+    "Usage, recent and colour sorts through settings",
+    "Search, categories, active indicator and complete reset; tones in both views; add product",
+    "Focus usage, favorite, product → own pose",
+    "Open and inverse close animation",
+    "Real photo retained; no photo, unknown shade and never used",
+    "Stored palette shade restored and accurately labelled",
+    "Existing filters remain functional in compact sheet",
+    "Existing editable product sheet",
+    "Create with existing reference",
+    "PO directory → profile → product → poses → used products; common products; style",
+    "Visibility saved through SQL and restored after reload",
+    "1000 products: bounded render 40 then 80, first render 2193ms",
+    "Reduced motion respected",
+    "Empty collection retained"
+  ],
+  "errors": []
+}

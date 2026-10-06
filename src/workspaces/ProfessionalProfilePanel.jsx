@@ -1,3 +1,6 @@
+import {ShelfVisibility} from '../shelf/ProShelf.jsx';
+import ProManager from '../professional/ProManager.jsx';
+import {proV2Enabled} from '../professional/service.js';
 import React,{useEffect,useMemo,useState} from 'react';
 import {Building2,Check,ChevronRight,Eye,Scissors,ShieldCheck,UsersRound} from 'lucide-react';
 import Sheet from '../Sheet';
@@ -11,7 +14,8 @@ import './professional.css';
 
 const emptyForm={name:'',handle:'',bio:'',city:'',isPublic:false,avatarUrl:null};
 
-export default function ProfessionalProfilePanel({client,userId,tier}){
+export default function ProfessionalProfilePanel(props){return <>{props.tier==='pro'&&<ShelfVisibility client={props.client}/ >}{proV2Enabled()?<ProManager {...props}/>:<LegacyProfessionalProfilePanel {...props}/>}</>;}
+function LegacyProfessionalProfilePanel({client,userId,tier}){
  const [state,setState]=useState(null),[status,setStatus]=useState(''),[form,setForm]=useState(emptyForm),[createName,setCreateName]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[closeOpen,setCloseOpen]=useState(false),[confirmation,setConfirmation]=useState(''),[previewHandle,setPreviewHandle]=useState('');
  const service=useMemo(()=>userId?professionalService(client,userId):null,[client,userId]);
  async function load(){if(!service)return;const next=await service.state();setState(next);setStatus(professionalStatus(next.status));return next;}
@@ -33,7 +37,7 @@ export default function ProfessionalProfilePanel({client,userId,tier}){
        <label><span>@NailMoodsID professionnel</span><div className="handleField"><i>@</i><input value={form.handle} maxLength={30} autoCapitalize="none" autoCorrect="off" placeholder={status==='institute_owner'?'institut.cassis':'studio.marie'} onChange={event=>setForm(current=>({...current,handle:event.target.value.replace(/^@+/,''),}))}/></div></label>
        <label><span>Bio / présentation</span><textarea value={form.bio} maxLength={320} rows={4} placeholder="Présente ton univers en quelques mots." onChange={event=>setForm(current=>({...current,bio:event.target.value}))}/></label>
        <label><span>Ville <small>facultative</small></span><input value={form.city} maxLength={80} placeholder="Visible uniquement si le profil est public" onChange={event=>setForm(current=>({...current,city:event.target.value}))}/></label>
-       <label className="visibilityToggle"><input type="checkbox" checked={form.isPublic} onChange={event=>setForm(current=>({...current,isPublic:event.target.checked}))}/><span><b>Profil public</b><small>Nom, ID, bio, ville et contenus publiés pourront être vus. Ta collection et ton journal privé restent invisibles.</small></span></label>
+       <label className="visibilityToggle"><input type="checkbox" checked={form.isPublic} onChange={event=>setForm(current=>({...current,isPublic:event.target.checked}))}/><span><b>Profil public</b><small>Nom, ID, bio, ville et contenus publiés pourront être vus. Ton journal privé reste invisible. Les produits ne sont partagés que selon le réglage de ton étagère.</small></span></label>
        <button className="primaryAction" disabled={busy||!form.name.trim()}>{busy?'Enregistrement…':'Enregistrer mon identité Pro'}</button>
        {workspace.profile?.is_public&&workspace.public_handle&&<button className="secondaryAction proPreviewButton" type="button" onClick={()=>setPreviewHandle(workspace.public_handle)}><Eye/>Voir mon profil comme les autres</button>}</form>
        {status==='institute_owner'&&<><div className="formSectionHeading"><span>B</span><div><h4>Mon espace Institut</h4><p>Les memberships et les rôles définissent les droits réels.</p></div></div><InstitutePanel client={client} userId={userId} mode={status} onChanged={load}/><button className="dangerText closeInstitute" type="button" onClick={()=>setCloseOpen(true)}>Fermer cet Institut</button></>}

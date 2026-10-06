@@ -1,0 +1,30 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';
+import {setup,login,rpc,draft,A,B,C} from './helpers/pro-db.js';
+const migration=readFileSync('supabase/migrations/20261005192257_catalogue_admin_cycle.sql','utf8');
+const product={name:'Cassis',brand:'Studio',catalogColor:'#800040',colorValidated:true,finish:'Crème',sourceUrl:'https://example.com/product'};
+const call=(db,a,d={})=>rpc(db,'nm_catalog_manage',[a,d]);
+async function fixture(){const db=await setup();await db.exec(migration);await db.query('insert into private.staff values($1)',[B]);await login(db,A);const wid=await rpc(db,'nm_pro_save',[null,{...draft(),professionalType:'brand'}]);const item=await rpc(db,'nm_pro_item',[wid,null,'product',{title:'Cassis',details:{hex:'#800040'},visibility:'public'}]);return {db,wid,item};}
+test('Catalogue publication gate, ownership, independent review, revisions and exact colours',async()=>{const {db,wid,item}=await fixture();try{
+ assert.equal((await rpc(db,'nm_pro_public',['studio.a'])).professional.items.length,0);
+ await assert.rejects(call(db,'queue'),/staff_required/);await assert.rejects(call(db,'submit',{itemId:item,product}),/rights_confirmation_required/);
+ await assert.rejects(call(db,'submit',{itemId:item,product:{...product,technical:{curing:{value:'60 s'}}},rightsConfirmed:true}),/documented_source_required/);
+ const r=await call(db,'submit',{itemId:item,product,rightsConfirmed:true});
+ await login(db,C);await assert.rejects(call(db,'mine',{workspaceId:wid}),/showcase_editor_required/);await assert.rejects(db.query('select * from private.catalog_products'),/permission denied/);
+ await login(db,B);const q=await call(db,'queue');assert.equal(q.requests.length,1);
+ await assert.rejects(rpc(db,'nm_pro_review',[null,null,r.id,true,null]),/use_catalog_review/);
+ const done=await call(db,'review',{id:r.id,revision:1,status:'approved',note:'Fiche et source vérifiées'});
+ let entries=await rpc(db,'nm_catalog_read',['',250]);assert.equal(entries[0].product.catalogColor,'#800040');assert.equal(entries[0].product.photos,undefined);
+ await assert.rejects(call(db,'review',{id:r.id,revision:1,status:'approved',note:'Ancien écran'}),/request_changed/);
+ await login(db,A);const correction=await call(db,'submit',{itemId:item,catalogId:done.catalogId,product:{...product,name:'Cassis corrigé'},rightsConfirmed:true});
+ assert.equal((await rpc(db,'nm_catalog_read',['',250]))[0].product.name,'Cassis');
+ await login(db,B);await call(db,'review',{id:correction.id,revision:1,status:'approved',note:'Correction vérifiée'});
+ entries=await rpc(db,'nm_catalog_read',['',250]);assert.equal(entries[0].revision,2);assert.equal(entries[0].catalogId,done.catalogId);
+ assert.equal((await call(db,'history',{catalogId:done.catalogId})).length,2);
+ await call(db,'archive',{catalogId:done.catalogId,revision:2,note:'Retiré du catalogue'});assert.equal((await rpc(db,'nm_catalog_read',['',250]))[0].archived,true);
+ }finally{await db.close();}});
+test('Admin imports: preview only, batch atomicity, duplicates, rollback and optimistic conflict',async()=>{const {db}=await fixture();try{await login(db,B);
+ let batch=await call(db,'import_preview',{name:'Test',rows:[{...product,catalogId:'TEST-1',ean13:'1234567890123'},{...product,catalogId:'TEST-1'}]});assert.match(batch.rows[1].error,/duplicate/);await assert.rejects(call(db,'import_apply',{id:batch.id}),/import_errors/);assert.deepEqual(await rpc(db,'nm_catalog_read',['',250]),[]);
+ batch=await call(db,'import_preview',{rows:[{...product,catalogId:'TEST-1'}]});await call(db,'import_apply',{id:batch.id});assert.equal((await rpc(db,'nm_catalog_read',['',250])).length,1);
+ await call(db,'import_rollback',{id:batch.id});assert.equal((await rpc(db,'nm_catalog_read',['',250]))[0].archived,true);
+ batch=await call(db,'import_preview',{rows:[{...product,catalogId:'TEST-2'}]});await call(db,'import_apply',{id:batch.id});await call(db,'archive',{catalogId:'TEST-2',revision:1,note:'Décision ultérieure'});await assert.rejects(call(db,'import_rollback',{id:batch.id}),/rollback_conflict/);
+ }finally{await db.close();}});
