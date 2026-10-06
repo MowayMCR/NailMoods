@@ -65,6 +65,7 @@ import './profile-sheet.css';
 import './illustrated-icons.css';
 import './design/da06.css';
 import './design/common-ux.css';
+import './design/atelier.css';
 import { PERSONALIZATION_KEY, readPersonalization, buildPersonalModel } from './personalization';
 const colors=colorFamilies;const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[];
 
