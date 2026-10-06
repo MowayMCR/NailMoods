@@ -40,14 +40,15 @@ export function ShelfDecor() {
 const shortLabel = p => p.reference && String(p.reference).length<=10 ? p.reference :
   String(p.name||'Mon produit').replace(/\s*[-–·]\s*(gel|led|nail|vernis|polish).*$/i,'');
 
-export default function Shelf({items=[], onSelect, selectedId, mini=false, variant='niche', commonIds=new Set()}) {
+export default function Shelf({items=[], onSelect, selectedId, mini=false, variant='open', commonIds=new Set()}) {
   const rows=Array.from({length:Math.ceil(items.length/5)},(_,i)=>items.slice(i*5,i*5+5));
   if(!rows.length)return null;
   return <div className={'nmShelf '+(mini?'nmShelfMini':'')} data-testid="illustrated-shelf">
-    <div className="nmShelfNiche" data-variant={mini?'simple':variant}>
-      {!mini&&<ShelfDecor/>}
+    <div className="nmShelfNiche" data-variant={mini?'open':variant}>
+      {!mini&&variant==='botanical'&&<img className="nmDrawnFrame" src={import.meta.env.BASE_URL+'atelier/collection-v2/frame.webp'} alt=""/>}
+      {!mini&&variant!=='botanical'&&<img className="nmDrawnShelfDecor" src={import.meta.env.BASE_URL+'atelier/collection-v2/'+(variant==='botanical'?'flowers':'sage')+'.webp'} alt=""/>}
       {rows.map((row,index)=><div className="nmShelfRow" key={index} role="group" aria-label={'Étagère '+(index+1)}>
-        <div className="nmShelfBottles">{row.map(p=>{
+        <img className="nmDrawnPlank" src={import.meta.env.BASE_URL+'atelier/collection-v2/plank.webp'} alt=""/><div className="nmShelfBottles">{row.map(p=>{
           const shared=commonIds.has(String(p.id)),label='Voir '+p.name+(p.brand?' · '+p.brand:'');
           return <button className={'nmShelfProduct '+(String(p.id)===String(selectedId)?'isSelected':'')}
             key={p.id} title={p.name+(p.brand?' · '+p.brand:'')} tabIndex={mini?-1:0}

@@ -132,6 +132,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const personalModel = useMemo(() => buildPersonalModel({ items, favorites: library.favorites, sessions: tutorials.sessions, entries: journal.entries }), [items, library.favorites, tutorials.sessions, journal.entries]);
   const [filter, setFilter] = useState('Tous');
   const [collectionFilters, setCollectionFilters] = useState({ ...emptyFilters, sort:'color' });
+  const [shelfStyle,setShelfStyle]=useState(()=>readStored(browserStorage,'nm-shelf-style-v2','open')==='botanical'?'botanical':'open');
   const [compactCollection, setCompactCollection] = useState(false);
   const [visibleCount, setVisibleCount] = useState(40);
   useEffect(() => { track('screen_viewed', {}, { screen: tab }); if(tab==='collection')track('collection_opened',{}, {screen:tab}); if(tab==='create')track('create_opened',{}, {screen:tab}); if(tab==='journal')track('journal_opened',{}, {screen:tab}); }, []);
@@ -370,7 +371,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
           <button className="addProduct" onClick={() => {if(filter==='Matériel'){setEquipmentOpen(true);return;}setAddCategory(filter==='Stickers & accessoires'?'decor':'product');setImporter(true);}} aria-label="Ajouter un produit" title="Ajouter un produit"><Plus /><span className="nmVisuallyHidden">Ajouter</span></button>
         </div>
         <ShelfToneFilter items={baseResults} value={shelfTone} onChange={setShelfTone}/>
-        {collectionView==='shelf'&&<Shelf items={filtered.slice(0,visibleCount).filter(p=>p.type!=='Matériel')} sort={collectionFilters.sort} selectedId={shelfSelection?.product.id} onSelect={(...args)=>setShelfSelection(selectBottle(...args))}/>}
+        {collectionView==='shelf'&&<Shelf variant={shelfStyle} items={filtered.slice(0,visibleCount).filter(p=>p.type!=='Matériel')} sort={collectionFilters.sort} selectedId={shelfSelection?.product.id} onSelect={(...args)=>setShelfSelection(selectBottle(...args))}/>}
         <section className={'collectionGrid ' + (compactCollection ? 'collectionCompact' : '')}>
           {filtered.slice(0, visibleCount).filter(item=>collectionView==='photos'||item.type==='Matériel').map(item => <button key={item.id} className="productCard" style={{ '--product-accent': item.type === 'Matériel' ? 'var(--a)' : productColor(item) }} onClick={() => {
             setSaveError('');
@@ -403,6 +404,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     </main>
     {feedbackOpen&&<SupportPanel screen={tab} onClose={()=>setFeedbackOpen(false)}/>}
     {collectionFiltersOpen&&<Sheet title="Réglages de la collection" className="nmCollectionSettings" onClose={()=>setCollectionFiltersOpen(false)}>
+      <fieldset className="nmShelfStyleChoice"><legend>Mon étagère</legend>{[['open','Étagères ouvertes'],['botanical','Cadre botanique']].map(([value,label])=><button type="button" key={value} aria-pressed={shelfStyle===value} onClick={()=>{setShelfStyle(value);try{browserStorage.setItem('nm-shelf-style-v2',JSON.stringify(value));}catch{setSaveError('Le style ne peut pas être enregistré.');}}}><img src={import.meta.env.BASE_URL+'atelier/collection-v2/'+(value==='open'?'plank':'frame')+'.webp'} alt=""/><span>{label}</span></button>)}</fieldset>
       <div className="collectionSearch"><Search aria-hidden="true"/><input aria-label="Rechercher dans la collection" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Nom, marque, référence…"/></div>
       <div className="filterRow" role="group" aria-label="Catégories de la collection">{['Tous','Produits','Stickers & accessoires','Matériel'].map(value=><button key={value} className={filter===value?'on':''} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{value==='Stickers & accessoires'?'Stickers':value}</button>)}</div>
       <CollectionFilters expanded type={filter} onType={setFilter} items={categoryItems} filters={collectionFilters} onChange={setCollectionFilters} count={filtered.length} onReset={()=>{setSearch('');setFilter('Tous');setShelfTone('');setCollectionFilters({...emptyFilters,sort:'color'});}}/>
