@@ -26,8 +26,31 @@ def configure_app_profile(text, bundle, team, uuid):
 def run(*args, **kwargs):
     try:
         return subprocess.check_output(args, stderr=subprocess.PIPE, **kwargs)
-    except subprocess.CalledProcessError:
-        raise SystemExit('Signing operation failed: ' + args[0]) from None
+    except subprocess.CalledProcessError as error:
+        # Only fixed command names and fixed diagnostic messages may be logged.
+        # Never expose arguments, stderr, certificate contents or passwords.
+        labels = {
+            'cms': 'read provisioning profile',
+            'create-keychain': 'create temporary keychain',
+            'set-keychain-settings': 'configure temporary keychain',
+            'unlock-keychain': 'unlock temporary keychain',
+            'import': 'import distribution P12',
+            'set-key-partition-list': 'authorize signing private key',
+            'find-identity': 'find distribution identity',
+            'list-keychains': 'register temporary keychain',
+        }
+        operation = labels.get(args[1] if len(args) > 1 else '', 'signing command')
+        detail = (error.stderr or b'').decode('utf-8', errors='replace').lower()
+        hint = ''
+        if 'mac verification failed' in detail or 'password is incorrect' in detail:
+            hint = ' Check the P12 password and PKCS12 export compatibility; this error alone does not distinguish them.'
+        elif 'decode' in detail or 'unknown format' in detail or 'invalid format' in detail:
+            hint = ' Check the file format and the secret containing its base64 data.'
+        elif 'item could not be found' in detail:
+            hint = ' Check that the P12 contains its associated private key.'
+        elif 'interaction is not allowed' in detail:
+            hint = ' The runner could not access the temporary signing keychain.'
+        raise SystemExit('Signing operation failed: ' + operation + hint) from None
 
 required = ['APPLE_TEAM_ID', 'APPLE_DISTRIBUTION_P12_BASE64', 'APPLE_DISTRIBUTION_P12_PASSWORD',
             'APPLE_PROVISIONING_PROFILE_BASE64', 'APP_STORE_CONNECT_KEY_ID',
