@@ -1,13 +1,14 @@
 import React, { useId } from 'react';
 import { normalize } from './creationEngine';
 import { renderingForIdea } from './techniqueRendering';
-import DrawnNail from './renderPrototype/DrawnNail';
+import DrawnNail,{DrawnDecoration} from './renderPrototype/DrawnNail';
 import AtelierArt from './design/AtelierArt';
 import {drawnNailSettings} from './renderPrototype/ideaDrawing';
 import './renderPrototype/ideas.css';
 import {ProNailArtwork} from './workspaces/ProNailArtwork';
 
 function Decor({ motif, color }) {
+  if(['flower','leaf','heart','star','moon'].includes(motif))return <g transform="scale(.64 .57777778)"><DrawnDecoration motif={motif} color={color} x={50} y={94}/></g>;
   if (motif === 'star') return <path d="m32 42 3 8 9 1-7 6 2 9-7-5-8 5 3-9-7-6 9-1Z" fill={color} />;
   if (motif === 'moon') return <path d="M38 44c-15-5-24 17-7 21 5 1 10-2 12-6-14 4-20-12-5-15Z" fill={color} />;
   if (motif === 'heart') return <path d="M32 64C8 48 25 38 32 48c8-10 24 0 0 16Z" fill={color} />;
