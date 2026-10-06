@@ -34,7 +34,7 @@ import { collectionResults, emptyFilters, duplicateCandidates, provenanceOf, mer
 import ContextHelp from './ContextHelp';
 import SupportPanel from './support/SupportPanel';
 import {setDiagnosticsStorage,recordRuntimeEvent} from './support/diagnostics';
-import { StorageStatus, useStorage } from './StorageContext';
+import { useStorage } from './StorageContext';
 import AccountRoot from './cloud/AccountRoot';
 import {tierCapabilities} from './cloud/betaTier';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
@@ -64,6 +64,7 @@ import './creative-sources.css';
 import './profile-sheet.css';
 import './illustrated-icons.css';
 import './design/da06.css';
+import './design/common-ux.css';
 import { PERSONALIZATION_KEY, readPersonalization, buildPersonalModel } from './personalization';
 const colors=colorFamilies;const defaults={name:'',brand:'',url:'',type:'Semi-permanent',finish:'Brillant',family:'Rose',color:'#db7897',depth:'Moyen',undertone:'Neutre',effect:'Aucun',usage:'Couleur seule',fav:false};const starter=[];
 
@@ -350,7 +351,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
 
   if(onboarding)return <Onboarding profile={profile} onChange={changeProfile} identityExtras={identityExtras} appearanceExtras={appearanceExtras} onDone={()=>{setOnboarding(false);setTour(true);navigate('home');}}/>;
   return <div className="app phase2" data-page={tab} data-mood={mood.id} style={themeStyle(mood)}>
-    <header><Brand /><NotificationButton /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={tab==='feed'?'home':route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" data-tour="profile" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header><StorageStatus />
+    <header><Brand /><NotificationButton /><ContextHelp onNavigate={navigate} key={(route || tab) + (tab === 'collection' && filter === 'Matériel' ? 'equipment' : '')} screen={tab==='feed'?'home':route.startsWith('#tutoriel') ? 'tutorial' : route.startsWith('#inspiration/') || route === '#favoris' ? 'moodboard' : tab === 'create' ? 'generator' : tab === 'collection' && filter === 'Matériel' ? 'equipment' : tab} step={route.startsWith('#inspiration/') ? 'detail' : route.startsWith('#journal/') ? 'entry' : 'overview'} /><button className="round" data-tour="profile" aria-label="Profil" onClick={() => navigate('profile')}><UserRound /></button></header>
     {import.meta.env.VITE_DEPLOYMENT_ENV==='recette' && <aside role="status" style={{textAlign:'center',background:'var(--surfaceSecondary)',color:'var(--textSecondary)',fontSize:'11px',padding:'6px 10px'}}>NailMoods-Recette · environnement de test séparé</aside>}
     <SocialGlobal /><Discovery onAccount={()=>{window.location.hash='profil/'+(browserStorage.accountScoped?'offer':'account');}} />
     <main>

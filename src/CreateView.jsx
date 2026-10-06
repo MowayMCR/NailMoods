@@ -193,7 +193,7 @@ export default function CreateView({ onProfileChange, onMoodChange, onPublish, o
   if(outfitEnabled() && route.startsWith('#creer/diy/'))return <DiyView route={route} items={items} profile={profile} onMoodChange={onMoodChange} onCollection={onCollection} onTutorial={onTutorial}/>;
   if(outfitEnabled() && route.startsWith('#creer/planning'))return <PlanningView profile={profile} onChange={onProfileChange} route={route}/>;
   if(outfitEnabled() && /^#creer\/(tenue|pose\/|projets-pose)/.test(route)) return <OutfitFlow onVariant={idea=>onOpen(idea,undefined,'variant')} items={items} profile={profile} route={route} onMoodChange={onMoodChange} onBack={()=>{window.location.hash='creer';setSourceOpen(true);}}/>;
-  if(sourceOpen && route!=='#creer/atelier') return <CreationSources onPlanning={()=>{window.location.hash='creer/planning';}} outfit={outfitEnabled()} onPoseProjects={()=>{window.location.hash='creer/projets-pose';}} onJournal={()=>onRoute('journal')} onChoose={id=>{
+  if(sourceOpen && route!=='#creer/atelier') return <CreationSources items={items} onPlanning={()=>{window.location.hash='creer/planning';}} outfit={outfitEnabled()} onPoseProjects={()=>{window.location.hash='creer/projets-pose';}} onJournal={()=>onRoute('journal')} onChoose={id=>{
     if(id==='trainer'){window.location.hash='creer/entrainement';return;}
     if(id==='outfit'){window.location.hash='creer/tenue';return;}
     if(id==='atelier'){window.location.hash='creer/atelier';return;}
