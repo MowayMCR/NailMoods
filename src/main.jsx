@@ -1,4 +1,4 @@
-import Shelf,{ViewSwitch,ShelfSort,ShelfToneFilter} from './shelf/Shelf.jsx';
+import Shelf,{ViewSwitch,ShelfToneFilter} from './shelf/Shelf.jsx';
 import ProductFocus,{selectBottle} from './shelf/ProductFocus.jsx';
 import {ProShelfDirectory} from './shelf/ProShelf.jsx';
 import {withUsage,sortShelf,toneOf,sameReference} from './shelf/model.js';
@@ -133,7 +133,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const [compactCollection, setCompactCollection] = useState(false);
   const [visibleCount, setVisibleCount] = useState(40);
   useEffect(() => { track('screen_viewed', {}, { screen: tab }); if(tab==='collection')track('collection_opened',{}, {screen:tab}); if(tab==='create')track('create_opened',{}, {screen:tab}); if(tab==='journal')track('journal_opened',{}, {screen:tab}); }, []);
-  useEffect(() => setVisibleCount(40), [search, filter, collectionFilters]);
+  useEffect(() => setVisibleCount(40), [search, filter, collectionFilters, shelfTone]);
   const [edit, setEdit] = useState(null);
   const [productDraft,setProductDraft]=useState(()=>readStored(browserStorage,'nm-product-draft-v1',null));
   useEffect(()=>{if(!edit)return;setProductDraft(edit);try{browserStorage.setItem('nm-product-draft-v1',JSON.stringify(edit));}catch{setSaveError('Le brouillon ne peut pas être conservé. Garde cette fiche ouverte.');}},[edit]);
@@ -343,7 +343,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const usedItems=useMemo(()=>withUsage(items,journal.entries),[items,journal.entries]);
   const usedById=new Map(usedItems.map(p=>[String(p.id),p]));
   const baseResults=collectionResults(categoryItems, search, ['Produits','Stickers & accessoires'].includes(filter)?'Tous':filter, {...collectionFilters,sort:'source'}).map(p=>usedById.get(String(p.id))||p);
-  const filtered=sortShelf(baseResults.filter(p=>collectionView!=='shelf'||!shelfTone||p.type==='Matériel'||toneOf(p)===shelfTone),collectionFilters.sort);
+  const filtered=sortShelf(baseResults.filter(p=>!shelfTone||p.type==='Matériel'||toneOf(p)===shelfTone),collectionFilters.sort);
   function createWith(p){setCreationEntry({intent:'collection',requiredColorIds:[String(p.id)],polishCount:'auto',constraints:[],decorations:'auto',decorationId:''});navigate('create');}
   useEffect(()=>{const open=e=>{const target=e.detail;if(!target)return;setProShelvesOpen(false);const owned=items.find(p=>sameReference(target,p));if(owned){createWith(owned);}else{const {id,createdAt,shelfUsage,...safe}=target;setSaveError('');setEdit({...defaults,...safe,color:safe.color||'',shade:safe.colorSource==='palette'?'':safe.color||'',family:safe.family||'',finish:safe.finish||'',source:'pro',provenance:target.catalogId?{kind:'personal',catalogId:target.catalogId}:undefined});}};window.addEventListener('nm-shelf-create',open);return()=>window.removeEventListener('nm-shelf-create',open);},[items]);
   const duplicates = edit ? duplicateCandidates(edit, items) : [];
@@ -357,22 +357,18 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
       {tab !== 'profile' && syncNotice}
       <div id="context-help-slot" />
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
-      {tab !== 'home' && tab !== 'scan' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
+      {tab !== 'home' && tab !== 'scan' && tab !== 'collection' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
       {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'feed' ? <Discovery embedded profile={profile} onAccount={()=>{window.location.hash='profil/'+(browserStorage.accountScoped?'offer':'account');}}/> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onOpen={openIdea} onBack={() => navigate('create')} capabilities={{addScannedProducts:!limited}} onAddProducts={addScannedProducts} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onProfileChange={changeProfile} onMoodChange={id=>changeProfile({...profile,visualMood:id})} ideaAction={ideaAction} onIdeaBack={returnFromIdea} onPublish={publishIdea} onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <section className="collectionExperience">
         <div className="nmCollectionHeading"><h1>{filter==='Matériel'?'Mon matériel':'Collection'}</h1><span>{filtered.length} fiche{filtered.length>1?'s':''}</span></div>
-        <ViewSwitch value={collectionView} onChange={v=>{setCollectionView(v);try{browserStorage.setItem('nm-collection-view',JSON.stringify(v));}catch{}}}/>
-        <section className="collectionTools">
-          <div className="collectionSearch"><Search /><input aria-label="Rechercher dans la collection" value={search} onChange={event => setSearch(event.target.value)} placeholder="Rechercher…" /></div>
+        <div className="nmCollectionActions">
+          <div className="nmCollectionModes">
+            <ViewSwitch value={collectionView} onChange={v=>{setCollectionView(v);try{browserStorage.setItem('nm-collection-view',JSON.stringify(v));}catch{}}}/>
+            <button className="nmCollectionFilterButton" aria-label="Réglages de la collection" title="Rechercher, filtrer et trier" aria-haspopup="dialog" onClick={()=>setCollectionFiltersOpen(true)}><SlidersHorizontal size={22} aria-hidden="true"/>{(search||filter!=='Tous'||collectionFilters.sort!=='color'||collectionFilters.brand||collectionFilters.family||collectionFilters.finish||collectionFilters.productKind||collectionFilters.favorites)&&<i aria-label="Recherche ou filtres actifs"/>}</button>
+          </div>
           <button className="addProduct" onClick={() => {if(filter==='Matériel'){setEquipmentOpen(true);return;}setAddCategory(filter==='Stickers & accessoires'?'decor':'product');setImporter(true);}} aria-label="Ajouter un produit" title="Ajouter un produit"><Plus /><span className="nmVisuallyHidden">Ajouter</span></button>
-        </section>
-        <div className="filterRow">
-          {['Tous', 'Produits', 'Stickers & accessoires', 'Matériel'].map(value =>
-            <button key={value} className={filter === value ? 'on' : ''} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value==='Stickers & accessoires'?'Stickers':value}</button>
-          )}
         </div>
-        <div className="nmShelfToolbar"><ShelfSort value={collectionFilters.sort} onChange={sort=>setCollectionFilters(f=>({...f,sort}))}/><button className="nmCollectionFilterButton" aria-label="Filtrer ma collection" onClick={()=>setCollectionFiltersOpen(true)}><SlidersHorizontal size={19}/>{(collectionFilters.brand||collectionFilters.family||collectionFilters.finish||collectionFilters.productKind||collectionFilters.favorites)&&<i/>}</button>{social?.client&&<button className="nmProShelfShortcut" onClick={()=>setProShelvesOpen(true)}><Library size={16}/><span>L’étagère des PO</span></button>}</div>
-        {collectionView==='shelf'&&<><ShelfToneFilter items={baseResults} value={shelfTone} onChange={setShelfTone}/><Shelf items={filtered.slice(0,visibleCount).filter(p=>p.type!=='Matériel')} sort={collectionFilters.sort} selectedId={shelfSelection?.product.id} onSelect={(...args)=>setShelfSelection(selectBottle(...args))}/></>}
-        {collectionView==='photos'&&<div className="collectionViewBar"><button aria-pressed={compactCollection} onClick={() => setCompactCollection(value => !value)}>Vue compacte</button><button className="collectionCreateAction" onClick={() => navigate('create')}>Créer une idée <Palette size={15} /></button></div>}
+        <ShelfToneFilter items={baseResults} value={shelfTone} onChange={setShelfTone}/>
+        {collectionView==='shelf'&&<Shelf items={filtered.slice(0,visibleCount).filter(p=>p.type!=='Matériel')} sort={collectionFilters.sort} selectedId={shelfSelection?.product.id} onSelect={(...args)=>setShelfSelection(selectBottle(...args))}/>}
         <section className={'collectionGrid ' + (compactCollection ? 'collectionCompact' : '')}>
           {filtered.slice(0, visibleCount).filter(item=>collectionView==='photos'||item.type==='Matériel').map(item => <button key={item.id} className="productCard" style={{ '--product-accent': item.type === 'Matériel' ? 'var(--a)' : productColor(item) }} onClick={() => {
             setSaveError('');
@@ -391,6 +387,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
             {item.fav && <Heart className="fav" fill="currentColor" aria-label="Favori" />}
           </button>)}
         </section>
+        {social?.client&&<button className="nmProShelfShortcut" onClick={()=>setProShelvesOpen(true)}><Library size={16}/><span>L’étagère des PO</span></button>}
         {filtered.length > visibleCount && <button className="collectionMore" onClick={() => setVisibleCount(value => value + 40)}>Afficher la suite ({filtered.length - visibleCount})</button>}
         {filtered.length === 0 && <section className="emptyCollection">
           <Package aria-hidden="true" />
@@ -403,7 +400,14 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     <button className="betaFeedbackLink" onClick={()=>setFeedbackOpen(true)}>Aide & Support</button>
     </main>
     {feedbackOpen&&<SupportPanel screen={tab} onClose={()=>setFeedbackOpen(false)}/>}
-    {collectionFiltersOpen&&<Sheet title="Filtrer ma collection" onClose={()=>setCollectionFiltersOpen(false)}><CollectionFilters expanded type={filter} onType={setFilter} items={categoryItems} filters={collectionFilters} onChange={setCollectionFilters} count={filtered.length}/><button className="detailPrimary" onClick={()=>setCollectionFiltersOpen(false)}>Voir {filtered.length} résultat{filtered.length>1?'s':''}</button></Sheet>}
+    {collectionFiltersOpen&&<Sheet title="Réglages de la collection" className="nmCollectionSettings" onClose={()=>setCollectionFiltersOpen(false)}>
+      <div className="collectionSearch"><Search aria-hidden="true"/><input aria-label="Rechercher dans la collection" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Nom, marque, référence…"/></div>
+      <div className="filterRow" role="group" aria-label="Catégories de la collection">{['Tous','Produits','Stickers & accessoires','Matériel'].map(value=><button key={value} className={filter===value?'on':''} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{value==='Stickers & accessoires'?'Stickers':value}</button>)}</div>
+      <CollectionFilters expanded type={filter} onType={setFilter} items={categoryItems} filters={collectionFilters} onChange={setCollectionFilters} count={filtered.length} onReset={()=>{setSearch('');setFilter('Tous');setShelfTone('');setCollectionFilters({...emptyFilters,sort:'color'});}}/>
+      {collectionView==='photos'&&<div className="collectionViewBar"><button aria-pressed={compactCollection} onClick={()=>setCompactCollection(value=>!value)}>Vue compacte</button><button className="collectionCreateAction" onClick={()=>{setCollectionFiltersOpen(false);navigate('create');}}>Créer une idée <Palette size={15}/></button></div>}
+      <button className="detailPrimary" onClick={()=>setCollectionFiltersOpen(false)}>Voir {filtered.length} résultat{filtered.length>1?'s':''}</button>
+    </Sheet>}
+
     {shelfSelection&&<ProductFocus selection={shelfSelection} product={usedById.get(String(shelfSelection.product.id))||shelfSelection.product} onClose={()=>setShelfSelection(null)} onFile={()=>{setSaveError('');setEdit({...defaults,...materialDefaults,...items.find(p=>String(p.id)===String(shelfSelection.product.id))});}} onCreate={()=>createWith(shelfSelection.product)} onFavorite={()=>persist(items.map(p=>String(p.id)===String(shelfSelection.product.id)?{...p,fav:!p.fav}:p))} onPose={p=>openJournal(p.id)}/>}{proShelvesOpen&&<Sheet title="L’étagère des PO" onClose={()=>setProShelvesOpen(false)}><ProShelfDirectory client={social?.client}/></Sheet>}
     <nav>{[['home', Home, 'Accueil'], ['feed', Compass, 'Fil'], ['create', Plus, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Mes poses']].map(([id, Icon, label]) =>
       <button data-tour={id} key={id} className={tab === id || tab === 'scan' && id === 'create' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'create' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}{limited && id==='collection' ? ' · Plus' : ''}</span></button>

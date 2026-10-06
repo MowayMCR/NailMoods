@@ -1,13 +1,16 @@
 import React from 'react';
-import {Heart, Library, Images, Check, Palette} from 'lucide-react';
+import {Heart, Package, Check, Palette} from 'lucide-react';
 import Bottle from './Bottle.jsx';
 import {toneOf, shelfSorts, toneGroups} from './model.js';
 import './shelf.css';
 
+function ShelfIcon() {
+  return <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 19h18M4 19v2m16-2v2M5 9h5v10H5zM6 5h3v4H6zM14 11h5v8h-5zM15 7h3v4h-3z"/></svg>;
+}
 export function ViewSwitch({value, onChange}) {
   return <div className="nmShelfSwitch" role="group" aria-label="Affichage de la collection">
-    {[['shelf','Vue étagère',Library],['photos','Vue photos',Images]].map(([id,label,Icon]) =>
-      <button key={id} aria-pressed={value===id} onClick={()=>onChange(id)}><Icon size={17}/>{label}</button>)}
+    {[['shelf','Vue étagère',ShelfIcon],['photos','Vue photos',Package]].map(([id,label,Icon]) =>
+      <button key={id} aria-label={label} title={id==='photos'?'Produits · Vue photos':label} aria-pressed={value===id} onClick={()=>onChange(id)}><Icon size={22} aria-hidden="true"/></button>)}
   </div>;
 }
 export function ShelfSort({value,onChange}) {
