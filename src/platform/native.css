@@ -23,12 +23,12 @@
   .nm-ios .app main{padding-inline:20px;}
   .nm-ios .smartHome{max-width:100%;}
   .nm-ios .nmHomeBento{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .nm-ios .collectionGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+  .nm-ios .app .collectionExperience .collectionGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
   .nm-ios .productSheet{width:min(620px,calc(100vw - 48px));}
   .nm-ios :is(.creationPage,.photoFlow,.profilePage,.trainerPage){max-width:860px;margin-inline:auto;}
   .nm-ios .journalGrid{grid-template-columns:repeat(3,minmax(0,1fr));}
   .nm-ios .mobileStatus{left:max(24px,calc((100vw - 992px)/2));right:max(24px,calc((100vw - 992px)/2));}
 }
 @media(min-width:1000px){
-  .nm-ios .collectionGrid{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .nm-ios .app .collectionExperience .collectionGrid{grid-template-columns:repeat(4,minmax(0,1fr));}
 }

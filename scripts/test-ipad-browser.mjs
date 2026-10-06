@@ -30,8 +30,11 @@ try{
       const geometry=await page.locator('.app').evaluate(el=>({width:el.clientWidth,viewport:innerWidth}));
       if(viewport.width>=700)assert.ok(geometry.width>=700,'iPad must not use the phone column');
       if(screen==='collection'&&viewport.width>=700){
+        await page.getByRole('button',{name:'Vue photos',exact:true}).click();
         const columns=await page.locator('.collectionGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length);
         assert.equal(columns,viewport.width>=1000?4:3);
+        await page.getByRole('button',{name:'Vue étagère',exact:true}).click();
+        assert.equal(await page.locator('.nmShelfBottles').first().evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),5);
       }
       await page.screenshot({path:`${out}/${viewport.width}x${viewport.height}-${screen}.png`});
       results.push({viewport,screen,geometry,status:'PASS'});
