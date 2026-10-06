@@ -15,7 +15,7 @@ export function collectionResults(items, query = '', type = 'Tous', filters = em
   });
   if (filters.sort === 'name') results.sort((a, b) => a.name.localeCompare(b.name, 'fr', { numeric: true }));
   else if (filters.sort === 'brand') results.sort((a, b) => (a.brand || '').localeCompare(b.brand || '', 'fr') || a.name.localeCompare(b.name, 'fr'));
-  else results.reverse();
+  else if(filters.sort!=='source') results.reverse();
   return results;
 }
 // Provenance is separate from the import method (manual, URL, camera, barcode).

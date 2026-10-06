@@ -1,3 +1,8 @@
+import Shelf,{ViewSwitch,ShelfSort} from './shelf/Shelf.jsx';
+import ProductFocus,{selectBottle} from './shelf/ProductFocus.jsx';
+import {ProShelfDirectory} from './shelf/ProShelf.jsx';
+import {withUsage,sortShelf,toneOf,toneGroups,sameReference} from './shelf/model.js';
+import {useSocial} from './social/SocialContext.jsx';
 import useUndoNotice from './engagement/useUndoNotice';
 import {restoreFavorite,restoreProduct} from './engagement/undo.js';
 import {catalogCandidate,catalogSelectionPatch} from './catalog.js';
@@ -80,6 +85,11 @@ const saveThemeBackup = (storage, theme) => { try { window.localStorage.setItem(
 
 function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, syncNotice, profileExtras, media, onShareToPro }) {
   const browserStorage=useStorage();
+  const social=useSocial();
+  const [collectionView,setCollectionView]=useState(()=>readStored(browserStorage,'nm-collection-view','shelf'));
+  const [shelfSelection,setShelfSelection]=useState(null);
+  const [proShelvesOpen,setProShelvesOpen]=useState(false);
+  const [shelfTone,setShelfTone]=useState('');
   const undoNotice=useUndoNotice(browserStorage);
   const limited=import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && browserStorage.accountScoped && !tierCapabilities(browserStorage.accountTier).personal;
   const [tab, setTab] = useState(tabFromHash);
@@ -118,7 +128,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const [search, setSearch] = useState('');
   const personalModel = useMemo(() => buildPersonalModel({ items, favorites: library.favorites, sessions: tutorials.sessions, entries: journal.entries }), [items, library.favorites, tutorials.sessions, journal.entries]);
   const [filter, setFilter] = useState('Tous');
-  const [collectionFilters, setCollectionFilters] = useState({ ...emptyFilters });
+  const [collectionFilters, setCollectionFilters] = useState({ ...emptyFilters, sort:'color' });
   const [compactCollection, setCompactCollection] = useState(false);
   const [visibleCount, setVisibleCount] = useState(40);
   useEffect(() => { track('screen_viewed', {}, { screen: tab }); if(tab==='collection')track('collection_opened',{}, {screen:tab}); if(tab==='create')track('create_opened',{}, {screen:tab}); if(tab==='journal')track('journal_opened',{}, {screen:tab}); }, []);
@@ -314,7 +324,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
       setSaveError('Indique une quantité entière entre 1 et 9999.');
       return;
     }
-    const product = { ...edit, provenance: provenanceOf(edit), id: edit.id ?? messageId(), name: edit.name.trim(), brand: edit.brand.trim(), url: edit.url.trim() };
+    const product = { ...edit, createdAt:edit.createdAt||(edit.id?undefined:Date.now()), provenance: provenanceOf(edit), id: edit.id ?? messageId(), name: edit.name.trim(), brand: edit.brand.trim(), url: edit.url.trim() };
     if (material) {
       product.quantity = quantity;
       if(duplicateCustomEquipment(items,product)){setSaveError('Ce matériel existe déjà dans ta collection. Modifie la fiche existante.');return;}
@@ -329,7 +339,12 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   }
 
   const categoryItems=filter==='Produits'?items.filter(i=>i.type!=='Matériel'):filter==='Stickers & accessoires'?items.filter(isDecoration):filter==='Matériel'?items.filter(i=>!isDecoration(i)):items;
-  const filtered = collectionResults(categoryItems, search, ['Produits','Stickers & accessoires'].includes(filter)?'Tous':filter, collectionFilters);
+  const usedItems=useMemo(()=>withUsage(items,journal.entries),[items,journal.entries]);
+  const usedById=new Map(usedItems.map(p=>[String(p.id),p]));
+  const baseResults=collectionResults(categoryItems, search, ['Produits','Stickers & accessoires'].includes(filter)?'Tous':filter, {...collectionFilters,sort:'source'}).map(p=>usedById.get(String(p.id))||p);
+  const filtered=sortShelf(baseResults.filter(p=>collectionView!=='shelf'||!shelfTone||p.type==='Matériel'||toneOf(p)===shelfTone),collectionFilters.sort);
+  function createWith(p){setCreationEntry({intent:'collection',requiredColorIds:[String(p.id)],polishCount:'auto',constraints:[],decorations:'auto',decorationId:''});navigate('create');}
+  useEffect(()=>{const open=e=>{const target=e.detail;if(!target)return;setProShelvesOpen(false);const owned=items.find(p=>sameReference(target,p));if(owned){createWith(owned);}else{const {id,createdAt,shelfUsage,...safe}=target;setSaveError('');setEdit({...defaults,...safe,color:safe.color||'',shade:safe.color||'',family:safe.family||'',finish:safe.finish||'',source:'pro',provenance:target.catalogId?{kind:'personal',catalogId:target.catalogId}:undefined});}};window.addEventListener('nm-shelf-create',open);return()=>window.removeEventListener('nm-shelf-create',open);},[items]);
   const duplicates = edit ? duplicateCandidates(edit, items) : [];
   const colorCount = new Set(items.filter(item => item.type !== 'Matériel' && item.family).map(item => item.family)).size;
 
@@ -364,9 +379,9 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
           )}
         </div>
         <CollectionFilters type={filter} onType={setFilter} items={categoryItems} filters={collectionFilters} onChange={setCollectionFilters} count={filtered.length} />
-        <div className="collectionViewBar"><span>{filtered.length} fiche{filtered.length > 1 ? 's' : ''}</span><button aria-pressed={compactCollection} onClick={() => setCompactCollection(value => !value)}>Vue compacte</button><button className="collectionCreateAction" onClick={() => navigate('create')}>Créer une idée <Palette size={15} /></button></div>
+        <ViewSwitch value={collectionView} onChange={v=>{setCollectionView(v);try{browserStorage.setItem('nm-collection-view',JSON.stringify(v));}catch{}}}/><div className="nmShelfToolbar"><ShelfSort value={collectionFilters.sort} onChange={sort=>setCollectionFilters(f=>({...f,sort}))}/><span className="nmShelfSummary">{filtered.length} fiches</span></div>{social?.client&&<button className="nmShelfEntry" onClick={()=>setProShelvesOpen(true)}><Library size={22}/><span>L’étagère des PO</span><ChevronRight size={18}/></button>}{collectionView==='shelf'&&<><div className="nmShelfToneFilter" aria-label="Familles de teintes"><button aria-pressed={!shelfTone} onClick={()=>setShelfTone('')}>Toutes les teintes</button>{toneGroups.filter(t=>baseResults.some(p=>p.type!=='Matériel'&&toneOf(p)===t)).map(t=><button key={t} aria-pressed={shelfTone===t} onClick={()=>setShelfTone(t)}>{t}</button>)}</div><Shelf items={filtered.slice(0,visibleCount).filter(p=>p.type!=='Matériel')} sort={collectionFilters.sort} selectedId={shelfSelection?.product.id} onSelect={(...args)=>setShelfSelection(selectBottle(...args))}/></>}<div className="collectionViewBar"><span>{filtered.length} fiche{filtered.length > 1 ? 's' : ''}</span>{collectionView==='photos'&&<button aria-pressed={compactCollection} onClick={() => setCompactCollection(value => !value)}>Vue compacte</button>}<button className="collectionCreateAction" onClick={() => navigate('create')}>Créer une idée <Palette size={15} /></button></div>
         <section className={'collectionGrid ' + (compactCollection ? 'collectionCompact' : '')}>
-          {filtered.slice(0, visibleCount).map(item => <button key={item.id} className="productCard" style={{ '--product-accent': item.type === 'Matériel' ? 'var(--a)' : productColor(item) }} onClick={() => {
+          {filtered.slice(0, visibleCount).filter(item=>collectionView==='photos'||item.type==='Matériel').map(item => <button key={item.id} className="productCard" style={{ '--product-accent': item.type === 'Matériel' ? 'var(--a)' : productColor(item) }} onClick={() => {
             setSaveError('');
             setEdit({ ...defaults, ...materialDefaults, ...item });
           }}>
@@ -395,6 +410,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     <button className="betaFeedbackLink" onClick={()=>setFeedbackOpen(true)}>Aide & Support</button>
     </main>
     {feedbackOpen&&<SupportPanel screen={tab} onClose={()=>setFeedbackOpen(false)}/>}
+    {shelfSelection&&<ProductFocus selection={shelfSelection} product={usedById.get(String(shelfSelection.product.id))||shelfSelection.product} onClose={()=>setShelfSelection(null)} onFile={()=>{setSaveError('');setEdit({...defaults,...materialDefaults,...items.find(p=>String(p.id)===String(shelfSelection.product.id))});}} onCreate={()=>createWith(shelfSelection.product)} onFavorite={()=>persist(items.map(p=>String(p.id)===String(shelfSelection.product.id)?{...p,fav:!p.fav}:p))} onPose={p=>openJournal(p.id)}/>}{proShelvesOpen&&<Sheet title="L’étagère des PO" onClose={()=>setProShelvesOpen(false)}><ProShelfDirectory client={social?.client}/></Sheet>}
     <nav>{[['home', Home, 'Accueil'], ['feed', Compass, 'Fil'], ['create', Plus, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Mes poses']].map(([id, Icon, label]) =>
       <button data-tour={id} key={id} className={tab === id || tab === 'scan' && id === 'create' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'create' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}{limited && id==='collection' ? ' · Plus' : ''}</span></button>
     )}</nav>
