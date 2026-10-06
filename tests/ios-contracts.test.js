@@ -6,10 +6,18 @@ test('actual SceneDelegate creates the view controller that registers StoreKit',
  assert.match(read('ios/App/App/SceneDelegate.swift'),/rootViewController = NailMoodsViewController\(\)/);
  assert.match(read('ios/App/App/NailMoodsViewController.swift'),/registerPluginInstance\(NailMoodsStoreKitPlugin\(\)\)/);
 });
-test('iOS permission surface excludes unrestricted photos, tracking and unused sensors',()=>{
- const p=read('ios/App/App/Info.plist');assert.match(p,/NSCameraUsageDescription/);
- for(const key of ['NSPhotoLibraryUsageDescription','NSPhotoLibraryAddUsageDescription','NSMicrophoneUsageDescription','NSContactsUsageDescription','NSLocationWhenInUseUsageDescription','NSUserTrackingUsageDescription','NSBluetoothAlwaysUsageDescription'])assert.equal(p.includes(key),false,key);
- assert.match(read('src/platform/nativeMedia.js'),/Camera.pickImages/);
+test('iOS includes camera SDK purpose strings without requesting broad photo access',()=>{
+ const p=read('ios/App/App/Info.plist');
+ for(const key of ['NSCameraUsageDescription','NSPhotoLibraryUsageDescription','NSPhotoLibraryAddUsageDescription']) {
+   const value=p.match(new RegExp('<key>'+key+'</key>\\s*<string>([^<]+)</string>'))?.[1];
+   assert.ok(value?.trim(),key+' needs a nonempty purpose string');
+ }
+ for(const key of ['NSMicrophoneUsageDescription','NSContactsUsageDescription','NSLocationWhenInUseUsageDescription','NSUserTrackingUsageDescription','NSBluetoothAlwaysUsageDescription'])assert.equal(p.includes(key),false,key);
+ const media=read('src/platform/nativeMedia.js');
+ assert.match(media,/Camera.pickImages/);
+ assert.match(media,/saveToGallery:false/);
+ assert.match(media,/requestPermissions\(\{permissions:\['camera'\]\}\)/);
+ assert.doesNotMatch(media,/requestPermissions\(\s*\)/);
 });
 test('billing transaction is finished only after successful server delivery',()=>{
  const source=read('src/cloud/appleBilling.js');assert.ok(source.indexOf('if(!result.ok||!result.entitlement)')<source.indexOf('await AppleBilling.finish'));

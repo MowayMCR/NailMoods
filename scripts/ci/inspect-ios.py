@@ -10,6 +10,8 @@ def inspect(app, signed=False):
     assert info['CFBundleDisplayName'] == 'NailMoods', 'Unexpected display name'
     assert info['CFBundleVersion'] == os.environ['NAILMOODS_IOS_BUILD_NUMBER'], 'Build number mismatch'
     assert info['ITSAppUsesNonExemptEncryption'] is False
+    for key in ['NSCameraUsageDescription', 'NSPhotoLibraryUsageDescription', 'NSPhotoLibraryAddUsageDescription']:
+        assert isinstance(info.get(key), str) and info[key].strip(), 'Missing camera SDK purpose string: ' + key
     assert 'NSUserTrackingUsageDescription' not in info, 'Unexpected ATT'
     assert 'UIInterfaceOrientationLandscapeLeft' in info['UISupportedInterfaceOrientations~ipad']
     manifest = plistlib.loads((app/'PrivacyInfo.xcprivacy').read_bytes())

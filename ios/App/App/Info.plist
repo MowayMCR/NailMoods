@@ -65,6 +65,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>NailMoods utilise les photos que tu choisis pour importer une inspiration, une tenue, un produit ou une photo de pose.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>NailMoods utilise cet accès si tu demandes à enregistrer une photo dans ta photothèque.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>NailMoods utilise l’appareil photo pour scanner tes produits, importer une tenue ou une inspiration et photographier une pose.</string>
 	<key>CFBundleURLTypes</key>
