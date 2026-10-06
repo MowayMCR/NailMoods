@@ -1,5 +1,6 @@
 import CollectionContext from './engagement/CollectionContext';
 import InternalLab from './aiPlus/InternalLab';
+import RenderPrototype from './renderPrototype/RenderPrototype';
 import Trainer from './trainer/Trainer';
 import {SharedPoseView} from './poseCycle/ProjectShare';
 import DiyView from './poseCycle/DiyView';
@@ -187,6 +188,7 @@ export default function CreateView({ onProfileChange, onMoodChange, onPublish, o
   if ((proDrawing || route === '#creer/atelier') && canDrawPro) return <div className="creationPage proDrawingPage"><button type="button" className="quietButton" onClick={()=>{setProDrawing(null);onRoute('create');}}>Revenir à Créer</button><h1>Mon Atelier</h1><p>Dessine, retrouve ta bibliothèque et crée une pose à partir de tes dessins.</p><ProCreationsPanel client={social.client} userId={social.userId} workspaceId={browserStorage.workspaceId} defaultShape={profile.shape} defaultLength={profile.length} onUse={useSavedDrawing} startDrawing={proDrawing==='draw'}/></div>;
   const drawingAction = canDrawPro && <button type="button" className="manualSetAction proDrawAction" onClick={()=>setProDrawing('draw')}><Brush/><span><b>Dessiner sur un ongle · Pro</b><small>Pinceau, gomme et couleurs au choix</small></span><ChevronRight/></button>;
 
+  if(route==='#creer/prototype-rendus')return <RenderPrototype items={items} profile={profile} onBack={()=>{setSourceOpen(true);window.location.hash='creer';}}/>;
   if(route==='#creer/ia-interne')return <InternalLab/>;
   if(route==='#creer/entrainement')return <Trainer/>;
   if(outfitEnabled() && route.startsWith('#partage/'))return <SharedPoseView route={route}/>;
@@ -195,6 +197,7 @@ export default function CreateView({ onProfileChange, onMoodChange, onPublish, o
   if(outfitEnabled() && /^#creer\/(tenue|pose\/|projets-pose)/.test(route)) return <OutfitFlow onVariant={idea=>onOpen(idea,undefined,'variant')} items={items} profile={profile} route={route} onMoodChange={onMoodChange} onBack={()=>{window.location.hash='creer';setSourceOpen(true);}}/>;
   if(sourceOpen && route!=='#creer/atelier') return <CreationSources items={items} onPlanning={()=>{window.location.hash='creer/planning';}} outfit={outfitEnabled()} onPoseProjects={()=>{window.location.hash='creer/projets-pose';}} onJournal={()=>onRoute('journal')} onChoose={id=>{
     if(id==='trainer'){window.location.hash='creer/entrainement';return;}
+    if(id==='prototype'){window.location.hash='creer/prototype-rendus';return;}
     if(id==='outfit'){window.location.hash='creer/tenue';return;}
     if(id==='atelier'){window.location.hash='creer/atelier';return;}
     setSourceOpen(false);

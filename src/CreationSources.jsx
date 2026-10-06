@@ -20,6 +20,7 @@ export default function CreationSources({onChoose,onJournal,outfit=false,onPlann
       {outfit&&<CreateTile secondary id="planning" title="Mon calendrier" onClick={onPlanning}/>}
       <CreateTile secondary id="journal" title="Mes poses" onClick={onJournal}/>
     </div>
+    <button type="button" className="nmPrototypeEntry" onClick={()=>onChoose('prototype')}><span><b>Prototype des rendus</b><small>Explore les formes, les teintes et les matières</small></span><ChevronRight aria-hidden="true"/></button>
     <InternalAIEntry/>
   </div>;
 }
