@@ -2,7 +2,7 @@ import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {Flower2,SlidersHorizontal,Move,RotateCcw,ZoomIn,ZoomOut,Plus,LockKeyhole,Check,Trash2} from 'lucide-react';
 import Sheet from '../Sheet.jsx';
 import {useStorage} from '../StorageContext.jsx';
-import {toolAsset,toolUses,deskSizes,decorations,bouquetStage,defaultPosition,clampPosition} from './model.js';
+import {toolAsset,toolUses,deskSizes,decorations,bouquetStage,defaultPosition,clampPosition,flowerVaseLinks} from './model.js';
 import './desk.css';
 const art=name=>import.meta.env.BASE_URL+'atelier/desk-v1/'+name+'.webp';
 const largeTools=new Set(['lampe-uv','lampe-led','lampe-uv-led','ponceuse','aspirateur','repose-main','tapis']);
@@ -14,14 +14,19 @@ function FramePhoto({entry,media}){
 }
 
 export default function Desk({items,state,onChange,entries=[],media,onAdd,onEdit,onCreate,onTutorials,error}){
- const storage=useStorage(),[focus,setFocus]=useState(null),[settings,setSettings]=useState(false),[decorate,setDecorate]=useState(false),[arrange,setArrange]=useState(false),[preview,setPreview]=useState(null),[moving,setMoving]=useState(''),[message,setMessage]=useState(''),[potOpen,setPotOpen]=useState(false),[selected,setSelected]=useState(null),[dragPoint,setDragPoint]=useState(null),[overTrash,setOverTrash]=useState(false),[undo,setUndo]=useState(null);
+ const storage=useStorage(),[focus,setFocus]=useState(null),[settings,setSettings]=useState(false),[decorate,setDecorate]=useState(false),[arrange,setArrange]=useState(false),[preview,setPreview]=useState(null),[moving,setMoving]=useState(''),[message,setMessage]=useState(''),[potOpen,setPotOpen]=useState(false),[selected,setSelected]=useState(null),[dragPoint,setDragPoint]=useState(null),[overTrash,setOverTrash]=useState(false),[undo,setUndo]=useState(null),[overVase,setOverVase]=useState('');
  const canvas=useRef(null),viewport=useRef(null),gesture=useRef(null),ignoreClick=useRef(0),trash=useRef(null);
  const size=deskSizes[state.size],owned=useMemo(()=>items.filter(p=>p.type==='Matériel'&&Number(p.quantity??1)>0),[items]);
  const unlocked=new Set(state.unlocked),hasVase=unlocked.has('vase-rose'),count=state.highWater;
  const visibleDecorations=state.decorations.filter(id=>id==='bouquet'?hasVase:unlocked.has(id));
+ const flowerVases=flowerVaseLinks(state.flowerVases);
+ const flowerIds=new Set(decorations.filter(d=>d.kind==='flower').map(d=>d.id));
+ const isVase=id=>id==='bouquet'||decorations.some(d=>d.id===id&&d.kind==='vase');
+ const vaseIds=visibleDecorations.filter(isVase);
+ const vaseFlowers=id=>visibleDecorations.filter(f=>flowerVases[f]===id);
  const selectedEntry=entries.find(e=>String(e.id)===state.frameEntryId)||entries.find(e=>e.mediaPath||e.photo);
  const brushes=owned.filter(p=>!state.hidden.includes(String(p.id))&&toolAsset(p).startsWith('pinceau-'));
- const objects=[...(state.groupBrushes&&brushes.length?[{id:'container:brushes',asset:'pot',label:'Mes pinceaux',container:true}]:[]),...owned.filter(p=>!state.hidden.includes(String(p.id))&&!(state.groupBrushes&&toolAsset(p).startsWith('pinceau-'))).map(item=>({id:String(item.id),asset:toolAsset(item),label:item.name,item})),...visibleDecorations.map(id=>({id:'decor:'+id,asset:id==='bouquet'?'vase-rose':id,label:id==='bouquet'?'Mon bouquet':decorations.find(d=>d.id===id)?.label||id,decor:true}))];
+ const objects=[...(state.groupBrushes&&brushes.length?[{id:'container:brushes',asset:'pot',label:'Mes pinceaux',container:true}]:[]),...owned.filter(p=>!state.hidden.includes(String(p.id))&&!(state.groupBrushes&&toolAsset(p).startsWith('pinceau-'))).map(item=>({id:String(item.id),asset:toolAsset(item),label:item.name,item})),...visibleDecorations.filter(id=>!flowerVases[id]).map(id=>({id:'decor:'+id,asset:id==='bouquet'?'vase-rose':id,label:id==='bouquet'?'Mon bouquet':decorations.find(d=>d.id===id)?.label||id,decor:true}))];
  function change(patch){return onChange({...state,...patch});}
  function position(object,index){return preview?.id===object.id?preview.pos:layoutPositions()[object.id];}
  function width(object){if(object.asset==='tapis')return 290;if(object.decor)return object.id==='decor:bouquet'?210:160;return largeTools.has(object.asset)?205:150;}
@@ -41,8 +46,8 @@ export default function Desk({items,state,onChange,entries=[],media,onAdd,onEdit
  function inTrash(x,y){const r=trash.current?.getBoundingClientRect();return Boolean(r&&x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom);}
  function finishGesture(cancel=false,e){
   const g=gesture.current;if(!g||(e?.pointerId!=null&&e.pointerId!==g.pointer))return;
-  clearTimeout(g.timer);gesture.current=null;setMoving('');setDragPoint(null);setOverTrash(false);
-  if(g.active){ignoreClick.current=Date.now()+700;if(!cancel){if(g.pos&&inTrash(e?.clientX??g.clientX,e?.clientY??g.clientY))removeObject(g.object);else if(g.pos){const ok=change({positions:{...layoutPositions(),[g.id]:g.pos}});setMessage(ok?'Position enregistrée.':'La position n’a pas pu être enregistrée.');}}setPreview(null);}
+  clearTimeout(g.timer);gesture.current=null;setMoving('');setDragPoint(null);setOverTrash(false);setOverVase('');
+  if(g.active){ignoreClick.current=Date.now()+700;if(!cancel){if(g.pos&&inTrash(e?.clientX??g.clientX,e?.clientY??g.clientY))removeObject(g.object);else if(g.pos){const vase=vaseAt(g.object,e?.clientX??g.clientX,e?.clientY??g.clientY);const ok=change({positions:{...layoutPositions(),[g.id]:g.pos},...(vase?{flowerVases:{...flowerVases,[g.id.slice(6)]:vase}}:{})});setMessage(ok?(vase?'Fleur placée dans le vase.':'Position enregistrée.'):'La position n’a pas pu être enregistrée.');}}setPreview(null);}
   try{if(g.target.hasPointerCapture(g.pointer))g.target.releasePointerCapture(g.pointer);}catch{}
  }
  useEffect(()=>()=>{clearTimeout(gesture.current?.timer);},[]);
@@ -64,7 +69,22 @@ export default function Desk({items,state,onChange,entries=[],media,onAdd,onEdit
   if(!g.active&&Math.hypot(dx,dy)>=6)activate(g);
   if(!g.active)return;e.preventDefault();
   const rect=canvas.current.getBoundingClientRect();g.pos=clampPosition({x:g.original.x+dx/rect.width,y:g.original.y+dy/rect.height},state.size);
-  setPreview({id:g.id,pos:g.pos});setDragPoint({x:e.clientX,y:e.clientY,asset:g.object.asset});setOverTrash(inTrash(e.clientX,e.clientY));
+  setPreview({id:g.id,pos:g.pos});setDragPoint({x:e.clientX,y:e.clientY,asset:g.object.asset});setOverTrash(inTrash(e.clientX,e.clientY));setOverVase(vaseAt(g.object,e.clientX,e.clientY));
+ }
+ function vaseAt(object,x,y){
+  if(!object.decor||!flowerIds.has(object.id.slice(6)))return '';
+  let nearest='',distance=Infinity;
+  for(const id of vaseIds){const el=canvas.current?.querySelector(`[data-decor="${id}"]`),r=el?.getBoundingClientRect();if(!r)continue;
+   // Include the opening and the upper bouquet so touch drops need not be pixel-perfect.
+   if(x<r.left-r.width*.25||x>r.right+r.width*.25||y<r.top-r.height*.65||y>r.bottom)continue;
+   const d=Math.hypot(x-(r.left+r.width/2),y-r.top);if(d<distance){nearest=id;distance=d;}
+  }return nearest;
+ }
+ function assignFlower(flower,vase){
+  const links={...flowerVases};if(vase)links[flower]=vase;else delete links[flower];
+  const positions=layoutPositions(),parent=positions['decor:'+flowerVases[flower]];
+  if(!vase&&parent)positions['decor:'+flower]=clampPosition({x:parent.x+.18,y:parent.y+.1},state.size);
+  if(change({flowerVases:links,positions})){setSelected(null);setMessage(vase?'Fleur placée dans le vase.':'Fleur retirée du vase.');}
  }
  function keyboard(e,object,index){if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();const pos=position(object,index),step=e.shiftKey?.04:.015;const next=clampPosition({x:pos.x+(e.key==='ArrowLeft'?-step:e.key==='ArrowRight'?step:0),y:pos.y+(e.key==='ArrowUp'?-step:e.key==='ArrowDown'?step:0)},state.size);change({positions:{...layoutPositions(),[object.id]:next}});setMessage('Position enregistrée.');}
  function toggleDecor(id){const active=state.decorations.includes(id);change({decorations:active?state.decorations.filter(d=>d!==id):[...state.decorations,id]});}
@@ -76,16 +96,18 @@ export default function Desk({items,state,onChange,entries=[],media,onAdd,onEdit
   <div className="nmDeskViewport" style={{'--desk-height':(size.height*state.zoom)+'px'}} ref={viewport} tabIndex={0} aria-label="Bureau à parcourir horizontalement et verticalement">
    <div className="nmDeskExtent" style={{width:size.width*state.zoom,height:size.height*state.zoom}}>
     <div className="nmDeskCanvas" ref={canvas} style={{width:size.width,height:size.height,transform:`scale(${state.zoom})`,backgroundImage:`url(${art('desk')})`}}>
-     {objects.map((object,index)=>{const pos=position(object,index);return <button key={object.id} type="button" className={'nmDeskObject '+(selected?.id===object.id?'isSelected ':'')+(moving===object.id?'isMoving':'')+(object.asset.startsWith('frame-')?' isFrame':'')} style={{left:(pos.x*100)+'%',top:(pos.y*100)+'%',width:width(object),zIndex:moving===object.id?1000:Math.round(pos.y*100)}} aria-label={object.label} aria-describedby="desk-gesture-help" data-tool={object.asset} onContextMenu={e=>e.preventDefault()} onPointerDown={e=>down(e,object,index)} onPointerMove={move} onPointerUp={e=>finishGesture(false,e)} onPointerCancel={e=>finishGesture(true,e)} onLostPointerCapture={e=>finishGesture(true,e)} onKeyDown={e=>keyboard(e,object,index)} onClick={()=>{if(Date.now()<ignoreClick.current)return;if(arrange){setSelected(object);return;}object.container?setPotOpen(true):object.decor?setDecorate(true):setFocus(object.item);}}>
+     {objects.map((object,index)=>{const pos=position(object,index);return <button key={object.id} type="button" className={'nmDeskObject '+(selected?.id===object.id?'isSelected ':'')+(moving===object.id?'isMoving':'')+(object.asset.startsWith('frame-')?' isFrame':'')+(overVase&&object.decor&&overVase===object.id.slice(6)?' isVaseTarget':'')} style={{left:(pos.x*100)+'%',top:(pos.y*100)+'%',width:width(object),zIndex:moving===object.id?1000:Math.round(pos.y*100)}} aria-label={object.label} aria-describedby="desk-gesture-help" data-tool={object.asset} data-decor={object.decor?object.id.slice(6):undefined} onContextMenu={e=>e.preventDefault()} onPointerDown={e=>down(e,object,index)} onPointerMove={move} onPointerUp={e=>finishGesture(false,e)} onPointerCancel={e=>finishGesture(true,e)} onLostPointerCapture={e=>finishGesture(true,e)} onKeyDown={e=>keyboard(e,object,index)} onClick={()=>{if(Date.now()<ignoreClick.current)return;if(arrange){setSelected(object);return;}object.container?setPotOpen(true):object.decor?setDecorate(true):setFocus(object.item);}}>
        {object.container&&<div className="nmDeskPotBrushes">{brushes.slice(0,3).map((b,i)=><img key={b.id} style={{left:(i*23)+'%',transform:`rotate(${35+i*8}deg)`}} src={art(toolAsset(b))} alt="" draggable="false"/>)}</div>}
-       {object.id==='decor:bouquet'&&bouquetStage(count)&&<img className="nmDeskBouquet" src={art(bouquetStage(count))} alt="" draggable="false"/>}
+       {object.id==='decor:bouquet'&&!vaseFlowers('bouquet').length&&bouquetStage(count)&&<img className="nmDeskBouquet" src={art(bouquetStage(count))} alt="" draggable="false"/>}
+       {object.decor&&isVase(object.id.slice(6))&&<div className="nmDeskVaseFlowers">{vaseFlowers(object.id.slice(6)).map((id,i,all)=><img key={id} data-flower={id} src={art(id)} alt="" draggable="false" style={{width:all.length>1?'70%':'82%',transform:`translateX(-50%) rotate(${all.length>1?(i-(all.length-1)/2)*12:0}deg)`}}/>)}</div>}
+       {overVase&&object.decor&&overVase===object.id.slice(6)&&<em className="nmDeskVaseDropHint">Relâche pour fleurir</em>}
        {object.asset.startsWith('frame-')&&<FramePhoto entry={selectedEntry} media={media}/>}
        <img className="nmDeskObjectArt" src={art(object.asset)} alt="" draggable="false"/><span>{object.label}</span>
       </button>;})}
     </div>
    </div>
   </div>
-  <p id="desk-gesture-help" className="nmDeskHint">{arrange?'Glisse un objet pour le déplacer ou dépose-le dans la corbeille.':'Touche un outil pour sa fiche. Glisse-le pour le déplacer.'}</p>
+  <p id="desk-gesture-help" className="nmDeskHint">{arrange?'Glisse un objet pour le déplacer ou dépose-le dans la corbeille.':'Glisse les objets pour les déplacer et les fleurs sur un vase pour composer ton bouquet.'}</p>
   <div className="nmDeskBottom"><button onClick={()=>zoom((viewport.current.clientWidth-4)/size.width)}>Tout voir</button><small>{owned.length} outil{owned.length>1?'s':''}</small><button onClick={onAdd}><Plus size={17}/>Ajouter du matériel</button></div>
   {!owned.length&&<p className="nmDeskHint">Ajoute le matériel que tu possèdes : il apparaîtra ici.</p>}
   {(arrange||moving)&&<div className="nmDeskArrangeDock">
@@ -115,6 +137,7 @@ export default function Desk({items,state,onChange,entries=[],media,onAdd,onEdit
    <p className="fieldHelp">Des souvenirs de ta collection et de tes créations. Tu peux tout déplacer ou ranger.</p>
    <button className="nmBouquetChoice" aria-pressed={state.decorations.includes('bouquet')} disabled={!hasVase} onClick={()=>toggleDecor('bouquet')}><img src={art(bouquetStage(count)||'vase-rose')} alt=""/><span><b>Mon bouquet évolutif</b><small>{count<12?`Prochaine étape : ${[1,3,5,8,12].find(n=>n>count)} vernis`:'Ton bouquet est fleuri'}</small></span>{hasVase?<Check size={18}/>:<LockKeyhole size={18}/>}</button>
    {['vase','flower','frame','art','reward'].map(kind=><section key={kind}><h3>{{vase:'Vases',flower:'Fleurs et feuillages',frame:'Cadres photo',art:'Illustrations',reward:'Mes créations'}[kind]}</h3><div className="nmDeskDecorGrid">{decorations.filter(d=>d.kind===kind).map(d=>{const earned=unlocked.has(d.id),active=state.decorations.includes(d.id);return <button key={d.id} disabled={!earned} aria-pressed={active} onClick={()=>toggleDecor(d.id)}><img src={art(d.id)} alt="" loading="lazy"/><b>{d.label}</b><small>{earned?(active?'Sur mon bureau':'Disponible'):d.rule}</small>{earned?active&&<Check size={15}/>:<LockKeyhole size={15}/>}</button>;})}</div></section>)}
+   {visibleDecorations.some(id=>flowerIds.has(id))&&<section className="nmDeskFlowerChoices"><h3>Composer mes bouquets</h3><p className="fieldHelp">Glisse une fleur sur un vase, ou choisis son vase ici. Le bouquet suivra ses déplacements.</p>{visibleDecorations.filter(id=>flowerIds.has(id)).map(id=><label key={id}>{decorations.find(d=>d.id===id).label}<select aria-label={'Vase pour '+decorations.find(d=>d.id===id).label} value={flowerVases[id]||''} onChange={e=>assignFlower(id,e.target.value)}><option value="">Sur le bureau, sans vase</option>{[...new Set([...vaseIds,...(flowerVases[id]?[flowerVases[id]]:[])])].map(v=><option key={v} value={v}>{v==='bouquet'?'Mon bouquet évolutif':decorations.find(d=>d.id===v)?.label}{!vaseIds.includes(v)?' · rangé':''}</option>)}</select></label>)}</section>}
    {entries.length>0&&<label>Photo dans mes cadres<select value={selectedEntry?.id||''} onChange={e=>change({frameEntryId:e.target.value})}>{entries.map(e=><option key={e.id} value={e.id}>{e.title||'Ma pose'}{!e.photo&&!e.mediaPath?' · sans photo':''}</option>)}</select></label>}
    <p className="fieldHelp">Les décorations débloquées restent acquises. La taille du bureau est toujours libre.</p>{error&&<p role="alert">{error}</p>}
   </Sheet>}
