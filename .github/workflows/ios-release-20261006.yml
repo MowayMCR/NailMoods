@@ -10,6 +10,6 @@ jobs:
     uses: ./.github/workflows/ios-testflight.yml
     with:
       mode: testflight
-      build_number: '20002'
+      build_number: '20003'
       source_ref: ${{ github.sha }}
     secrets: inherit

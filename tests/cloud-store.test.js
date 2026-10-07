@@ -274,3 +274,10 @@ test('new timer state becomes durable while an earlier remote save is still pend
  let restored;for(let i=0;i<50;i++){restored=await cacheFor(local).getCachedWorkspace(accountCacheKey('A','WA'));if(restored.views['nm-tutorials-v1'].sessions[0].timer.status==='paused')break;await new Promise(r=>setImmediate(r));}
  assert.equal(restored.views['nm-tutorials-v1'].sessions[0].timer.status,'paused');repo.write=original;release();await store.flush();
 });
+
+test('desk layout and earned decorations sync between account stores',async()=>{
+ const repo=backend(),a=make(memory(),repo);await a.load();
+ const desk={version:1,size:'large',positions:{lamp:{x:.4,y:.6}},unlocked:['vase-rose'],highWater:3};
+ a.storage.setItem('nm-desk-v1',JSON.stringify(desk));assert.equal(await a.flush(),true);
+ const b=make(memory(),repo);await b.load();assert.deepEqual(JSON.parse(b.storage.getItem('nm-desk-v1')),desk);
+});

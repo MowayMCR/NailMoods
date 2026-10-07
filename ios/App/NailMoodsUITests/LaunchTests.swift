@@ -9,7 +9,20 @@ final class LaunchTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 30))
         let create = app.buttons["Créer"].firstMatch
-        XCTAssertTrue(create.waitForExistence(timeout: 30), "Expected the actual NailMoods navigation, not just the launch screen")
+        // Cold hosted simulators can take longer to expose WKWebView accessibility.
+        // Keep the real navigation assertion and preserve evidence if it never appears.
+        let navigationReady = create.waitForExistence(timeout: 90)
+        if !navigationReady {
+            let failure = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+            failure.name = "NailMoods-navigation-missing"
+            failure.lifetime = .keepAlways
+            add(failure)
+            let hierarchy = XCTAttachment(string: app.debugDescription)
+            hierarchy.name = "NailMoods-accessibility-hierarchy"
+            hierarchy.lifetime = .keepAlways
+            add(hierarchy)
+        }
+        XCTAssertTrue(navigationReady, "Expected the actual NailMoods navigation, not just the launch screen")
         let portrait = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         portrait.name = "NailMoods-native-portrait"
         portrait.lifetime = .keepAlways
