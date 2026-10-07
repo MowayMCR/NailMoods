@@ -31,6 +31,26 @@ try{
   await page.getByRole('button',{name:'Réglages du bureau',exact:true}).click();await page.getByLabel('Ranger mes pinceaux dans un pot').check();await page.getByRole('button',{name:'Fermer',exact:true}).click();await page.waitForTimeout(150);
   await drop('pot');assert.equal(await page.locator('[data-tool="pot"]').count(),0);assert.ok(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm-desk-v1')).hidden.includes('brush')));
   await page.reload();await page.locator('.nmDesk').waitFor();assert.equal(await page.locator('[data-tool="pot"]').count(),0);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm-collection-v2')).length),6);
+  // Flowers snap to the vase, travel with it, persist, and can be detached explicitly.
+  await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm-desk-v1'));s.highWater=12;s.decorations=['vase-ivory','vase-rose','flower-rose','flower-cosmos','leaf-sage'];s.hidden=['lamp','file','brush'];s.positions={'decor:vase-ivory':{x:.35,y:.55},'decor:vase-rose':{x:.7,y:.45},'decor:flower-rose':{x:.7,y:.72},'decor:flower-cosmos':{x:.2,y:.8},'decor:leaf-sage':{x:.8,y:.85}};localStorage.setItem('nm-desk-v1',JSON.stringify(s));});
+  await page.reload();await page.locator('.nmDesk').waitFor();
+  const ivory=page.locator('[data-decor="vase-ivory"]');
+  p=await start('flower-rose');let vr=await ivory.boundingBox();await touch('touchMove',vr.x+vr.width/2,vr.y+vr.height*.2);await page.locator('.isVaseTarget').waitFor();await touch('touchEnd');
+  await page.locator('[data-decor="vase-ivory"] [data-flower="flower-rose"]').waitFor();
+  assert.equal(await page.locator('[data-tool="flower-rose"]').count(),0);
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm-desk-v1')).flowerVases['flower-rose']),'vase-ivory');
+  const beforeFlower=await page.locator('[data-flower="flower-rose"]').boundingBox();
+  p=await start('vase-ivory');await touch('touchMove',p.x+25,p.y+20);await touch('touchEnd');await page.waitForTimeout(100);
+  const afterFlower=await page.locator('[data-flower="flower-rose"]').boundingBox();assert.ok(Math.abs(afterFlower.x-beforeFlower.x-25)<2);assert.ok(Math.abs(afterFlower.y-beforeFlower.y-20)<2);
+  await page.reload();await page.locator('[data-flower="flower-rose"]').waitFor();
+  await page.getByRole('button',{name:'Décorer',exact:true}).click();await page.getByLabel('Vase pour Cosmos',{exact:true}).selectOption('vase-ivory');await page.getByLabel('Vase pour Eucalyptus',{exact:true}).selectOption('vase-ivory');await page.getByRole('button',{name:'Fermer',exact:true}).click();
+  assert.equal(await ivory.locator('[data-flower]').count(),3);
+  await page.screenshot({path:`/tmp/desk-bouquet-${width}.png`,fullPage:true});
+  await drop('vase-ivory');assert.equal(await page.locator('[data-flower]').count(),0);await page.getByRole('button',{name:'Annuler',exact:true}).click();assert.equal(await ivory.locator('[data-flower]').count(),3);
+  await page.getByRole('button',{name:'Décorer',exact:true}).click();await page.getByLabel('Vase pour Rose',{exact:true}).selectOption('vase-rose');await page.getByLabel('Vase pour Cosmos',{exact:true}).selectOption('');await page.getByRole('button',{name:'Fermer',exact:true}).click();
+  assert.equal(await page.locator('[data-decor="vase-rose"] [data-flower="flower-rose"]').count(),1);assert.equal(await page.locator('[data-tool="flower-cosmos"]').count(),1);
+  p=await start('flower-cosmos');vr=await ivory.boundingBox();await touch('touchMove',vr.x+vr.width/2,vr.y+vr.height*.2);await touch('touchCancel');assert.equal(await page.locator('[data-tool="flower-cosmos"]').count(),1);
+  console.log(`Flower touch snap, group movement, persistence, vase switch, detach and cancel passed at ${width}px`);
   assert.deepEqual(errors,[]);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   console.log(`Desk touch drag, interruption, trash, undo and persistence passed at ${width}px`);await context.close();
  }

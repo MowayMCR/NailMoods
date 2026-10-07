@@ -29,3 +29,12 @@ test('desk settings are included in account preferences and positions stay on th
  assert.deepEqual(clampPosition({x:-2,y:9},'large'),{x:.08,y:.87});
  const s=initialDesk({size:'bad',zoom:9});assert.equal(s.size,'standard');assert.equal(s.zoom,1.5);
 });
+
+test('bouquet links survive reload and reject invalid decoration relationships',()=>{
+ const input={size:'large',positions:{'decor:vase-rose':{x:.3,y:.6}},flowerVases:{'flower-rose':'vase-rose','leaf-sage':'bouquet','vase-rose':'flower-rose','flower-cosmos':'unknown'}};
+ const state=initialDesk(input);
+ assert.deepEqual(state.flowerVases,{'flower-rose':'vase-rose','leaf-sage':'bouquet'});
+ assert.deepEqual(initialDesk(JSON.parse(JSON.stringify(state))).flowerVases,state.flowerVases);
+ assert.deepEqual(initialDesk({}).flowerVases,{});
+ assert.deepEqual(state.positions,input.positions);
+});

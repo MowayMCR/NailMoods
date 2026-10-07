@@ -31,7 +31,7 @@ Les lectures de médias utilisent des téléchargements authentifiés. La nouvel
 
 ## Validation effectuée
 
-- `npm test` : 572 tests, 570 réussis, 2 tests live historiques ignorés, aucune erreur. Les tests des droits Apple/Google, expirations, remboursements, ordre des événements et propriété des achats présents dans le projet sont conservés. Ces tests ne remplacent pas les achats Sandbox réels.
+- `npm test` : 573 tests, 571 réussis, 2 tests live historiques ignorés, aucune erreur. Les tests des droits Apple/Google, expirations, remboursements, ordre des événements et propriété des achats présents dans le projet sont conservés. Ces tests ne remplacent pas les achats Sandbox réels.
 - Tests PGlite complémentaires : anciennes lectures/écritures et RPC refusées ; actualisation sans reprise de session ; invitations incorrectes, expirées, révoquées ou réutilisées ; code soumis à approbation ; quota ; suspension ; droit manuel préservé.
 - Essai réel Auth/Postgres/Storage/Edge en recette avec comptes jetables : **35 contrôles réussis**, dont acceptations concurrentes de la dernière place, Auth ancien compte refusé, ancien JWT refusé pour données et service IA, liens signés refusés. Résultat : [tests/recette-results.json](tests/recette-results.json).
 - Tous les comptes jetables et leur espace ont été supprimés. La garde a été remise à OFF à la fin du test. Le worker temporaire est désactivé et sa fonction SQL de préparation supprimée.
@@ -73,3 +73,5 @@ Les lectures de médias utilisent des téléchargements authentifiés. La nouvel
 - [Apple appAccountToken](https://developer.apple.com/documentation/storekit/product/purchaseoption/appaccounttoken(_:)), [App Store Server API](https://developer.apple.com/documentation/appstoreserverapi), [notifications V2](https://developer.apple.com/documentation/appstoreservernotifications).
 - [Google Subscription lifecycle](https://developer.android.com/google/play/billing/lifecycle/subscriptions), [backend sécurisé](https://developer.android.com/google/play/billing/security), [Publisher bundles.upload](https://developers.google.com/android-publisher/api-ref/rest/v3/edits.bundles/upload).
 - [Apple upload builds](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).
+
+La livraison intègre aussi le tronc commun `5bf856c31fbbb5e60faaad7156d4e4a52221f0e3` (déplacement du bouquet et insertion des fleurs). Le premier contrôle CI Android a détecté l’absence de `NAILMOODS_MOBILE_ENV` au moment de `cap sync` ; le coordinateur transmet désormais explicitement cet environnement. Les résultats natifs doivent être vérifiés sur le dernier commit de la PR.

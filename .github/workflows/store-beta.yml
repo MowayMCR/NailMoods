@@ -69,6 +69,8 @@ jobs:
     environment: ${{ inputs.mode == 'beta' && 'store-beta' || 'store-verification' }}
     env:
       SOURCE_SHA: ${{ needs.validate.outputs.sha }}
+      NAILMOODS_MOBILE_ENV: production
+      NAILMOODS_PLATFORM: android
       NAILMOODS_ANDROID_BUILD_NUMBER: ${{ needs.validate.outputs.build }}
       NAILMOODS_VERSION: ${{ inputs.version || '0.8.0' }}
     steps:
