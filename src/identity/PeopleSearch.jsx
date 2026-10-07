@@ -5,7 +5,7 @@ import {Search,ChevronRight,SlidersHorizontal} from 'lucide-react';
 import {identityService} from './service';
 import {rankProfiles} from './handles';
 import {professionalLabel} from '../workspaces/professionalProfile';
-import PublicProfile from './PublicProfile';
+import PublicProfile from './PublicProfile.jsx';
 import ContentImage from '../social/ContentImage';
 export default function PeopleSearch({client,initialKind='',compact=false,children,onSearched}) {
  const [query,setQuery]=useState(''),[kind,setKind]=useState(initialKind),[city,setCity]=useState(''),[rows,setRows]=useState([]),[busy,setBusy]=useState(false),[searched,setSearched]=useState(false),[error,setError]=useState(''),[handle,setHandle]=useState(null);

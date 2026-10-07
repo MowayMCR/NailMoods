@@ -75,3 +75,5 @@ Les lectures de médias utilisent des téléchargements authentifiés. La nouvel
 - [Apple upload builds](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).
 
 La livraison intègre aussi le tronc commun `5bf856c31fbbb5e60faaad7156d4e4a52221f0e3` (déplacement du bouquet et insertion des fleurs). Le premier contrôle CI Android a détecté l’absence de `NAILMOODS_MOBILE_ENV` au moment de `cap sync` ; le coordinateur transmet désormais explicitement cet environnement. Les résultats natifs doivent être vérifiés sur le dernier commit de la PR.
+
+La vérification macOS a également révélé une ambiguïté des imports sans extension entre composants JSX et modules de données de casse différente. Les dix imports concernés sont explicites ; un contrôle de régression vérifie cette contrainte.

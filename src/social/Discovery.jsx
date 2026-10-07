@@ -7,7 +7,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {Compass,ChevronRight,Search,Bookmark,ArrowLeft,ArrowRight,Globe2,SlidersHorizontal} from 'lucide-react';
 import Sheet from '../Sheet';
 import FeedPeople from './FeedPeople';
-import PublicProfile from '../identity/PublicProfile';
+import PublicProfile from '../identity/PublicProfile.jsx';
 import {SafetyActions} from '../support/SafetyActions';
 import {ShareToPoSheet} from './PoShare';
 import {track} from '../analytics/analytics';

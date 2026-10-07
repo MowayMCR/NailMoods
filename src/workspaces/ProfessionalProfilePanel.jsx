@@ -4,7 +4,7 @@ import {proV2Enabled} from '../professional/service.js';
 import React,{useEffect,useMemo,useState} from 'react';
 import {Building2,Check,ChevronRight,Eye,Scissors,ShieldCheck,UsersRound} from 'lucide-react';
 import Sheet from '../Sheet';
-import PublicProfile from '../identity/PublicProfile';
+import PublicProfile from '../identity/PublicProfile.jsx';
 import InstitutePanel from './InstitutePanel';
 import WorkspaceAvatar from './WorkspaceAvatar';
 import {PROFESSIONAL_STATUSES,professionalStatus} from './professionalProfile';

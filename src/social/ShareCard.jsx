@@ -1,4 +1,4 @@
-import PoLoop from './PoLoop';
+import PoLoop from './PoLoop.jsx';
 import {poLoopEnabled} from './poLoop';
 import PoseSharedSummary from '../poseCycle/PoseSharedSummary';
 import {useStorage} from '../StorageContext';
