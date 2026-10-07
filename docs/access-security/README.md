@@ -77,3 +77,5 @@ Les lectures de médias utilisent des téléchargements authentifiés. La nouvel
 La livraison intègre aussi le tronc commun `5bf856c31fbbb5e60faaad7156d4e4a52221f0e3` (déplacement du bouquet et insertion des fleurs). Le premier contrôle CI Android a détecté l’absence de `NAILMOODS_MOBILE_ENV` au moment de `cap sync` ; le coordinateur transmet désormais explicitement cet environnement. Les résultats natifs doivent être vérifiés sur le dernier commit de la PR.
 
 La vérification macOS a également révélé une ambiguïté des imports sans extension entre composants JSX et modules de données de casse différente. Les dix imports concernés sont explicites ; un contrôle de régression vérifie cette contrainte.
+
+Audit des dépendances npm : la dépendance transitive `source-map-js` passe de 1.2.1 à 1.2.2 pour corriger [GHSA-68fv-2mgg-jv7q](https://github.com/advisories/GHSA-68fv-2mgg-jv7q). Le nouvel audit npm ne signale aucune vulnérabilité connue au 7 octobre 2026 ; ce résultat ne constitue pas une preuve d’absence de vulnérabilités dans l’application.
