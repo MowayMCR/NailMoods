@@ -1,3 +1,4 @@
+import {watchActiveSession,checkActiveSession,revokeOtherSessions,SESSION_REPLACED_MESSAGE,isReplacedSession} from './sessionSecurity.js';
 import {proV2Enabled} from '../professional/service.js';
 import {clearTutorialTimerNotifications} from '../poseCycle/timerAlerts.js';
 import {clearPlanningNotifications} from '../poseCycle/notifications.js';
@@ -67,15 +68,16 @@ export default function AccountRoot({App}){
   const [staffMode,setStaffMode]=useState(false),[staffEligible,setStaffEligible]=useState(false);
   const [suspension,setSuspension]=useState(false);
   const [termsAccepted,setTermsAccepted]=useState(false);
+  const intentionalLogout=useRef(false),sessionUser=useRef(null);
   const active=useRef(null), mounted=useRef(true), analytics=useRef(null);
-  const userId=session?.user?.id || null;
+  const userId=session?.user?.id || null;sessionUser.current=userId;
   useEffect(()=>{
     mounted.current=true;
     if(!service){setSession(null);return;}
     let cancelled=false,booting=true;
     const unsubscribe=service.subscribe((event,next)=>{
       if(cancelled || booting)return;
-      if(event==='SIGNED_OUT')void clearPlanningNotifications().catch(()=>{});
+      if(event==='SIGNED_OUT'){void clearPlanningNotifications().catch(()=>{});if(sessionUser.current&&!intentionalLogout.current&&import.meta.env.VITE_SESSION_SECURITY_ENABLED==='true'){void active.current?.ensureDurable().catch(()=>{});active.current?.close();setMode('login');setAuthError(SESSION_REPLACED_MESSAGE);setOpen(true);}}
       if(event==='PASSWORD_RECOVERY'){setMode('password');setOpen(true);}
       setSession(next);
     });
@@ -95,6 +97,13 @@ export default function AccountRoot({App}){
     })();
     return ()=>{cancelled=true;mounted.current=false;unsubscribe();active.current?.close();};
   },[]);
+  useEffect(()=>{
+    if(!userId||import.meta.env.VITE_SESSION_SECURITY_ENABLED!=='true')return;
+    return watchActiveSession(client,{onReplaced:async()=>{
+      let draftWarning='';try{await active.current?.ensureDurable();}catch{draftWarning=' Les modifications locales restent sur cet appareil ; reconnectez-vous ici pour les récupérer.';}active.current?.close();
+      setSession(null);setGuestOverride(false);setMode('login');setAuthError(SESSION_REPLACED_MESSAGE+draftWarning);setOpen(true);try{await client.auth.signOut({scope:'local'});}catch{/* Access is already blocked; retain local drafts. */}
+    }});
+  },[userId]);
   useEffect(()=>{
     if(!isNative()||!service)return;
     let alive=true,processing=false;
@@ -125,6 +134,7 @@ export default function AccountRoot({App}){
           const {data,error}=await client.auth.getUser();
           if(error)throw error;
           if(data.user?.id!==userId)throw Object.assign(new Error('Reconnecte-toi à ton compte.'),{status:401});
+          if(import.meta.env.VITE_SESSION_SECURITY_ENABLED==='true')await checkActiveSession(client);
           const access=await client.rpc('nm_account_access');if(access.error)throw access.error;
           if(access.data?.suspended){if(!cancelled)setSuspension(true);return;}
           workspace=await personalWorkspace(client,userId);
@@ -145,7 +155,7 @@ export default function AccountRoot({App}){
         if(cancelled){store.close();return;}
         setLoaded({store,workspace,userId,media});
         if(store.pending&&!offline)void store.flush();
-      }catch(error){if(!cancelled)setLoadError(error.message || 'Ton espace n’a pas pu être chargé. Réessaie.');}
+      }catch(error){if(!cancelled){setLoadError(isReplacedSession(error)?SESSION_REPLACED_MESSAGE:error.message || 'Ton espace n’a pas pu être chargé. Réessaie.');}}
     })();
     return ()=>{cancelled=true;store?.close();};
   },[userId,retry,guestOverride]);
@@ -173,7 +183,7 @@ export default function AccountRoot({App}){
     recordCloudEvent(browserStorage,mode,true);
     }catch(error){recordCloudEvent(browserStorage,mode,false);setAuthError(authMessage(error));}finally{if(mounted.current)setBusy(false);}
   }
-  async function logout(){setBusy(true);setAuthError('');try{track('logout');void analytics.current?.flush();await active.current?.ensureDurable();await clearPlanningNotifications();await clearTutorialTimerNotifications();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{setBusy(false);}}
+  async function logout(){intentionalLogout.current=true;setBusy(true);setAuthError('');try{track('logout');void analytics.current?.flush();await active.current?.ensureDurable();await clearPlanningNotifications();await clearTutorialTimerNotifications();await service.signOut();setSession(null);setPassword('');setOpen(false);setGuestOverride(false);}catch(error){setAuthError(error.code==='quota'||error.code==='cache_unavailable'?cacheError(error).message:authMessage(error));}finally{intentionalLogout.current=false;setBusy(false);}}
   async function migrate(){setBusy(true);setAuthError('');try{
     if(import.meta.env.VITE_BETA_ACCOUNT_TIERS==='true' && loaded.store.profile?.account_tier==='free')throw new Error('L’import dans la collection est disponible avec Plus. Ta copie invitée reste conservée.');
     const guest=readGuest(browserStorage);
@@ -261,7 +271,7 @@ export default function AccountRoot({App}){
           {status.kind==='error' && <section><button disabled={busy || status.pending>0} onClick={()=>setConfirmCacheClear(true)}>Nettoyer le cache local</button>{confirmCacheClear && <><p>Nettoyer uniquement le cache reconstituable de ce compte ? Tes données en ligne, ta copie invitée et tes sauvegardes restent conservées.</p><button disabled={busy} onClick={clearCache}>Confirmer le nettoyage</button><button onClick={()=>setConfirmCacheClear(false)}>Annuler</button></>}<button disabled={busy} onClick={exportDraft}>Télécharger ma copie locale</button><button disabled={busy} onClick={()=>setConfirmRemote(true)}>Utiliser la version en ligne</button>{confirmRemote && <><p>Les changements en attente ne seront pas envoyés. Une sauvegarde locale sera conservée ; télécharge-la pour pouvoir la consulter.</p><button disabled={busy} onClick={useRemote}>Confirmer le rechargement</button><button onClick={()=>setConfirmRemote(false)}>Annuler</button></>}</section>}
           {status.pending>0 && <p>Les modifications en attente resteront sur cet appareil après déconnexion. Reconnecte-toi ici pour les synchroniser.</p>}
         </>}
-        <button disabled={busy} onClick={()=>setAccountSection('privacy')}>Confidentialité et mes données</button><button disabled={busy} onClick={()=>changeMode('password')}>Changer mon mot de passe</button><button disabled={busy} onClick={logout}>Se déconnecter</button>
+        {import.meta.env.VITE_SESSION_SECURITY_ENABLED==='true'&&<button disabled={busy} onClick={async()=>{setBusy(true);try{await revokeOtherSessions(client);setMessage('Les autres appareils ont été déconnectés.');}catch{setAuthError('La demande n’a pas abouti. Réessaie.');}finally{setBusy(false);}}}>Déconnecter les autres appareils</button>}<button disabled={busy} onClick={()=>setAccountSection('privacy')}>Confidentialité et mes données</button><button disabled={busy} onClick={()=>changeMode('password')}>Changer mon mot de passe</button><button disabled={busy} onClick={logout}>Se déconnecter</button>
       </> : <form onSubmit={submit}>
         <p>Retrouve ta collection, tes inspirations et ton journal sur tes appareils. Tu peux aussi continuer sans compte.</p>
         {mode!=='password' && <label>Email<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>}

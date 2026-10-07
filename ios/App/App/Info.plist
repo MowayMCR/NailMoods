@@ -56,8 +56,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Photographier un produit à scanner ou ajouter une photo de pose dans NailMoods.</string>
+	<string>NailMoods utilise l’appareil photo pour scanner tes produits, importer une tenue ou une inspiration et photographier une pose.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

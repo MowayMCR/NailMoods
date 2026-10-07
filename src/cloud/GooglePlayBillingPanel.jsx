@@ -42,6 +42,7 @@ export default function GooglePlayBillingPanel({ client, tier, onApplied }) {
   const manage = 'https://play.google.com/store/account/subscriptions?package=' + encodeURIComponent(state?.packageName || 'com.nailmoods.app');
   return <section className="card accountOffer billingPanel" aria-labelledby="billing-panel-title">
     <div className="accountOfferHeading"><div><small>ABONNEMENTS GOOGLE PLAY</small><h2 id="billing-panel-title">Plus et Pro</h2><p>Free reste utilisable sans abonnement. Les abonnements sont facultatifs.</p></div><Sparkles aria-hidden="true"/></div>
+    {context?.instituteActive&&<p>Ton institut fournit déjà un accès. Aucun second abonnement n’est nécessaire.</p>}
     {context?.otherProviderActive && <p>Ton offre est déjà active sur ton compte. Aucun second abonnement n’est nécessaire.</p>}
     {manual && <p className="accountOfferCurrent">Ton accès {state.manualTier === 'pro' ? 'Pro' : 'Plus'} est offert par NailMoods. Aucune souscription n’est nécessaire.</p>}
     {!android && <p>Pour souscrire, utilise l’application Android installée depuis Google Play.</p>}

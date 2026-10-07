@@ -1,3 +1,4 @@
+import {requireActiveSession,sessionGuardResponse} from '../_shared/sessionGuard.ts';
 import {createClient} from 'npm:@supabase/supabase-js@2.116.0';
 import {createAIService,validRequest} from './provider.mjs';
 import {renderPhotoreal,pngBytes,compositionPrompt} from './photoreal.mjs';
@@ -9,6 +10,7 @@ Deno.serve(async req=>{
  const authorization=req.headers.get('Authorization');if(!authorization?.startsWith('Bearer '))return json({error:'authentication_required'},401);
  const url=Deno.env.get('SUPABASE_URL')!,client=createClient(url,Deno.env.get('SUPABASE_ANON_KEY')!,{auth:{persistSession:false},global:{headers:{Authorization:authorization}}});
  const {data:auth,error:authError}=await client.auth.getUser(authorization.slice(7));if(authError||!auth.user)return json({error:'authentication_required'},401);
+ try{await requireActiveSession(authorization);}catch(error){return sessionGuardResponse(error,cors)||json({error:'session_check_unavailable'},503);}
  const reader=req.body?.getReader();let bytes=0;const chunks:Uint8Array[]=[];if(!reader)return json({error:'invalid_request'},400);
  while(true){const {done,value}=await reader.read();if(done)break;bytes+=value.length;if(bytes>1_450_000){await reader.cancel();return json({error:'request_too_large'},413);}chunks.push(value);}
  let body;try{body=JSON.parse(await new Blob(chunks).text());}catch{return json({error:'invalid_request'},400);}if(!validRequest(body))return json({error:'invalid_request'},400);
@@ -16,7 +18,9 @@ Deno.serve(async req=>{
  async function imageUrl(job:any){
   const path=job.result?.imagePath;if(!path)return null;
   if(!path.startsWith(auth.user!.id+'/')||!path.endsWith('/ai/'+job.id+'.png'))throw Error('render_unavailable');
-  const {data,error}=await admin.storage.from('nailmoods-private').createSignedUrl(path,600);if(error)throw error;return data.signedUrl;
+  const {data,error}=await admin.storage.from('nailmoods-private').download(path);if(error||!data||data.size>8_000_000)throw Error('render_unavailable');
+  const bytes=new Uint8Array(await data.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+  return 'data:image/png;base64,'+btoa(binary);
  }
  if(body.action){
   // History applies the existing independent internal entitlement guard.

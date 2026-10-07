@@ -1,3 +1,4 @@
+import {requireActiveSession,sessionGuardResponse} from '../_shared/sessionGuard.ts';
 import {createClient} from 'npm:@supabase/supabase-js@2.116.0';
 import {DOMParser} from 'npm:linkedom@0.18.12';
 import {boundedText} from '../_shared/productPageCore.mjs';
@@ -14,7 +15,8 @@ Deno.serve(async req=>{
  const {data,error}=await client.auth.getUser(token);if(error||!data.user)return reply({error:'AUTH_REQUIRED'},401);
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),14000);
  try {
-  const raw=JSON.parse(await boundedText(req,2048,controller.signal)),input=normalizeLookupInput(raw);
+  await requireActiveSession(req.headers.get('Authorization'));
+ const raw=JSON.parse(await boundedText(req,2048,controller.signal)),input=normalizeLookupInput(raw);
   if(!input.sufficient)return reply({status:'insufficient',candidates:[],message:'Ajoute un code-barres, un numéro de teinte ou un nom exact.'});
   const gate=await client.rpc('nm_product_import_quota');if(gate.error)return reply({error:'LOOKUP_UNAVAILABLE'},503);if(!gate.data)return reply({error:'RATE_LIMIT'},429);
   const key=lookupKey(input),hit=cache.get(key);
@@ -25,6 +27,6 @@ Deno.serve(async req=>{
    cache.set(key,{result,expires:Date.now()+(result.candidates.length?3600000:600000)});
   }
   return reply({...result,cached:false});
- } catch {return reply({status:'unavailable',candidates:[],message:'La recherche Internet n’a pas pu être terminée. La saisie manuelle reste disponible.'});}
+ } catch(error) {const denied=sessionGuardResponse(error,cors);if(denied)return denied;return reply({status:'unavailable',candidates:[],message:'La recherche Internet n’a pas pu être terminée. La saisie manuelle reste disponible.'});}
  finally {clearTimeout(timer);}
 });

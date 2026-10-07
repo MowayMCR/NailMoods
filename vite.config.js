@@ -1,3 +1,4 @@
+import {commonFeatures} from './scripts/common-features.mjs';
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import recette from './src/cloud/recette-public-config.json' with { type: 'json' }
@@ -11,5 +12,5 @@ export default defineConfig(() => {
     VITE_DEPLOYMENT_ENV: 'production', VITE_BETA_ACCOUNT_TIERS: 'false'
   };
   return { server: { host: '0.0.0.0', allowedHosts: ['terminal.local'] }, plugins: [react()], base: target === 'production' ? '/NailMoods/' : '/',
-    define: Object.fromEntries(Object.entries(config).map(([key,value])=>[`import.meta.env.${key}`,JSON.stringify(value)])) };
+    define: Object.fromEntries(Object.entries({...config,...commonFeatures(target)}).map(([key,value])=>[`import.meta.env.${key}`,JSON.stringify(value)])) };
 });

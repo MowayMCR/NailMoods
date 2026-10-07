@@ -1,0 +1,140 @@
+name: Common validated beta — Android and TestFlight
+on:
+  push:
+    branches: [feat/access-security-teams]
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact reviewed common commit (40 hex characters)
+        required: true
+        type: string
+      mode:
+        description: Verify/build only, or upload beta after approval
+        type: choice
+        options: [verify, beta]
+        default: verify
+      play_track:
+        description: Google beta track (never production)
+        type: choice
+        options: [internal, alpha, beta]
+        default: internal
+      version:
+        description: Store version already approved
+        required: true
+        default: '0.8.0'
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: nailmoods-store-beta
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+      build: ${{ steps.source.outputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha || github.sha }}
+          fetch-depth: 0
+      - id: source
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
+          MODE: ${{ inputs.mode || 'verify' }}
+        run: |
+          [[ "$SOURCE_SHA" =~ ^[a-f0-9]{40}$ ]] || exit 1
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          if [ "$MODE" = beta ]; then test "$SOURCE_SHA" = "$(git rev-parse origin/main)"; fi
+          echo "sha=$SOURCE_SHA" >> "$GITHUB_OUTPUT"
+          echo "build=$((20000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci && npm test && npm run build
+      - name: Preserve release source and included changes
+        run: |
+          mkdir -p artifacts/release
+          git rev-parse HEAD > artifacts/release/commit.txt
+          git log -20 --oneline > artifacts/release/included-commits.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: beta-source-provenance
+          path: artifacts/release
+  android:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.mode == 'beta' && 'store-beta' || 'store-verification' }}
+    env:
+      SOURCE_SHA: ${{ needs.validate.outputs.sha }}
+      NAILMOODS_ANDROID_BUILD_NUMBER: ${{ needs.validate.outputs.build }}
+      NAILMOODS_VERSION: ${{ inputs.version || '0.8.0' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.validate.outputs.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - name: Prepare the same common UI
+        run: |
+          node scripts/build-theme-css.mjs
+          npm run mobile:production
+          node scripts/check-mobile-build.mjs dist-mobile production
+          npx --no-install cap sync android
+          npm run mobile:assets
+      - name: Install upload key only for an explicitly approved beta
+        if: inputs.mode == 'beta'
+        env:
+          UPLOAD_KEY: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+        run: |
+          test -n "$UPLOAD_KEY"
+          printf '%s' "$UPLOAD_KEY" | base64 --decode > "$RUNNER_TEMP/nm-upload.jks"
+          chmod 600 "$RUNNER_TEMP/nm-upload.jks"
+          echo "NM_UPLOAD_KEYSTORE=$RUNNER_TEMP/nm-upload.jks" >> "$GITHUB_ENV"
+      - name: Compile bundle
+        env:
+          NM_UPLOAD_STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_STORE_PASSWORD }}
+          NM_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          NM_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        run: |
+          chmod +x android/gradlew
+          ./android/gradlew -p android -PnailmoodsEnvironment=production bundleRelease --console=plain
+          mkdir -p artifacts/android
+          cp android/app/build/outputs/bundle/release/app-release.aab artifacts/android/
+          cp dist-mobile/mobile-build.json artifacts/android/
+          sha256sum artifacts/android/app-release.aab > artifacts/android/SHA256SUMS
+      - name: Upload signed beta to the selected non-public track
+        if: inputs.mode == 'beta'
+        env:
+          GOOGLE_PLAY_PUBLISHER_JSON: ${{ secrets.GOOGLE_PLAY_PUBLISHER_JSON }}
+          PLAY_TRACK: ${{ inputs.play_track }}
+          SOURCE_SHA: ${{ needs.validate.outputs.sha }}
+        run: |
+          git fetch origin main
+          test "$SOURCE_SHA" = "$(git rev-parse origin/main)"
+          node scripts/ci/upload-play.mjs artifacts/android/app-release.aab
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-beta-${{ needs.validate.outputs.build }}
+          path: artifacts/android
+      - if: always()
+        run: rm -f "$RUNNER_TEMP/nm-upload.jks"
+  ios:
+    needs: validate
+    uses: ./.github/workflows/ios-testflight.yml
+    with:
+      source_ref: ${{ needs.validate.outputs.sha }}
+      build_number: ${{ needs.validate.outputs.build }}
+      version: ${{ inputs.version || '0.8.0' }}
+      mode: ${{ inputs.mode == 'beta' && 'testflight' || 'verify' }}
+    secrets: inherit

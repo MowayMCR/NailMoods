@@ -1,3 +1,4 @@
+import {requireActiveSession} from '../_shared/sessionGuard.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.116.0';
 import { appleServer, currentAppleRecords } from '../_shared/appleServer.ts';
 const cors = {'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization, apikey, content-type, x-client-info','Access-Control-Allow-Methods':'POST, OPTIONS'};
@@ -28,6 +29,7 @@ Deno.serve(async req=>{
     const {data:{user},error}=await admin.auth.getUser(bearer.startsWith('Bearer ')?bearer.slice(7):'');
     if(error||!user?.email_confirmed_at)return reply({error:'authentication_required'},401);
     const rpc=async(name:string,args:Record<string,unknown>)=>{const {data,error}=await admin.rpc(name,args);if(error)throw Error(error.message);return data;};
+    await requireActiveSession(bearer);
     const context=await rpc('apple_server_context',{p_user_id:user.id,p_environment:body.environment});
     if(body.action==='prepare'){
       let configured=false; try{appleServer(body.environment);configured=true;}catch{}
@@ -50,7 +52,7 @@ Deno.serve(async req=>{
     return reply(await verify(tx.transactionId!));
   }catch(e){
     const message=e instanceof Error?e.message:'';
-    const code=['authentication_required','purchase_account_mismatch','purchase_owned_by_another_account','billing_not_configured','sandbox_account_required','invalid_environment','rate_limit','billing_ineligible'].find(v=>message.includes(v))||'verification_unavailable';
-    return reply({error:code},code==='authentication_required'?401:code==='verification_unavailable'||code==='billing_not_configured'?503:400);
+    const code=['SESSION_REPLACED','authentication_required','purchase_account_mismatch','purchase_owned_by_another_account','billing_not_configured','sandbox_account_required','invalid_environment','rate_limit','billing_ineligible'].find(v=>message.includes(v))||'verification_unavailable';
+    return reply({error:code},['authentication_required','SESSION_REPLACED'].includes(code)?401:code==='verification_unavailable'||code==='billing_not_configured'?503:400);
   }
 });

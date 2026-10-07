@@ -1,3 +1,4 @@
+import {requireActiveSession,sessionGuardResponse} from '../_shared/sessionGuard.ts';
 import { boundedReadFetch } from './read-fetch.mjs';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.116.0';
 
@@ -16,6 +17,7 @@ async function requester(req: Request, readFetch: typeof fetch) {
   if (!token) return null;
   const auth = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { fetch: readFetch, headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false } });
   const { data } = await auth.auth.getUser(token);
+  if(data.user)await requireActiveSession(`Bearer ${token}`);
   return data.user ?? null;
 }
 
@@ -83,5 +85,5 @@ Deno.serve(async req => {
   const { data: file, error: downloadError } = await admin.storage.from(bucket).download(path);
   if (downloadError || !file) return json({ error: 'media_unavailable' }, 404);
   return new Response(req.method === 'HEAD' ? null : file, { status: 200, headers: { ...cors, 'Content-Type': file.type || 'application/octet-stream', 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff' } });
- } catch { return json({ error: 'media_temporarily_unavailable' }, 503); }
+ } catch(error) { const denied=sessionGuardResponse(error,cors);if(denied)return denied;return json({ error: 'media_temporarily_unavailable' }, 503); }
 });

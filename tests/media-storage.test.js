@@ -17,13 +17,13 @@ test('media adapter uploads with bounded type and returns a storage reference', 
   const calls = [];
   const client = { storage: { from(bucket) { assert.equal(bucket, BUCKET); return {
     upload: async (path, file, options) => { calls.push({path,file,options}); return { data:{path}, error:null }; },
-    createSignedUrl: async path => ({ data:{signedUrl:`signed:${path}`}, error:null }),
+    download: async path => ({data:new Blob(['image'],{type:'image/png'}),error:null}),
     remove: async paths => { calls.push({paths}); return { error:null }; },
   }; } } };
   const { upload, signedUrl } = createMediaStorage(client);
   const result = await upload({ userId:'u1', workspaceId:'w1', kind:'avatar', objectId:'profile', file:{type:'image/png',size:12} });
   assert.equal(result.path, 'u1/w1/avatar/profile.png');
-  assert.equal((await signedUrl(result.path)).startsWith('signed:'), true);
+  assert.equal((await signedUrl(result.path)).startsWith('blob:'), true);
   assert.equal(calls[0].options.upsert, false);
  assert.equal(calls.length, 1);
 });
