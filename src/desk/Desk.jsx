@@ -4,6 +4,7 @@ import Sheet from '../Sheet.jsx';
 import {useStorage} from '../StorageContext.jsx';
 import {toolAsset,toolUses,deskSizes,decorations,bouquetStage,defaultPosition,clampPosition,flowerVaseLinks} from './model.js';
 import './desk.css';
+import VaseArrangement from './VaseArrangement.jsx';
 const art=name=>import.meta.env.BASE_URL+'atelier/desk-v1/'+name+'.webp';
 const largeTools=new Set(['lampe-uv','lampe-led','lampe-uv-led','ponceuse','aspirateur','repose-main','tapis']);
 
@@ -98,11 +99,9 @@ export default function Desk({items,state,onChange,entries=[],media,onAdd,onEdit
     <div className="nmDeskCanvas" ref={canvas} style={{width:size.width,height:size.height,transform:`scale(${state.zoom})`,backgroundImage:`url(${art('desk')})`}}>
      {objects.map((object,index)=>{const pos=position(object,index);return <button key={object.id} type="button" className={'nmDeskObject '+(selected?.id===object.id?'isSelected ':'')+(moving===object.id?'isMoving':'')+(object.asset.startsWith('frame-')?' isFrame':'')+(overVase&&object.decor&&overVase===object.id.slice(6)?' isVaseTarget':'')} style={{left:(pos.x*100)+'%',top:(pos.y*100)+'%',width:width(object),zIndex:moving===object.id?1000:Math.round(pos.y*100)}} aria-label={object.label} aria-describedby="desk-gesture-help" data-tool={object.asset} data-decor={object.decor?object.id.slice(6):undefined} onContextMenu={e=>e.preventDefault()} onPointerDown={e=>down(e,object,index)} onPointerMove={move} onPointerUp={e=>finishGesture(false,e)} onPointerCancel={e=>finishGesture(true,e)} onLostPointerCapture={e=>finishGesture(true,e)} onKeyDown={e=>keyboard(e,object,index)} onClick={()=>{if(Date.now()<ignoreClick.current)return;if(arrange){setSelected(object);return;}object.container?setPotOpen(true):object.decor?setDecorate(true):setFocus(object.item);}}>
        {object.container&&<div className="nmDeskPotBrushes">{brushes.slice(0,3).map((b,i)=><img key={b.id} style={{left:(i*23)+'%',transform:`rotate(${35+i*8}deg)`}} src={art(toolAsset(b))} alt="" draggable="false"/>)}</div>}
-       {object.id==='decor:bouquet'&&!vaseFlowers('bouquet').length&&bouquetStage(count)&&<img className="nmDeskBouquet" src={art(bouquetStage(count))} alt="" draggable="false"/>}
-       {object.decor&&isVase(object.id.slice(6))&&<div className="nmDeskVaseFlowers">{vaseFlowers(object.id.slice(6)).map((id,i,all)=><img key={id} data-flower={id} src={art(id)} alt="" draggable="false" style={{width:all.length>1?'70%':'82%',transform:`translateX(-50%) rotate(${all.length>1?(i-(all.length-1)/2)*12:0}deg)`}}/>)}</div>}
        {overVase&&object.decor&&overVase===object.id.slice(6)&&<em className="nmDeskVaseDropHint">Relâche pour fleurir</em>}
        {object.asset.startsWith('frame-')&&<FramePhoto entry={selectedEntry} media={media}/>}
-       <img className="nmDeskObjectArt" src={art(object.asset)} alt="" draggable="false"/><span>{object.label}</span>
+       <>{object.decor&&isVase(object.id.slice(6))?<VaseArrangement asset={object.asset} flowers={vaseFlowers(object.id.slice(6))} stage={object.id==='decor:bouquet'?bouquetStage(count):null} art={art}/>:<img className="nmDeskObjectArt" src={art(object.asset)} alt="" draggable="false"/>}</><span>{object.label}</span>
       </button>;})}
     </div>
    </div>
