@@ -73,3 +73,10 @@ Quatre atlas WebP générés avec le générateur intégré : Soft Glam, Dark Fe
 572 tests, 570 réussis et 2 anciens tests live ignorés. Tests dédiés : normalisation et limites, conservation du journal et de sa visibilité, projection publique excluant une photo privée/un autre auteur et tout champ inconnu. Navigateur 390 et 820 : mouvement tactile, réglages de taille/inclinaison, mélange de moods, plusieurs photos, fonds et textes, undo/redo, sauvegarde/rechargement, annulation, public en lecture seule avec coups de cœur. Pas d’erreur JavaScript. La synchronisation reprend le chemin existant du journal ; le test navigateur de cette livraison utilise un journal local et un profil public simulé, sans prétendre à un essai multi-appareils réel.
 
 Limites pratiques : 32 éléments maximum par page, 4 photos, textes de 160 caractères. Les images ajoutées viennent de Mes poses ; une nouvelle photo se crée depuis la fiche de pose existante. Pas de build envoyé aux stores dans cette livraison Web.
+
+
+## Correction mobile — 8 octobre, seconde livraison
+
+Le livre s’ouvre depuis l’icône Livre dans Collection. Mes poses conserve la galerie des réalisations et la fiche de chaque pose. Les commandes de l’éditeur sont rangées dans une grille de deux colonnes ; les sélecteurs occupent la largeur disponible. Les miniatures restent limitées à 80 px de hauteur. Les statistiques publiques ne remplacent jamais la composition personnelle enregistrée dans le journal.
+
+Vérification navigateur : absence de chevauchement des commandes, déplacement tactile, réglages, annuler/rétablir, sauvegarde et rechargement, accès Collection, galerie Mes poses et lecture du livre public sur téléphone et tablette.
