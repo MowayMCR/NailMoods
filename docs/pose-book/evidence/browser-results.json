@@ -1,6 +1,7 @@
 [
   {
     "width": 390,
+    "photoFillsFrame": true,
     "touchSwipe": true,
     "doubleTap": true,
     "persistence": true,
@@ -12,6 +13,7 @@
   },
   {
     "width": 820,
+    "photoFillsFrame": true,
     "touchSwipe": true,
     "doubleTap": true,
     "persistence": true,
