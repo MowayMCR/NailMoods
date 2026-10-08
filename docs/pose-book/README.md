@@ -43,3 +43,12 @@ Deux illustrations générées avec le générateur intégré, puis optimisées 
 Référence de style : vase rose existant du bureau. Prompt couverture : « closed blush pink photo album, hand-drawn dark rose contours, soft painted blush highlights, cassis spine, delicate rose/cassis flower sprigs, blank center, no text, isolated transparent background ». Prompt pages : « matching open photo album, top down, blank ivory pages, painted crease, cassis binding, blush edges, tiny floral corners outside content, no text/photos, transparent background ».
 
 Retour arrière : revenir au commit Web précédent. Conserver la table de mise en avant et les enregistrements existants ; ne pas supprimer les journaux ou favoris. La nouvelle RPC est additive et ne remplace aucune fonction de droits, de publication, de paiement ou d’équipe.
+
+
+## Planche Polaroid validée (8 octobre 2026)
+
+La photo est centrée dans un petit cadre Polaroid illustré, avec son titre sur la marge de papier. La date est manuscrite et française. Les actions sont regroupées sous le livre ; sur tablette, chaque colonne correspond à la page au-dessus. Les titres, photos et contrôles restent dynamiques, sans intégrer une capture dans l’interface.
+
+- Cadre `public/atelier/pose-book-v1/polaroid.webp`, génération intégrée : papier ivoire peint, contour irrégulier au crayon, ruban rose unique, ouverture centrale et extérieur transparents, aucun texte ni photo.
+- Police Caveat embarquée et limitée aux caractères latins usuels, source officielle Google Fonts ; licence SIL Open Font License conservée dans `src/poseBook/fonts/OFL.txt`.
+- Vérifications navigateur aux largeurs 390 et 820 : cadre chargé, police manuscrite, actions hors du livre, swipe, double tap, filtres, persistance et poses privées préservées.

@@ -20,3 +20,33 @@
 .nmBookMount .nmBookPhoto{width:100%;aspect-ratio:4/5;border:6px solid #fffdf7;border-bottom-width:20px;border-radius:1px;box-shadow:2px 5px 8px #58333f30}
 .nmBookPage h4{margin-top:18px}
 .nmBookRibbon{top:8px;right:2px}
+/* Approved illustrated Polaroid layout. */
+@font-face{font-family:NailMoodsHand;src:url('./fonts/Caveat.ttf') format('truetype');font-weight:400 700;font-style:normal;font-display:swap}
+.nmBookSpread{aspect-ratio:5/7;min-height:0}
+.nmBookSpread.wide{aspect-ratio:5/4;min-height:0}
+.nmBookPages,.wide .nmBookPages{position:absolute;inset:0;padding:18% 13% 23%;align-items:center}
+.wide .nmBookPages{padding:13% 9% 17%;gap:8%}
+.nmBookPage{display:flex;flex-direction:column;align-items:center}
+.nmBookMount,.nmBookPage:nth-child(even) .nmBookMount{width:76%;max-width:245px;margin:0 auto 8px;aspect-ratio:4/5;transform:rotate(-1deg);isolation:isolate;container-type:inline-size}
+.nmBookPage:nth-child(even) .nmBookMount{transform:rotate(1deg)}
+.nmBookMount:before,.nmBookMount:after{content:none}
+.nmBookMount .nmBookPolaroid{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;z-index:2}
+.nmBookMount .nmBookPhoto{position:absolute;left:12%;top:14.5%;width:76%;height:61%;aspect-ratio:1;border:0;border-radius:1px;box-shadow:none;background:#fff9f2;overflow:hidden}
+.nmBookMount h4{position:absolute;inset:78% 9% 7%;margin:0;display:flex;align-items:center;justify-content:center;font-family:NailMoodsHand,cursive;font-weight:500;font-size:clamp(22px,5vw,34px);line-height:.95;color:#703046;text-align:center;overflow-wrap:anywhere;z-index:3}
+.nmBookMount h4,.wide .nmBookMount h4{font-size:clamp(16px,12cqw,30px);inset:77% 9% 5%}
+.nmBookDate{font-family:NailMoodsHand,cursive;font-size:clamp(20px,4.6vw,26px);line-height:1.15;color:#735144;margin:7px 0 4px;text-align:center}
+.nmBookTags{gap:4px;margin:5px 0 0}
+.nmBookTags button{font-size:9px;padding:3px 6px;background:#f1e5debb}
+.nmBookActionGroups{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0 0}
+.nmBookActionGroups.wide{grid-template-columns:1fr 1fr;gap:8%;padding:0 9%}
+.nmBookActions{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.nmBookActions>button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:9px 14px;border:1px solid #ac7183;border-radius:16px;background:#fffaf4;color:#813e57;font-size:13px}
+.nmBookActions>button[aria-pressed=true]{background:#f0dce3;color:#8f3553;border-color:#8f3553}
+.nmBookActionTitle{flex-basis:100%;text-align:center;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.nmBookRibbon{position:static;clip-path:none;padding:4px 7px;border-radius:9px;font-size:10px;display:flex;align-items:center;gap:4px}
+.nmBookActions .nmBookRibbon{flex-basis:100%;width:max-content;flex-grow:0;justify-content:center;background:transparent;color:#893d59}
+.nmBookPhoto .journalVisual>.nailPreview{min-height:0;padding:8px 4px}
+.nmBookPhoto .journalVisual>small{font-size:8px;padding:2px 4px}
+.nmBookEmpty,.nmBookLastPage{min-height:0;padding:10px}
+.nmBookEmpty{grid-column:1/-1}
+@media(max-width:350px){.nmBookActions>button{padding:9px 10px;font-size:12px}.nmBookMount h4{font-size:21px}.nmBookDate{font-size:18px}}

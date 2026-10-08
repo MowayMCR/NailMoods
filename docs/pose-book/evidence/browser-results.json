@@ -1,6 +1,9 @@
 [
   {
     "width": 390,
+    "illustratedPolaroid": true,
+    "handwriting": true,
+    "actionsBelowBook": true,
     "photoFillsFrame": true,
     "touchSwipe": true,
     "doubleTap": true,
@@ -13,6 +16,9 @@
   },
   {
     "width": 820,
+    "illustratedPolaroid": true,
+    "handwriting": true,
+    "actionsBelowBook": true,
     "photoFillsFrame": true,
     "touchSwipe": true,
     "doubleTap": true,
