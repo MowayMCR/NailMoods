@@ -1,5 +1,5 @@
 import React from 'react';
-import {Heart, Package, Check, Palette} from 'lucide-react';
+import {Heart, Package, Check, Palette, Table2, BookHeart} from 'lucide-react';
 import Bottle from './Bottle.jsx';
 import {toneOf, shelfSorts, toneGroups} from './model.js';
 import './shelf.css';
@@ -9,7 +9,7 @@ function ShelfIcon() {
 }
 export function ViewSwitch({value, onChange}) {
   return <div className="nmShelfSwitch" role="group" aria-label="Affichage de la collection">
-    {[['shelf','Vue étagère',ShelfIcon],['photos','Vue photos',Package]].map(([id,label,Icon]) =>
+    {[['shelf','Vue étagère',ShelfIcon],['desk','Vue bureau',Table2],['photos','Vue photos',Package],['book','Mon livre de poses',BookHeart]].map(([id,label,Icon]) =>
       <button key={id} aria-label={label} title={id==='photos'?'Produits · Vue photos':label} aria-pressed={value===id} onClick={()=>onChange(id)}><Icon size={22} aria-hidden="true"/></button>)}
   </div>;
 }

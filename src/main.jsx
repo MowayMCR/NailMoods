@@ -1,3 +1,5 @@
+import Desk from './desk/Desk.jsx';
+import {DESK_KEY,initialDesk,progressFor,earnedDecorations} from './desk/model.js';
 import Shelf,{ViewSwitch,ShelfToneFilter} from './shelf/Shelf.jsx';
 import ProductFocus,{selectBottle} from './shelf/ProductFocus.jsx';
 import {ProShelfDirectory} from './shelf/ProShelf.jsx';
@@ -51,7 +53,8 @@ import ProfileView from './ProfileView';
 import { defaultProfile } from './profileOptions';
 import HomeView from './HomeView';
 import ScanGenerate from './ScanGenerate.jsx';
-import JournalView from './JournalView';
+import JournalView,{JournalVisual} from './JournalView';
+import PersonalPoseBook from './poseBook/PersonalPoseBook.jsx';
 import { JOURNAL_KEY, putJournalEntry, readJournal, removeJournalEntry } from './journal';
 import TutorialView, { TutorialBanner, TutorialsList } from './TutorialView';
 import { TUTORIAL_KEY, readTutorials, newTutorial, addTutorial, actOnTutorial, markIdeaDone } from './tutorial';
@@ -89,6 +92,9 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const browserStorage=useStorage();
   const social=useSocial();
   const [collectionView,setCollectionView]=useState(()=>readStored(browserStorage,'nm-collection-view','shelf'));
+  const [deskState,setDeskState]=useState(()=>initialDesk(readStored(browserStorage,DESK_KEY,null)));
+  const [deskError,setDeskError]=useState('');
+  function saveDesk(next){try{browserStorage.setItem(DESK_KEY,JSON.stringify(next));setDeskState(next);setDeskError('');return true;}catch{setDeskError('Le bureau ne peut pas être enregistré. Réessaie avant de quitter.');return false;}}
   const [shelfSelection,setShelfSelection]=useState(null);
   const [proShelvesOpen,setProShelvesOpen]=useState(false);
   const [shelfTone,setShelfTone]=useState('');
@@ -128,6 +134,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     const stored = readStored(browserStorage, 'nm-collection-v2', starter);
     return Array.isArray(stored) ? stored : starter;
   });
+  useEffect(()=>{const progress=progressFor(items,journal.entries,library),unlocked=earnedDecorations(progress,deskState),highWater=Math.max(deskState.highWater,progress.count);if(highWater!==deskState.highWater||JSON.stringify(unlocked)!==JSON.stringify(deskState.unlocked))saveDesk({...deskState,unlocked,highWater});},[items,journal.entries,library,deskState]);
   const [search, setSearch] = useState('');
   const personalModel = useMemo(() => buildPersonalModel({ items, favorites: library.favorites, sessions: tutorials.sessions, entries: journal.entries }), [items, library.favorites, tutorials.sessions, journal.entries]);
   const [filter, setFilter] = useState('Tous');
@@ -153,7 +160,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const material = edit?.type === 'Matériel';
 
   function navigate(next) {
-    if (next === 'equipment') { setFilter('Matériel'); setSearch(''); setCollectionFilters({ ...emptyFilters }); next = 'collection'; }
+    if (next === 'equipment') { setCollectionView('desk'); setFilter('Matériel'); setSearch(''); setCollectionFilters({ ...emptyFilters }); next = 'collection'; }
     setTab(['favorites', 'projects', 'tutorials'].includes(next) ? 'create' : next);
     setRoute('#' + tabRoutes[next]);
     window.location.hash = tabRoutes[next];
@@ -362,17 +369,19 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && tab !== 'scan' && tab !== 'collection' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
       {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'feed' ? <Discovery embedded profile={profile} onAccount={()=>{window.location.hash='profil/'+(browserStorage.accountScoped?'offer':'account');}}/> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onOpen={openIdea} onBack={() => navigate('create')} capabilities={{addScannedProducts:!limited}} onAddProducts={addScannedProducts} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onProfileChange={changeProfile} onMoodChange={id=>changeProfile({...profile,visualMood:id})} ideaAction={ideaAction} onIdeaBack={returnFromIdea} onPublish={publishIdea} onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <section className="collectionExperience">
-        <div className="nmCollectionHeading"><h1>{filter==='Matériel'?'Mon matériel':'Collection'}</h1><span>{filtered.length} fiche{filtered.length>1?'s':''}</span></div>
+        <div className="nmCollectionHeading"><h1>{collectionView==='book'?'Mon livre de poses':collectionView==='desk'?'Mon bureau':filter==='Matériel'?'Mon matériel':'Collection'}</h1><span>{collectionView==='book'?journal.entries.length:collectionView==='desk'?items.filter(p=>p.type==='Matériel').length:filtered.length} {collectionView==='book'?'pose':'fiche'}{(collectionView==='book'?journal.entries.length:collectionView==='desk'?items.filter(p=>p.type==='Matériel').length:filtered.length)>1?'s':''}</span></div>
         <div className="nmCollectionActions">
           <div className="nmCollectionModes">
-            <ViewSwitch value={collectionView} onChange={v=>{setCollectionView(v);try{browserStorage.setItem('nm-collection-view',JSON.stringify(v));}catch{}}}/>
-            <button className="nmCollectionFilterButton" aria-label="Réglages de la collection" title="Rechercher, filtrer et trier" aria-haspopup="dialog" onClick={()=>setCollectionFiltersOpen(true)}><SlidersHorizontal size={22} aria-hidden="true"/>{(search||filter!=='Tous'||collectionFilters.sort!=='color'||collectionFilters.brand||collectionFilters.family||collectionFilters.finish||collectionFilters.productKind||collectionFilters.favorites)&&<i aria-label="Recherche ou filtres actifs"/>}</button>
+            <ViewSwitch value={collectionView} onChange={v=>{setCollectionView(v);if(v==='desk'){setFilter('Matériel');setSearch('');setShelfTone('');setCollectionFilters({...emptyFilters});}else if(filter==='Matériel')setFilter('Tous');try{browserStorage.setItem('nm-collection-view',JSON.stringify(v));}catch{}}}/>
+            {collectionView!=='book'&&<button className="nmCollectionFilterButton" aria-label="Réglages de la collection" title="Rechercher, filtrer et trier" aria-haspopup="dialog" onClick={()=>setCollectionFiltersOpen(true)}><SlidersHorizontal size={22} aria-hidden="true"/>{(search||filter!=='Tous'||collectionFilters.sort!=='color'||collectionFilters.brand||collectionFilters.family||collectionFilters.finish||collectionFilters.productKind||collectionFilters.favorites)&&<i aria-label="Recherche ou filtres actifs"/>}</button>}
           </div>
-          <button className="addProduct" onClick={() => {if(filter==='Matériel'){setEquipmentOpen(true);return;}setAddCategory(filter==='Stickers & accessoires'?'decor':'product');setImporter(true);}} aria-label="Ajouter un produit" title="Ajouter un produit"><Plus /><span className="nmVisuallyHidden">Ajouter</span></button>
+          {collectionView!=='book'&&<button className="addProduct" onClick={() => {if(collectionView==='desk'||filter==='Matériel'){setEquipmentOpen(true);return;}setAddCategory(filter==='Stickers & accessoires'?'decor':'product');setImporter(true);}} aria-label="Ajouter un produit" title="Ajouter un produit"><Plus /><span className="nmVisuallyHidden">Ajouter</span></button>}
         </div>
-        <ShelfToneFilter items={baseResults} value={shelfTone} onChange={setShelfTone}/>
+        {!['desk','book'].includes(collectionView)&&<ShelfToneFilter items={baseResults} value={shelfTone} onChange={setShelfTone}/>}
+        {collectionView==='book'&&<PersonalPoseBook entries={journal.entries} renderVisual={entry=><JournalVisual entry={entry} media={media} compact/>} onNavigate={openJournal} onSave={saveJournalEntry}/>}
+        {collectionView==='desk'&&<Desk items={items} state={deskState} onChange={saveDesk} entries={journal.entries} library={library} media={media} onAdd={()=>setEquipmentOpen(true)} onEdit={item=>{setSaveError('');setEdit({...defaults,...materialDefaults,...item});}} onCreate={()=>navigate('create')} onTutorials={()=>navigate('tutorials')} error={deskError}/>}
         {collectionView==='shelf'&&<Shelf variant={shelfStyle} items={filtered.slice(0,visibleCount).filter(p=>p.type!=='Matériel')} sort={collectionFilters.sort} selectedId={shelfSelection?.product.id} onSelect={(...args)=>setShelfSelection(selectBottle(...args))}/>}
-        <section className={'collectionGrid ' + (compactCollection ? 'collectionCompact' : '')}>
+        {!['desk','book'].includes(collectionView)&&<section className={'collectionGrid ' + (compactCollection ? 'collectionCompact' : '')}>
           {filtered.slice(0, visibleCount).filter(item=>collectionView==='photos'||item.type==='Matériel').map(item => <button key={item.id} className="productCard" style={{ '--product-accent': item.type === 'Matériel' ? 'var(--a)' : productColor(item) }} onClick={() => {
             setSaveError('');
             setEdit({ ...defaults, ...materialDefaults, ...item });
@@ -389,10 +398,10 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
             </div>
             {item.fav && <Heart className="fav" fill="currentColor" aria-label="Favori" />}
           </button>)}
-        </section>
-        {social?.client&&<button className="nmProShelfShortcut" onClick={()=>setProShelvesOpen(true)}><Library size={16}/><span>L’étagère des PO</span></button>}
-        {filtered.length > visibleCount && <button className="collectionMore" onClick={() => setVisibleCount(value => value + 40)}>Afficher la suite ({filtered.length - visibleCount})</button>}
-        {filtered.length === 0 && <section className="emptyCollection">
+        </section>}
+        {social?.client&&!['desk','book'].includes(collectionView)&&<button className="nmProShelfShortcut" onClick={()=>setProShelvesOpen(true)}><Library size={16}/><span>L’étagère des PO</span></button>}
+        {!['desk','book'].includes(collectionView)&&filtered.length > visibleCount && <button className="collectionMore" onClick={() => setVisibleCount(value => value + 40)}>Afficher la suite ({filtered.length - visibleCount})</button>}
+        {!['desk','book'].includes(collectionView)&&filtered.length === 0 && <section className="emptyCollection">
           <Package aria-hidden="true" />
           <h2>{items.length ? 'Aucun résultat' : filter === 'Matériel' ? 'Ta boîte à matériel' : 'Aucun produit pour le moment'}</h2>
           <p>{items.length ? 'Essaie un autre nom ou efface les filtres.' : filter === 'Matériel' ? 'Lampes, stickers, pinceaux, limes… Rassemble ici ce que tu possèdes.' : 'Ta collection personnalise tes idées. Tu peux aussi créer sans ajouter de produit.'}</p>
@@ -404,6 +413,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     </main>
     {feedbackOpen&&<SupportPanel screen={tab} onClose={()=>setFeedbackOpen(false)}/>}
     {collectionFiltersOpen&&<Sheet title="Réglages de la collection" className="nmCollectionSettings" onClose={()=>setCollectionFiltersOpen(false)}>
+      <div className="nmDeskSettingsLinks"><button className="detailSecondary" onClick={()=>{setCollectionView('desk');setFilter('Matériel');setSearch('');try{browserStorage.setItem('nm-collection-view',JSON.stringify('desk'));}catch{setDeskError('Le choix de vue ne peut pas être enregistré.');}setCollectionFiltersOpen(false);}}>Ouvrir mon bureau</button><button className="detailSecondary" onClick={()=>{setCollectionView('photos');try{browserStorage.setItem('nm-collection-view',JSON.stringify('photos'));}catch{setDeskError('Le choix de vue ne peut pas être enregistré.');}setCollectionFiltersOpen(false);}}>Vue photo de ma collection</button><button className="detailSecondary" onClick={()=>{setCollectionFiltersOpen(false);setEquipmentOpen(true);}}>Bibliothèque du matériel</button></div>
       <fieldset className="nmShelfStyleChoice"><legend>Mon étagère</legend>{[['open','Étagères ouvertes'],['botanical','Cadre botanique']].map(([value,label])=><button type="button" key={value} aria-pressed={shelfStyle===value} onClick={()=>{setShelfStyle(value);try{browserStorage.setItem('nm-shelf-style-v2',JSON.stringify(value));}catch{setSaveError('Le style ne peut pas être enregistré.');}}}><img src={import.meta.env.BASE_URL+'atelier/collection-v2/'+(value==='open'?'plank':'frame')+'.webp'} alt=""/><span>{label}</span></button>)}</fieldset>
       <div className="collectionSearch"><Search aria-hidden="true"/><input aria-label="Rechercher dans la collection" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Nom, marque, référence…"/></div>
       <div className="filterRow" role="group" aria-label="Catégories de la collection">{['Tous','Produits','Stickers & accessoires','Matériel'].map(value=><button key={value} className={filter===value?'on':''} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{value==='Stickers & accessoires'?'Stickers':value}</button>)}</div>
