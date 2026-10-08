@@ -24,7 +24,7 @@ export const toolUses={
 };
 export function initialDesk(value){
  const v=value&&typeof value==='object'&&!Array.isArray(value)?value:{};
- return {version:1,viewInitialized:v.viewInitialized===true,size:deskSizes[v.size]?v.size:'standard',zoom:Number.isFinite(v.zoom)?Math.min(1.5,Math.max(.2,v.zoom)):.35,groupBrushes:v.groupBrushes===true,positions:v.positions&&typeof v.positions==='object'?v.positions:{},hidden:Array.isArray(v.hidden)?v.hidden.filter(x=>typeof x==='string'):[],decorations:Array.isArray(v.decorations)?v.decorations.filter(x=>typeof x==='string'):['bouquet'],unlocked:Array.isArray(v.unlocked)?v.unlocked.filter(x=>typeof x==='string'):[],highWater:Number.isFinite(v.highWater)?Math.max(0,v.highWater):0,frameEntryId:typeof v.frameEntryId==='string'?v.frameEntryId:''};
+ return {version:1,viewInitialized:v.viewInitialized===true,size:deskSizes[v.size]?v.size:'standard',zoom:Number.isFinite(v.zoom)?Math.min(1.5,Math.max(.2,v.zoom)):.35,groupBrushes:v.groupBrushes===true,positions:v.positions&&typeof v.positions==='object'?v.positions:{},hidden:Array.isArray(v.hidden)?v.hidden.filter(x=>typeof x==='string'):[],decorations:Array.isArray(v.decorations)?v.decorations.filter(x=>typeof x==='string'):['bouquet'],flowerVases:flowerVaseLinks(v.flowerVases),unlocked:Array.isArray(v.unlocked)?v.unlocked.filter(x=>typeof x==='string'):[],highWater:Number.isFinite(v.highWater)?Math.max(0,v.highWater):0,frameEntryId:typeof v.frameEntryId==='string'?v.frameEntryId:''};
 }
 export function progressFor(items=[],entries=[],library={}){
  const polishes=items.filter(p=>p.type!=='Matériel'&&Number(p.quantity??1)>0&&!isDecoration(p)&&productKind(p)==='Couleur');
@@ -46,3 +46,10 @@ export function earnedDecorations(progress,state){const count=Math.max(progress.
 export function bouquetStage(count){return count>=12?'bouquet-full':count>=8?'bouquet-leaves':count>=5?'bouquet-two':count>=3?'bouquet-one':null;}
 export function clampPosition(pos,size){const {width,height}=deskSizes[size]||deskSizes.standard;return {x:Math.max(.08,Math.min(.92,Number.isFinite(pos.x)?pos.x:.5)),y:Math.max(.34,Math.min(.87,Number.isFinite(pos.y)?pos.y:.6))};}
 export function defaultPosition(index,total=1){const cols=total>18?6:total>8?4:3,rows=Math.ceil(total/cols);return {x:.16+(index%cols)*(.68/Math.max(1,cols-1)),y:.4+Math.floor(index/cols)*(.42/Math.max(1,rows-1))};}
+
+// Keep the relationship separate from positions: moving or hiding a vase keeps its bouquet intact.
+export function flowerVaseLinks(value){
+ const flowers=new Set(decorations.filter(d=>d.kind==='flower').map(d=>d.id));
+ const vases=new Set(['bouquet',...decorations.filter(d=>d.kind==='vase').map(d=>d.id)]);
+ return Object.fromEntries(Object.entries(value&&typeof value==='object'&&!Array.isArray(value)?value:{}).filter(([flower,vase])=>flowers.has(flower)&&vases.has(vase)));
+}

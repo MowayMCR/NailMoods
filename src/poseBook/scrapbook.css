@@ -1,0 +1,42 @@
+.nmScrapCanvas,.nmScrapSwatch{background-color:var(--scrap-paper,#faf0e8);background-image:var(--scrap-texture);background-size:400% 400%;background-position:var(--scrap-texture-position);border:1px solid #bb9d8440;border-radius:7px;box-shadow:inset 0 0 20px #94795c0e}
+.nmScrapCanvas{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;isolation:isolate;color:#59333f}
+.nmScrapNode{position:absolute;aspect-ratio:1;container-type:inline-size;user-select:none}
+.nmScrapNode.type-photo{aspect-ratio:4/5}.nmScrapNode.type-text{aspect-ratio:auto;min-height:24px}
+.nmScrapSprite{display:block;width:100%;height:100%;aspect-ratio:1;background-repeat:no-repeat;pointer-events:none}
+.nmScrapPrint{display:block;position:relative;width:100%;height:100%;aspect-ratio:4/5;cursor:pointer}
+.nmScrapFrame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;z-index:2}
+.nmScrapFrame.frame-torn{filter:sepia(.1);clip-path:polygon(1% 0,20% 1%,40% 0,61% 1%,79% 0,99% 1%,100% 22%,99% 44%,100% 66%,99% 98%,80% 100%,60% 99%,40% 100%,20% 99%,0 100%,1% 70%,0 50%)}
+.nmScrapFrame.frame-gold{filter:sepia(.45) saturate(1.2) drop-shadow(0 0 1px #bf9447)}
+.nmScrapImage{position:absolute;left:12%;top:14.5%;width:76%;height:61%;overflow:hidden;background:#fff9f2}
+.nmScrapImage>img,.nmScrapImage .journalVisual>img,.app .nmPoseBook .nmScrapImage .journalVisual.compact>img,.nmScrapEditor .nmScrapImage .journalVisual.compact>img{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:cover;border-radius:0}
+.nmScrapImage .journalVisual,.app .nmPoseBook .nmScrapImage .journalVisual{position:absolute;inset:0;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.nmScrapImage .nailPreview{width:100%;height:auto;min-height:0!important;padding:4px!important;margin:0!important}.nmScrapImage small{font-size:7px!important;padding:0 2px!important}
+.nmScrapCaption{position:absolute;inset:77% 9% 5%;display:flex;align-items:center;justify-content:center;font-family:NailMoodsHand,cursive;font-size:clamp(12px,12cqw,28px);line-height:1;color:#703046;text-align:center;overflow:hidden;overflow-wrap:anywhere;z-index:3}
+.nmScrapText{display:block;font-family:NailMoodsHand,cursive;font-size:clamp(18px,13cqw,36px);line-height:1.05;text-align:center;white-space:pre-wrap;overflow-wrap:anywhere}.color-cassis{color:#74354d}.color-ink{color:#513c32}.color-sage{color:#365940}
+.nmScrapMissing{font-size:12px}.nmScrapCompose{border:1px solid #b48899;border-radius:14px;min-height:44px;padding:9px 14px;background:#fff8f4;color:#7c3c55;display:flex;align-items:center;gap:6px}
+.nmBookPage.customized{width:100%;height:100%;justify-content:center}.nmBookPage.customized>.nmBookTags{display:none}
+.nmScrapEditor .sheetBody{padding:14px}.nmScrapEditor .nmScrapCanvas{max-width:430px;margin:12px auto}.nmScrapEditor .nmScrapNode{touch-action:none;cursor:grab}.nmScrapEditor .nmScrapNode.selected{outline:2px solid #934d70;outline-offset:2px}.nmScrapEditor .nmScrapNode.selected:after{content:'';position:absolute;width:8px;height:8px;background:#fff;border:1px solid #934d70;bottom:-5px;right:-5px;pointer-events:none}.nmScrapEditor .nmScrapPrint{pointer-events:none}
+.nmScrapToolbar{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.nmScrapToolbar button,.nmScrapControls button{min-height:44px;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 10px;background:#fff8f4;border:1px solid #dac3cc;border-radius:12px;color:#74354d}.nmScrapToolbar .nmScrapFinish{margin-left:auto;background:#813e57;color:white}.nmScrapToolbar button:disabled{opacity:.5}
+.nmScrapHint{font-size:12px;line-height:1.5;color:var(--muted)}.nmScrapControls{display:flex;gap:8px;flex-wrap:wrap;border:1px solid #e0cdd3;border-radius:14px;padding:10px;margin:10px 0;background:var(--surfacePrimary)}.nmScrapControls label{display:flex;flex-direction:column;gap:5px;font-size:12px;flex:1;min-width:120px}.nmScrapControls input,.nmScrapControls select,.nmScrapControls textarea{width:100%;accent-color:#813e57;font:inherit;border-radius:8px}.nmScrapControls textarea{min-height:70px;padding:8px;resize:vertical}
+.nmScrapTabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:12px 0}.nmScrapTabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px 2px;min-height:52px;border:0;border-radius:12px;background:var(--surfaceSecondary);color:var(--text);font-size:11px}.nmScrapTabs button[aria-pressed=true]{background:#eed5de;color:#773c54}
+.nmScrapMood{display:flex;align-items:center;gap:9px;margin:10px 0;font-size:12px}.nmScrapMood select{min-height:44px;border:1px solid var(--border);background:var(--surfacePrimary);color:var(--text);padding:8px;border-radius:12px}
+.nmScrapPalette{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-height:330px;overflow:auto;padding:3px}.nmScrapPalette>button{min-width:0;border:1px solid #e1d1d7;background:#fffaf5;border-radius:12px;display:flex;flex-direction:column;align-items:center;padding:7px;color:#633749;font-size:10px;gap:4px}.nmScrapPalette>button[aria-pressed=true]{outline:2px solid #8c4662}.nmScrapPalette small{font-size:8px}.nmScrapPalette .nmScrapSprite{width:100%;aspect-ratio:1;height:auto}.nmScrapPalette .nmScrapSwatch{display:block;aspect-ratio:3/4;width:100%}.nmScrapPhotoChoice .journalVisual{width:100%;height:70px;padding:0;border:0;margin:0}.nmScrapPhotoChoice .journalVisual img{width:100%;height:70px;object-fit:cover}.nmScrapPhotoChoice .nailPreview{min-height:0!important;padding:0!important;height:70px!important}.nmScrapPhotoChoice small{display:none}
+.nmScrapPrint .tapFavoriteNotice{position:absolute;inset:14.5% 12% 24.5%;display:grid;place-content:center;gap:7px;background:#fff8efcc;color:#813e57;font-size:10px;z-index:4}.nmScrapPrint .tapFavoriteNotice:before{content:'♥';font-size:38px;text-align:center}
+.app .nmScrapEditor .nmScrapTabs{position:static;inset:auto;transform:none;width:100%;height:auto;max-width:none;box-shadow:none;border:0;padding:0;z-index:auto;background:none}
+@media(max-width:350px){.nmScrapPalette{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.nmScrapTechnique{display:grid;place-items:center;width:100%;height:100%;aspect-ratio:1;pointer-events:none}.nmScrapTechnique svg{width:100%;height:100%}
+.nmScrapPalette .nmScrapTechnique{height:auto;aspect-ratio:1}
+.nmScrapEditor .nmScrapToolbar{position:sticky;top:0;z-index:5;padding:8px 0;background:var(--surfacePrimary,#fffaf4)}
+
+/* Keep editor controls independent of the global product form layout. */
+.app .productSheet.nmScrapEditor .nmScrapControls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:100%;align-items:start}
+.app .productSheet.nmScrapEditor .nmScrapControls>label{display:flex;flex-direction:column;min-width:0;width:100%;margin:0;gap:6px;flex:none}
+.app .productSheet.nmScrapEditor .nmScrapControls>button{min-width:0;width:100%;height:auto;min-height:44px;white-space:normal;font-size:12px;padding:10px 6px}
+.app .productSheet.nmScrapEditor .nmScrapControls>label:has(select),.app .productSheet.nmScrapEditor .nmScrapControls>label:has(textarea){grid-column:1/-1}
+.app .productSheet.nmScrapEditor input[type=range]{height:44px;min-height:44px;padding:0;border:0;background:transparent;margin:0}
+.app .productSheet.nmScrapEditor .nmScrapPhotoChoice .journalVisual.compact{height:80px;min-height:0;aspect-ratio:auto;padding:0;margin:0;width:100%;overflow:hidden}
+.app .productSheet.nmScrapEditor .nmScrapPhotoChoice .journalVisual.compact>img{display:block;width:100%;height:80px;object-fit:cover;max-height:80px;border-radius:6px}
+.app .productSheet.nmScrapEditor .nmScrapPalette>button{align-self:start;overflow:hidden}
+.app .productSheet.nmScrapEditor .nmScrapToolbar{scroll-margin-top:0;gap:5px}
+.app .productSheet.nmScrapEditor .nmScrapToolbar button{min-width:0;font-size:12px;padding:8px}
+.app .nmBookPage.customized>.nmScrapCanvas{border:0;border-radius:0;box-shadow:none}
