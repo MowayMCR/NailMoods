@@ -1,0 +1,24 @@
+[
+  {
+    "width": 390,
+    "touchSwipe": true,
+    "doubleTap": true,
+    "persistence": true,
+    "filters": true,
+    "privatePreserved": true,
+    "mainScreens": true,
+    "publicFavoriteAndFeature": true,
+    "errors": []
+  },
+  {
+    "width": 820,
+    "touchSwipe": true,
+    "doubleTap": true,
+    "persistence": true,
+    "filters": true,
+    "privatePreserved": true,
+    "mainScreens": true,
+    "publicFavoriteAndFeature": true,
+    "errors": []
+  }
+]
