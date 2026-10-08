@@ -79,3 +79,16 @@ La livraison intègre aussi le tronc commun `5bf856c31fbbb5e60faaad7156d4e4a5222
 La vérification macOS a également révélé une ambiguïté des imports sans extension entre composants JSX et modules de données de casse différente. Les dix imports concernés sont explicites ; un contrôle de régression vérifie cette contrainte.
 
 Audit des dépendances npm : la dépendance transitive `source-map-js` passe de 1.2.1 à 1.2.2 pour corriger [GHSA-68fv-2mgg-jv7q](https://github.com/advisories/GHSA-68fv-2mgg-jv7q). Le nouvel audit npm ne signale aucune vulnérabilité connue au 7 octobre 2026 ; ce résultat ne constitue pas une preuve d’absence de vulnérabilités dans l’application.
+
+## Reprise vérifiée le 8 octobre 2026
+
+La PR [#33](https://github.com/MowayMCR/NailMoods/pull/33) est ouverte et fusionnable. Le dernier commit natif entièrement validé est `7a9f8f06141d61df8872be0436ad5d6de19b10a1`, identique sur les deux branches d’intégration.
+
+- [Workflow commun 37675387301](https://github.com/MowayMCR/NailMoods/actions/runs/37675387301) : validation, AAB Android, contrôles web iPad, compilation iOS, lancement simulateurs iPhone/iPad et archive iOS non signée réussis. Étapes de signature et d’envoi stores ignorées en mode verify.
+- [Workflow iOS 37675392398](https://github.com/MowayMCR/NailMoods/actions/runs/37675392398) : réussi. Aucun résultat de compilation ne prouve une disponibilité dans TestFlight.
+- Nouvelle exécution locale du 8 octobre : 573 tests, 571 réussis, 2 ignorés, aucune erreur.
+- Contrôle Supabase en lecture seule : les migrations de sécurité du 7 octobre ne sont pas appliquées en production ; la garde de recette est OFF. Les 35 résultats de recette conservés ne sont pas présentés comme une nouvelle exécution sur appareils.
+
+Correction supplémentaire : le coordinateur est le seul workflow autorisé à envoyer les bêtas. Sa numérotation commence désormais à 60 millions pour dépasser les numéros historiques du workflow iOS (50 millions). Une fonction testée distingue les runs et leurs relances ; elle refuse une tentative ≥100 et toute sortie de la plage admise. Les 3 tests ciblés du workflow passent. Les sources natives restent identiques ; les résultats CI ci-dessus concernent le commit précédent, et le prochain contrôle CI vérifiera la correction de numérotation. Avant le premier envoi, vérifier dans les deux stores que leur numéro maximal est inférieur au nouveau numéro attribué. Si un autre processus a envoyé un numéro supérieur, adapter la base avant toute publication.
+
+Ordre des étapes restantes : configurer les secrets et la validation de l’environnement GitHub ; tester les sessions sur appareils avec le backend de recette ; valider les achats Sandbox et Play test ; définir l’offre Institut ; appliquer et contrôler les migrations/fonctions en production puis activer graduellement. Le livre de poses et ses nouvelles illustrations ne font pas partie de cette livraison sécurité.

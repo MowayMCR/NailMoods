@@ -48,7 +48,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
           if [ "$MODE" = beta ]; then test "$SOURCE_SHA" = "$(git rev-parse origin/main)"; fi
           echo "sha=$SOURCE_SHA" >> "$GITHUB_OUTPUT"
-          echo "build=$((20000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))" >> "$GITHUB_OUTPUT"
+          node --input-type=module -e "import {coordinatedBuildNumber} from './scripts/mobile-version.mjs'; console.log('build='+coordinatedBuildNumber(process.env.GITHUB_RUN_NUMBER,process.env.GITHUB_RUN_ATTEMPT))" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
