@@ -1,6 +1,12 @@
 [
   {
     "width": 390,
+    "scrapbookEditor": true,
+    "crossMood": true,
+    "editorTouchDrag": true,
+    "undoRedo": true,
+    "editorPersistence": true,
+    "cancelPreserved": true,
     "illustratedPolaroid": true,
     "handwriting": true,
     "actionsBelowBook": true,
@@ -16,6 +22,12 @@
   },
   {
     "width": 820,
+    "scrapbookEditor": true,
+    "crossMood": true,
+    "editorTouchDrag": true,
+    "undoRedo": true,
+    "editorPersistence": true,
+    "cancelPreserved": true,
     "illustratedPolaroid": true,
     "handwriting": true,
     "actionsBelowBook": true,

@@ -52,3 +52,24 @@ La photo est centrée dans un petit cadre Polaroid illustré, avec son titre sur
 - Cadre `public/atelier/pose-book-v1/polaroid.webp`, génération intégrée : papier ivoire peint, contour irrégulier au crayon, ruban rose unique, ouverture centrale et extérieur transparents, aucun texte ni photo.
 - Police Caveat embarquée et limitée aux caractères latins usuels, source officielle Google Fonts ; licence SIL Open Font License conservée dans `src/poseBook/fonts/OFL.txt`.
 - Vérifications navigateur aux largeurs 390 et 820 : cadre chargé, police manuscrite, actions hors du livre, swipe, double tap, filtres, persistance et poses privées préservées.
+
+
+## Livre personnalisable (8 octobre 2026)
+
+Dans Mes poses → Réalisées → Livre, ouvrir le livre puis « Composer cette page ». Tous les décors sont accessibles sans restriction de mood ni d’offre : 32 stickers des quatre moods, 16 pictogrammes de techniques existants, 16 scotchs et 16 fonds de pages. Trois styles de cadre, textes manuscrits, jusqu’à quatre photos de poses existantes par page, taille et inclinaison, déplacement tactile ou au clavier, superposition, suppression, annuler/rétablir. « Terminer » enregistre ; « Annuler » conserve la page précédente. La page appartient à la pose de départ ; il n’y a pas de second journal.
+
+### Sauvegarde et confidentialité
+
+Le champ `scrapbook` est normalisé et sauvegardé dans le snapshot du journal existant, donc reprend son stockage local et son mécanisme de synchronisation de compte. Aucune URL ou copie de photo supplémentaire n’est stockée : les éléments référencent les poses par leur identifiant local stable. Les textes du scrapbook sont des contenus destinés à la page ; les notes privées de la fiche ne sont jamais utilisées.
+
+La projection publique garde les règles d’accès du livre existant. Chaque référence à une photo est vérifiée contre les poses déjà autorisées du même auteur ; les références privées, supprimées ou absentes de la vitrine sont éliminées et les références locales deviennent des IDs serveur. Les tags et notes de poses privées ne sont pas copiés. Aucune modification de visibilité, de droits ou d’abonnements. Les helpers privés ne sont pas exécutables directement par les clients.
+
+### Graphismes
+
+Quatre atlas WebP générés avec le générateur intégré : Soft Glam, Dark Feminine, Cottagecore, Pop Pastel, chacun 4×4 cases (8 stickers, 4 scotchs, 4 papiers). Prompt : aquarelle et contour au crayon, grille uniforme, fonds transparents, papiers opaques, aucun texte ni interface. Cadre Polaroid dérivé du cadre validé avec retrait du scotch fixe pour permettre de choisir les scotchs séparément. Les pictogrammes de techniques réutilisent `MoodGlyph` et les planches originales ; ils ne remplacent aucun élément validé.
+
+### Validation
+
+572 tests, 570 réussis et 2 anciens tests live ignorés. Tests dédiés : normalisation et limites, conservation du journal et de sa visibilité, projection publique excluant une photo privée/un autre auteur et tout champ inconnu. Navigateur 390 et 820 : mouvement tactile, réglages de taille/inclinaison, mélange de moods, plusieurs photos, fonds et textes, undo/redo, sauvegarde/rechargement, annulation, public en lecture seule avec coups de cœur. Pas d’erreur JavaScript. La synchronisation reprend le chemin existant du journal ; le test navigateur de cette livraison utilise un journal local et un profil public simulé, sans prétendre à un essai multi-appareils réel.
+
+Limites pratiques : 32 éléments maximum par page, 4 photos, textes de 160 caractères. Les images ajoutées viennent de Mes poses ; une nouvelle photo se crée depuis la fiche de pose existante. Pas de build envoyé aux stores dans cette livraison Web.
