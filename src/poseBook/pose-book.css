@@ -8,3 +8,15 @@
 /* Keep gallery sizing out of the book: crop only the displayed photo. */
 .app .nmPoseBook .nmBookPhoto .journalVisual{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;border-radius:0;min-height:0}
 .app .nmPoseBook .nmBookPhoto>img,.app .nmPoseBook .nmBookPhoto .journalVisual.compact>img{position:absolute;inset:0;width:100%;height:100%;max-height:none;min-height:0;border-radius:0;object-fit:cover;object-position:center;flex:none}
+
+/* Small paper prints attached to the page, with decorative washi tape. */
+.nmBookPages{padding-top:24%}
+.wide .nmBookPages{padding-top:17%}
+.nmBookMount{position:relative;width:80%;max-width:270px;margin:0 auto 22px;transform:rotate(-3deg);isolation:isolate}
+.nmBookPage:nth-child(even) .nmBookMount{transform:rotate(3deg)}
+.nmBookMount:before,.nmBookMount:after{content:'';position:absolute;z-index:2;pointer-events:none;width:47px;height:20px;top:-9px;background:repeating-linear-gradient(45deg,#d6a1adad 0 6px,#edc6cebc 6px 12px);box-shadow:0 1px 2px #59303a15;clip-path:polygon(3% 0,96% 3%,100% 93%,2% 100%,5% 65%,0 35%)}
+.nmBookMount:before{left:-10px;transform:rotate(-27deg)}
+.nmBookMount:after{right:-10px;transform:rotate(24deg)}
+.nmBookMount .nmBookPhoto{width:100%;aspect-ratio:4/5;border:6px solid #fffdf7;border-bottom-width:20px;border-radius:1px;box-shadow:2px 5px 8px #58333f30}
+.nmBookPage h4{margin-top:18px}
+.nmBookRibbon{top:8px;right:2px}

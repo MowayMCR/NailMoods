@@ -11,8 +11,10 @@ try{for(const width of [390,820]){
  await page.getByRole('button',{name:'Ouvrir Mon livre de poses',exact:true}).click();await page.locator('.nmBookPhoto').first().waitFor();
  assert.equal(await page.locator('.nmBookPhoto').count(),width===390?1:2);
  await page.locator('.nmBookPhoto .journalVisual>img').waitFor();
+ await page.addStyleTag({content:'.nmBookMount{transform:none!important}'});
  const crop=await page.locator('.nmBookPhoto').first().evaluate(frame=>{const image=frame.querySelector('img'),box=frame.getBoundingClientRect(),photo=image.getBoundingClientRect(),style=getComputedStyle(frame);return {width:photo.width,height:photo.height,frameWidth:box.width-parseFloat(style.borderLeftWidth)-parseFloat(style.borderRightWidth),frameHeight:box.height-parseFloat(style.borderTopWidth)-parseFloat(style.borderBottomWidth),fit:getComputedStyle(image).objectFit};});
  assert.ok(Math.abs(crop.width-crop.frameWidth)<1&&Math.abs(crop.height-crop.frameHeight)<1,'landscape photo must fill the book frame without blank bands');assert.equal(crop.fit,'cover');
+ await page.locator('head style').last().evaluate(e=>e.remove());
  await page.screenshot({path:out+'/photo-crop-'+width+'.png',fullPage:true});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  await page.locator('.nmBookSpread').scrollIntoViewIfNeeded();const b=await page.locator('.nmBookPhoto').first().boundingBox();const cdp=await context.newCDPSession(page);const start={x:b.x+b.width*.85,y:b.y+b.height*.45},end={x:b.x+b.width*.2,y:start.y};
  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[start]});for(let n=1;n<=6;n++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:start.x+(end.x-start.x)*n/6,y:start.y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
