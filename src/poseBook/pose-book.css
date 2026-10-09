@@ -66,3 +66,5 @@
 @container(min-width:680px){.nmBookCover{width:50%}}
 /* Leave room for the date below each print in a two-page spread. */
 .wide .nmBookMount,.wide .nmBookPage:nth-child(even) .nmBookMount{width:60%;max-width:210px}
+
+.nmPoseBook .nmBookHeading{position:static;height:auto;min-height:44px;padding:0;border:0;background:transparent}
