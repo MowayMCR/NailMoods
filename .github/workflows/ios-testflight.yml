@@ -191,17 +191,17 @@ jobs:
       - name: Real native iPhone and iPad simulator launch captures
         run: python3 scripts/ci/ios-simulator-captures.py "$RUNNER_TEMP/nm-simulator/Build/Products/Release-iphonesimulator/App.app"
       - name: Unsigned device archive when verifying
-        if: inputs.mode != 'testflight' || !(github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        if: inputs.mode != 'testflight' || !(github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
         run: |
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/NailMoods-unsigned.xcarchive" -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" CODE_SIGNING_ALLOWED=NO archive > artifacts/ios/unsigned-archive.log 2>&1 || { tail -80 artifacts/ios/unsigned-archive.log; exit 1; }
           python3 scripts/ci/inspect-ios.py "$RUNNER_TEMP/NailMoods-unsigned.xcarchive/Products/Applications/App.app" > artifacts/ios/unsigned-inspection.json
       - name: Check Apple identity has been confirmed
-        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
         env:
           CONFIRMED: ${{ vars.IOS_BUNDLE_ID_CONFIRMED }}
         run: test "$CONFIRMED" = true || { echo 'Confirm the existing Apple Bundle ID and set IOS_BUNDLE_ID_CONFIRMED=true before signing.'; exit 1; }
       - name: Install distribution signature and upload key
-        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_DISTRIBUTION_P12_BASE64: ${{ secrets.APPLE_DISTRIBUTION_P12_BASE64 }}
@@ -212,7 +212,7 @@ jobs:
           APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
         run: python3 scripts/ci/ios-signing.py
       - name: Archive, export and verify signed IPA
-        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
@@ -225,7 +225,7 @@ jobs:
           ditto -c -k --keepParent "$RUNNER_TEMP/NailMoods.xcarchive/dSYMs" artifacts/ios/dSYMs.zip
           shasum -a 256 "${ipa[0]}" artifacts/ios/dSYMs.zip > artifacts/ios/SHA256SUMS
       - name: Validate and upload to App Store Connect (TestFlight only)
-        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
         env:
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
