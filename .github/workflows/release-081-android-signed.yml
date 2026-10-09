@@ -1,0 +1,69 @@
+name: NailMoods 0.8.1 — signed Android candidate
+on:
+  push:
+    branches: [release/nailmoods-0.8.1-web-android-ios]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  signed-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      NM_UPLOAD_KEYSTORE_B64: ${{ secrets.NM_UPLOAD_KEYSTORE_BASE64 }}
+      NM_UPLOAD_STORE_PASSWORD: ${{ secrets.NM_UPLOAD_STORE_PASSWORD }}
+      NM_UPLOAD_KEY_ALIAS: ${{ secrets.NM_UPLOAD_KEY_ALIAS }}
+      NM_UPLOAD_KEY_PASSWORD: ${{ secrets.NM_UPLOAD_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine signing readiness without exposing secrets
+        id: readiness
+        shell: bash
+        run: |
+          if [[ -n "$NM_UPLOAD_KEYSTORE_B64" && -n "$NM_UPLOAD_STORE_PASSWORD" && -n "$NM_UPLOAD_KEY_ALIAS" && -n "$NM_UPLOAD_KEY_PASSWORD" ]]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "Android upload credentials present"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Android upload credentials not complete. No signed AAB will be generated."
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.readiness.outputs.ready == 'true'
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        if: steps.readiness.outputs.ready == 'true'
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Build and verify signed AAB
+        if: steps.readiness.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          TEMP_KEYSTORE="$RUNNER_TEMP/nailmoods-upload.jks"
+          trap 'rm -f "$TEMP_KEYSTORE"' EXIT
+          printf '%s' "$NM_UPLOAD_KEYSTORE_B64" | base64 -d > "$TEMP_KEYSTORE"
+          export NM_UPLOAD_KEYSTORE="$TEMP_KEYSTORE"
+          npm ci --no-audit --no-fund
+          npm test
+          node scripts/build-theme-css.mjs
+          npm run mobile:production
+          NAILMOODS_MOBILE_ENV=production npx cap sync android
+          npm run mobile:assets
+          chmod +x android/gradlew
+          ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain
+          mkdir -p artifacts/android-signed
+          cp android/app/build/outputs/bundle/release/app-release.aab artifacts/android-signed/NailMoods-0.8.1-code12-signed.aab
+          jarsigner -verify -verbose -certs artifacts/android-signed/NailMoods-0.8.1-code12-signed.aab > artifacts/android-signed/jarsigner-verification.txt
+          grep -q 'jar verified' artifacts/android-signed/jarsigner-verification.txt
+          sha256sum artifacts/android-signed/*.aab > artifacts/android-signed/SHA256SUMS
+          echo "Signed AAB generated. Verify upload certificate SHA-256 against Play Console before import."
+      - uses: actions/upload-artifact@v4
+        if: steps.readiness.outputs.ready == 'true' && success()
+        with:
+          name: NailMoods-0.8.1-code12-SIGNED-AAB
+          path: artifacts/android-signed/
+          retention-days: 14
