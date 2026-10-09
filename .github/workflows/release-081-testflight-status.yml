@@ -1,5 +1,8 @@
 name: Verify delivered NailMoods 0.8.1 TestFlight availability
 on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/release-081-testflight-status.yml', 'scripts/ci/apple-testflight-status.py']
   workflow_run:
     workflows: ["NailMoods 0.8.1 TestFlight signed delivery"]
     types: [completed]
@@ -7,7 +10,7 @@ permissions:
   contents: read
 jobs:
   status:
-    if: github.event.workflow_run.head_sha == '88d4dab4e7153792a498eed20836228fecb4b27d' && (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
+    if: github.event_name == 'push' || github.event.workflow_run.head_sha == '88d4dab4e7153792a498eed20836228fecb4b27d' && (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
