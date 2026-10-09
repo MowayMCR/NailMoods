@@ -1,0 +1,77 @@
+name: Salon — common Web and unsigned native checks
+on:
+  push:
+    branches: [feat/salon-collaborative]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+        env:
+          VITE_DEPLOYMENT_ENV: recette
+          VITE_PRO_V2_ENABLED: 'true'
+          VITE_SALON_ENABLED: 'true'
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/test-salon-browser.mjs
+      - run: node scripts/test-tablet-book-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: salon-tablet-browser-evidence
+          path: |
+            salon-evidence/
+            tablet-evidence/
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm run mobile:recette
+        env:
+          VITE_PRO_V2_ENABLED: 'true'
+          VITE_SALON_ENABLED: 'true'
+      - run: npx cap sync android
+        env:
+          NAILMOODS_MOBILE_ENV: recette
+      - run: chmod +x android/gradlew
+      - run: ./android/gradlew -p android -PnailmoodsEnvironment=recette :app:compileDebugJavaWithJavac --console=plain
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run ios:recette
+        env:
+          VITE_PRO_V2_ENABLED: 'true'
+          VITE_SALON_ENABLED: 'true'
+      - run: xcodebuild -project ios/App/App.xcodeproj -scheme App -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/nailmoods-salon CODE_SIGNING_ALLOWED=NO build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: salon-ios-build-logs
+          path: /tmp/nailmoods-salon/Logs/Build

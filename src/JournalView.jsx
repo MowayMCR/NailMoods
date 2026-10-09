@@ -1,3 +1,4 @@
+import {salonEnabled,salonService} from './professional/salonService';
 import AtelierArt from './design/AtelierArt';
 import AdaptCollection from './engagement/AdaptCollection';
 import JournalTracking from './poseCycle/JournalTracking';
@@ -61,6 +62,8 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
   const social=useSocial(),canPublish=['plus','pro'].includes(social?.tier);
   const [draft, setDraft] = useState(() => {try{const saved=JSON.parse(storage.getItem(draftKey));if(saved?.id)return saved;}catch{}return entry ? JSON.parse(JSON.stringify(entry)) : draftEntry ? JSON.parse(JSON.stringify(draftEntry)) : newJournalEntry('journal-' + messageId(), session);});
   const [photoUrl,setPhotoUrl]=useState('');
+  const [salons,setSalons]=useState([]),[salonId,setSalonId]=useState(''),[saving,setSaving]=useState(false);
+  useEffect(()=>{let alive=true;if(salonEnabled()&&social?.client)salonService(social.client).state().then(s=>{if(alive)setSalons(s.spaces.filter(w=>w.operational));}).catch(()=>{});return()=>{alive=false;};},[social?.client]);
   useEffect(()=>{let active=true;setPhotoUrl('');if(draft.mediaPath&&storage.media)storage.media.signedUrl(draft.mediaPath).then(url=>{if(active)setPhotoUrl(url);}).catch(()=>{});return()=>{active=false;};},[draft.mediaPath,storage]);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
@@ -74,14 +77,18 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
     try{storage.setItem(draftKey,JSON.stringify(next));setError('');}
     catch{setError('Le brouillon n’a pas pu être conservé. Reste sur cet écran et réessaie.');}
   };
-  function save(event) {
+  async function save(event) {
     event.preventDefault();
-    if (photoBusy) return;
+    if (photoBusy||saving) return;
     const invalid = journalValidation(draft);
     if (invalid) { setError(invalid); return; }
     const publicTags=cleanTags(draft.publicTags??suggestTags(draft));
     const result = onSave({...draft,publicTags,searchTags:internalTags(Object.values(publicTags).flat().join(' '))});
-    if (result.ok) {try{storage.setItem(draftKey,'null');}catch{}onNavigate(result.id);}
+    if (result.ok) {
+      if(salonId){setSaving(true);try{const id=await storage.remoteContentId('journal_entries',result.id);await salonService(social.client).action(salonId,'submit',{kind:'journal',id});}
+      catch{setError('Ta pose est enregistrée. L’envoi au salon n’a pas abouti : réessaie depuis Mon salon après synchronisation.');setSaving(false);return;}setSaving(false);}
+      try{storage.setItem(draftKey,'null');}catch{}onNavigate(result.id);
+    }
     else setError(result.error);
   }
   return <div className="journalPage journalEditPage">
@@ -90,6 +97,7 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
     <form className="journalForm" onSubmit={save} noValidate>
       <section className="journalFormCard">
         <ProductPhoto value={draft.mediaPath ? photoUrl : draft.photo} onChange={photo => change({ photo, mediaPath: null, publicMediaPath: null })} onBusy={setPhotoBusy} alt="Photo du résultat de ma pose" cameraLabel="Photographier ma pose" />
+        {salons.length>0&&<label>Ajouter aussi à la vitrine du salon<select value={salonId} onChange={e=>{setSalonId(e.target.value);if(e.target.value)change({visibility:'public'});}}><option value="">Uniquement ma galerie</option>{salons.map(w=><option value={w.id} key={w.id}>{w.name}{w.moderation?' · validation préalable':''}</option>)}</select>{salonId&&<small>La pose reste dans ta galerie. Sa publication respecte la vérification de l’image et la validation du salon.</small>}</label>}
         <label htmlFor="journal-title">Un nom pour cette pose<input id="journal-title" maxLength={120} value={draft.title} onChange={event => change({ title: event.target.value })} placeholder={'Ma pose du ' + journalDate(draft.date)} /></label>
         <label htmlFor="journal-date">Date de la pose<input id="journal-date" type="date" max={localDate()} value={draft.date} onChange={event => change({ date: event.target.value })} /></label>
       </section>
@@ -111,7 +119,7 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
         <button type="button" className="journalSecondary" onClick={() => setProductsOpen(true)}><Package />{draft.products.length ? 'Modifier les produits' : 'Choisir dans ma collection'}</button>
       </section>
       </details>
-      <div className="journalFormActions">{error && <p className="formError" role="alert">{error}</p>}<button type="submit" className="journalPrimary" disabled={photoBusy}><Check />{photoBusy ? 'Préparation de la photo…' : entry ? 'Enregistrer les modifications' : 'Enregistrer'}</button><small><StorageHint guest="Conservée dans ce navigateur, sur cet appareil." account="Conservée dans ton compte après synchronisation."/></small></div>
+      <div className="journalFormActions">{error && <p className="formError" role="alert">{error}</p>}<button type="submit" className="journalPrimary" disabled={photoBusy||saving}><Check />{saving ? 'Envoi au salon…' : photoBusy ? 'Préparation de la photo…' : entry ? 'Enregistrer les modifications' : 'Enregistrer'}</button><small><StorageHint guest="Conservée dans ce navigateur, sur cet appareil." account="Conservée dans ton compte après synchronisation."/></small></div>
     </form>
     {productsOpen && <ProductPicker products={draft.products} items={items} onApply={products => { change({ products }); setProductsOpen(false); }} onClose={() => setProductsOpen(false)} />}
   </div>;

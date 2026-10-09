@@ -25,6 +25,7 @@ export function billingError(error) {
     billing_not_available: 'Les achats sont disponibles dans la version Android distribuée par Google Play.',
     billing_ineligible: 'Confirme les conditions et ta majorité dans Confidentialité avant de souscrire.',
     existing_subscription: 'Un abonnement existe déjà. Restaure tes achats ou gère-le dans Google Play.',
+    salon_entitlement_active:'Ton accès Pro est inclus dans ton salon. Aucun second abonnement n’est nécessaire.',
     manual_entitlement_active: 'Tu bénéficies déjà d’un accès offert par NailMoods.',
     price_changed: 'Cette offre a changé. Actualise les offres et vérifie le prix avant de réessayer.',
     purchase_account_mismatch: 'Cet achat est associé à un autre compte NailMoods. Connecte-toi au compte utilisé pour l’achat.',

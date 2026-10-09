@@ -42,6 +42,7 @@ export default function GooglePlayBillingPanel({ client, tier, onApplied }) {
   const manage = 'https://play.google.com/store/account/subscriptions?package=' + encodeURIComponent(state?.packageName || 'com.nailmoods.app');
   return <section className="card accountOffer billingPanel" aria-labelledby="billing-panel-title">
     <div className="accountOfferHeading"><div><small>ABONNEMENTS GOOGLE PLAY</small><h2 id="billing-panel-title">Plus et Pro</h2><p>Free reste utilisable sans abonnement. Les abonnements sont facultatifs.</p></div><Sparkles aria-hidden="true"/></div>
+    {context?.instituteActive && <p>Ton salon inclut déjà les fonctions Pro. Aucun abonnement individuel supplémentaire n’est nécessaire.</p>}
     {context?.otherProviderActive && <p>Ton offre est déjà active sur ton compte. Aucun second abonnement n’est nécessaire.</p>}
     {manual && <p className="accountOfferCurrent">Ton accès {state.manualTier === 'pro' ? 'Pro' : 'Plus'} est offert par NailMoods. Aucune souscription n’est nécessaire.</p>}
     {!android && <p>Pour souscrire, utilise l’application Android installée depuis Google Play.</p>}
@@ -54,7 +55,7 @@ export default function GooglePlayBillingPanel({ client, tier, onApplied }) {
         const available = product?.formattedPrice && period;
         return <div className="billingChoice" key={key}><div><h3>{label}</h3><p>{description}</p>
           {available ? <><p><strong>{product.formattedPrice} / {period}</strong></p><p>Facturé chaque {period}. Renouvellement automatique au même tarif, sauf changement annoncé par Google Play. Résiliable dans Google Play ; accès conservé jusqu’à la fin de la période payée, sauf remboursement ou révocation.</p></> : <p>Prix indisponible : aucune souscription proposée.</p>}
-          <button disabled={busy !== '' || !android || !context?.enabled || !context?.canPurchase || manual || existing || !available} onClick={() => buy(key)}>{busy === key ? 'Vérification…' : available ? 'S’abonner à ' + label + ' · ' + product.formattedPrice + ' / ' + period : label + ' indisponible'}</button>
+          <button disabled={busy !== '' || !android || !context?.enabled || !context?.canPurchase || context?.instituteActive || manual || existing || !available} onClick={() => buy(key)}>{busy === key ? 'Vérification…' : available ? 'S’abonner à ' + label + ' · ' + product.formattedPrice + ' / ' + period : label + ' indisponible'}</button>
         </div></div>;
       })}
     </div>

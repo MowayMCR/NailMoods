@@ -204,6 +204,13 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
   const adapter={
     accountScoped:true,
     media,userId,workspaceId,
+    async remoteContentId(table,localId){
+      if(!['journal_entries','inspirations'].includes(table))throw new Error('invalid_content_kind');
+      await initialize();check();await flush();if(state.queue.length)await flush();
+      const id=state.ids[token(table,localId)];
+      if(!id||state.queue.some(op=>op.table===table&&op.rowId===id))throw new Error('content_sync_pending');
+      return id;
+    },
     async acceptJournalRow(row){
       await initialize();check();
       if(!row?.id||row.created_by!==userId||row.workspace_id!==workspaceId||!row.snapshot?.id)throw new Error('Pose reçue pour un autre compte.');
