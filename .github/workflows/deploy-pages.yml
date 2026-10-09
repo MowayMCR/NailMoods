@@ -35,6 +35,7 @@ jobs:
           VITE_POSE_CYCLE_ENABLED: 'true'
           VITE_CATALOGUE_ADMIN_ENABLED: 'true'
           VITE_PO_LOOP_ENABLED: 'true'
+          VITE_SALON_ENABLED: 'true'
           VITE_SUPABASE_URL: https://rvqmtnqvzzxzwfxfyjcg.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_EZthbmym16fnDWx9W6RkEg_ublzI88l
         run: npm run build
