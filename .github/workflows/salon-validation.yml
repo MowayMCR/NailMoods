@@ -34,7 +34,7 @@ jobs:
             tablet-evidence/
   android:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -56,6 +56,20 @@ jobs:
       - run: npm run mobile:assets
       - run: chmod +x android/gradlew
       - run: ./android/gradlew -p android -PnailmoodsEnvironment=recette :app:compileDebugJavaWithJavac --console=plain
+      - name: Build Android beta AAB candidate (not signed for Play)
+        run: |
+          npm run mobile:production
+          npx cap sync android
+          ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain
+          mkdir -p artifacts/salon-android
+          cp android/app/build/outputs/bundle/release/app-release.aab artifacts/salon-android/UNSIGNED-NailMoods-0.8.1-code12.aab
+          sha256sum artifacts/salon-android/*.aab > artifacts/salon-android/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: salon-android-unsigned-aab
+          path: artifacts/salon-android/
+          retention-days: 7
   ios:
     runs-on: macos-26
     timeout-minutes: 30
