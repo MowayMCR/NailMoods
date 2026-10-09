@@ -48,11 +48,11 @@ export function createMediaStorage(client, { userId } = {}) {
       if (error) throw new MediaStorageError('upload_failed', 'La photo n’a pas pu être enregistrée. Réessaie.');
       return { path: data.path || path, bucket: BUCKET, contentType: file.type, bytes: file.size };
     },
-    async signedUrl(path, expiresIn = 300) {
+    async signedUrl(path) {
       if (typeof path !== 'string' || !path || (userId && userIdPrefix(path) !== userId)) throw new MediaStorageError('forbidden_path', 'Cette image ne peut pas être ouverte ici.');
-      const { data, error } = await client.storage.from(BUCKET).createSignedUrl(path, expiresIn);
+      const { data, error } = await client.storage.from(BUCKET).download(path);
       if (error) throw new MediaStorageError('download_failed', 'La photo n’a pas pu être chargée.');
-      return data.signedUrl;
+      return URL.createObjectURL(data);
     },
     async download(path) {
       const {data,error}=await client.storage.from(BUCKET).download(path);

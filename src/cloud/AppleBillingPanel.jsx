@@ -11,6 +11,7 @@ export default function AppleBillingPanel({client,tier,onApplied}) {
   }catch(e){setNotice(appleError(e));}finally{setBusy(false);}}
   return <section className="card accountOffer billingPanel" aria-labelledby="apple-offer-title"><small>ABONNEMENTS APP STORE</small><h2 id="apple-offer-title">Mon offre</h2><p>Free reste gratuit. Les abonnements sont facultatifs.</p>
     {state?.manualPriority&&<p>Ton accès {state.manualTier==='pro'?'Pro':'Plus'} est offert par NailMoods. Aucune souscription n’est nécessaire.</p>}
+    {context?.instituteActive&&<p>Ton institut fournit déjà un accès. Aucun second abonnement n’est nécessaire.</p>}
     {context?.otherProviderActive&&<p>Ton offre est déjà active sur ton compte. Aucun second abonnement n’est nécessaire.</p>}
     {!context?.enabled&&<p>Les abonnements Apple ne sont pas encore ouverts.</p>}
     <div className="billingChoices">{[['plus','Plus','Toutes les fonctions Free, projets depuis 1 à 4 photos, Découvrir, connexions et partage.'],['pro','Pro','Les fonctions Plus, le profil et l’espace professionnel, le nuancier et l’Atelier Pro.']].map(([key,label,description])=>{

@@ -1,0 +1,15 @@
+✔ media paths are scoped by user and workspace and never public (1.05894ms)
+✔ media validation rejects unsupported and oversized files (0.996093ms)
+✔ media adapter uploads with bounded type and returns a storage reference (1.245787ms)
+✔ a retry updates an already-created private photo without requiring a read (0.283146ms)
+✔ published media uses the controlled reader, never a public Storage URL (0.507357ms)
+✔ public copies use fresh paths and INSERT only in the protected bucket (0.876807ms)
+✔ network failure preserves the client; foreground revocation signals once (10.369619ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 138.997988

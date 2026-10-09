@@ -6,6 +6,6 @@ export function proService(client){const rpc=async(name,args={})=>{const {data,e
  portfolio:(wid,kind,id,enabled,productId=null)=>rpc('nm_pro_portfolio',{p_workspace_id:wid,p_kind:kind,p_content_id:id,p_product_id:productId,p_enabled:enabled}),
  search:(query='',type='',city='')=>rpc('nm_pro_search',{p_query:query,p_type:type,p_city:city}),
  async upload(userId,workspaceId,file){validateImage(file);const ext={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[file.type];const path=`${userId}/${workspaceId}/${crypto.randomUUID()}.${ext}`;const {error}=await client.storage.from('nailmoods-pro').upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;return path;},
- async image(path){const {data,error}=await client.storage.from('nailmoods-pro').createSignedUrl(path,300);if(error)throw error;return data.signedUrl;}
+ async image(path){const {data,error}=await client.storage.from('nailmoods-pro').download(path);if(error)throw error;return URL.createObjectURL(data);}
 };}
 export const proV2Enabled=()=>import.meta.env?.VITE_PRO_V2_ENABLED==='true';

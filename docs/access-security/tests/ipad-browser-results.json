@@ -1,0 +1,366 @@
+{
+  "scope": "Chromium browser, local guest fixtures and Apple CSS. Not a native simulator or physical iPad test.",
+  "results": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screen": "home",
+      "geometry": {
+        "width": 390,
+        "viewport": 390
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screen": "feed",
+      "geometry": {
+        "width": 390,
+        "viewport": 390
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screen": "create",
+      "geometry": {
+        "width": 390,
+        "viewport": 390
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screen": "collection",
+      "geometry": {
+        "width": 390,
+        "viewport": 390
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screen": "journal",
+      "geometry": {
+        "width": 390,
+        "viewport": 390
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "screen": "home",
+      "geometry": {
+        "width": 768,
+        "viewport": 768
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "screen": "feed",
+      "geometry": {
+        "width": 768,
+        "viewport": 768
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "screen": "create",
+      "geometry": {
+        "width": 768,
+        "viewport": 768
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "screen": "collection",
+      "geometry": {
+        "width": 768,
+        "viewport": 768
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "screen": "journal",
+      "geometry": {
+        "width": 768,
+        "viewport": 768
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 820,
+        "height": 1180
+      },
+      "screen": "home",
+      "geometry": {
+        "width": 820,
+        "viewport": 820
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 820,
+        "height": 1180
+      },
+      "screen": "feed",
+      "geometry": {
+        "width": 820,
+        "viewport": 820
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 820,
+        "height": 1180
+      },
+      "screen": "create",
+      "geometry": {
+        "width": 820,
+        "viewport": 820
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 820,
+        "height": 1180
+      },
+      "screen": "collection",
+      "geometry": {
+        "width": 820,
+        "viewport": 820
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 820,
+        "height": 1180
+      },
+      "screen": "journal",
+      "geometry": {
+        "width": 820,
+        "viewport": 820
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 1366
+      },
+      "screen": "home",
+      "geometry": {
+        "width": 1024,
+        "viewport": 1024
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 1366
+      },
+      "screen": "feed",
+      "geometry": {
+        "width": 1024,
+        "viewport": 1024
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 1366
+      },
+      "screen": "create",
+      "geometry": {
+        "width": 1024,
+        "viewport": 1024
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 1366
+      },
+      "screen": "collection",
+      "geometry": {
+        "width": 1024,
+        "viewport": 1024
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 1366
+      },
+      "screen": "journal",
+      "geometry": {
+        "width": 1024,
+        "viewport": 1024
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "screen": "home",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1180
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "screen": "feed",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1180
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "screen": "create",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1180
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "screen": "collection",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1180
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "screen": "journal",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1180
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1366,
+        "height": 1024
+      },
+      "screen": "home",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1366
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1366,
+        "height": 1024
+      },
+      "screen": "feed",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1366
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1366,
+        "height": 1024
+      },
+      "screen": "create",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1366
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1366,
+        "height": 1024
+      },
+      "screen": "collection",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1366
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": {
+        "width": 1366,
+        "height": 1024
+      },
+      "screen": "journal",
+      "geometry": {
+        "width": 1040,
+        "viewport": 1366
+      },
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

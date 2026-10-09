@@ -35,6 +35,7 @@ export async function purchaseTier(client, tier, displayedProduct) {
   if (!context.enabled) throw new Error('billing_not_configured');
   if (!context.eligible) throw new Error('billing_ineligible');
   if (context.manualPriority) throw new Error('manual_entitlement_active');
+  if (!context.canPurchase) throw new Error(context.instituteActive?'institute_entitlement_active':'other_subscription_active');
   if (context.hasSubscription) throw new Error('existing_subscription');
   if (context.allowedPlans[productId] !== displayedProduct.basePlanId) throw new Error('price_changed');
   const result = await NailMoodsBilling.purchase({ ...displayedProduct, accountId: context.accountId });
@@ -60,12 +61,13 @@ export async function restoreGooglePlayPurchases(client) {
     try { synced.push(await syncGooglePlayPurchase(client, purchase, productId)); }
     catch (error) { if (purchase.purchaseState === 2) synced.push({ purchaseState: 'pending' }); else failures.push(error.message); }
   }
+  if(failures.some(code=>/purchase_(token_owned_by_another_account|account_mismatch)/.test(code)))throw Error('purchase_token_owned_by_another_account');
   // Also query stored tokens: queryPurchasesAsync omits expired/held purchases.
   const reconciled = await billingRequest(client, { action: 'refresh' });
   return { synced, failures, reconciliationFailed: reconciled.failed || 0 };
 }
 export async function readGooglePlayEntitlement(client) {
-  const { data, error } = await client.rpc('google_play_entitlement_state');
+  const { data, error } = await client.rpc('billing_entitlement_state');
   if (error) throw error;
   return data;
 }

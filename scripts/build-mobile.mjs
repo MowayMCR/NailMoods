@@ -1,3 +1,5 @@
+import {mobileFeatures} from './mobile-features.mjs';
+import {execFileSync} from 'node:child_process';
 import { mobileVersion } from './mobile-version.mjs';
 import { spawnSync } from 'node:child_process';
 import { writeFileSync, rmSync, readdirSync, readFileSync } from 'node:fs';
@@ -8,7 +10,7 @@ for (const args of [['scripts/prepare-recognition.mjs'], ['node_modules/vite/bin
   const result = spawnSync(process.execPath, args, {env, stdio:'inherit'});
   if (result.status !== 0) process.exit(result.status || 1);
 }
-writeFileSync('dist-mobile/mobile-build.json', JSON.stringify({environment, ...mobileVersion(env.NAILMOODS_PLATFORM), appId:env.NAILMOODS_PLATFORM==='ios'&&env.NAILMOODS_IOS_BUNDLE_ID?env.NAILMOODS_IOS_BUNDLE_ID:environment==='production'?'com.nailmoods.app':'com.nailmoods.app.recette'}, null, 2));
+writeFileSync('dist-mobile/mobile-build.json', JSON.stringify({platform:env.NAILMOODS_PLATFORM||'android',features:mobileFeatures(environment,env),sourceCommit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),buildRun:env.GITHUB_RUN_ID||null,environment, ...mobileVersion(env.NAILMOODS_PLATFORM), appId:env.NAILMOODS_PLATFORM==='ios'&&env.NAILMOODS_IOS_BUNDLE_ID?env.NAILMOODS_IOS_BUNDLE_ID:environment==='production'?'com.nailmoods.app':'com.nailmoods.app.recette'}, null, 2));
 
 // Historical texts remain on the public website; only active texts ship offline.
 rmSync('dist-mobile/legal/archives', {recursive:true, force:true});

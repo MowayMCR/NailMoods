@@ -1,3 +1,4 @@
+import {requireActiveSession} from '../_shared/sessionGuard.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.116.0';
 import { SignJWT, importPKCS8 } from 'npm:jose@5.10.0';
 import { verifyAndPersist } from '../_shared/googlePlayCore.mjs';
@@ -52,6 +53,7 @@ Deno.serve(async request => {
       if (!bearer.startsWith('Bearer ')) return json({ error: 'authentication_required' }, 401);
       const { data: { user }, error } = await admin.auth.getUser(bearer.slice(7));
       if (error || !user || !user.email_confirmed_at) return json({ error: 'authentication_required' }, 401);
+      await requireActiveSession(bearer);
       userId = user.id;
       context = await rpc('google_play_server_context', { p_user_id: userId, p_prepare: body.action === 'prepare' });
     }
@@ -83,8 +85,8 @@ Deno.serve(async request => {
     const message = error instanceof Error ? error.message : '';
     const safe = ['purchase_account_mismatch', 'purchase_product_mismatch', 'unrecognized_product_or_plan', 'invalid_token',
       'billing_not_configured', 'billing_disabled', 'billing_ineligible', 'purchase_token_owned_by_another_account',
-      'authentication_required', 'rate_limit', 'invalid_scheduler_key', 'existing_subscription', 'manual_entitlement_active'];
+      'SESSION_REPLACED', 'authentication_required', 'rate_limit', 'invalid_scheduler_key', 'existing_subscription', 'manual_entitlement_active'];
     const code = safe.find(value => message.includes(value)) || 'verification_unavailable';
-    return json({ error: code }, ['authentication_required', 'invalid_scheduler_key'].includes(code) ? 401 : code === 'verification_unavailable' || code === 'billing_not_configured' ? 503 : 400);
+    return json({ error: code }, ['authentication_required', 'invalid_scheduler_key','SESSION_REPLACED'].includes(code) ? 401 : code === 'verification_unavailable' || code === 'billing_not_configured' ? 503 : 400);
   }
 });

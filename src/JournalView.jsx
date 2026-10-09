@@ -1,5 +1,5 @@
 import AtelierArt from './design/AtelierArt';
-import AdaptCollection from './engagement/AdaptCollection';
+import AdaptCollection from './engagement/AdaptCollection.jsx';
 import JournalTracking from './poseCycle/JournalTracking';
 import {poseDestinations} from './poseDestinations';
 import {messageId} from './social/messageState';

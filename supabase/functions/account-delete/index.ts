@@ -1,3 +1,4 @@
+import {requireActiveSession,sessionGuardResponse} from '../_shared/sessionGuard.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.116.0';
 
 const cors = {
@@ -29,6 +30,7 @@ Deno.serve(async (req) => {
     if (!groups.has(item.bucket)) groups.set(item.bucket, []);
     groups.get(item.bucket)!.push(item.object_path);
   }
+  try{await requireActiveSession(req.headers.get('Authorization'));}catch(error){return sessionGuardResponse(error,cors)||json({error:'session_check_unavailable'},503);}
   const admin = createClient(url, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false, autoRefreshToken: false } });
   for (const [bucket, paths] of groups) {
     for (let at = 0; at < paths.length; at += 100) {
