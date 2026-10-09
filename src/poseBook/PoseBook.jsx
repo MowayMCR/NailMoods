@@ -5,6 +5,7 @@ import TapFavorite from '../TapFavorite.jsx';
 import {poseTags,filterBook,swipeDirection,bookPage} from './model.js';
 import './pose-book.css';
 import ScrapPage from './ScrapPage.jsx';
+import ScrapFrame from './ScrapFrame.jsx';
 import {cleanScrapbook} from './scrapbook.js';
 function bookDate(value){if(!/^\d{4}-\d{2}-\d{2}$/.test(value||''))return value||'';const date=new Date(value+'T12:00:00Z');return Number.isNaN(date.getTime())?value:new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(date);}
 const art=import.meta.env.BASE_URL+'atelier/pose-book-v1/';
@@ -27,7 +28,7 @@ export default function PoseBook({entries=[],title='Mon livre de poses',subtitle
     <img className="nmBookPaper" src={art+'open.webp'} alt="" aria-hidden="true"/>
     <div className="nmBookPages">{visible.map(entry=><article className={'nmBookPage'+(cleanScrapbook(entry.scrapbook)?' customized':'')} key={entry.kind+entry.id}>
      {cleanScrapbook(entry.scrapbook)?<ScrapPage design={cleanScrapbook(entry.scrapbook)} entries={entries} renderVisual={renderVisual} onOpen={onOpen} onFavorite={onFavorite}/>:<>
-     <div className="nmBookMount"><img className="nmBookPolaroid" src={import.meta.env.BASE_URL+'atelier/scrapbook-v2/frame.svg'} alt="" aria-hidden="true"/><TapFavorite className="nmBookPhoto" onOpen={()=>onOpen?.(entry)} onToggle={()=>onFavorite?.(entry)} saved={Boolean(entry.saved)} aria-label={'Ouvrir la pose '+(entry.title||'Ma pose')}>{renderVisual(entry)}</TapFavorite><h4>{entry.title||'Ma pose'}</h4></div>
+     <div className="nmBookMount"><ScrapFrame className="nmBookPolaroid"/><TapFavorite className="nmBookPhoto" onOpen={()=>onOpen?.(entry)} onToggle={()=>onFavorite?.(entry)} saved={Boolean(entry.saved)} aria-label={'Ouvrir la pose '+(entry.title||'Ma pose')}>{renderVisual(entry)}</TapFavorite><h4>{entry.title||'Ma pose'}</h4></div>
      <p className="nmBookDate">{bookDate(entry.date||entry.performedOn)}</p>
      <div className="nmBookTags">{poseTags(entry).slice(0,4).map(t=><button key={t} onClick={()=>setTag(t)}>{t}</button>)}</div>
      </>}

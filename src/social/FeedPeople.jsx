@@ -1,3 +1,4 @@
+import AtelierArt from '../design/AtelierArt.jsx';
 import NativeSponsoredSlot from '../ads/NativeSponsoredSlot.jsx';
 import React,{useEffect,useRef,useState} from 'react';
 import {ChevronRight} from 'lucide-react';
@@ -8,7 +9,7 @@ import {proLabel} from '../professional/model';
 import {ProShelfDirectory} from '../shelf/ProShelf';
 import {useSocial} from './SocialContext';
 import ContentImage from './ContentImage';
-export function FilArt({source}){return <svg className="nmFilArt" viewBox={source==='po'?'0 0 887 887':'887 0 887 887'} aria-hidden="true" focusable="false"><image href={import.meta.env.BASE_URL+'atelier/fil-v1.webp'} width="1774" height="887"/></svg>;}
+export function FilArt({source}){return <AtelierArt source={source} className="nmFilArt"/>;}
 export default function FeedPeople({client,onOpen}){
  const social=useSocial(),directory=useRef(null),[rows,setRows]=useState([]),[busy,setBusy]=useState(true),[error,setError]=useState(''),[revision,setRevision]=useState(0),[searched,setSearched]=useState(false);
  useEffect(()=>{if(!proV2Enabled()){setBusy(false);return;}let active=true;setBusy(true);setError('');proService(client).search().then(r=>{if(active)setRows(r||[]);}).catch(()=>{if(active)setError('Les profils proposés sont indisponibles pour le moment.');}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};},[client,revision]);

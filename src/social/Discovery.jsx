@@ -23,7 +23,7 @@ export function DiscoveryShortcut({featured=false, compact=false}) {
  const social=useSocial();
  const open=()=>{window.location.hash='fil';};
  if(compact)return <button className="round discoveryHeader" onClick={open} aria-label="Ouvrir le fil d’inspiration public" title="Fil d’inspiration"><FeedMark aria-hidden="true"/><span>Fil</span></button>;
- if(featured)return <button className="communityEntry" onClick={open}><span className="communityEntryIcon" aria-hidden="true"><Globe2/></span><span className="communityEntryCopy"><small>LA COMMUNAUTÉ NAILMOODS</small><b>Le fil d’inspiration</b><span>Photos et idées publiques,<br/>de tes amies et au-delà.</span><strong>Découvrir le fil <ArrowRight aria-hidden="true"/></strong></span></button>;
+ if(featured)return <button className="communityEntry" onClick={open}><AtelierArt source="fil" className="nmCommunityArt"/><span className="communityEntryCopy"><small>LA COMMUNAUTÉ NAILMOODS</small><b>Le fil d’inspiration</b><span>Photos et idées publiques,<br/>de tes amies et au-delà.</span><strong>Découvrir le fil <ArrowRight aria-hidden="true"/></strong></span></button>;
  return <button className="nmShortcut discoveryShortcut" onClick={open}><FeedMark aria-hidden="true"/><span><b>Fil d’inspiration</b><small>Photos et idées publiques de la communauté</small></span><ChevronRight aria-hidden="true"/></button>;
 }
 function FeedFrame({embedded,title,eyebrow,children,...props}){return embedded?<section className="discoveryEmbedded nmFil"><header className="nmFilArtHeading"><AtelierArt source="fil"/><div><h1>{title}</h1><p className="nmFilIntro">Les idées de la communauté.</p></div></header>{children}</section>:<Sheet title={title} eyebrow={eyebrow} {...props}>{children}</Sheet>;}

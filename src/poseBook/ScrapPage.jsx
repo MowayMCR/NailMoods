@@ -1,5 +1,6 @@
 import MoodGlyph from '../MoodGlyph.jsx';
 import React from 'react';
+import ScrapFrame from './ScrapFrame.jsx';
 import './scrapbook.css';
 import TapFavorite from '../TapFavorite.jsx';
 import {assetById,spriteStyle,scrapMoods,scrapBackgrounds} from './scrapbook.js';
@@ -7,7 +8,7 @@ export function ScrapSprite({asset,className=''}){if(asset.icon)return <span cla
 export function ScrapNode({node,entries,renderVisual,onOpen,onFavorite,editing=false}){
  if(node.type==='photo'){
  const entry=entries.find(e=>e.id===node.ref);if(!entry)return editing?<span className="nmScrapMissing">Pose indisponible</span>:null;
- const body=<><img className={'nmScrapFrame frame-'+node.frame} src={import.meta.env.BASE_URL+'atelier/scrapbook-v2/frame.svg'} alt=""/><span className="nmScrapImage">{renderVisual(entry)}</span><span className="nmScrapCaption">{entry.title||'Ma pose'}</span></>;
+ const body=<><ScrapFrame className={'nmScrapFrame frame-'+node.frame} frame={node.frame}/><span className="nmScrapImage">{renderVisual(entry)}</span><span className="nmScrapCaption">{entry.title||'Ma pose'}</span></>;
  return editing?<div className="nmScrapPrint">{body}</div>:<TapFavorite className="nmScrapPrint" aria-label={'Ouvrir la pose '+(entry.title||'Ma pose')} onOpen={()=>onOpen?.(entry)} onToggle={()=>onFavorite?.(entry)} saved={Boolean(entry.saved)}>{body}</TapFavorite>;
  }
  if(node.type==='text')return <span className={'nmScrapText color-'+node.color}>{node.text}</span>;

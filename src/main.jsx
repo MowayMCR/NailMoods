@@ -382,7 +382,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
         {collectionView==='book'&&<PersonalPoseBook entries={journal.entries} renderVisual={entry=><JournalVisual entry={entry} media={media} compact/>} onNavigate={openJournal} onSave={saveJournalEntry}/>}
         {collectionView==='desk'&&<Desk items={items} state={deskState} onChange={saveDesk} entries={journal.entries} library={library} media={media} onAdd={()=>setEquipmentOpen(true)} onEdit={item=>{setSaveError('');setEdit({...defaults,...materialDefaults,...item});}} onCreate={()=>navigate('create')} onTutorials={()=>navigate('tutorials')} error={deskError}/>}
         {collectionView==='shelf'&&<Shelf variant={shelfStyle} items={filtered.slice(0,visibleCount).filter(p=>p.type!=='Matériel')} sort={collectionFilters.sort} selectedId={shelfSelection?.product.id} onSelect={(...args)=>setShelfSelection(selectBottle(...args))}/>}
-        {!['desk','book'].includes(collectionView)&&<section className={'collectionGrid ' + (compactCollection ? 'collectionCompact' : '')}>
+        {collectionView==='photos'&&<section className={'collectionGrid ' + (compactCollection ? 'collectionCompact' : '')}>
           {filtered.slice(0, visibleCount).filter(item=>collectionView==='photos'||item.type==='Matériel').map(item => <button key={item.id} className="productCard" style={{ '--product-accent': item.type === 'Matériel' ? 'var(--a)' : productColor(item) }} onClick={() => {
             setSaveError('');
             setEdit({ ...defaults, ...materialDefaults, ...item });

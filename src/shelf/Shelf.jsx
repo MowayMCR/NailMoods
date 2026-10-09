@@ -44,9 +44,9 @@ export default function Shelf({items=[], onSelect, selectedId, mini=false, varia
   const rows=Array.from({length:Math.ceil(items.length/5)},(_,i)=>items.slice(i*5,i*5+5));
   if(!rows.length)return null;
   return <div className={'nmShelf '+(mini?'nmShelfMini':'')} data-testid="illustrated-shelf">
-    <div className="nmShelfNiche" data-variant={mini?'open':variant}>
+    <div className="nmShelfNiche" data-variant={mini?'open':variant} style={{'--shelf-frame':`url(${import.meta.env.BASE_URL}atelier/collection-v2/frame.webp)`}}>
       {!mini&&variant==='botanical'&&<img className="nmDrawnFrame" src={import.meta.env.BASE_URL+'atelier/collection-v2/frame.webp'} alt=""/>}
-      {!mini&&variant!=='botanical'&&<img className="nmDrawnShelfDecor" src={import.meta.env.BASE_URL+'atelier/collection-v2/'+(variant==='botanical'?'flowers':'sage')+'.webp'} alt=""/>}
+      
       {rows.map((row,index)=><div className="nmShelfRow" key={index} role="group" aria-label={'Étagère '+(index+1)}>
         <img className="nmDrawnPlank" src={import.meta.env.BASE_URL+'atelier/collection-v2/plank.webp'} alt=""/><div className="nmShelfBottles">{row.map(p=>{
           const shared=commonIds.has(String(p.id)),label='Voir '+p.name+(p.brand?' · '+p.brand:'');

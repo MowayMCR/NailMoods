@@ -107,3 +107,8 @@
 .nmFinishSwatch.glitter{background-image:radial-gradient(circle,#fff6bd 1px,transparent 2px),linear-gradient(120deg,transparent,#ffffff44);background-size:7px 9px,100% 100%}
 
 .nmFocusProductName{text-align:center;font:500 28px/1.15 Georgia,serif;margin:8px 0}.nmFocusInfo .nmFocusBrand{font-size:15px;color:var(--textSecondary)}
+
+.nmShelfNiche[data-variant="botanical"]{border:14px solid transparent;border-image-source:var(--shelf-frame);border-image-slice:110;border-image-width:28px;border-image-repeat:stretch;padding:24px 8px 18px}
+.nmShelfNiche .nmDrawnFrame{display:none}
+@media(min-width:700px){.nmShelfNiche[data-variant="botanical"]{border-width:22px;border-image-width:42px;padding:34px 20px 24px}.nmShelfBottles{gap:clamp(12px,3vw,40px)}}
+

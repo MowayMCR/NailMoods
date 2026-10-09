@@ -56,3 +56,10 @@
 .nmScrapFrame.frame-gold{filter:none}
 .nmScrapFrame.frame-torn{filter:none}
 .nmScrapEditor .nmScrapCanvas{background-color:#fffaf1}
+
+.nmScrapText{font-size:7cqw;line-height:1.15}
+.nmScrapCaption{font-size:12cqw;line-height:1.05}
+.nmScrapFrame.frame-torn,.nmScrapFrame.frame-gold{filter:none;clip-path:none}
+.nmScrapCanvas{padding:0;border:0}
+.nmScrapNode.type-text{min-height:0}
+

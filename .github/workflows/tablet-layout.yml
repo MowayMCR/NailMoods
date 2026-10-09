@@ -1,7 +1,7 @@
 name: Tablet book and layout checks
 on:
   push:
-    branches: [main, fix/tablet-book-layout]
+    branches: [main, fix/tablet-book-layout, fix/tablet-ui-scrapbook]
     paths: [src/poseBook/**, src/design/atelier.css, scripts/test-tablet-book-browser.mjs, .github/workflows/tablet-layout.yml]
 permissions:
   contents: read

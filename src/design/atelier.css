@@ -247,7 +247,20 @@
 .nmFilArtHeading h1{margin:0;font-size:clamp(25px,5vw,36px)}
 .nmFilArtHeading .nmFilIntro{margin:6px 0 0}
 @media(max-width:360px){.nmFilArtHeading>.nmAtelierArt{width:72px;height:72px;flex-basis:72px}.nmBookHeaderTools{gap:4px}}
-
 .nmPreferencesTitle{display:flex;align-items:center;gap:12px}.nmPreferencesTitle>.nmAtelierArt{width:56px;height:56px;flex-shrink:0}
+
+.app>nav{width:min(1080px,100vw);max-width:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(min-width:700px){.app>nav{height:calc(76px + env(safe-area-inset-bottom,0px));padding:6px 24px env(safe-area-inset-bottom,0px)}.app>nav button{font-size:13px;min-height:62px}.app>nav button svg{width:25px;height:25px}.app>nav button[data-tour=create] svg{width:32px;height:32px}}
+.app .communityEntry>.nmCommunityArt{width:100px;height:100px;flex:0 0 100px;object-fit:contain;align-self:center}
+.app .nmFilPeopleTiles .nmFilArt{width:min(100%,210px);height:150px;object-fit:contain;overflow:visible;justify-self:center}
+.app .profilePage .profileHero:before{display:none}
+.app .profilePage .profileHero>.nmProfileHeroArt{position:absolute;right:16px;top:18px;width:clamp(72px,16vw,136px);height:136px;object-fit:contain;opacity:.65;pointer-events:none}
+.app .profilePage .profileHero>div:not(.nmProfileStats){padding-right:clamp(40px,10vw,120px)}
+.app .nmPoseLanding .poseSavedCard>.nailPreview,.app .nmPoseLanding .journalEntryCard>.journalVisual{align-self:stretch;width:100%;max-width:none;aspect-ratio:4/3;height:auto;min-height:0;margin:0;box-sizing:border-box;border-radius:0}
+.app .nmPoseLanding .poseSavedCard>.nailPreview{display:flex;align-items:center;justify-content:center;padding:16px 8px}
+.app .nmPoseLanding .poseSavedCard>.nailPreview>svg{max-height:120px;width:20%;flex:0 1 20%}
+.app .nmPoseLanding .journalVisual.compact>img{width:100%;height:100%;object-fit:cover;border-radius:0}
+@media(max-width:420px){.app .communityEntry>.nmCommunityArt{width:72px;height:72px;flex-basis:72px}.app .profilePage .profileHero>.nmProfileHeroArt{width:64px;height:80px;right:10px}.app .profilePage .profileHero>div:not(.nmProfileStats){padding-right:32px}}
+
 
 .app .nmFilArtHeading{justify-content:flex-start}.app .nmFilArtHeading>div{min-width:0}
