@@ -1,3 +1,4 @@
+import {applyCatalogueOverlay} from './catalogue/model.js';
 // Local catalogue is read-only. Personal collection edits never write back to it.
 import { productKind } from './productKinds.js';
 import { validHex } from './colorAnalysis.js';
@@ -61,6 +62,7 @@ export function catalogCandidate(match) {
   const p=match.product;
   const fields=Object.fromEntries(['brand','collection','name','reference','type','url','family','finish','coverage','opacity','usage','sku','ean13','gtin','shadeCode'].filter(k=>p[k]).map(k=>[k,p[k]]));
   fields.productKind=productKind(p);
+  if(p.technical)fields.catalogTechnical=p.technical;
   const finishes = { creme: 'Crème', jelly: 'Jelly', paillete: 'Pailleté', metallique: 'Métallique', brillant: 'Brillant', 'cat eye': 'Cat-eye', mat: 'Mat' };
   fields.finish = finishes[catalogText(p.finish)] || 'Autre';
   if (p.finish && !finishes[catalogText(p.finish)]) fields.finishDetail = p.finish;
@@ -79,9 +81,12 @@ export function catalogSelectionPatch(candidate, item = {}) {
     ...(!explicit && color ? {color,shade:color,confirmedColor:color,colorSource:'catalog'} : {}),
     ...(!explicit && !color && item.colorSource==='catalog' ? {color:'',shade:'',confirmedColor:'',colorSource:''} : {})};
 }
-let cached;
+let cached,loading;
 export async function loadCatalog(signal) {
-  if(cached) return cached;
+ if(cached)return cached;if(loading)return loading;
+ loading=readCatalog(signal).then(value=>{cached=value;return value;}).finally(()=>{loading=null;});return loading;
+}
+async function readCatalog(signal) {
   const response=await fetch(import.meta.env.BASE_URL + 'catalog-v2.json',{signal});
   if(!response.ok) throw new Error('Le catalogue est indisponible. Tu peux ajouter ton produit manuellement.');
   const data=await response.json();
@@ -95,7 +100,16 @@ export async function loadCatalog(signal) {
   if(!officialResponse.ok)throw new Error('Le complément des marques est indisponible. La saisie manuelle reste disponible.');
   const official=await officialResponse.json();
   if(!Array.isArray(official.products))throw new Error('Complément des marques illisible.');
-  cached=[...new Map([...data.products,...additional.products,...official.products].map(p=>[p.catalogId,p])).values()];return cached;
+  let products=[...new Map([...data.products,...additional.products,...official.products].map(p=>[p.catalogId,p])).values()];
+  if(import.meta.env?.VITE_CATALOGUE_ADMIN_ENABLED==='true'){
+   const {getCloudClient}=await import('./cloud/client.js');const client=getCloudClient();
+   if(client){const key='nm-public-catalogue:'+client.supabaseUrl;let overlay=[];
+    try {for(let after='';;){const r=await client.rpc('nm_catalog_read',{p_after:after,p_limit:250}).abortSignal(signal||new AbortController().signal);if(r.error)throw r.error;overlay.push(...r.data);if(r.data.length<250)break;after=r.data.at(-1).catalogId;}try{localStorage.setItem(key,JSON.stringify(overlay));}catch{}}
+    catch{try{overlay=JSON.parse(localStorage.getItem(key)||'[]');}catch{overlay=[];}}
+    products=applyCatalogueOverlay(products,overlay);
+   }
+  }
+  return products;
 }
 
 // Future swatch import can refer to these stable groups without editing the catalogue.

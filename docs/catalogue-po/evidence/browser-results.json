@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-05T19:43:37.975Z",
+  "scope": "Actual production React components, PGlite RPC/project persistence; synthetic test accounts. Not a hosted authentication or native-device test.",
+  "checks": [
+    "Brand submission persists after reload",
+    "Staff approval -> published catalogue, persisted version",
+    "Admin responsive 320",
+    "Admin responsive 360",
+    "Admin responsive 390",
+    "Admin responsive 430",
+    "Staff correction retains stable ID and version",
+    "CSV preview and explicit import",
+    "Brief -> existing Atelier editor -> private SQL draft -> reload -> linked reply",
+    "Customer like, private pose_project save and idempotent retry after reload",
+    "PO responsive 320",
+    "PO responsive 360",
+    "PO responsive 390",
+    "PO responsive 430"
+  ],
+  "errors": []
+}

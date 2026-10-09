@@ -6,7 +6,7 @@
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr</string>
-	<key>CFBundleDisplayName</key><string>NailMoods Recette</string>
+	<key>CFBundleDisplayName</key><string>NailMoods</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -56,14 +56,27 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>NailMoods utilise les photos que tu choisis pour importer une inspiration, une tenue, un produit ou une photo de pose.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>NailMoods utilise cet accès si tu demandes à enregistrer une photo dans ta photothèque.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Photographier un produit à scanner ou ajouter une photo de pose dans NailMoods.</string>
+	<string>NailMoods utilise l’appareil photo pour scanner tes produits, importer une tenue ou une inspiration et photographier une pose.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
 			<string>NailMoods Auth</string>
-			<key>CFBundleURLSchemes</key><array><string>com.nailmoods.app.recette</string>
+			<key>CFBundleURLSchemes</key><array><string>com.nailmoods.app</string>
 			</array>
 		</dict>
 	</array>

@@ -4,7 +4,7 @@ export const COLLECTION = 'nm-collection-v2';
 export const LIBRARY = 'nm-inspirations-v1';
 export const JOURNAL = 'nm-journal-v1';
 export const PROFILE = 'nm-profile';
-export const EXTRAS = ['nm-tutorials-v1','nm-personalization-v1','nm-creation-v1','nm-recent-colors-v1','nm-photo-draft-v1'];
+export const EXTRAS = ['nm-desk-v1','nm-tutorials-v1','nm-personalization-v1','nm-creation-v1','nm-recent-colors-v1','nm-photo-draft-v1'];
 export const TABLES = ['user_products','user_stickers','user_equipment','inspirations','journal_entries'];
 export const clone = value => JSON.parse(JSON.stringify(value));
 export const same = (a,b) => stable(a) === stable(b);
@@ -20,7 +20,7 @@ export function productRow(item) {
 }
 export function productFromRow(row,table) {
   const saved = row.metadata?.nailmoods || {};
-  const result = {...saved,id:saved.id ?? row.id};
+  const result = {...saved,createdAt:saved.createdAt || row.created_at,id:saved.id ?? row.id};
   if (table === 'user_stickers') return {...result,type:'Matériel',name:row.name,equipmentCategory:saved.equipmentCategory || 'Stickers / décalcomanies',decorationTags:row.tags || [],photo:row.image_url || saved.photo || ''};
   if (table === 'user_equipment') return {...result,type:'Matériel',name:row.name,equipmentCategory:row.equipment_category || 'Autre matériel',toolSubtype:row.tool_subtype,linerLengthMm:row.liner_length_mm,tipType:row.tip_type,compatibleSystems:row.compatible_systems || []};
   return {...result,type:saved.type || 'Vernis',name:row.shade_name || saved.name || 'Ma couleur',brand:row.brand || '',reference:row.reference || '',collection:row.product_range || '',barcode:row.barcode || '',color:row.hex || saved.color,shade:row.hex || saved.shade,confirmedColor:row.hex || saved.confirmedColor};

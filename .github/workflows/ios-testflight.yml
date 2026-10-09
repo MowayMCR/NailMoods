@@ -1,0 +1,252 @@
+name: Build NailMoods iOS / TestFlight
+
+on:
+  pull_request:
+    branches: [feat/apple-storekit-ios]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Verify only, or sign and upload to TestFlight
+        type: choice
+        options: [verify, testflight]
+        default: verify
+      build_number:
+        description: Optional unused Apple build number (default 10000 + run number)
+        type: string
+        default: ''
+  workflow_call:
+    inputs:
+      mode:
+        type: string
+        default: verify
+      build_number:
+        type: string
+        default: ''
+      source_ref:
+        type: string
+        default: feat/ios-testflight-beta1
+    secrets:
+      APPLE_TEAM_ID:
+        required: false
+      APPLE_DISTRIBUTION_P12_BASE64:
+        required: false
+      APPLE_DISTRIBUTION_P12_PASSWORD:
+        required: false
+      APPLE_PROVISIONING_PROFILE_BASE64:
+        required: false
+      APP_STORE_CONNECT_KEY_ID:
+        required: false
+      APP_STORE_CONNECT_ISSUER_ID:
+        required: false
+      APP_STORE_CONNECT_PRIVATE_KEY:
+        required: false
+
+permissions:
+  contents: read
+concurrency:
+  group: ios-testflight-${{ github.ref }}-${{ inputs.mode || 'verify' }}
+  cancel-in-progress: ${{ inputs.mode != 'testflight' }}
+
+jobs:
+  shared-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Report Apple signing readiness without revealing values
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_DISTRIBUTION_P12_BASE64: ${{ secrets.APPLE_DISTRIBUTION_P12_BASE64 }}
+          APPLE_DISTRIBUTION_P12_PASSWORD: ${{ secrets.APPLE_DISTRIBUTION_P12_PASSWORD }}
+          APPLE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+          BUNDLE_CONFIRMED: ${{ vars.IOS_BUNDLE_ID_CONFIRMED }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          names=['APPLE_TEAM_ID','APPLE_DISTRIBUTION_P12_BASE64','APPLE_DISTRIBUTION_P12_PASSWORD','APPLE_PROVISIONING_PROFILE_BASE64','APP_STORE_CONNECT_KEY_ID','APP_STORE_CONNECT_ISSUER_ID','APP_STORE_CONNECT_PRIVATE_KEY']
+          result={'missingSecretNames':[n for n in names if not os.environ.get(n)],'bundleConfirmed':os.environ.get('BUNDLE_CONFIRMED')=='true'}
+          pathlib.Path('artifacts/ios').mkdir(parents=True,exist_ok=True)
+          pathlib.Path('artifacts/ios/apple-readiness.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result))
+          PY
+      - run: npm ci --no-audit --no-fund
+      - name: Unit and database integration tests
+        run: |
+          mkdir -p artifacts/ios
+          npm test > artifacts/ios/tests.log 2>&1 || { tail -80 artifacts/ios/tests.log; exit 1; }
+          tail -12 artifacts/ios/tests.log
+      - name: JavaScript syntax and frontend build
+        run: |
+          node --check scripts/build-ios.mjs
+          node --check scripts/mobile-version.mjs
+          node scripts/build-theme-css.mjs
+          npm run build
+      - name: iPad responsive browser checks (distinct from native simulators)
+        run: |
+          npx --no-install playwright install --with-deps chromium
+          node scripts/test-ipad-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-shared-test-results
+          path: artifacts/ios
+          retention-days: 14
+
+  android-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --no-audit --no-fund
+      - name: Production Android bundle remains buildable
+        env:
+          NAILMOODS_MOBILE_ENV: production
+        run: |
+          mkdir -p artifacts/android
+          node scripts/build-theme-css.mjs
+          npm run mobile:production
+          node scripts/check-mobile-build.mjs dist-mobile production
+          npx --no-install cap sync android
+          npm run mobile:assets
+          chmod +x android/gradlew
+          ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain > artifacts/android/gradle.log 2>&1 || { tail -80 artifacts/android/gradle.log; exit 1; }
+          cp android/app/build/outputs/bundle/release/app-release.aab artifacts/android/
+          sha256sum artifacts/android/app-release.aab > artifacts/android/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-regression-bundle-and-log
+          path: artifacts/android
+          retention-days: 7
+
+  ios:
+    needs: [shared-tests, android-regression]
+    # Verify native iOS independently of Android failures. For signed TestFlight
+    # releases retain the Android regression as a strict prerequisite.
+    if: ${{ always() && needs.shared-tests.result == 'success' && (inputs.mode != 'testflight' || needs.android-regression.result == 'success') }}
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      NAILMOODS_IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID || 'com.nailmoods.app' }}
+      NAILMOODS_XCODE_VERSION: ${{ vars.IOS_XCODE_VERSION || '26.3' }}
+      NAILMOODS_MOBILE_ENV: production
+      NAILMOODS_PLATFORM: ios
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Assign Apple build number and record source
+        env:
+          REQUESTED_BUILD: ${{ inputs.build_number }}
+        run: |
+          mkdir -p artifacts/ios
+          number="${REQUESTED_BUILD:-$((10000 + GITHUB_RUN_NUMBER))}"
+          [[ "$number" =~ ^[1-9][0-9]{0,8}$ ]] || { echo 'Invalid Apple build number'; exit 1; }
+          echo "NAILMOODS_IOS_BUILD_NUMBER=$number" >> "$GITHUB_ENV"
+          git rev-parse HEAD > artifacts/ios/commit.txt
+          printf '%s\n' "$number" > artifacts/ios/build-number.txt
+      - name: Select supported Apple toolchain
+        run: bash scripts/ci/select-xcode.sh | tee artifacts/ios/toolchain.log
+      - run: npm ci --no-audit --no-fund
+      - name: Synchronize complete Production UI and official Apple assets
+        run: |
+          node scripts/build-theme-css.mjs
+          npm run ios:production
+          node scripts/check-mobile-build.mjs dist-mobile production
+          cp dist-mobile/mobile-build.json artifacts/ios/
+          plutil -lint ios/App/App/Info.plist ios/App/App/PrivacyInfo.xcprivacy
+      - name: Resolve pinned native dependencies
+        run: |
+          set -o pipefail
+          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" | tee artifacts/ios/spm.log
+          cp ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved artifacts/ios/Package.resolved
+      - name: Release simulator build
+        run: |
+          set -o pipefail
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/nm-simulator" -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" CODE_SIGNING_ALLOWED=NO build > artifacts/ios/simulator-build.log 2>&1 || { tail -80 artifacts/ios/simulator-build.log; exit 1; }
+          python3 scripts/ci/inspect-ios.py "$RUNNER_TEMP/nm-simulator/Build/Products/Release-iphonesimulator/App.app" > artifacts/ios/simulator-inspection.json
+      - name: Real native iPhone and iPad simulator launch captures
+        run: python3 scripts/ci/ios-simulator-captures.py "$RUNNER_TEMP/nm-simulator/Build/Products/Release-iphonesimulator/App.app"
+      - name: Unsigned device archive when verifying
+        if: inputs.mode != 'testflight' || !(github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/NailMoods-unsigned.xcarchive" -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" CODE_SIGNING_ALLOWED=NO archive > artifacts/ios/unsigned-archive.log 2>&1 || { tail -80 artifacts/ios/unsigned-archive.log; exit 1; }
+          python3 scripts/ci/inspect-ios.py "$RUNNER_TEMP/NailMoods-unsigned.xcarchive/Products/Applications/App.app" > artifacts/ios/unsigned-inspection.json
+      - name: Check Apple identity has been confirmed
+        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        env:
+          CONFIRMED: ${{ vars.IOS_BUNDLE_ID_CONFIRMED }}
+        run: test "$CONFIRMED" = true || { echo 'Confirm the existing Apple Bundle ID and set IOS_BUNDLE_ID_CONFIRMED=true before signing.'; exit 1; }
+      - name: Install distribution signature and upload key
+        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_DISTRIBUTION_P12_BASE64: ${{ secrets.APPLE_DISTRIBUTION_P12_BASE64 }}
+          APPLE_DISTRIBUTION_P12_PASSWORD: ${{ secrets.APPLE_DISTRIBUTION_P12_PASSWORD }}
+          APPLE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+        run: python3 scripts/ci/ios-signing.py
+      - name: Archive, export and verify signed IPA
+        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/NailMoods.xcarchive" -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' archive > artifacts/ios/archive.log 2>&1 || { tail -80 artifacts/ios/archive.log; exit 1; }
+          python3 scripts/ci/inspect-ios.py "$RUNNER_TEMP/NailMoods.xcarchive/Products/Applications/App.app" --signed > artifacts/ios/archive-inspection.json
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/NailMoods.xcarchive" -exportOptionsPlist "$NM_SIGNING_DIR/ExportOptions.plist" -exportPath artifacts/ios/export > artifacts/ios/export.log 2>&1 || { tail -80 artifacts/ios/export.log; exit 1; }
+          ipa=(artifacts/ios/export/*.ipa)
+          [[ ${#ipa[@]} -eq 1 && -f "${ipa[0]}" ]] || { echo 'Exactly one IPA required'; exit 1; }
+          python3 scripts/ci/inspect-ios.py "${ipa[0]}" --signed > artifacts/ios/ipa-inspection.json
+          ditto -c -k --keepParent "$RUNNER_TEMP/NailMoods.xcarchive/dSYMs" artifacts/ios/dSYMs.zip
+          shasum -a 256 "${ipa[0]}" artifacts/ios/dSYMs.zip > artifacts/ios/SHA256SUMS
+      - name: Validate and upload to App Store Connect (TestFlight only)
+        if: inputs.mode == 'testflight' && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/feat/ios-testflight-beta1'))
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          ipa=(artifacts/ios/export/*.ipa)
+          xcrun altool --validate-app -f "${ipa[0]}" -t ios --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID" --output-format json > artifacts/ios/apple-validation.json 2>&1 || { tail -60 artifacts/ios/apple-validation.json; exit 1; }
+          xcrun altool --upload-app -f "${ipa[0]}" -t ios --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID" --output-format json > artifacts/ios/apple-upload.json 2>&1 || { tail -60 artifacts/ios/apple-upload.json; exit 1; }
+          echo 'Upload accepted; Apple processing and assignment to the internal TestFlight group remain in App Store Connect.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove signing materials
+        if: always()
+        run: python3 scripts/ci/ios-cleanup.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: NailMoods-iOS-Beta1-${{ github.run_number }}
+          path: artifacts/ios
+          retention-days: 14
+      - name: Build summary
+        if: always()
+        env:
+          RESULT: ${{ job.status }}
+        run: |
+          printf 'NailMoods %s · build %s · %s\n' '0.8.0' "$NAILMOODS_IOS_BUILD_NUMBER" "$RESULT" >> "$GITHUB_STEP_SUMMARY"
+          echo 'Native screenshots are launch checks. iPad hardware, login, camera, UGC and StoreKit Sandbox must still be tested.' >> "$GITHUB_STEP_SUMMARY"

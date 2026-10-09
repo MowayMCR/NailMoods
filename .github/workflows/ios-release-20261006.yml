@@ -1,0 +1,15 @@
+name: NailMoods latest approved UI to TestFlight
+on:
+  push:
+    branches: [feat/ios-testflight-beta1]
+    paths: [.github/workflows/ios-release-20261006.yml]
+permissions:
+  contents: read
+jobs:
+  testflight:
+    uses: ./.github/workflows/ios-testflight.yml
+    with:
+      mode: testflight
+      build_number: '20007'
+      source_ref: ${{ github.sha }}
+    secrets: inherit

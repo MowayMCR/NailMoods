@@ -1,0 +1,70 @@
+.nmPoseBook{margin:24px 0;color:var(--text);min-width:0}.nmBookHeading{display:flex;justify-content:space-between;align-items:center;gap:16px}.nmBookHeading small{font-size:10px;letter-spacing:.12em;color:var(--muted)}.nmBookHeading h3{font-size:24px;margin:5px 0}.nmBookHeading p,.nmBookGesture{font-size:12px;color:var(--muted)}.nmBookQuiet{border:0;background:var(--surfaceSecondary);border-radius:50%;width:40px;height:40px}.nmBookCover{display:block;position:relative;width:min(310px,85%);margin:18px auto;border:0;background:none;padding:0;color:#702e47;cursor:pointer;filter:drop-shadow(0 12px 15px #5c23371c);transition:transform .2s}.nmBookCover:hover{transform:rotate(-2deg)}.nmBookCover>img{width:100%;display:block}.nmBookCover>span{position:absolute;inset:27% 19% 22% 25%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:13px}.nmBookCover small{font-size:10px;letter-spacing:.18em}.nmBookCover b{font-family:Georgia,serif;font-size:clamp(23px,4vw,31px);line-height:1.1}.nmBookCover em{font-size:12px;font-style:normal}.nmBookCover i{display:flex;gap:7px;align-items:center;font-style:normal;font-size:11px}.nmBookSearch{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.nmBookSearch>label:first-child{display:flex;align-items:center;gap:8px;flex:1;min-width:140px;border:1px solid var(--border);background:var(--surface);border-radius:16px;padding:0 12px}.nmBookSearch input{width:100%;min-width:0;border:0;background:transparent;color:var(--text);padding:12px 0;font:inherit}.nmBookTagSelect select{max-width:145px;border:1px solid var(--border);border-radius:14px;background:var(--surface);color:var(--text);padding:12px;font:inherit}.nmBookSpread{position:relative;isolation:isolate;touch-action:pan-y;min-height:410px;border-radius:16px;background:#f8efe4;box-shadow:inset 5px 0 10px #8c475b25,5px 8px 0 #edd3d5,7px 10px 0 #ad7183;outline-offset:8px}.nmBookPaper{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1;opacity:0}.nmBookSpread.wide{background:none;box-shadow:none;min-height:480px}.nmBookSpread.wide .nmBookPaper{opacity:1}.nmBookPages{display:grid;grid-template-columns:1fr;gap:0;padding:22px;color:#58383f}.wide .nmBookPages{grid-template-columns:1fr 1fr;gap:5%;padding:6% 7% 8%}.nmBookPage{min-width:0;position:relative}.nmBookPhoto{display:block;position:relative;aspect-ratio:4/5;background:#fffaf4;border:7px solid #fffaf4;border-radius:3px;box-shadow:0 3px 9px #6e354620;overflow:hidden;cursor:pointer}.nmBookPhoto img{display:block;width:100%;height:100%;object-fit:cover}.nmBookPhoto .journalVisual{height:100%;margin:0;aspect-ratio:auto}.nmBookPhoto .journalVisual img{object-fit:cover}.nmBookPhoto .nailPreview{height:100%;margin:0}.nmBookPage h4{font-family:Georgia,serif;font-size:20px;margin:14px 0 5px;overflow-wrap:anywhere}.nmBookDate{font-size:11px;color:#80656d;margin:4px 0}.nmBookTags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.nmBookTags button{border:0;background:#eedfe1;color:#754354;border-radius:20px;padding:5px 8px;font-size:10px}.nmBookActions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nmBookActions>button{display:flex;align-items:center;gap:5px;border:0;background:transparent;color:#813e57;min-height:44px;padding:5px 0;font-size:11px}.nmBookActions>button[aria-pressed=true]{color:#b4426b}.nmBookRibbon{position:absolute;top:-7px;right:8px;background:#893d59;color:#fff7ef;padding:7px 9px;display:flex;gap:4px;align-items:center;font-size:10px;z-index:1;clip-path:polygon(0 0,100% 0,100% 100%,50% 88%,0 100%);padding-bottom:13px}.nmBookEmpty,.nmBookLastPage{min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#9b6c7a;padding:24px}.nmBookEmpty p{font-size:13px}.nmBookEmpty button{border:0;background:#ead9dd;padding:10px;border-radius:12px;color:#77384f}.nmBookPagination{display:flex;justify-content:center;align-items:center;gap:20px;margin:20px 0;font-size:12px;color:var(--muted)}.nmBookPagination input{max-width:130px;accent-color:#a74768}.nmBookNotice{font-size:12px;color:var(--muted)}.turning .nmBookPages{animation:nmBookTurn .38s ease both;transform-origin:center}@keyframes nmBookTurn{from{opacity:.5;transform:perspective(1000px) rotateY(calc(var(--turn)*-12deg))}to{opacity:1;transform:none}}.nmPoseBook button:focus-visible{outline:3px solid #9e4264;outline-offset:3px}@media(prefers-reduced-motion:reduce){.turning .nmBookPages{animation:none}.nmBookCover{transition:none}}@media(min-width:700px){.nmBookPhoto{aspect-ratio:4/5}.nmBookPage h4{font-size:clamp(17px,2vw,24px)}}
+
+.nmBookSpread{overflow:hidden;background:none;box-shadow:none}.nmBookPaper{opacity:1;width:200%;max-width:none}.nmBookSpread.wide .nmBookPaper{width:100%}.nmBookPages{padding:9% 11% 12%}.wide .nmBookPages{padding:7% 8% 9%}
+.nmPoseBook .srOnly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.nmBookPages{padding:19% 13% 21%}.wide .nmBookPages{padding:14% 9% 18%;gap:8%}.nmBookSpread{min-height:0}.nmBookPhoto .journalVisual{display:flex;flex-direction:column;justify-content:center;align-items:center;background:#fff9f2}.nmBookPhoto .journalVisual>.nailPreview{height:auto;width:100%;margin:0}.nmBookPagination{white-space:nowrap}.nmBookPage h4,.nmBookDate{text-align:center}.nmBookTags{justify-content:center}.nmBookActions{justify-content:center}
+.nmBookPhoto .tapFavoriteNotice{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;pointer-events:none;background:#fff5edbb;color:#9e4264;text-shadow:0 1px #fff;font-size:12px;font-weight:600}.nmBookPhoto .tapFavoriteNotice:before{content:'♥';font-size:64px;line-height:1;animation:nmBookHeart .4s ease-out}@keyframes nmBookHeart{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}@media(prefers-reduced-motion:reduce){.nmBookPhoto .tapFavoriteNotice:before{animation:none}}
+
+/* Keep gallery sizing out of the book: crop only the displayed photo. */
+.app .nmPoseBook .nmBookPhoto .journalVisual{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;border-radius:0;min-height:0}
+.app .nmPoseBook .nmBookPhoto>img,.app .nmPoseBook .nmBookPhoto .journalVisual.compact>img{position:absolute;inset:0;width:100%;height:100%;max-height:none;min-height:0;border-radius:0;object-fit:cover;object-position:center;flex:none}
+
+/* Small paper prints attached to the page, with decorative washi tape. */
+.nmBookPages{padding-top:24%}
+.wide .nmBookPages{padding-top:17%}
+.nmBookMount{position:relative;width:80%;max-width:270px;margin:0 auto 22px;transform:rotate(-3deg);isolation:isolate}
+.nmBookPage:nth-child(even) .nmBookMount{transform:rotate(3deg)}
+.nmBookMount:before,.nmBookMount:after{content:'';position:absolute;z-index:2;pointer-events:none;width:47px;height:20px;top:-9px;background:repeating-linear-gradient(45deg,#d6a1adad 0 6px,#edc6cebc 6px 12px);box-shadow:0 1px 2px #59303a15;clip-path:polygon(3% 0,96% 3%,100% 93%,2% 100%,5% 65%,0 35%)}
+.nmBookMount:before{left:-10px;transform:rotate(-27deg)}
+.nmBookMount:after{right:-10px;transform:rotate(24deg)}
+.nmBookMount .nmBookPhoto{width:100%;aspect-ratio:4/5;border:6px solid #fffdf7;border-bottom-width:20px;border-radius:1px;box-shadow:2px 5px 8px #58333f30}
+.nmBookPage h4{margin-top:18px}
+.nmBookRibbon{top:8px;right:2px}
+/* Approved illustrated Polaroid layout. */
+@font-face{font-family:NailMoodsHand;src:url('./fonts/Caveat.ttf') format('truetype');font-weight:400 700;font-style:normal;font-display:swap}
+.nmBookSpread{aspect-ratio:5/7;min-height:0}
+.nmBookSpread.wide{aspect-ratio:5/4;min-height:0}
+.nmBookPages,.wide .nmBookPages{position:absolute;inset:0;padding:18% 13% 23%;align-items:center}
+.wide .nmBookPages{padding:13% 9% 17%;gap:8%}
+.nmBookPage{display:flex;flex-direction:column;align-items:center}
+.nmBookMount,.nmBookPage:nth-child(even) .nmBookMount{width:76%;max-width:245px;margin:0 auto 8px;aspect-ratio:4/5;transform:rotate(-1deg);isolation:isolate;container-type:inline-size}
+.nmBookPage:nth-child(even) .nmBookMount{transform:rotate(1deg)}
+.nmBookMount:before,.nmBookMount:after{content:none}
+.nmBookMount .nmBookPolaroid{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;z-index:2}
+.nmBookMount .nmBookPhoto{position:absolute;left:12%;top:14.5%;width:76%;height:61%;aspect-ratio:1;border:0;border-radius:1px;box-shadow:none;background:#fff9f2;overflow:hidden}
+.nmBookMount h4{position:absolute;inset:78% 9% 7%;margin:0;display:flex;align-items:center;justify-content:center;font-family:NailMoodsHand,cursive;font-weight:500;font-size:clamp(22px,5vw,34px);line-height:.95;color:#703046;text-align:center;overflow-wrap:anywhere;z-index:3}
+.nmBookMount h4,.wide .nmBookMount h4{font-size:clamp(16px,12cqw,30px);inset:77% 9% 5%}
+.nmBookDate{font-family:NailMoodsHand,cursive;font-size:clamp(20px,4.6vw,26px);line-height:1.15;color:#735144;margin:7px 0 4px;text-align:center}
+.nmBookTags{gap:4px;margin:5px 0 0}
+.nmBookTags button{font-size:9px;padding:3px 6px;background:#f1e5debb}
+.nmBookActionGroups{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0 0}
+.nmBookActionGroups.wide{grid-template-columns:1fr 1fr;gap:8%;padding:0 9%}
+.nmBookActions{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.nmBookActions>button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:9px 14px;border:1px solid #ac7183;border-radius:16px;background:#fffaf4;color:#813e57;font-size:13px}
+.nmBookActions>button[aria-pressed=true]{background:#f0dce3;color:#8f3553;border-color:#8f3553}
+.nmBookActionTitle{flex-basis:100%;text-align:center;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.nmBookRibbon{position:static;clip-path:none;padding:4px 7px;border-radius:9px;font-size:10px;display:flex;align-items:center;gap:4px}
+.nmBookActions .nmBookRibbon{flex-basis:100%;width:max-content;flex-grow:0;justify-content:center;background:transparent;color:#893d59}
+.nmBookPhoto .journalVisual>.nailPreview{min-height:0;padding:8px 4px}
+.nmBookPhoto .journalVisual>small{font-size:8px;padding:2px 4px}
+.nmBookEmpty,.nmBookLastPage{min-height:0;padding:10px}
+.nmBookEmpty{grid-column:1/-1}
+@media(max-width:350px){.nmBookActions>button{padding:9px 10px;font-size:12px}.nmBookMount h4{font-size:21px}.nmBookDate{font-size:18px}}
+
+/* The illustration keeps its native proportions; each closed cover is one leaf. */
+.nmPoseBook{width:100%;max-width:900px;margin:24px auto;container-type:inline-size}
+.nmBookSpread{aspect-ratio:750/938;width:100%;max-width:450px;margin-inline:auto}
+.nmBookSpread.wide{aspect-ratio:1500/938;max-width:900px}
+.nmBookCover{width:85%;max-width:450px;margin:18px auto}
+.nmBookCover b{font-size:clamp(23px,5cqw,36px)}
+.nmBookQuiet{width:auto;height:auto;min-height:44px;padding:8px 12px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;color:var(--text)}
+.nmBookPagination{flex-wrap:wrap;gap:10px}
+.nmBookPagination button:disabled{opacity:.4;cursor:default}
+.nmBookDate{font-size:clamp(18px,3.8cqw,24px)}
+.nmBookPage.customized{min-height:0}
+.nmBookPage.customized>.nmScrapCanvas{height:100%;max-height:100%;width:auto;max-width:100%;aspect-ratio:3/4}
+@container(min-width:680px){.nmBookCover{width:50%}}
+/* Leave room for the date below each print in a two-page spread. */
+.wide .nmBookMount,.wide .nmBookPage:nth-child(even) .nmBookMount{width:60%;max-width:210px}
+
+.nmPoseBook .nmBookHeading{position:static;height:auto;min-height:44px;padding:0;border:0;background:transparent}

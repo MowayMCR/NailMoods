@@ -143,3 +143,13 @@
 .publicProfileSheet .publicContentCard>img{order:-1;border-radius:17px}
 .nmBrandOnboarding .nmField input,.nmBrandOnboarding .nmField select,.nmBrandOnboarding .nmField textarea{font-size:16px}
 @media(max-width:350px){.nmBrandOnboarding .nmPreferenceForm{grid-template-columns:1fr}}
+
+/* Profile subpages share the same gutters and field components as the main DA06. */
+.app .profilePage > .profileSectionTitle{margin:20px 18px 18px;font-size:clamp(28px,7vw,36px);line-height:1.2;overflow-wrap:break-word}
+.app .profilePage > .profileAccountCard{margin:14px 18px;padding:20px 16px;min-width:0}
+.app .profilePage .profileAccountCard h2{font-size:clamp(22px,5.5vw,27px);line-height:1.25;overflow-wrap:break-word}
+.app .profilePage .profileAccountCard .nmField{display:grid;gap:9px;margin:14px 0;font:600 14px/1.5 system-ui,sans-serif;min-width:0}
+.app .profilePage .profileAccountCard .nmField input,.app .profilePage .profileAccountCard .nmField textarea{display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;min-height:48px;padding:12px 14px;font:400 16px/1.5 system-ui,sans-serif;color:var(--textPrimary);background:var(--surfaceSecondary);border:1px solid var(--borderDefault);border-radius:14px}
+.app .profilePage .profileAccountCard .nmField textarea{min-height:120px;resize:vertical}
+.app .profilePage .profileAccountCard .nmField input:focus-visible,.app .profilePage .profileAccountCard .nmField textarea:focus-visible{outline:2px solid var(--borderActive);outline-offset:2px}
+.app .profilePage .profileAccountCard .nmCaption{font:400 13px/1.6 system-ui,sans-serif;color:var(--textSecondary);overflow-wrap:break-word}

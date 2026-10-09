@@ -35,7 +35,15 @@ public class NailMoodsStoreKitPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func getEnvironment(_ call: CAPPluginCall) {
         Task {
             do {
-                let result = try await AppTransaction.shared
+                var result: VerificationResult<AppTransaction>
+                do { result = try await AppTransaction.shared }
+                catch {
+                    guard call.getBool("refresh") == true else { throw error }
+                    result = try await AppTransaction.refresh()
+                }
+                if case .unverified = result, call.getBool("refresh") == true {
+                    result = try await AppTransaction.refresh()
+                }
                 guard case .verified(let app) = result else { call.reject("app_not_verified"); return }
                 switch app.environment {
                 case .production: call.resolve(["environment": "Production"])

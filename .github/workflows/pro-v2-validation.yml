@@ -1,0 +1,63 @@
+name: Pro V2 — validation web commune
+on:
+  push:
+    branches: [feat/pro-v2-showcases]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: validation
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Installer et tester la base commune
+        working-directory: validation
+        run: |
+          npm ci
+          npm test
+      - name: Construire la version de validation sur recette
+        working-directory: validation
+        env:
+          VITE_DEPLOYMENT_ENV: recette
+          VITE_PRO_V2_ENABLED: 'true'
+          VITE_POSE_CYCLE_ENABLED: 'true'
+        run: npm run build -- --base /NailMoods/validation-pro-v2/
+      - name: Conserver l’application stable à la racine
+        working-directory: stable
+        env:
+          VITE_DEPLOYMENT_ENV: production
+          VITE_POSE_CYCLE_ENABLED: 'true'
+        run: |
+          npm ci
+          npm run build
+      - name: Ajouter la validation dans un chemin séparé
+        run: |
+          mkdir -p stable/dist/validation-pro-v2
+          cp -R validation/dist/. stable/dist/validation-pro-v2/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: stable/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}validation-pro-v2/
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
