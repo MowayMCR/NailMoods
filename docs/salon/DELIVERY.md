@@ -19,11 +19,20 @@ The implementation extends existing institute workspaces, profile/showcase ident
 
 Four additive migrations were applied to recette **pueqkbwfwxgqzmkauxoz**, not production. New private tables have RLS and no client table grants; narrow invoker RPCs delegate to server permission checks. Ad configuration defaults disabled on Android and iOS. The reward edge function is not deployed. No Salon Store products were created.
 
-Feature flags remain off by default: `VITE_SALON_ENABLED`, `VITE_ADMOB_TEST_ENABLED`, `VITE_ADMOB_NATIVE_PREVIEW`. Validation enables Salon only. Native compile workflow is unsigned and does not upload to TestFlight, Play or Pages.
+Feature flags remain off by default: `VITE_SALON_ENABLED`, `VITE_ADMOB_TEST_ENABLED`, `VITE_ADMOB_NATIVE_PREVIEW`. Validation enables Salon and the reused Pro V2 interface; advertisements remain off. Native compile workflow is unsigned and does not upload to TestFlight, Play or Pages.
 
 ## Verification and limitations
 
 `npm test`, Web/mobile builds, native Capacitor synchronization, PGlite permission/privacy/expiration tests, cryptographic callback mutation tests, and policy matrix. The CI additionally exercises real React components with synthetic SQL-backed users at 390/768/1024/1366px and validates the book return to cover, then compiles Android Java and iOS simulator. This is not a claim of camera hardware, device Store purchase or ad delivery validation.
+
+## Recorded checks
+
+- Full suite: 583 tests, 581 passed, 2 skipped, 0 failures.
+- SQL/React Salon journey: responsive controls, proposal, responsible approval, public author attribution, private-note protection and revoked publication permission passed.
+- Book at 390/768/1024/1366px: no horizontal overflow, proportional one/two-page rendering and return to cover passed.
+- Android Java compilation and iOS simulator compilation both passed without signing or deployment.
+- Recette verification: two public-portfolio visibility guards present; four new private tables have RLS and no authenticated table read/insert grants; ads disabled/test-only on both platforms.
+- CI evidence: https://github.com/MowayMCR/NailMoods/actions/runs/37903744967 . Further presentation checks run on the PR branch.
 
 ## Remaining manual/commercial validation
 
