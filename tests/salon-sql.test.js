@@ -42,13 +42,26 @@ test('Direct publication and legacy callers use the same moderated references',a
 test('Ad configuration is off, client cannot confirm a reward, demo cannot grant credits',async()=>{const db=await setup();try{
  await db.exec('create role service_role;');
  await db.exec(readFileSync(new URL('../supabase/migrations/20261009095000_admob_disabled_reward_ledger.sql',import.meta.url),'utf8'));
+ await db.exec(readFileSync(new URL('../supabase/migrations/20261009103000_admob_callback_platform_guard.sql',import.meta.url),'utf8'));
  await login(db,C);assert.equal((await rpc(db,'nm_ad_state',['ios'])).config.enabled,false);
  await assert.rejects(rpc(db,'nm_ad_confirm_reward',[A,'forged']),/permission denied/);
  await db.exec('reset role');await db.query('insert into private.ad_reward_tickets(id,user_id,platform) values($1,$2,$3)',[A,C,'ios']);
  await db.query("update private.ad_config set enabled=true where platform='ios'");
  assert.equal((await db.query('select private.ad_confirm_reward($1,$2) result',[A,'demo-tx'])).rows[0].result,false);
  await db.query("update private.ad_config set test_only=false where platform='ios'");
- assert.equal((await db.query('select private.ad_confirm_reward($1,$2) result',[A,'verified-server-tx'])).rows[0].result,true);
+ assert.equal((await db.query('select private.ad_confirm_platform_reward($1,$2,$3) result',[A,'wrong-platform-tx','android'])).rows[0].result,false);
+ assert.equal((await db.query('select private.ad_confirm_platform_reward($1,$2,$3) result',[A,'verified-server-tx','ios'])).rows[0].result,true);
  assert.equal((await db.query('select private.ad_confirm_reward($1,$2) result',[A,'verified-server-tx'])).rows[0].result,false);
  await login(db,A);assert.equal((await rpc(db,'nm_ad_state',['ios'])).config.enabled,false);
+ }finally{await db.close();}});
+
+test('Invitation decline, member removal and responsibility transfer keep accounts and capacity intact',async()=>{const db=await setup();try{
+ await db.exec(migration);await db.exec(permissions);await login(db,A);const wid=await rpc(db,'nm_pro_save',[null,draft()]);await db.exec('reset role');await db.query('update workspace_entitlements set seat_limit=2 where workspace_id=$1',[wid]);
+ await login(db,A);let invite=await rpc(db,'nm_pro_team',[wid,'invite',{handle:'artist.b'}]);await login(db,B);await rpc(db,'nm_pro_team',[wid,'decline',{invitationId:invite.invitation_id}]);
+ await db.exec('reset role');assert.equal((await db.query('select count(*)::int n from workspace_members where workspace_id=$1',[wid])).rows[0].n,1);
+ await login(db,A);invite=await rpc(db,'nm_pro_team',[wid,'invite',{handle:'artist.b'}]);await login(db,B);await rpc(db,'nm_pro_team',[wid,'accept',{invitationId:invite.invitation_id}]);await db.exec('reset role');const id=(await db.query("insert into journal_entries(created_by,visibility,snapshot) values($1,'public','{}') returning id",[B])).rows[0].id;
+ await login(db,A);await rpc(db,'nm_pro_team',[wid,'remove',{userId:B}]);await login(db,B);await assert.rejects(rpc(db,'nm_salon_action',[wid,'submit','journal',id,{}]),/entitlement_inactive/);
+ await db.exec('reset role');assert.equal((await db.query('select count(*)::int n from journal_entries where id=$1',[id])).rows[0].n,1);assert.equal((await db.query('select account_tier from profiles where id=$1',[B])).rows[0].account_tier,'pro');
+ await login(db,A);invite=await rpc(db,'nm_pro_team',[wid,'invite',{handle:'artist.b'}]);await login(db,B);await rpc(db,'nm_pro_team',[wid,'accept',{invitationId:invite.invitation_id}]);await login(db,A);await rpc(db,'nm_pro_team',[wid,'transfer',{userId:B}]);
+ await db.exec('reset role');assert.equal((await db.query('select owner_user_id from workspaces where id=$1',[wid])).rows[0].owner_user_id,B);assert.equal((await db.query('select count(*)::int n from workspace_members where workspace_id=$1',[wid])).rows[0].n,2);assert.equal((await db.query('select seat_limit from workspace_entitlements where workspace_id=$1',[wid])).rows[0].seat_limit,2);
  }finally{await db.close();}});

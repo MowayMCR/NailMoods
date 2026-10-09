@@ -25,5 +25,5 @@ export async function verifyAdmobCallback(rawQuery,keys,allowedUnits,now=Date.no
  const body=key.pem.replace(/-----BEGIN PUBLIC KEY-----|-----END PUBLIC KEY-----|\s/g,'');
  const publicKey=await crypto.subtle.importKey('spki',bytes64(body),{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
  if(!await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},publicKey,derSignatureToRaw(bytes64(params.get('signature'))),new TextEncoder().encode(signed)))throw Error('invalid_signature');
- return {ticket:nonce,transactionId:params.get('transaction_id')};
+ return {ticket:nonce,transactionId:params.get('transaction_id'),adUnit:params.get('ad_unit')};
 }

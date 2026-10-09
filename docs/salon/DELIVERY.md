@@ -17,7 +17,7 @@ The implementation extends existing institute workspaces, profile/showcase ident
 
 ## Database and rollout
 
-Three additive migrations were applied to recette **pueqkbwfwxgqzmkauxoz**, not production. New private tables have RLS and no client table grants; narrow invoker RPCs delegate to server permission checks. Ad configuration defaults disabled on Android and iOS. The reward edge function is not deployed. No Salon Store products were created.
+Four additive migrations were applied to recette **pueqkbwfwxgqzmkauxoz**, not production. New private tables have RLS and no client table grants; narrow invoker RPCs delegate to server permission checks. Ad configuration defaults disabled on Android and iOS. The reward edge function is not deployed. No Salon Store products were created.
 
 Feature flags remain off by default: `VITE_SALON_ENABLED`, `VITE_ADMOB_TEST_ENABLED`, `VITE_ADMOB_NATIVE_PREVIEW`. Validation enables Salon only. Native compile workflow is unsigned and does not upload to TestFlight, Play or Pages.
 
