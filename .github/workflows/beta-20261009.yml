@@ -45,10 +45,11 @@ permissions:
   contents: read
 concurrency:
   group: ios-testflight-${{ github.ref }}-${{ (inputs.mode || 'testflight') || 'verify' }}
-  cancel-in-progress: ${{ (inputs.mode || 'testflight') != 'testflight' }}
+  cancel-in-progress: true
 
 jobs:
   shared-tests:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -102,6 +103,7 @@ jobs:
           retention-days: 14
 
   android-regression:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -139,6 +141,7 @@ jobs:
           retention-days: 7
 
   ios:
+    if: ${{ false }}
     needs: [shared-tests, android-regression]
     runs-on: macos-26
     timeout-minutes: 60

@@ -1,3 +1,4 @@
+raise SystemExit('Beta delivery paused by Marie pending advertising additions; do not sign or upload.')
 """Install CI signing assets. Never print keys, profile contents or passwords."""
 import base64, datetime, hashlib, json, os, pathlib, plistlib, re, secrets, subprocess
 
