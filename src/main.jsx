@@ -424,7 +424,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     </Sheet>}
 
     {shelfSelection&&<ProductFocus selection={shelfSelection} product={usedById.get(String(shelfSelection.product.id))||shelfSelection.product} onClose={()=>setShelfSelection(null)} onFile={()=>{setSaveError('');setEdit({...defaults,...materialDefaults,...items.find(p=>String(p.id)===String(shelfSelection.product.id))});}} onCreate={()=>createWith(shelfSelection.product)} onFavorite={()=>persist(items.map(p=>String(p.id)===String(shelfSelection.product.id)?{...p,fav:!p.fav}:p))} onPose={p=>openJournal(p.id)}/>}{proShelvesOpen&&<Sheet title="L’étagère des PO" onClose={()=>setProShelvesOpen(false)}><ProShelfDirectory client={social?.client}/></Sheet>}
-    <nav>{[['home', Home, 'Accueil'], ['feed', 'Fil'], ['create', Plus, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Mes poses']].map(([id, Icon, label]) =>
+    <nav>{[['home', Home, 'Accueil'], ['feed', FeedMark, 'Fil'], ['create', Plus, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Mes poses']].map(([id, Icon, label]) =>
       <button data-tour={id} key={id} className={tab === id || tab === 'scan' && id === 'create' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'create' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}{limited && id==='collection' ? ' · Plus' : ''}</span></button>
     )}</nav>
 

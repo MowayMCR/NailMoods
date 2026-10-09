@@ -249,3 +249,5 @@
 @media(max-width:360px){.nmFilArtHeading>.nmAtelierArt{width:72px;height:72px;flex-basis:72px}.nmBookHeaderTools{gap:4px}}
 
 .nmPreferencesTitle{display:flex;align-items:center;gap:12px}.nmPreferencesTitle>.nmAtelierArt{width:56px;height:56px;flex-shrink:0}
+
+.app .nmFilArtHeading{justify-content:flex-start}.app .nmFilArtHeading>div{min-width:0}
