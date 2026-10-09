@@ -281,3 +281,13 @@ test('desk layout and earned decorations sync between account stores',async()=>{
  a.storage.setItem('nm-desk-v1',JSON.stringify(desk));assert.equal(await a.flush(),true);
  const b=make(memory(),repo);await b.load();assert.deepEqual(JSON.parse(b.storage.getItem('nm-desk-v1')),desk);
 });
+
+test('Salon references only a synchronized existing creation and refuses offline pending data',async()=>{
+ const repo=backend(),store=make(memory(),repo);await store.load();
+ store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'salon-pose',date:'2026-10-09',title:'Photo importée',visibility:'public'}]}));
+ const remote=await store.storage.remoteContentId('journal_entries','salon-pose');assert.equal(remote,repo.rows.journal_entries[0].id);assert.equal(repo.rows.journal_entries.length,1);
+ repo.fail=true;store.storage.setItem(JOURNAL,JSON.stringify({entries:[{id:'salon-pose',date:'2026-10-09',title:'Correction en attente',visibility:'public'}]}));
+ await assert.rejects(store.storage.remoteContentId('journal_entries','salon-pose'),/content_sync_pending/);
+ assert.equal(JSON.parse(store.storage.getItem(JOURNAL)).entries[0].title,'Correction en attente');
+ await assert.rejects(store.storage.remoteContentId('profiles','salon-pose'),/invalid_content_kind/);store.close();
+});

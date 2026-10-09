@@ -8,9 +8,23 @@ export async function appleRequest(client, body) {
   if(data?.error)throw Error(data.error);
   return data;
 }
-export async function appleContext(client) {
-  const {environment}=await AppleBilling.getEnvironment();
+export async function appleContext(client, refresh=false) {
+  const {environment}=await AppleBilling.getEnvironment({refresh});
   return appleRequest(client,{action:'prepare',environment});
+}
+// Catalog visibility must not depend on obtaining the app download transaction.
+// The server context still gates every purchase and every entitlement change.
+export async function loadAppleOffers(client, refresh=false, store=AppleBilling, contextLoader=appleContext) {
+  const [access,catalog,prepared]=await Promise.allSettled([
+    readBillingEntitlement(client), store.getProducts(), contextLoader(client,refresh)
+  ]);
+  const errors=[access,catalog,prepared].filter(r=>r.status==='rejected').map(r=>r.reason);
+  return {
+    state:access.status==='fulfilled'?access.value:null,
+    products:catalog.status==='fulfilled'?(catalog.value.products||[]):[],
+    context:prepared.status==='fulfilled'?prepared.value:null,
+    error:errors[0]||(catalog.status==='fulfilled'&&!catalog.value.products?.length?Error('product_unavailable'):null)
+  };
 }
 export async function readBillingEntitlement(client) {
   const {data,error}=await client.rpc('billing_entitlement_state');if(error)throw error;return data;
@@ -23,6 +37,7 @@ export async function verifyApplePurchase(client, transaction, environment) {
 }
 export async function purchaseAppleTier(client,tier,displayed) {
   if(!isAppleIOS()||displayed?.productId!==APPLE_PRODUCTS[tier])throw Error('product_unavailable');
+  const rights=await readBillingEntitlement(client);if(rights?.instituteActive)throw Error('salon_entitlement_active');
   const context=await appleContext(client);
   if(!context.enabled)throw Error('billing_not_configured');
   if(!context.canPurchase)throw Error(context.manualPriority?'manual_entitlement_active':context.otherProviderActive?'other_subscription_active':'billing_ineligible');
@@ -47,7 +62,7 @@ export function applePeriod(product) {
   return value===1?label:`${value} ${label}${label==='mois'?'':'s'}`;
 }
 export function appleError(error) {
-  return ({billing_not_configured:'Les abonnements Apple ne sont pas encore ouverts.',manual_entitlement_active:'Ton accès est déjà offert par NailMoods.',
-    other_subscription_active:'Ton offre est déjà active sur ton compte.',billing_ineligible:'Confirme ta majorité et les conditions dans Confidentialité. Les achats Sandbox sont réservés aux comptes de test autorisés.',
-    price_changed:'Le prix a changé. Actualise les offres avant de confirmer.',purchase_account_mismatch:'Cet achat appartient à un autre compte NailMoods. Reconnecte-toi au compte utilisé pour l’achat.'})[error?.message]||'La vérification n’a pas abouti. Réessaie la restauration ; ton achat reste à vérifier.';
+  return ({environment_unavailable:'La connexion Apple n’a pas abouti. Appuie sur Actualiser les offres pour te reconnecter à Apple.',app_not_verified:'Apple n’a pas confirmé les informations de cette application. Appuie sur Actualiser les offres.',product_unavailable:'Apple ne renvoie pas encore les offres Plus et Pro. Leur configuration App Store reste à vérifier.',local_storekit_not_server_verifiable:'Les achats locaux Xcode ne peuvent pas être vérifiés par le serveur.',billing_not_configured:'Les abonnements Apple ne sont pas encore ouverts.',manual_entitlement_active:'Ton accès est déjà offert par NailMoods.',
+    salon_entitlement_active:'Ton accès Pro est inclus dans ton salon. Aucun second abonnement n’est nécessaire.',other_subscription_active:'Ton offre est déjà active sur ton compte.',billing_ineligible:'Confirme ta majorité et les conditions dans Confidentialité. Les achats Sandbox sont réservés aux comptes de test autorisés.',
+    price_changed:'Le prix a changé. Actualise les offres avant de confirmer.',purchase_account_mismatch:'Cet achat appartient à un autre compte NailMoods. Reconnecte-toi au compte utilisé pour l’achat.'})[error?.message]||'La connexion aux abonnements a échoué. Actualise les offres. Tes accès actuels sont conservés.';
 }

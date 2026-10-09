@@ -31,6 +31,7 @@ export async function purchaseTier(client, tier, displayedProduct) {
   if (!isGooglePlayAndroid()) throw new Error('billing_not_available');
   const productId = BILLING_PRODUCTS[tier];
   if (!productId || displayedProduct?.productId !== productId) throw new Error('product_unavailable');
+  const {data:rights,error:rightsError}=await client.rpc('billing_entitlement_state');if(rightsError)throw rightsError;if(rights?.instituteActive)throw new Error('salon_entitlement_active');
   const context = await prepareGooglePlayPurchase(client);
   if (!context.enabled) throw new Error('billing_not_configured');
   if (!context.eligible) throw new Error('billing_ineligible');

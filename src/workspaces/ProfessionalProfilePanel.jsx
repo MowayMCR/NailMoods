@@ -1,10 +1,12 @@
+import SalonPanel from '../professional/SalonPanel';
+import {salonEnabled} from '../professional/salonService';
 import {ShelfVisibility} from '../shelf/ProShelf.jsx';
 import ProManager from '../professional/ProManager.jsx';
 import {proV2Enabled} from '../professional/service.js';
 import React,{useEffect,useMemo,useState} from 'react';
 import {Building2,Check,ChevronRight,Eye,Scissors,ShieldCheck,UsersRound} from 'lucide-react';
 import Sheet from '../Sheet';
-import PublicProfile from '../identity/PublicProfile';
+import PublicProfile from '../identity/PublicProfile.jsx';
 import InstitutePanel from './InstitutePanel';
 import WorkspaceAvatar from './WorkspaceAvatar';
 import {PROFESSIONAL_STATUSES,professionalStatus} from './professionalProfile';
@@ -14,7 +16,7 @@ import './professional.css';
 
 const emptyForm={name:'',handle:'',bio:'',city:'',isPublic:false,avatarUrl:null};
 
-export default function ProfessionalProfilePanel(props){return <>{props.tier==='pro'&&<ShelfVisibility client={props.client}/ >}{proV2Enabled()?<ProManager {...props}/>:<LegacyProfessionalProfilePanel {...props}/>}</>;}
+export default function ProfessionalProfilePanel(props){return <>{salonEnabled()&&<SalonPanel {...props}/ >}{props.tier==='pro'&&<ShelfVisibility client={props.client}/ >}{proV2Enabled()?<ProManager {...props}/>:<LegacyProfessionalProfilePanel {...props}/>}</>;}
 function LegacyProfessionalProfilePanel({client,userId,tier}){
  const [state,setState]=useState(null),[status,setStatus]=useState(''),[form,setForm]=useState(emptyForm),[createName,setCreateName]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[closeOpen,setCloseOpen]=useState(false),[confirmation,setConfirmation]=useState(''),[previewHandle,setPreviewHandle]=useState('');
  const service=useMemo(()=>userId?professionalService(client,userId):null,[client,userId]);

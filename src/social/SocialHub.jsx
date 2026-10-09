@@ -5,7 +5,7 @@ import {poShareService} from './poShareService';
 import React,{useEffect,useState,useRef} from 'react';
 import {MessageCircle,Users,ChevronRight,RefreshCw,Send,CheckCheck,Search,ShieldBan} from 'lucide-react';
 import Sheet from '../Sheet';
-import PublicProfile from '../identity/PublicProfile';
+import PublicProfile from '../identity/PublicProfile.jsx';
 import {useSocial,socialCall} from './SocialContext';
 import {mergeMessages,notificationLabel,messageId} from './messageState';
 import './social-beta.css';

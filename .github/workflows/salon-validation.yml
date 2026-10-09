@@ -1,0 +1,102 @@
+name: Salon — common Web and unsigned native checks
+on:
+  push:
+    branches: [feat/salon-collaborative, release/nailmoods-0.8.1-web-android-ios]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+        env:
+          VITE_DEPLOYMENT_ENV: recette
+          VITE_PRO_V2_ENABLED: 'true'
+          VITE_SALON_ENABLED: 'true'
+      - name: Archive unified Web 0.8.1 preview build
+        run: |
+          mkdir -p artifacts/web-081
+          cp -R dist/. artifacts/web-081/
+          printf '%s\n' "$GITHUB_SHA" > artifacts/web-081/SOURCE_COMMIT.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NailMoods-Web-0.8.1-preview
+          path: artifacts/web-081/
+          retention-days: 14
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/test-salon-browser.mjs
+      - run: node scripts/test-tablet-book-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: salon-tablet-browser-evidence
+          path: |
+            salon-evidence/
+            tablet-evidence/
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm run mobile:recette
+        env:
+          VITE_PRO_V2_ENABLED: 'true'
+          VITE_SALON_ENABLED: 'true'
+      - run: npx cap sync android
+        env:
+          NAILMOODS_MOBILE_ENV: recette
+      - run: npm run mobile:assets
+      - run: chmod +x android/gradlew
+      - run: ./android/gradlew -p android -PnailmoodsEnvironment=recette :app:compileDebugJavaWithJavac --console=plain
+      - name: Build Android beta AAB candidate (not signed for Play)
+        run: |
+          npm run mobile:production
+          NAILMOODS_MOBILE_ENV=production npx cap sync android
+          ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain
+          mkdir -p artifacts/salon-android
+          cp android/app/build/outputs/bundle/release/app-release.aab artifacts/salon-android/UNSIGNED-NailMoods-0.8.1-code12.aab
+          sha256sum artifacts/salon-android/*.aab > artifacts/salon-android/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: salon-android-unsigned-aab
+          path: artifacts/salon-android/
+          retention-days: 7
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run ios:recette
+        env:
+          VITE_PRO_V2_ENABLED: 'true'
+          VITE_SALON_ENABLED: 'true'
+      - run: xcodebuild -project ios/App/App.xcodeproj -scheme App -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/nailmoods-salon CODE_SIGNING_ALLOWED=NO build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: salon-ios-build-logs
+          path: /tmp/nailmoods-salon/Logs/Build

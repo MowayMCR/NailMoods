@@ -1,5 +1,6 @@
+import {salonEnabled,salonService,contributionLabel} from './professional/salonService';
 import AtelierArt from './design/AtelierArt';
-import AdaptCollection from './engagement/AdaptCollection';
+import AdaptCollection from './engagement/AdaptCollection.jsx';
 import JournalTracking from './poseCycle/JournalTracking';
 import {poseDestinations} from './poseDestinations';
 import {messageId} from './social/messageState';
@@ -55,12 +56,14 @@ function ProductPicker({ products, items, onApply, onClose }) {
   </Sheet>;
 }
 
-function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }) {
+function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate, onSubmitted }) {
   const storage=useStorage();
   const draftKey='nm-journal-draft:'+ (entry?.id || session?.id || draftEntry?.idea?.key || 'new');
   const social=useSocial(),canPublish=['plus','pro'].includes(social?.tier);
   const [draft, setDraft] = useState(() => {try{const saved=JSON.parse(storage.getItem(draftKey));if(saved?.id)return saved;}catch{}return entry ? JSON.parse(JSON.stringify(entry)) : draftEntry ? JSON.parse(JSON.stringify(draftEntry)) : newJournalEntry('journal-' + messageId(), session);});
   const [photoUrl,setPhotoUrl]=useState('');
+  const [salons,setSalons]=useState([]),[salonId,setSalonId]=useState(''),[saving,setSaving]=useState(false);
+  useEffect(()=>{let alive=true;if(salonEnabled()&&social?.client)salonService(social.client).state().then(s=>{if(alive)setSalons(s.spaces.filter(w=>w.operational&&w.canPublish!==false));}).catch(()=>{});return()=>{alive=false;};},[social?.client]);
   useEffect(()=>{let active=true;setPhotoUrl('');if(draft.mediaPath&&storage.media)storage.media.signedUrl(draft.mediaPath).then(url=>{if(active)setPhotoUrl(url);}).catch(()=>{});return()=>{active=false;};},[draft.mediaPath,storage]);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
@@ -74,14 +77,18 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
     try{storage.setItem(draftKey,JSON.stringify(next));setError('');}
     catch{setError('Le brouillon n’a pas pu être conservé. Reste sur cet écran et réessaie.');}
   };
-  function save(event) {
+  async function save(event) {
     event.preventDefault();
-    if (photoBusy) return;
+    if (photoBusy||saving) return;
     const invalid = journalValidation(draft);
     if (invalid) { setError(invalid); return; }
     const publicTags=cleanTags(draft.publicTags??suggestTags(draft));
     const result = onSave({...draft,publicTags,searchTags:internalTags(Object.values(publicTags).flat().join(' '))});
-    if (result.ok) {try{storage.setItem(draftKey,'null');}catch{}onNavigate(result.id);}
+    if (result.ok) {
+      if(salonId){setSaving(true);try{const id=await storage.remoteContentId('journal_entries',result.id);const submitted=await salonService(social.client).action(salonId,'submit',{kind:'journal',id});onSubmitted?.({id:result.id,text:contributionLabel(submitted.status)});}
+      catch{setError('Ta pose est enregistrée. L’envoi au salon n’a pas abouti : réessaie depuis Mon salon après synchronisation.');setSaving(false);return;}setSaving(false);}
+      try{storage.setItem(draftKey,'null');}catch{}onNavigate(result.id);
+    }
     else setError(result.error);
   }
   return <div className="journalPage journalEditPage">
@@ -90,6 +97,7 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
     <form className="journalForm" onSubmit={save} noValidate>
       <section className="journalFormCard">
         <ProductPhoto value={draft.mediaPath ? photoUrl : draft.photo} onChange={photo => change({ photo, mediaPath: null, publicMediaPath: null })} onBusy={setPhotoBusy} alt="Photo du résultat de ma pose" cameraLabel="Photographier ma pose" />
+        {salons.length>0&&<label>Ajouter aussi à la vitrine du salon<select value={salonId} onChange={e=>{setSalonId(e.target.value);if(e.target.value)change({visibility:'public'});}}><option value="">Uniquement ma galerie</option>{salons.map(w=><option value={w.id} key={w.id}>{w.name}{w.moderation?' · validation préalable':''}</option>)}</select>{salonId&&<small>La pose reste dans ta galerie. Sa publication respecte la vérification de l’image et la validation du salon.</small>}</label>}
         <label htmlFor="journal-title">Un nom pour cette pose<input id="journal-title" maxLength={120} value={draft.title} onChange={event => change({ title: event.target.value })} placeholder={'Ma pose du ' + journalDate(draft.date)} /></label>
         <label htmlFor="journal-date">Date de la pose<input id="journal-date" type="date" max={localDate()} value={draft.date} onChange={event => change({ date: event.target.value })} /></label>
       </section>
@@ -111,13 +119,13 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
         <button type="button" className="journalSecondary" onClick={() => setProductsOpen(true)}><Package />{draft.products.length ? 'Modifier les produits' : 'Choisir dans ma collection'}</button>
       </section>
       </details>
-      <div className="journalFormActions">{error && <p className="formError" role="alert">{error}</p>}<button type="submit" className="journalPrimary" disabled={photoBusy}><Check />{photoBusy ? 'Préparation de la photo…' : entry ? 'Enregistrer les modifications' : 'Enregistrer'}</button><small><StorageHint guest="Conservée dans ce navigateur, sur cet appareil." account="Conservée dans ton compte après synchronisation."/></small></div>
+      <div className="journalFormActions">{error && <p className="formError" role="alert">{error}</p>}<button type="submit" className="journalPrimary" disabled={photoBusy||saving}><Check />{saving ? 'Envoi au salon…' : photoBusy ? 'Préparation de la photo…' : entry ? 'Enregistrer les modifications' : 'Enregistrer'}</button><small><StorageHint guest="Conservée dans ce navigateur, sur cet appareil." account="Conservée dans ton compte après synchronisation."/></small></div>
     </form>
     {productsOpen && <ProductPicker products={draft.products} items={items} onApply={products => { change({ products }); setProductsOpen(false); }} onClose={() => setProductsOpen(false)} />}
   </div>;
 }
 
-function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDelete, onIdea, onCollection, onShareToPro }) {
+function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDelete, onIdea, onCollection, onShareToPro, salonNotice }) {
   const [variantsOpen, setVariantsOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState('');
@@ -126,7 +134,7 @@ function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDel
   return <div className="journalPage journalDetailPage">
     <div className="journalToolbar"><button onClick={() => onNavigate('')}><ArrowLeft />Mon journal</button><button onClick={() => onNavigate(entry.id + '/modifier')}><PenLine />Modifier</button></div>
     <section className="journalHeading"><small>{journalDate(entry.date)}</small><h1 ref={heading} tabIndex={-1}>{entry.title}</h1></section>
-    <JournalVisual entry={entry} media={media} /><div className="journalToolbar"><button onClick={() => setVariantsOpen(true)}>Créer une variante<ArrowRight /></button></div>
+    {salonNotice?.id===entry.id&&<p role="status">{salonNotice.text}</p>}<JournalVisual entry={entry} media={media} /><div className="journalToolbar"><button onClick={() => setVariantsOpen(true)}>Créer une variante<ArrowRight /></button></div>
     {entry.idea&&<AdaptCollection idea={entry.idea} items={items} onOpen={onIdea} onCollection={onCollection}/>}
     <JournalTracking entry={entry}/><RecipeSummary idea={entry.idea} /><section className="journalDetailBody">
       {error && <p className="formError" role="alert">{error}</p>}
@@ -151,6 +159,7 @@ function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDel
 
 export default function JournalView({ onFavorites, library, profile, journal, sessions, items, media, route, draftIdea, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate, onShareToPro }) {
   const storage=useStorage();
+  const [salonNotice,setSalonNotice]=useState(null);
   const hasDraft=Boolean(storage.getItem('nm-journal-draft:new') && storage.getItem('nm-journal-draft:new')!=='null');
   const [query, setQuery] = useState('');
   const [repeatOnly, setRepeatOnly] = useState(false);
@@ -161,18 +170,18 @@ export default function JournalView({ onFavorites, library, profile, journal, se
   const path=listSection?'':rawPath;
   const destinations=poseDestinations(library,sessions);
   const incoming=path.startsWith('idee/')? [...(library.recent||[]),...(library.favorites||[]),...(library.projects||[]),...(draftIdea?[draftIdea]:[])].find(i=>i.key===path.slice(5)):draftIdea;
-  if (path === 'nouveau') return <JournalEditor key="new" items={items} onSave={onSave} onNavigate={onNavigate} />;
-  if ((path === 'projet'||path.startsWith('idee/')) && incoming) return <JournalEditor key={incoming.key} draftEntry={newJournalEntryFromIdea('journal-' + messageId(), incoming)} items={items} onSave={onSave} onNavigate={onNavigate} />;
+  if (path === 'nouveau') return <JournalEditor key="new" items={items} onSave={onSave} onNavigate={onNavigate} onSubmitted={setSalonNotice} />;
+  if ((path === 'projet'||path.startsWith('idee/')) && incoming) return <JournalEditor key={incoming.key} draftEntry={newJournalEntryFromIdea('journal-' + messageId(), incoming)} items={items} onSave={onSave} onNavigate={onNavigate} onSubmitted={setSalonNotice} />;
   if (path.startsWith('pose/')) {
     const id = path.slice(5), session = sessions.find(value => value.id === id && value.status === 'completed');
     const existing = journal.entries.find(entry => entry.sessionId === id);
-    if (existing) return <JournalDetail profile={profile} key={existing.id} entry={existing} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} onShareToPro={onShareToPro} />;
-    if (session) return <JournalEditor key={id} session={session} items={items} onSave={onSave} onNavigate={onNavigate} />;
+    if (existing) return <JournalDetail salonNotice={salonNotice} profile={profile} key={existing.id} entry={existing} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} onShareToPro={onShareToPro} />;
+    if (session) return <JournalEditor key={id} session={session} items={items} onSave={onSave} onNavigate={onNavigate} onSubmitted={setSalonNotice} />;
   } else if (path) {
     const editing = path.endsWith('/modifier');
     const id = editing ? path.slice(0, -9) : path;
     const entry = journal.entries.find(value => value.id === id);
-    if (entry) return editing ? <JournalEditor key={id + '/edit'} entry={entry} items={items} onSave={onSave} onNavigate={onNavigate} /> : <JournalDetail profile={profile} key={id} entry={entry} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} onShareToPro={onShareToPro} />;
+    if (entry) return editing ? <JournalEditor key={id + '/edit'} entry={entry} items={items} onSave={onSave} onNavigate={onNavigate} onSubmitted={setSalonNotice} /> : <JournalDetail salonNotice={salonNotice} profile={profile} key={id} entry={entry} items={items} media={media} onNavigate={onNavigate} onSave={onSave} onDelete={onDelete} onIdea={onIdea} onCollection={onCollection} onShareToPro={onShareToPro} />;
   }
   if (path) return <div className="journalPage"><section className="journalEmpty"><BookHeart /><h1>Cette pose n’est pas disponible</h1><button className="journalPrimary" onClick={() => onNavigate('')}>Retrouver mon journal</button></section></div>;
   return <div className="journalPage nmPoseLanding">
