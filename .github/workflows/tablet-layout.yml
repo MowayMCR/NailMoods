@@ -1,0 +1,24 @@
+name: Tablet book and layout checks
+on:
+  push:
+    branches: [main, fix/tablet-book-layout]
+    paths: [src/poseBook/**, src/design/atelier.css, scripts/test-tablet-book-browser.mjs, .github/workflows/tablet-layout.yml]
+permissions:
+  contents: read
+jobs:
+  tablet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/test-tablet-book-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tablet-book-layout
+          path: tablet-evidence/
