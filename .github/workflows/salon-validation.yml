@@ -22,6 +22,16 @@ jobs:
           VITE_DEPLOYMENT_ENV: recette
           VITE_PRO_V2_ENABLED: 'true'
           VITE_SALON_ENABLED: 'true'
+      - name: Archive unified Web 0.8.1 preview build
+        run: |
+          mkdir -p artifacts/web-081
+          cp -R dist/. artifacts/web-081/
+          printf '%s\n' "$GITHUB_SHA" > artifacts/web-081/SOURCE_COMMIT.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NailMoods-Web-0.8.1-preview
+          path: artifacts/web-081/
+          retention-days: 14
       - run: npx playwright install --with-deps chromium
       - run: node scripts/test-salon-browser.mjs
       - run: node scripts/test-tablet-book-browser.mjs
