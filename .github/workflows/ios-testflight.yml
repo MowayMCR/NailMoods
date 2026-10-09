@@ -140,6 +140,9 @@ jobs:
 
   ios:
     needs: [shared-tests, android-regression]
+    # Verify native iOS independently of Android failures. For signed TestFlight
+    # releases retain the Android regression as a strict prerequisite.
+    if: ${{ always() && needs.shared-tests.result == 'success' && (inputs.mode != 'testflight' || needs.android-regression.result == 'success') }}
     runs-on: macos-15
     timeout-minutes: 60
     env:
