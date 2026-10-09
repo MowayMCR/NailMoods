@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const out='tablet-evidence';fs.mkdirSync(out,{recursive:true});
 const server=await createServer({server:{host:'127.0.0.1',port:4199}});
-server.middlewares.use('/__tablet-book',async(_req,res)=>{res.setHeader('Content-Type','text/html');res.end(await server.transformIndexHtml('/__tablet-book',`<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><div id="root"></div><script type="module">
+fs.writeFileSync('tablet-book-fixture.html',`<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><div id="root"></div><script type="module">
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import PoseBook from '/src/poseBook/PoseBook.jsx';
@@ -13,13 +13,13 @@ const h=React.createElement;
 const entries=Array.from({length:5},(_,i)=>({id:'pose-'+i,kind:'journal',title:'Mon souvenir floral '+i,date:'2026-10-09',...(i===0?{scrapbook:{version:1,background:'soft-0',nodes:[{id:'photo',type:'photo',ref:'pose-0',frame:'classic',x:50,y:40,w:65,rotate:0}]}}:{})}));
 const props={entries,renderVisual:()=>h('div',{className:'journalVisual compact'},h('img',{src:'/atelier/pose-book-v1/cover.webp',alt:'Souvenir de test'})),onCompose:()=>{}};
 createRoot(document.getElementById('root')).render(h('div',{className:'app'},h('main',{},h('section',{className:'collectionExperience'},h(PoseBook,props)))));
-</script>`));});
+</script>`);
 await server.listen();
 const browser=await chromium.launch({args:['--no-sandbox']});
 try{
- const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const page=await browser.newPage();const errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error(e.message);});
  for(const [width,height] of [[390,844],[768,1024],[1024,1366],[1366,1024]]){
-  await page.setViewportSize({width,height});await page.goto('http://127.0.0.1:4199/__tablet-book');
+  await page.setViewportSize({width,height});await page.goto('http://127.0.0.1:4199/tablet-book-fixture.html');
   const cover=page.getByRole('button',{name:'Ouvrir Mon livre de poses'});await cover.waitFor();await cover.click();
   await page.locator('.nmBookSpread').waitFor();await page.waitForTimeout(100);
   const geometry=await page.evaluate(()=>{
@@ -38,4 +38,4 @@ try{
   console.log('PASS tablet book',width,JSON.stringify(geometry));
  }
  assert.deepEqual(errors,[]);
-}finally{await browser.close();await server.close();}
+}finally{await browser.close();await server.close();fs.rmSync('tablet-book-fixture.html',{force:true});}
