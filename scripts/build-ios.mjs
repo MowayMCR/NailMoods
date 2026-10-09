@@ -1,4 +1,5 @@
 import {spawnSync} from 'node:child_process';
+import {mobileVersion} from './mobile-version.mjs';
 import {readFileSync,writeFileSync} from 'node:fs';
 const environment=process.argv[2];
 if(!['recette','production'].includes(environment))throw Error('Usage: node scripts/build-ios.mjs recette|production');
@@ -13,7 +14,8 @@ const plist='ios/App/App/Info.plist';
 let xml=readFileSync(plist,'utf8').replace(/<key>CFBundleDisplayName<\/key>\s*<string>[^<]*<\/string>/,'<key>CFBundleDisplayName</key><string>'+(environment==='production'?'NailMoods':'NailMoods Recette')+'</string>');
 xml=xml.replace(/<key>CFBundleURLSchemes<\/key>\s*<array>\s*<string>[^<]*<\/string>/,'<key>CFBundleURLSchemes</key><array><string>'+(environment==='production'?'com.nailmoods.app':'com.nailmoods.app.recette')+'</string>');writeFileSync(plist,xml);
 const project='ios/App/App.xcodeproj/project.pbxproj';
-writeFileSync(project,readFileSync(project,'utf8').replace(/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/g,`PRODUCT_BUNDLE_IDENTIFIER = ${bundle};`).replace(/IPHONEOS_DEPLOYMENT_TARGET = [^;]+;/g,'IPHONEOS_DEPLOYMENT_TARGET = 16.0;'));
+const {version,versionCode}=mobileVersion('ios',env);
+writeFileSync(project,readFileSync(project,'utf8').replace(/PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);/g,(_match,value)=>`PRODUCT_BUNDLE_IDENTIFIER = ${bundle}${value.endsWith(".uitests")?".uitests":""};`).replace(/IPHONEOS_DEPLOYMENT_TARGET = [^;]+;/g,'IPHONEOS_DEPLOYMENT_TARGET = 16.0;').replace(/MARKETING_VERSION = [^;]+;/g,`MARKETING_VERSION = ${version};`).replace(/CURRENT_PROJECT_VERSION = [^;]+;/g,`CURRENT_PROJECT_VERSION = ${versionCode};`).replace(/TARGETED_DEVICE_FAMILY = [^;]+;/g,'TARGETED_DEVICE_FAMILY = "1,2";'));
 // SDK package version is pinned independently of CLI-generated SPM file.
 const spm='ios/App/CapApp-SPM/Package.swift';
 writeFileSync(spm,readFileSync(spm,'utf8').replace(/from: "[\d.]+"/, 'exact: "8.5.2"'));
