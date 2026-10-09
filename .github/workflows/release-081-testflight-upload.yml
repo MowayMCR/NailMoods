@@ -1,0 +1,16 @@
+name: NailMoods 0.8.1 TestFlight signed delivery
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/release-081-testflight-upload.yml
+permissions:
+  contents: read
+jobs:
+  testflight:
+    uses: MowayMCR/NailMoods/.github/workflows/ios-testflight.yml@feat/ios-testflight-beta1
+    with:
+      mode: testflight
+      source_ref: main
+      build_number: '30001'
+    secrets: inherit
