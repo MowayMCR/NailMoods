@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   status:
-    if: github.event.workflow_run.head_sha == '88d4dab4e7153792a498eed20836228fecb4b27d' && github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.head_sha == '88d4dab4e7153792a498eed20836228fecb4b27d' && (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
