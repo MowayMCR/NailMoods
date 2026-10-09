@@ -1,0 +1,2 @@
+import React from 'react';
+export default function EditMark(){return <svg width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false"><path d="m9 23 3-7L25 3l5 5-13 13-8 2Z" fill="var(--accentSoft,#ead1d7)" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="m22 6 5 5M12 16l5 5M9 23l4-1" stroke="currentColor" strokeWidth="1.6"/><path d="M5 9v-4M3 7h4" stroke="#b68a50" strokeWidth="1.3" strokeLinecap="round"/><path d="M5 27c5-2 12 3 21-1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>;}

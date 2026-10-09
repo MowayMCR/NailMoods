@@ -8,11 +8,12 @@ fs.writeFileSync('tablet-book-fixture.html',`<!doctype html><meta name="viewport
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import PoseBook from '/src/poseBook/PoseBook.jsx';
+import AtelierArt from '/src/design/AtelierArt.jsx';
 await import('/src/style.css');await import('/src/design-system.css');await import('/src/design/da06.css');await import('/src/design/atelier.css');
 const h=React.createElement;
-const entries=Array.from({length:5},(_,i)=>({id:'pose-'+i,kind:'journal',title:'Mon souvenir floral '+i,date:'2026-10-09',...(i===0?{scrapbook:{version:1,background:'soft-0',nodes:[{id:'photo',type:'photo',ref:'pose-0',frame:'classic',x:50,y:40,w:65,rotate:0}]}}:{})}));
+const entries=Array.from({length:5},(_,i)=>({id:'pose-'+i,kind:'journal',title:'Mon souvenir floral '+i,date:'2026-10-09',...(i===0?{scrapbook:{version:1,background:'soft-0',nodes:[{id:'photo',type:'photo',ref:'pose-0',frame:'classic',x:50,y:40,w:65,rotate:0},{id:'tape',type:'tape',asset:'cottage-8',x:30,y:70,w:25,rotate:-10}]}}:{})}));
 const props={entries,renderVisual:()=>h('div',{className:'journalVisual compact'},h('img',{src:'/atelier/pose-book-v1/cover.webp',alt:'Souvenir de test'})),onCompose:()=>{}};
-createRoot(document.getElementById('root')).render(h('div',{className:'app'},h('main',{},h('section',{className:'collectionExperience'},h(PoseBook,props)))));
+createRoot(document.getElementById('root')).render(h('div',{className:'app'},h('main',{},h('section',{className:'collectionExperience'},h(PoseBook,props),h(AtelierArt,{source:'fil'})))));
 </script>`);
 await server.listen();
 const browser=await chromium.launch({args:['--no-sandbox']});
@@ -21,7 +22,27 @@ try{
  for(const [width,height] of [[390,844],[768,1024],[1024,1366],[1366,1024]]){
   await page.setViewportSize({width,height});await page.goto('http://127.0.0.1:4199/tablet-book-fixture.html');
   const cover=page.getByRole('button',{name:'Ouvrir Mon livre de poses'});await cover.waitFor();await cover.click();
-  await page.locator('.nmBookSpread').waitFor();await page.waitForTimeout(100);
+  await page.locator('.nmBookSpread').waitFor();
+  assert.equal(await page.locator('.nmBookSearch').count(),0);
+  assert.equal(await page.locator('.nmBookGesture').count(),0);
+  const edit=page.getByRole('button',{name:/Composer (cette page|la page :)/}).first();
+  assert.equal((await edit.innerText()).trim(),'');
+  await page.getByRole('button',{name:'Rechercher dans le livre',exact:true}).click();
+  await page.getByRole('searchbox',{name:'Rechercher dans le livre'}).fill('aucun-resultat');
+  await page.getByRole('heading',{name:'Aucune pose avec ces tags'}).waitFor();
+  await page.getByRole('button',{name:'Voir toutes les poses'}).click();
+  await page.getByRole('button',{name:'Rechercher dans le livre',exact:true}).click();
+  assert.equal(await page.locator('.nmBookSearch').count(),0);
+  const canvasColor=await page.locator('.nmScrapCanvas').evaluate(el=>getComputedStyle(el).backgroundColor);
+  assert.equal(canvasColor,'rgba(0, 0, 0, 0)');
+  const tape=await page.locator('.nmScrapNode.type-tape').evaluate(el=>{const r=el.getBoundingClientRect();return {aspect:getComputedStyle(el).aspectRatio,bg:getComputedStyle(el.querySelector('.nmScrapSprite')).backgroundImage};});
+  assert.equal(tape.aspect,'4 / 1');assert.match(tape.bg,/scrapbook-v2\/cottage-8.svg/);
+  for(const [mood,prefix] of [['soft-glam','soft'],['dark-feminine','dark'],['cottagecore','cottage'],['pop-pastel','pop']]){
+   await page.evaluate(m=>{document.documentElement.dataset.mood=m;},mood);
+   await page.waitForFunction(p=>document.querySelector('img.nmAtelierArt')?.src.endsWith('/'+p+'-fil.webp'),prefix);
+   await page.waitForFunction(()=>{const i=document.querySelector('img.nmAtelierArt');return i?.complete&&i.naturalWidth>0;});
+  }
+  await page.evaluate(()=>{document.documentElement.dataset.mood='soft-glam';});await page.waitForTimeout(100);
   const geometry=await page.evaluate(()=>{
    const book=document.querySelector('.nmPoseBook').getBoundingClientRect(),spread=document.querySelector('.nmBookSpread').getBoundingClientRect(),canvas=document.querySelector('.nmScrapCanvas').getBoundingClientRect(),wide=document.querySelector('.nmBookSpread').classList.contains('wide');
    return {bookWidth:book.width,spreadWidth:spread.width,ratio:spread.width/spread.height,wide,canvasWidth:canvas.width,canvasHeight:canvas.height,canvasInside:canvas.top>=spread.top&&canvas.bottom<=spread.bottom+1,overflow:document.documentElement.scrollWidth>innerWidth};

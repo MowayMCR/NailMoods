@@ -1,3 +1,4 @@
+import FeedMark from './design/FeedMark.jsx';
 import Desk from './desk/Desk.jsx';
 import {DESK_KEY,initialDesk,progressFor,earnedDecorations} from './desk/model.js';
 import Shelf,{ViewSwitch,ShelfToneFilter} from './shelf/Shelf.jsx';
@@ -41,7 +42,7 @@ import AccountRoot from './cloud/AccountRoot';
 import {tierCapabilities} from './cloud/betaTier';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { SlidersHorizontal, Home, Palette, Library, BookHeart, UserRound, Compass, ChevronRight, X, Check, Search, Plus, Camera, Trash2, Heart, Link, ScanLine, Image, PenLine, WandSparkles, Package } from 'lucide-react';
+import { SlidersHorizontal, Home, Palette, Library, BookHeart, UserRound, ChevronRight, X, Check, Search, Plus, Camera, Trash2, Heart, Link, ScanLine, Image, PenLine, WandSparkles, Package } from 'lucide-react';
 import { equipmentInfo, EquipmentVisual, EquipmentCategory, EquipmentFields } from './equipment';
 import ProductPhoto from './ProductPhoto';
 import ProductImport from './ProductImport.jsx';
@@ -423,7 +424,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     </Sheet>}
 
     {shelfSelection&&<ProductFocus selection={shelfSelection} product={usedById.get(String(shelfSelection.product.id))||shelfSelection.product} onClose={()=>setShelfSelection(null)} onFile={()=>{setSaveError('');setEdit({...defaults,...materialDefaults,...items.find(p=>String(p.id)===String(shelfSelection.product.id))});}} onCreate={()=>createWith(shelfSelection.product)} onFavorite={()=>persist(items.map(p=>String(p.id)===String(shelfSelection.product.id)?{...p,fav:!p.fav}:p))} onPose={p=>openJournal(p.id)}/>}{proShelvesOpen&&<Sheet title="L’étagère des PO" onClose={()=>setProShelvesOpen(false)}><ProShelfDirectory client={social?.client}/></Sheet>}
-    <nav>{[['home', Home, 'Accueil'], ['feed', Compass, 'Fil'], ['create', Plus, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Mes poses']].map(([id, Icon, label]) =>
+    <nav>{[['home', Home, 'Accueil'], ['feed', 'Fil'], ['create', Plus, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Mes poses']].map(([id, Icon, label]) =>
       <button data-tour={id} key={id} className={tab === id || tab === 'scan' && id === 'create' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'create' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}{limited && id==='collection' ? ' · Plus' : ''}</span></button>
     )}</nav>
 

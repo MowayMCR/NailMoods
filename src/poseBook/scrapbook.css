@@ -40,3 +40,19 @@
 .app .productSheet.nmScrapEditor .nmScrapToolbar{scroll-margin-top:0;gap:5px}
 .app .productSheet.nmScrapEditor .nmScrapToolbar button{min-width:0;font-size:12px;padding:8px}
 .app .nmBookPage.customized>.nmScrapCanvas{border:0;border-radius:0;box-shadow:none}
+
+/* Single transparent assets; no artwork atlas or neighbouring drawing fragments. */
+.nmScrapCanvas,.nmScrapSwatch{background-image:none;background-size:auto;background-position:center}
+.nmScrapCanvas.background-0,.nmScrapSwatch.background-0{background-image:none}
+.nmScrapCanvas.background-1,.nmScrapSwatch.background-1{background-image:radial-gradient(circle,color-mix(in srgb,var(--scrap-ink) 18%,transparent) 1px,transparent 1.5px);background-size:16px 16px}
+.nmScrapCanvas.background-2,.nmScrapSwatch.background-2{background-image:repeating-linear-gradient(135deg,transparent 0 12px,color-mix(in srgb,var(--scrap-ink) 9%,transparent) 12px 13px)}
+.nmScrapCanvas.background-3,.nmScrapSwatch.background-3{background-image:var(--scrap-decor);background-size:100% 100%;background-repeat:no-repeat}
+.nmBookPage .nmScrapCanvas{background-color:transparent}
+.nmBookPage .nmScrapCanvas.background-1,.nmBookPage .nmScrapCanvas.background-2{background-color:color-mix(in srgb,var(--scrap-paper) 24%,transparent)}
+.nmScrapSprite{background-size:contain!important;background-position:center!important}
+.nmScrapNode.type-tape{aspect-ratio:4/1}
+.nmScrapPalette .nmScrapSprite{height:70px;aspect-ratio:auto}
+.nmScrapText{font-size:clamp(16px,7cqw,30px);line-height:1.15}
+.nmScrapFrame.frame-gold{filter:none}
+.nmScrapFrame.frame-torn{filter:none}
+.nmScrapEditor .nmScrapCanvas{background-color:#fffaf1}

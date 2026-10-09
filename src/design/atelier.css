@@ -237,3 +237,15 @@
  .app .collectionExperience .productPhoto img{height:110px;object-fit:contain}
  .app .collectionExperience .productInfo>b{font-size:18px;line-height:1.25;margin:6px 0}
 }
+
+/* Approved arched tiles: same destinations, independent themed artwork. */
+.nmAtelierArt{object-fit:contain}
+.app .nmIllustratedTile,.app .nmUniverseTile,.app .nmPreferenceTiles>div,.app .nmAtelierSources .sourceCard{border-radius:38px 38px 18px 18px}
+.app .nmUniverseTile{padding-top:18px}
+.nmFilArtHeading{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.nmFilArtHeading>.nmAtelierArt{width:96px;height:96px;flex:0 0 96px}
+.nmFilArtHeading h1{margin:0;font-size:clamp(25px,5vw,36px)}
+.nmFilArtHeading .nmFilIntro{margin:6px 0 0}
+@media(max-width:360px){.nmFilArtHeading>.nmAtelierArt{width:72px;height:72px;flex-basis:72px}.nmBookHeaderTools{gap:4px}}
+
+.nmPreferencesTitle{display:flex;align-items:center;gap:12px}.nmPreferencesTitle>.nmAtelierArt{width:56px;height:56px;flex-shrink:0}

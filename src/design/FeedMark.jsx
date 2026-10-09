@@ -1,0 +1,2 @@
+import React from 'react';
+export default function FeedMark({size=24,...props}){return <svg width={size} height={size} viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false" {...props}><path d="m4 8 17-4 4 19-17 4Z"/><path d="m23 10 6 3-4 15-5-2"/><path d="M18 19c-4-5-9 1-5 5l5 5 5-5c4-4-1-10-5-5Z" fill="var(--surfacePrimary,#fffaf7)"/></svg>;}

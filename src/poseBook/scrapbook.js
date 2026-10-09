@@ -17,6 +17,6 @@ export function cleanScrapbook(value){
  }
  return {version:1,background:scrapBackgrounds.some(b=>b.id===value.background)?value.background:'soft-0',nodes};
 }
-export function defaultScrapbook(entry){return {version:1,background:'soft-0',nodes:[{id:'photo-main',type:'photo',ref:entry.id,x:50,y:42,w:54,rotate:-1,frame:'classic'},{id:'date-main',type:'text',text:(()=>{const v=entry.date||entry.performedOn||'';if(!/^\d{4}-\d{2}-\d{2}$/.test(v))return v;const d=new Date(v+'T12:00:00Z');return Number.isNaN(d.getTime())?v:new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(d);})(),x:50,y:75,w:60,rotate:0,color:'ink'}]};}
+export function defaultScrapbook(entry){return {version:1,background:'soft-0',nodes:[{id:'photo-main',type:'photo',ref:entry.id,x:50,y:44,w:54,rotate:-1,frame:'classic'},{id:'date-main',type:'text',text:(()=>{const v=entry.date||entry.performedOn||'';if(!/^\d{4}-\d{2}-\d{2}$/.test(v))return v;const d=new Date(v+'T12:00:00Z');return Number.isNaN(d.getTime())?v:new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(d);})(),x:50,y:76,w:82,rotate:0,color:'ink'}]};}
 export const assetById=id=>scrapAssets.find(a=>a.id===id);
-export function spriteStyle(asset){return {backgroundImage:`url(${import.meta.env?.BASE_URL||'/'}atelier/scrapbook-v1/${asset.mood}.webp)`,backgroundSize:'400% 400%',backgroundPosition:`${asset.index%4/3*100}% ${Math.floor(asset.index/4)/3*100}%`};}
+export function spriteStyle(asset){return {backgroundImage:`url(${import.meta.env?.BASE_URL||'/'}atelier/scrapbook-v2/${asset.id}.svg)`,backgroundSize:'contain',backgroundPosition:'center'};}
