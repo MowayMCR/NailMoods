@@ -1,6 +1,6 @@
 import {salonEnabled,salonService} from './professional/salonService';
 import AtelierArt from './design/AtelierArt';
-import AdaptCollection from './engagement/AdaptCollection';
+import AdaptCollection from './engagement/AdaptCollection.jsx';
 import JournalTracking from './poseCycle/JournalTracking';
 import {poseDestinations} from './poseDestinations';
 import {messageId} from './social/messageState';
@@ -63,7 +63,7 @@ function JournalEditor({ entry, session, draftEntry, items, onSave, onNavigate }
   const [draft, setDraft] = useState(() => {try{const saved=JSON.parse(storage.getItem(draftKey));if(saved?.id)return saved;}catch{}return entry ? JSON.parse(JSON.stringify(entry)) : draftEntry ? JSON.parse(JSON.stringify(draftEntry)) : newJournalEntry('journal-' + messageId(), session);});
   const [photoUrl,setPhotoUrl]=useState('');
   const [salons,setSalons]=useState([]),[salonId,setSalonId]=useState(''),[saving,setSaving]=useState(false);
-  useEffect(()=>{let alive=true;if(salonEnabled()&&social?.client)salonService(social.client).state().then(s=>{if(alive)setSalons(s.spaces.filter(w=>w.operational));}).catch(()=>{});return()=>{alive=false;};},[social?.client]);
+  useEffect(()=>{let alive=true;if(salonEnabled()&&social?.client)salonService(social.client).state().then(s=>{if(alive)setSalons(s.spaces.filter(w=>w.operational&&w.canPublish!==false));}).catch(()=>{});return()=>{alive=false;};},[social?.client]);
   useEffect(()=>{let active=true;setPhotoUrl('');if(draft.mediaPath&&storage.media)storage.media.signedUrl(draft.mediaPath).then(url=>{if(active)setPhotoUrl(url);}).catch(()=>{});return()=>{active=false;};},[draft.mediaPath,storage]);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);

@@ -3,7 +3,7 @@ import {proService} from './service';
 import {salonService,contributionLabel} from './salonService';
 import {TeamEditor} from './ProManager';
 import {normalizeDraft,errorMessage} from './model';
-import PublicProfile from '../identity/PublicProfile';
+import PublicProfile from '../identity/PublicProfile.jsx';
 import './salon.css';
 export default function SalonPanel({client,userId,tier}){
  const [state,setState]=useState(null),[selected,setSelected]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[name,setName]=useState(''),[handle,setHandle]=useState(''),[preview,setPreview]=useState(''),[tab,setTab]=useState('gallery');

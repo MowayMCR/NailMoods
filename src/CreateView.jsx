@@ -1,4 +1,4 @@
-import CollectionContext from './engagement/CollectionContext';
+import CollectionContext from './engagement/CollectionContext.jsx';
 import InternalLab from './aiPlus/InternalLab';
 import RenderPrototype from './renderPrototype/RenderPrototype';
 import Trainer from './trainer/Trainer';

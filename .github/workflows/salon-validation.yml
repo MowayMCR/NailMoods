@@ -53,6 +53,7 @@ jobs:
       - run: npx cap sync android
         env:
           NAILMOODS_MOBILE_ENV: recette
+      - run: npm run mobile:assets
       - run: chmod +x android/gradlew
       - run: ./android/gradlew -p android -PnailmoodsEnvironment=recette :app:compileDebugJavaWithJavac --console=plain
   ios:

@@ -3,7 +3,7 @@ import {useSocial} from '../social/SocialContext';
 import React,{useEffect,useState} from 'react';
 import {ChevronRight,Search,UserRound,Copy,Settings} from 'lucide-react';
 import Sheet from '../Sheet';
-import PublicProfile from './PublicProfile';
+import PublicProfile from './PublicProfile.jsx';
 import {identityService} from './service';
 import {suggestHandle,normalizeHandle,handleError,rankProfiles} from './handles';
 import {professionalLabel} from '../workspaces/professionalProfile';

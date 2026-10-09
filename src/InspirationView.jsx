@@ -1,5 +1,5 @@
 import {StorageHint} from './StorageContext';
-import AdaptCollection from './engagement/AdaptCollection';
+import AdaptCollection from './engagement/AdaptCollection.jsx';
 import {DiyEntry} from './poseCycle/DiyView';
 import ResultActions from './ResultActions';
 import PhotoReferences from './PhotoReferences';

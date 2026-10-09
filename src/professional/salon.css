@@ -3,3 +3,5 @@
 .salonTabs,.salonRow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:14px 0}.salonRow>b{flex:1;min-width:160px}.salonPanel button{padding:10px 14px;border-radius:12px}.salonTabs button[aria-pressed=true]{background:var(--accent,#80435e);color:white}
 .salonContribution{padding:16px 0;border-bottom:1px solid var(--border,#ead6df)}.salonContribution h4{margin:8px 0}.salonContribution textarea{width:100%;box-sizing:border-box}.salonContribution form{margin-top:12px}.salonPanel h3{flex:1}.salonPanel small{overflow-wrap:anywhere}
 @media(max-width:600px){.salonPanel{padding:16px}.salonRow button{width:100%}}
+/* The global nav is the bottom app bar. Salon tabs are ordinary in-page controls. */
+.salonPanel nav.salonTabs{position:static;inset:auto;transform:none;width:auto;height:auto;min-height:0;padding:0;background:transparent;box-shadow:none;border:0;z-index:auto}
