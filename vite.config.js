@@ -11,5 +11,5 @@ export default defineConfig(() => {
     VITE_DEPLOYMENT_ENV: 'production', VITE_BETA_ACCOUNT_TIERS: 'false'
   };
   return { server: { host: '0.0.0.0', allowedHosts: ['terminal.local'] }, plugins: [react()], base: target === 'production' ? '/NailMoods/' : '/',
-    define: Object.fromEntries(Object.entries(config).map(([key,value])=>[`import.meta.env.${key}`,JSON.stringify(value)])) };
+    define: { ...Object.fromEntries(Object.entries(config).map(([key,value])=>[`import.meta.env.${key}`,JSON.stringify(value)])), 'import.meta.env.VITE_APP_VERSION': JSON.stringify('0.8.1') } };
 });

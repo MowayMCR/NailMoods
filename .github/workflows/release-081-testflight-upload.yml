@@ -8,9 +8,9 @@ permissions:
   contents: read
 jobs:
   testflight:
-    uses: MowayMCR/NailMoods/.github/workflows/ios-testflight.yml@feat/ios-testflight-beta1
+    uses: MowayMCR/NailMoods/.github/workflows/ios-testflight.yml@main
     with:
       mode: testflight
-      source_ref: main
-      build_number: '30001'
+      source_ref: ${{ github.sha }}
+      build_number: '30002'
     secrets: inherit
