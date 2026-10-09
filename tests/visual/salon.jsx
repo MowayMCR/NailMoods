@@ -1,5 +1,7 @@
 import React,{useState,useEffect} from 'react';import{createRoot}from'react-dom/client';
 import SalonPanel from '../../src/professional/SalonPanel.jsx';import Showcase from '../../src/professional/Showcase.jsx';
+import {applyMood,visualMoods} from '../../src/design/themes.js';
+applyMood(visualMoods[0]);
 import '../../src/style.css';import '../../src/design-system.css';import '../../src/design/da06.css';import '../../src/design/profile-experience.css';
 const A='10000000-0000-4000-8000-000000000001',B='10000000-0000-4000-8000-000000000002';let actor=B;
 const client={auth:{getSession:async()=>({data:{session:null}})},rpc:async(name,args={})=>(await fetch('/__salon_rpc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({actor,name,args})})).json(),from(){const q={select:()=>q,eq:()=>q,limit:async()=>({data:[]})};return q;},storage:{from:()=>({createSignedUrl:async()=>({data:{signedUrl:'/nailmoods-symbol.png'}})})}};
