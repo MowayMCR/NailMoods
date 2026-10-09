@@ -211,3 +211,29 @@
 .app .nmFilPeopleTiles b{font-size:17px!important;width:100%}
 .app .nmFil .nmFilTabs>button{border-bottom:2px solid transparent!important}
 .app .nmFil .nmFilTabs>button[aria-pressed=true]{border-bottom:2px solid var(--accentPrimary)!important}
+
+/* Tablet: common reading width, compact illustrated navigation, real touch targets. */
+@media(min-width:700px){
+ .app{max-width:1080px;box-shadow:none}
+ .app>nav{max-width:1080px}
+ .app :is(.nmHomeLight,.nmAtelierSources,.nmPoseLanding,.collectionExperience){width:100%;max-width:960px;margin-inline:auto;padding-inline:24px}
+ .app :is(.profilePage,.creationPage,.accountPage){max-width:800px;margin-inline:auto}
+ .app .nmHomeTileGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;grid-auto-rows:auto}
+ .app .nmAtelierSources .sourceCardGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;grid-auto-rows:auto}
+ .app .nmAtelierSources .sourceCardGrid .sourceCard{grid-template-rows:96px auto auto;gap:6px;padding:12px;border-radius:14px}
+ .app .nmAtelierSources .sourceCardGrid .sourceCard>.nmAtelierArt{height:96px}
+ .app .nmHomeTileGrid .nmIllustratedTile,.app .nmPoseQuickGrid>.nmIllustratedTile:not(:only-child){grid-template-rows:96px auto auto;gap:6px;padding:12px;border-radius:14px}
+ .app .nmHomeTileGrid .nmIllustratedTile>.nmAtelierArt,.app .nmPoseQuickGrid>.nmIllustratedTile:not(:only-child)>.nmAtelierArt{height:96px}
+ .app .nmFilPeopleTiles>button{grid-template-rows:150px auto 1fr!important}
+ .app .nmFilArt{height:150px}
+ .app .nmScrapEditor{width:min(840px,calc(100vw - 48px))}
+ .app .nmScrapEditor .nmScrapCanvas{max-width:480px}
+}
+
+@media(min-width:700px){
+ .app .collectionExperience .collectionGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;padding-inline:0;align-items:start}
+ .app .collectionExperience .productCard{padding:12px;border-radius:16px;box-shadow:none;min-height:0;height:100%;text-align:left;overflow-wrap:anywhere}
+ .app .collectionExperience .productPhoto,.app .collectionExperience .equipmentVisual{height:110px;margin-bottom:10px}
+ .app .collectionExperience .productPhoto img{height:110px;object-fit:contain}
+ .app .collectionExperience .productInfo>b{font-size:18px;line-height:1.25;margin:6px 0}
+}
