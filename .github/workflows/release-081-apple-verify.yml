@@ -1,0 +1,14 @@
+name: NailMoods 0.8.1 — Apple verification from unified source
+on:
+  push:
+    branches: [release/nailmoods-0.8.1-web-android-ios]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-ios:
+    uses: MowayMCR/NailMoods/.github/workflows/ios-testflight.yml@feat/ios-testflight-beta1
+    with:
+      mode: verify
+      source_ref: release/nailmoods-0.8.1-web-android-ios
+    secrets: inherit
