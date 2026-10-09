@@ -1,7 +1,7 @@
 name: Salon — common Web and unsigned native checks
 on:
   push:
-    branches: [feat/salon-collaborative]
+    branches: [feat/salon-collaborative, release/nailmoods-0.8.1-web-android-ios]
   workflow_dispatch:
 permissions:
   contents: read
