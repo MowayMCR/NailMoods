@@ -28,7 +28,8 @@ Source de configuration : `src/ads/android-config.json`.
 
 ## Suite avant activation commerciale
 
-Récupérer les identifiants iOS séparément. Finaliser l'association à la fiche
+Les identifiants iOS ont depuis été reçus et préparés dans la même PR ; voir
+`ADMOB-IOS-2026-10-10.md`. Finaliser l'association à la fiche
 Google Play et la validation AdMob/app-ads.txt. Vérifier le consentement avec
 l'application réelle, terminer l'affichage de la bannière et la validation
 serveur des récompenses, puis valider le parcours sur appareils de test.
