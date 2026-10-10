@@ -1,4 +1,4 @@
-const norm=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim();
+const norm=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9œæ]+/g,' ').replace(/\s+/g,' ').trim();
 const slug=value=>norm(value).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
 const list=(category,labels,visible=[],extra={})=>labels.map(label=>({id:slug(label),label,category,synonyms:extra[label]?.synonyms||[],related_tags:extra[label]?.related_tags||[],visible_in_filters:visible.includes(label)}));
 
@@ -6,7 +6,7 @@ const relation={
  Goth:{synonyms:['gothique','gothic','goth'],related_tags:[]},
  Vampire:{synonyms:['vampires'],related_tags:[]},
  'Chauve-souris':{synonyms:['chauves souris','chauve souris','bat','bats'],related_tags:[]},
- Fleurs:{synonyms:['flowers','flower','fleur','floral'],related_tags:[]},
+ Fleurs:{synonyms:['flowers','flower','fleur','floral','rose','roses'],related_tags:[]},
  Bordeaux:{synonyms:['burgundy'],related_tags:[]},
  Noir:{synonyms:['black'],related_tags:[]},
  Hiver:{synonyms:['winter'],related_tags:[]},

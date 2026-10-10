@@ -82,7 +82,7 @@ Deno.serve(async req=>{
  }catch{return fail('not_allowed',403);}
  const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(body)));
  const fingerprint=[...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
- let referencePath:string|null=null;if(body.referenceJobId){try{const source=await rpc(user,'nm_ai2_status',{p_job:body.referenceJobId});if(source.status!=='succeeded'||source.result?.kind!=='illustration'||!source.result?.imagePath?.startsWith(auth.user.id+'/'+body.workspaceId+'/ai/'))return fail('invalid_reference');referencePath=source.result.imagePath;}catch{return fail('invalid_reference');}}
+ let referencePath:string|null=null;if(body.referenceJobId){try{const source=await rpc(user,'nm_ai2_status',{p_job:body.referenceJobId});if(source.status!=='succeeded'||source.result?.kind!=='illustration'||!source.result?.imagePath?.startsWith(auth.user.id+'/'+body.workspaceId+'/ai/'))return fail('invalid_reference');if(source.result.masterId&&source.result.masterId!==body.composition?.master?.id||source.result.masterRevision&&source.result.masterRevision!==body.composition?.master?.revision)return fail('invalid_reference');referencePath=source.result.imagePath;}catch{return fail('invalid_reference');}}
  let job:any;
  try{
   const r=await rpc(admin,'nm_ai2_enqueue',{p_user:auth.user.id,p_request:body.requestId,p_thread:body.threadId,p_workspace:body.workspaceId,p_operation:body.operation,p_fingerprint:fingerprint,p_prompt:body.prompt,p_payload:{body,products,history:history.messages||[],referencePath}});

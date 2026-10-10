@@ -32,10 +32,10 @@ export function internalTags(value){return internalTagIds(value);}
 export const searchTerms=canonicalSearchTerms;
 export function masterTags(idea){
  const master=idea.ai?.master;if(!master)return null;const out=cleanTags();
- const intent=resolveTags(master.originalRequest,{related:false});
- for(const tag of intent){if(['style','ambiance','envie'].includes(tag.category))out.aesthetics.push(tag.label);if(tag.category==='theme')out.themes.push(tag.label);}
+ const intent=resolveTags(String(master.originalRequest||'').replace(/(?:sans|aucun|pas de|without|no)\s+.*?(?=[,.;]|\bmais\b|\bbut\b|$)/gi,''),{related:false});
+ for(const tag of intent){if(['style','ambiance','envie'].includes(tag.category)){if(TAXONOMY.moods.includes(tag.label))out.moods.push(tag.label);else out.aesthetics.push(tag.label);}if(tag.category==='theme'&&['Halloween','Noël','Été','Automne','Hiver','Printemps','Vampire','Minions','Harry Potter'].includes(tag.label))out.themes.push(tag.label);}
  const map={french:'French','micro-french':'Micro French','v-french':'V-French',aura:'Aura','gel-3d':'3D',rhinestones:'Strass','cat-eye':'Cat eye',chrome:'Chromé',jelly:'Jelly',glazed:'Glazed','glass-nails':'Glass',glitter:'Pailleté',aurora:'Aurora',charms:'Charms',ombre:'Dégradé',line:'Dessin à main levée',dots:'Dot art','one-stroke':'One stroke'};
  for(const n of master.nails){for(const t of n.art?.techniques||[n.technique,n.drawingTechnique]){const label=map[t];if(!label)continue;for(const key of ['techniques','finishes'])if(TAXONOMY[key]?.includes(label))out[key].push(label);}for(const m of n.art?.motifs||[])for(const tag of resolveTags(m.name,{related:false}))if(tag.category==='theme')out.themes.push(tag.label);}
- out.colors=master.palette.map(p=>colorTag(p.color)).filter(Boolean);out.levels=[TAXONOMY.levels[master.level]];out.shapes=master.shape==='Ronde'?['Rond']:master.shape==='Carrée'?['Carré']:[master.shape];out.lengths=[['Très courte','Courte'].includes(master.length)?'Court':master.length==='Moyenne'?'Moyen':'Long'];
+ out.colors=master.palette.map(p=>colorTag(p.color)).filter(Boolean);out.levels=[TAXONOMY.levels[master.level]];out.shapes=master.shape==='Ronde'?['Rond']:master.shape==='Carrée'?['Carré']:master.shape==='Coffin / Ballerine'?['Coffin']:[master.shape];out.lengths=[['Très courte','Courte'].includes(master.length)?'Court':master.length==='Moyenne'?'Moyen':'Long'];
  return cleanTags(out);
 }
