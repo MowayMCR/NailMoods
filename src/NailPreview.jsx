@@ -8,6 +8,10 @@ import './renderPrototype/ideas.css';
 import {ProNailArtwork} from './workspaces/ProNailArtwork';
 
 function Decor({ motif, color }) {
+  if(motif==='bat')return <path d="M12 42L24 49L29 41L32 47L35 41L40 49L53 42L49 61L38 58L32 66L26 58L16 61Z" fill={color}/>;
+  if(motif==='fangs')return <g fill={color}><path d="M15 43L26 43L21 69Z"/><path d="M38 43L49 43L43 69Z"/></g>;
+  if(motif==='blood-drop')return <path d="M32 38C30 47 20 53 24 63C30 75 44 66 40 57Z" fill={color}/>;
+  if(motif==='goggles')return <g fill="none" stroke={color} strokeWidth="3"><path d="M8 53H15M49 53H56M29 53H35"/><circle cx="23" cy="53" r="9"/><circle cx="42" cy="53" r="9"/></g>;
   if(motif==='winged-orb')return <g fill={color} stroke={color} strokeWidth="1"><path d="M27 52Q16 39 7 44Q13 52 25 56M37 52Q48 39 57 44Q51 52 39 56"/><circle cx="32" cy="55" r="7"/><path d="M29 51Q32 48 35 51" fill="none" stroke="#fff8df" strokeWidth="1.5"/></g>;
   if(['flower','leaf','heart','star','moon'].includes(motif))return <g transform="scale(.64 .57777778)"><DrawnDecoration motif={motif} color={color} x={50} y={94}/></g>;
   if (motif === 'star') return <path d="m32 42 3 8 9 1-7 6 2 9-7-5-8 5 3-9-7-6 9-1Z" fill={color} />;
@@ -91,19 +95,22 @@ function SingleHandPreview({idea,onSelect,selectedIndex=0,labels=[],highlightedI
  const id=useId().replace(/:/g,'');
  const rendering=renderingForIdea(idea);
  const preview=<div className={'nailPreview illustratedNails drawnNails '+(compact?'compactNails ':'')+(onSelect?'interactiveNails ':'')} role={onSelect?'group':'img'} aria-label={onSelect?'Choisir un ongle':'Inspiration dessinée : '+(idea.description||idea.title||'')}>
- {!compact&&<span className="drawnPreviewBotanical"><AtelierArt source="botanical"/></span>}
+ {!compact&&!idea.options?.aiAssisted&&<span className="drawnPreviewBotanical"><AtelierArt source="botanical"/></span>}
  {idea.nails.map((nail,index)=>{
-  const settings=drawnNailSettings(nail.decoration?.motif==='winged-orb'&&nail.technique==='gel-3d'?{...nail,technique:'',drawingTechnique:null}:nail,idea),opacity=highlightedIndices?{opacity:highlightedIndices.includes(index)?1:.16}:undefined;
+  const settings=drawnNailSettings(nail.art?{...nail,technique:'gloss',drawingTechnique:null,drawing:null}:nail.decoration?.motif==='winged-orb'&&nail.technique==='gel-3d'?{...nail,technique:'',drawingTechnique:null}:nail,idea),opacity=highlightedIndices?{opacity:highlightedIndices.includes(index)?1:.16}:undefined;
   const ids={decorHalo:id+'decorHalo'+index};
   const svg=nail.proDesign?<svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={opacity}><g transform="scale(.64 .57777778)"><ProNailArtwork nail={nail.proDesign} shape={idea.shape} length={idea.length}/></g></svg>:
    <DrawnNail key={index} {...settings} style={opacity} seed={index} ariaHidden>
     <defs><radialGradient id={ids.decorHalo}><stop stopColor={settings.accent}/><stop offset="1" stopColor={settings.accent} stopOpacity="0"/></radialGradient></defs>
     <g transform="scale(1.5625 1.73076923)">
+     {nail.art?.techniques.filter(t=>!['line','dots','one-stroke','gel-3d','charms','stamping'].includes(t)).map(t=><IllustratedTechniqueLayer key={t} technique={t} nail={nail} ids={ids}/>)}
      {settings.legacyTechnique&&<IllustratedTechniqueLayer technique={settings.legacyTechnique} nail={nail} ids={ids}/>}
-     <StyleLayer style={nail.visualStyle} index={index} color={settings.base}/>
+     <StyleLayer style={nail.art?null:nail.visualStyle} index={index} color={settings.base}/>
      {nail.drawing==='line'&&nail.technique!=='line'&&<path d="M31 23Q25 54 35 81" stroke={settings.accent} strokeWidth="1.5" fill="none"/>}
      {nail.drawing==='dots'&&nail.technique!=='dots'&&<g fill={settings.accent}>{[[28,34],[37,46],[28,60],[37,74]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r="2"/>)}</g>}
-     {nail.decoration&&<Decor {...nail.decoration} color={nail.decoration.color||settings.accent}/>}
+     {!nail.art&&nail.decoration&&<Decor {...nail.decoration} color={nail.decoration.color||settings.accent}/>}
+     {nail.art?.motifs?.map((m,j)=>{const name=String(m.name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),motif=/chauve|bat/.test(name)?'bat':/croc|fang/.test(name)?'fangs':/sang|blood/.test(name)?'blood-drop':/lunette|goggle/.test(name)?'goggles':/fleur|flower|rose/.test(name)?'flower':/lune|moon/.test(name)?'moon':null;return <g key={j} transform={`translate(${m.x*.64} ${m.y*1.04}) scale(${m.size/45}) translate(-32 -54)`}>{motif?<Decor motif={motif} color={m.colors?.find(c=>c!==settings.base)||settings.accent}/>:<rect x="22" y="44" width="20" height="20" rx="4" stroke={settings.accent} fill="none" strokeDasharray="2 2"><title>{m.name}</title></rect>}</g>;})}
+
     </g>
    </DrawnNail>;
   return onSelect?<button key={index} type="button" aria-label={'Voir '+(labels[index]||'l’ongle '+(index+1))} aria-pressed={index===selectedIndex} onClick={()=>onSelect(index)}>{svg}<span>{labels[index]}</span></button>:svg;

@@ -37,7 +37,7 @@ test('local renderer handles creative examples, exact single-finger edits and an
  assert.equal(localPlan('Envoie cette inspiration à ma PO').action,'share');
 });
 test('provider is opt-in, bounded, stateless, moderated and never retries; usage is retained after invalid output',async()=>{
- let paid=0,mod=0;const fetcher=async(url,o)=>{if(url.endsWith('/moderations')){mod++;return moderation;}paid++;const b=JSON.parse(o.body);assert.equal(b.store,false);assert.equal(b.max_output_tokens,2500);assert.equal(b.text.format.strict,true);assert.equal(b.input.some(i=>JSON.stringify(i).includes('SECRET-PROFILE')),false);return mockResponse(plan());};
+ let paid=0,mod=0;const fetcher=async(url,o)=>{if(url.endsWith('/moderations')){mod++;return moderation;}paid++;const b=JSON.parse(o.body);assert.equal(b.store,false);assert.equal(b.max_output_tokens,4000);assert.equal(b.text.format.strict,true);assert.equal(b.input.some(i=>JSON.stringify(i).includes('SECRET-PROFILE')),false);return mockResponse(plan());};
  await assert.rejects(runProvider({body:request(),products,config:{...config,enabled:false},maxUsd:1,fetcher}),/provider_disabled/);assert.equal(paid,0);
  await assert.rejects(runProvider({body:request(),products,config,maxUsd:.000001,fetcher}),/operation_budget_exceeded/);assert.equal(paid,0);
  const r=await runProvider({body:request(),products,config,maxUsd:1,fetcher});assert.equal(r.result.kind,'plan');assert.equal(r.cost,.0005);assert.equal(paid,1);assert.equal(mod,2);
@@ -78,8 +78,8 @@ test('ten-finger creation keeps separate hands through saving, tutorials and the
  const second={...idea,secondHand:{nails:idea.secondHand.nails.map(n=>({...n,color:'#112233'}))}};assert.notEqual(compositionKey(idea),compositionKey(second));
  const steps=buildTutorial(idea);assert.ok(steps.filter(s=>s.hand==='left'&&s.kind==='color').every(s=>s.products[0].id==='concept-burgundy'));assert.ok(steps.filter(s=>s.hand==='right'&&s.kind==='color').every(s=>s.products[0].id==='concept-green'));assert.ok(steps.every(s=>s.targets.every(i=>i<5)));
  const composition=minimalComposition(idea);assert.equal(composition.nails.length,10);const brief=visualPrompt(composition,'realistic');assert.match(brief,/TWO real adult human hands/);assert.match(brief,/straight flat square/);assert.match(brief,/8 to 12 mm/);assert.match(brief,/Vert main droite/);
- const body={...request(),designCount:10,level:2,shape:'Carrée',length:'Longue'};assert.equal(validateRequest(body).designCount,10);assert.throws(()=>validateRequest({...body,designCount:8}));
- const req=requestBody(body,products,[],config);assert.equal(req.max_output_tokens,4500);assert.equal(req.text.format.schema.properties.nails.items.properties.finger.enum.length,10);
+ const body={...request(),prompt:'Harry Potter vif d’or',designCount:10,level:2,shape:'Carrée',length:'Longue'};assert.equal(validateRequest(body).designCount,10);assert.throws(()=>validateRequest({...body,designCount:8}));
+ const req=requestBody(body,products,[],config);assert.equal(req.max_output_tokens,6500);assert.equal(req.text.format.schema.properties.nails.items.properties.finger.enum.length,10);
  const r=await runProvider({body,products,config,maxUsd:1,fetcher:async url=>url.endsWith('/moderations')?moderation:mockResponse({...ten,shape:'Ronde',length:'Courte',level:0})});assert.equal(r.result.plan.shape,'Carrée');assert.equal(r.result.plan.length,'Longue');assert.equal(r.result.plan.level,2);assert.equal(r.result.plan.nails.length,10);
 });
 
