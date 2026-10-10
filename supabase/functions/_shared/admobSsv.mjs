@@ -17,9 +17,13 @@ export async function verifyAdmobCallback(rawQuery,keys,allowedUnits,now=Date.no
  // Only signature and key ID may be outside the signed payload.
  const tail=new URLSearchParams(rawQuery.slice(marker+1));
  if([...tail.keys()].some(k=>!['signature','key_id'].includes(k)))throw Error('invalid_callback');
- for(const key of ['signature','key_id','ad_unit','timestamp','transaction_id','custom_data'])if(params.getAll(key).length!==1)throw Error('invalid_callback');
- if(!allowedUnits.includes(params.get('ad_unit')))throw Error('invalid_ad_unit');
- const timestamp=Number(params.get('timestamp'));if(!Number.isFinite(timestamp)||Math.abs(now-timestamp)>3600000)throw Error('expired_callback');
+ for(const key of ['signature','key_id','ad_unit','timestamp','transaction_id','custom_data','reward_amount','reward_item'])if(params.getAll(key).length!==1)throw Error('invalid_callback');
+ const adUnit=params.get('ad_unit');
+ // Google sends the numeric suffix. Accept a full ID only if explicitly allowlisted.
+ if(!allowedUnits.some(unit=>unit===adUnit||(/^\d+$/.test(adUnit)&&/^ca-app-pub-\d{16}\/\d+$/.test(unit)&&unit.split('/')[1]===adUnit)))throw Error('invalid_ad_unit');
+ const tx=params.get('transaction_id'),amount=params.get('reward_amount'),item=params.get('reward_item');
+ if(!tx||tx.length>200||!/^\d+$/.test(amount)||Number(amount)<1||!Number.isSafeInteger(Number(amount))||!item||item.length>200)throw Error('invalid_reward');
+ const timestamp=Number(params.get('timestamp'));if(!/^\d+$/.test(params.get('timestamp'))||!Number.isSafeInteger(timestamp)||Math.abs(now-timestamp)>3600000)throw Error('expired_callback');
  const nonce=params.get('custom_data');if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(nonce))throw Error('invalid_ticket');
  const key=keys.find(k=>String(k.keyId)===params.get('key_id'));if(!key?.pem)throw Error('unknown_key');
  const body=key.pem.replace(/-----BEGIN PUBLIC KEY-----|-----END PUBLIC KEY-----|\s/g,'');

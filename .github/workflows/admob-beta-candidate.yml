@@ -1,0 +1,33 @@
+name: NailMoods AdMob beta — native verification and delivery
+on:
+  push:
+    branches: [chore/admob-android-identifiers-20261010, main]
+    paths:
+      - '.github/workflows/admob-beta-candidate.yml'
+      - '.github/workflows/ios-testflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: admob-beta-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
+jobs:
+  edge-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check --no-config supabase/functions/admob-reward/index.ts
+  apple:
+    needs: edge-check
+    uses: ./.github/workflows/ios-testflight.yml
+    with:
+      mode: ${{ github.ref_name == 'main' && 'testflight' || 'verify' }}
+      source_ref: ${{ github.sha }}
+      build_number: '30003'
+      admob_test: true
+    secrets: inherit
+  # The Android regression job uploads an unsigned AAB. The release operator
+  # signs it with the backed-up historical upload key outside this repository.

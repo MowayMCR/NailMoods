@@ -16,6 +16,9 @@ on:
         default: ''
   workflow_call:
     inputs:
+      admob_test:
+        type: boolean
+        default: false
       mode:
         type: string
         default: verify
@@ -120,6 +123,7 @@ jobs:
       - name: Production Android bundle remains buildable
         env:
           NAILMOODS_MOBILE_ENV: production
+          VITE_ADMOB_TEST_ENABLED: ${{ inputs.admob_test && 'true' || 'false' }}
         run: |
           mkdir -p artifacts/android
           node scripts/build-theme-css.mjs
@@ -129,6 +133,8 @@ jobs:
           npm run mobile:assets
           chmod +x android/gradlew
           ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain > artifacts/android/gradle.log 2>&1 || { tail -80 artifacts/android/gradle.log; exit 1; }
+          python3 scripts/ci/inspect-admob-android.py > artifacts/android/admob-manifest.json
+          cp dist-mobile/mobile-build.json artifacts/android/
           cp android/app/build/outputs/bundle/release/app-release.aab artifacts/android/
           cp android/app/build/outputs/mapping/release/mapping.txt artifacts/android/
           git rev-parse HEAD > artifacts/android/SOURCE_COMMIT.txt
@@ -152,6 +158,7 @@ jobs:
       NAILMOODS_XCODE_VERSION: ${{ vars.IOS_XCODE_VERSION || '26.3' }}
       NAILMOODS_MOBILE_ENV: production
       NAILMOODS_PLATFORM: ios
+      VITE_ADMOB_TEST_ENABLED: ${{ inputs.admob_test && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -236,12 +243,12 @@ jobs:
           xcrun altool --validate-app -f "${ipa[0]}" -t ios --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID" --output-format json > artifacts/ios/apple-validation.json 2>&1 || { tail -60 artifacts/ios/apple-validation.json; exit 1; }
           xcrun altool --upload-app -f "${ipa[0]}" -t ios --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID" --output-format json > artifacts/ios/apple-upload.json 2>&1 || { tail -60 artifacts/ios/apple-upload.json; exit 1; }
           echo 'Upload accepted; Apple processing and assignment to the internal TestFlight group remain in App Store Connect.' >> "$GITHUB_STEP_SUMMARY"
-      - name: Confirm Apple processing and prepare existing TestFlight groups
+      - name: Confirm Apple processing and existing TestFlight availability
         if: inputs.mode == 'testflight' && github.event_name != 'pull_request'
         env:
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-        run: python3 scripts/ci/apple-processing.py
+        run: python3 scripts/ci/apple-testflight-status.py
       - name: Remove signing materials
         if: always()
         run: python3 scripts/ci/ios-cleanup.py

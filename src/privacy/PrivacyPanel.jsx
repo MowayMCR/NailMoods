@@ -1,3 +1,4 @@
+import {declineAds} from '../ads/admob';
 import {isAppleIOS,manageAppleSubscription} from '../cloud/appleBilling';
 import {stopActiveAnalytics} from '../analytics/analytics';
 import React, { useEffect, useState } from 'react';
@@ -5,7 +6,7 @@ import Sheet from '../Sheet';
 import { TERMS_VERSION, PRIVACY_VERSION, TECHNOLOGIES, DENIED, availableChoices, readGuestConsent, GUEST_CONSENT_KEY } from './policy';
 import { privacyService, downloadJSON } from './service';
 import './privacy.css';
-const legal = { conditions: 'conditions-0.6-beta.html', confidentialite: 'confidentialite-0.8-beta.html', informations: 'informations-0.5-beta.html' };
+const legal = { conditions: 'conditions-0.6-beta.html', confidentialite: 'confidentialite-0.9-beta.html', informations: 'informations-0.5-beta.html' };
 export function LegalLinks() { return <p className="legalLinks"><a href={`${import.meta.env.BASE_URL}legal/${legal.conditions}`} target="_blank" rel="noopener">Conditions d’utilisation · {TERMS_VERSION}</a><a href={`${import.meta.env.BASE_URL}legal/${legal.confidentialite}`} target="_blank" rel="noopener">Politique de confidentialité · {PRIVACY_VERSION}</a><a href={`${import.meta.env.BASE_URL}legal/${legal.informations}`} target="_blank" rel="noopener">Mentions légales et conservation</a></p>; }
 export default function PrivacyPanel({ client, userId, tier, guestStorage, onDeleted, localDraft, embedded = false, onBack }) {
   const [panel, setPanel] = useState(null), [choices, setChoices] = useState(DENIED), [record, setRecord] = useState(null);
@@ -47,9 +48,9 @@ export default function PrivacyPanel({ client, userId, tier, guestStorage, onDel
     {panel && <Sheet title={panel === 'choices' ? 'Vos choix de confidentialité' : panel === 'delete' ? 'Supprimer mon compte' : 'Mes données'} className="privacySheet" onClose={() => { if (!busy) setPanel(null); }}>
       {panel === 'choices' && <>
         <p>NailMoods utilise les éléments nécessaires au fonctionnement de l’application. Avec votre accord, certaines technologies peuvent aussi être utilisées pour mesurer l’audience et afficher ou personnaliser des publicités.</p>
-        <p>Avec ton accord, NailMoods mesure uniquement des événements techniques et d’usage pseudonymisés afin d’améliorer le service, ses performances et sa sécurité. Aucun contenu privé, photo, message, note, email ni prompt complet n’est collecté. Aucun partenaire publicitaire n’est activé.</p>
+        <p>Avec ton accord, NailMoods mesure uniquement des événements techniques et d’usage pseudonymisés afin d’améliorer le service, ses performances et sa sécurité. Aucun contenu privé, photo, message, note, email ni prompt complet n’est collecté. La publicité commerciale reste désactivée. Les essais publicitaires natifs facultatifs utilisent Google AdMob et des choix distincts, accessibles dans les réglages publicitaires.</p>
         {(tier === 'plus' || tier === 'pro') && <p>Ton offre {tier === 'plus' ? 'Plus' : 'Pro'} est sans publicité.</p>}
-        <div className="consentActions"><button disabled={busy || !loaded} onClick={() => save({ analytics_consent: true, ads_consent: true, personalized_ads_consent: true })}>Tout accepter</button><button disabled={busy || !loaded} onClick={() => save(DENIED)}>Tout refuser</button><button onClick={() => document.getElementById('privacy-options')?.focus()}>Personnaliser</button></div>
+        <div className="consentActions"><button disabled={busy || !loaded} onClick={() => save({ analytics_consent: true, ads_consent: true, personalized_ads_consent: true })}>Tout accepter</button><button disabled={busy || !loaded} onClick={async() => {stopActiveAnalytics();let adRefusalFailed=false;await Promise.all([save(DENIED),declineAds().catch(()=>{adRefusalFailed=true;})]);if(adRefusalFailed)setNotice('Le refus publicitaire n’a pas pu être entièrement enregistré sur cet appareil. Réessaie.');}}>Tout refuser</button><button onClick={() => document.getElementById('privacy-options')?.focus()}>Personnaliser</button></div>
         <div id="privacy-options" tabIndex={-1}><h3>Personnaliser</h3><p><b>Nécessaires · toujours actifs</b><br/>Connexion, sécurité, session, sauvegarde, synchronisation et préférences indispensables.</p>
           {TECHNOLOGIES.analytics && <label className="consentCheck"><input type="checkbox" checked={choices.analytics_consent} onChange={e => setChoices({ ...choices, analytics_consent: e.target.checked })}/>Mesure d’audience</label>}
           <label className="consentCheck"><input type="checkbox" disabled={!TECHNOLOGIES.ads || tier === 'plus' || tier === 'pro'} checked={choices.ads_consent} onChange={e => setChoices({ ...choices, ads_consent: e.target.checked, personalized_ads_consent: e.target.checked && choices.personalized_ads_consent })}/>Publicité {!TECHNOLOGIES.ads && '· non activée'}</label>

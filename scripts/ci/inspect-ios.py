@@ -13,6 +13,9 @@ def inspect(app, signed=False):
     for key in ['NSCameraUsageDescription', 'NSPhotoLibraryUsageDescription', 'NSPhotoLibraryAddUsageDescription']:
         assert isinstance(info.get(key), str) and info[key].strip(), 'Missing camera SDK purpose string: ' + key
     assert 'NSUserTrackingUsageDescription' not in info, 'Unexpected ATT'
+    expected_admob=json.loads(pathlib.Path('src/ads/ios-config.json').read_text())['applicationId']
+    assert info.get('GADApplicationIdentifier') == expected_admob, 'AdMob application mismatch'
+    assert info.get('GADDelayAppMeasurementInit') is True, 'AdMob measurement must be delayed'
     assert 'UIInterfaceOrientationLandscapeLeft' in info['UISupportedInterfaceOrientations~ipad']
     manifest = plistlib.loads((app/'PrivacyInfo.xcprivacy').read_bytes())
     assert manifest['NSPrivacyTracking'] is False
@@ -47,7 +50,7 @@ def inspect(app, signed=False):
     return {'bundle':info['CFBundleIdentifier'],'version':info['CFBundleShortVersionString'],
             'build':info['CFBundleVersion'],'sdk':info['DTSDKName'],'devices':info['UIDeviceFamily'],
             'sdkPrivacyManifests':len(sdk_manifests),'privacyResources':privacy_resources,
-            'signatureVerified':signed,'IAPlus':'compiled closed'}
+            'admobAppId':info.get('GADApplicationIdentifier'),'admobMeasurementDelayed':info.get('GADDelayAppMeasurementInit'),'signatureVerified':signed,'IAPlus':'compiled closed'}
 
 path = pathlib.Path(sys.argv[1])
 signed = '--signed' in sys.argv
