@@ -49,12 +49,12 @@ const durationLabel = value => value === 90 ? '90 min max' : value + ' min max';
 const polishCountLabel = value => value === 'auto' ? 'Automatique' : value + ' vernis';
 const polishCountHints = { auto: 'Des associations de 1 à 5 couleurs.', 1: 'Un seul vernis coloré.', 2: 'Duos, accents et détails.', 3: 'Un trio à répartir sur les ongles.', 4: 'Quatre vernis dans une même composition.', 5: 'Un vernis différent sur chaque ongle.' };
 
-export default function CreateView({ onProfileChange, onMoodChange, onPublish, onShareToPro, onIdeaBack, ideaAction, onSaveIdea, onSaveProject, onJournalIdea, entryOptions, onEntryConsumed, onRename, onEquipment, items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
+export default function CreateView({ onOpenAI, onProfileChange, onMoodChange, onPublish, onShareToPro, onIdeaBack, ideaAction, onSaveIdea, onSaveProject, onJournalIdea, entryOptions, onEntryConsumed, onRename, onEquipment, items, profile, onCollection, route, library, onOpen, onFavorite, onSelect, onRoute, onTutorial, onDone, tutorials, personalModel, personalSettings, onPersonalization }) {
   const browserStorage=useStorage();
   const social=useSocial();
   const [state, setState] = useState(() => { const saved = readCreationState(browserStorage, profile); return entryOptions ? { ...saved, options: { ...saved.options, ...entryOptions, ...(entryOptions.intent === 'inspire' ? { requiredColorIds: [] } : {}) }, generated: false, selected: null } : saved; });
   useEffect(() => { if (entryOptions) onEntryConsumed(); }, []);
-  const [sourceOpen,setSourceOpen]=useState(()=>!entryOptions&&!state.generated);
+  const [sourceOpen,setSourceOpen]=useState(()=>!entryOptions);
   const [editing,setEditing]=useState(false);
   const [techniqueCategory,setTechniqueCategory]=useState('French');
   const [picker, setPicker] = useState(null);
@@ -195,7 +195,7 @@ export default function CreateView({ onProfileChange, onMoodChange, onPublish, o
   if(outfitEnabled() && route.startsWith('#creer/diy/'))return <DiyView route={route} items={items} profile={profile} onMoodChange={onMoodChange} onCollection={onCollection} onTutorial={onTutorial}/>;
   if(outfitEnabled() && route.startsWith('#creer/planning'))return <PlanningView profile={profile} onChange={onProfileChange} route={route}/>;
   if(outfitEnabled() && /^#creer\/(tenue|pose\/|projets-pose)/.test(route)) return <OutfitFlow onVariant={idea=>onOpen(idea,undefined,'variant')} items={items} profile={profile} route={route} onMoodChange={onMoodChange} onBack={()=>{window.location.hash='creer';setSourceOpen(true);}}/>;
-  if(sourceOpen && route!=='#creer/atelier') return <CreationSources items={items} onPlanning={()=>{window.location.hash='creer/planning';}} outfit={outfitEnabled()} onPoseProjects={()=>{window.location.hash='creer/projets-pose';}} onJournal={()=>onRoute('journal')} onChoose={id=>{
+  if(sourceOpen && route!=='#creer/atelier') return <CreationSources onOpenAI={onOpenAI} items={items} onPlanning={()=>{window.location.hash='creer/planning';}} outfit={outfitEnabled()} onPoseProjects={()=>{window.location.hash='creer/projets-pose';}} onJournal={()=>onRoute('journal')} onChoose={id=>{
     if(id==='trainer'){window.location.hash='creer/entrainement';return;}
     if(id==='prototype'){window.location.hash='creer/prototype-rendus';return;}
     if(id==='outfit'){window.location.hash='creer/tenue';return;}
