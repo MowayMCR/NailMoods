@@ -58,7 +58,13 @@ export async function runProvider({body,products,history=[],config,maxUsd,fetche
  if(payload.status&&payload.status!=='completed')throw new AIError('incomplete_response',usage,cost);
  if(body.operation==='trends'){
   const sources=safeSources(payload);if(!sources.length)throw new AIError('sources_unavailable',usage,cost);
-  try{const value=JSON.parse(outputText(payload));if(typeof value.message!=='string'||!Array.isArray(value.cards)||value.cards.length!==3)throw Error();const cards=value.cards.map(c=>{if(typeof c.summary!=='string'||typeof c.sourceUrl!=='string'||c.plan?.action!=='compose')throw Error();const source=sources.find(s=>s.url===c.sourceUrl);if(!source)throw Error();return {summary:c.summary.slice(0,120),source,plan:validatePlan(c.plan,pool,{collectionOnly:body.collectionOnly})};});return {result:{kind:'trends',message:value.message.slice(0,160),cards,products:pool,sources,searchedAt:new Date().toISOString()},usage,cost};}catch{throw new AIError('invalid_response',usage,cost);}
+  let validationFailure='json';try{
+   const value=JSON.parse(outputText(payload));validationFailure='cards';if(typeof value.message!=='string'||!Array.isArray(value.cards)||value.cards.length!==3)throw Error();
+   const canonical=url=>{const u=new URL(url);for(const key of [...u.searchParams.keys()])if(key.startsWith('utm_'))u.searchParams.delete(key);u.hash='';return u.href;};
+   const cards=value.cards.map(c=>{validationFailure='card_fields';if(typeof c.summary!=='string'||typeof c.sourceUrl!=='string'||c.plan?.action!=='compose')throw Error();validationFailure='source_match';const source=sources.find(s=>canonical(s.url)===canonical(c.sourceUrl));if(!source)throw Error();validationFailure='plan';return {summary:c.summary.slice(0,120),source,plan:validatePlan(c.plan,pool,{collectionOnly:body.collectionOnly})};});
+   return {result:{kind:'trends',message:value.message.slice(0,160),cards,products:pool,sources,searchedAt:new Date().toISOString()},usage,cost};
+  }catch{throw new AIError('invalid_response',{...usage,validationFailure},cost);}
+
  }
  try{return {result:{kind:'plan',plan:validatePlan(JSON.parse(outputText(payload)),pool,{collectionOnly:body.collectionOnly}),products:pool},usage,cost};}catch{throw new AIError('invalid_response',usage,cost);}
 }
