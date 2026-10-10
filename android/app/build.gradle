@@ -10,6 +10,12 @@ def nativeConfig = new groovy.json.JsonSlurper().parse(file('src/main/assets/cap
 if (nativeConfig.appId != mobile.appId || nativeConfig.server?.url)
     throw new GradleException('Incorrect app ID or remote server URL')
 def uploadStore = System.getenv('NM_UPLOAD_KEYSTORE')
+// The production app identity also applies to the closed beta. Ad requests
+// remain on Google's demo units in src/ads/policy.js until a separate release.
+def admobConfig = new groovy.json.JsonSlurper().parse(file('../../src/ads/android-config.json'))
+if (!(admobConfig.applicationId ==~ /ca-app-pub-[0-9]{16}~[0-9]{10}/))
+    throw new GradleException('Invalid AdMob Android application ID')
+def admobAppId = targetEnvironment == 'production' ? admobConfig.applicationId : 'ca-app-pub-3940256099942544~3347511713'
 
 
 android {
@@ -21,7 +27,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode (mobile.versionCode as int)
         versionName mobile.version
-        manifestPlaceholders = [nailmoodsLabel: targetEnvironment == 'production' ? 'NailMoods' : 'NailMoods Recette', nailmoodsScheme: mobile.appId]
+        manifestPlaceholders = [nailmoodsLabel: targetEnvironment == 'production' ? 'NailMoods' : 'NailMoods Recette', nailmoodsScheme: mobile.appId, nailmoodsAdMobAppId: admobAppId]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
