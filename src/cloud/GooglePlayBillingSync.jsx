@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { refreshGooglePlayAccount } from './refreshGooglePlayAccount';
 import { isGooglePlayAndroid, prepareGooglePlayPurchase, restoreGooglePlayPurchases, readGooglePlayEntitlement, NailMoodsBilling } from './googlePlayBilling';
 export default function GooglePlayBillingSync({ client, userId, tier, onChanged }) {
   const callback = useRef(onChanged); callback.current = onChanged;
@@ -10,10 +11,16 @@ export default function GooglePlayBillingSync({ client, userId, tier, onChanged 
       if (!alive || running || (!force && Date.now() - last < 30000)) return;
       running = true; last = Date.now();
       try {
-        const context = await prepareGooglePlayPurchase(client);
-        if (context.enabled) await restoreGooglePlayPurchases(client);
-        const after = await readGooglePlayEntitlement(client);
-        if (alive && displayedTier.current !== after.tier) await callback.current?.();
+        await refreshGooglePlayAccount({
+          reconcile: async () => {
+            const context = await prepareGooglePlayPurchase(client);
+            if (context.enabled) await restoreGooglePlayPurchases(client);
+          },
+          read: () => readGooglePlayEntitlement(client),
+          refresh: () => callback.current?.(),
+          isActive: () => alive,
+          displayedTier: () => displayedTier.current,
+        });
       } catch { /* Keep server-granted capabilities; retry on next foreground. */ }
       finally { running = false; }
     }
