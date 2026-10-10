@@ -1,5 +1,6 @@
 import React,{useState} from 'react';
 import CreationSources from '../../src/CreationSources.jsx';
+import '../../src/design/common-ux.css';
 import '../../src/design/atelier.css';import {createRoot} from 'react-dom/client';
 import Assistant from '../../src/assistant/Assistant.jsx';
 import {SocialProvider} from '../../src/social/SocialContext.jsx';
