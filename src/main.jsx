@@ -1,3 +1,4 @@
+import Assistant,{AssistantEntry} from './assistant/Assistant';
 import FeedMark from './design/FeedMark.jsx';
 import Desk from './desk/Desk.jsx';
 import {DESK_KEY,initialDesk,progressFor,earnedDecorations} from './desk/model.js';
@@ -92,6 +93,7 @@ const saveThemeBackup = (storage, theme) => { try { window.localStorage.setItem(
 function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, syncNotice, profileExtras, media, onShareToPro }) {
   const browserStorage=useStorage();
   const social=useSocial();
+  const [assistantOpen,setAssistantOpen]=useState(false);
   const [collectionView,setCollectionView]=useState(()=>readStored(browserStorage,'nm-collection-view','shelf'));
   const [deskState,setDeskState]=useState(()=>initialDesk(readStored(browserStorage,DESK_KEY,null)));
   const [deskError,setDeskError]=useState('');
@@ -367,6 +369,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     <main>
       {tab !== 'profile' && syncNotice}
       <div id="context-help-slot" />
+      {(['home','create','feed','collection','journal'].includes(tab)||tab==='profile'&&browserStorage.accountTier==='pro')&&<AssistantEntry context={tab} onOpen={()=>setAssistantOpen(true)}/>}
       {appError && <p className="formError appStorageError" role="alert">{appError}</p>}
       {tab !== 'home' && tab !== 'scan' && tab !== 'collection' && !route.startsWith('#tutoriel') && <TutorialBanner session={activeTutorial} onOpen={openTutorial} />}
       {locked ? <section className="creationEmpty"><h1>Disponible avec Plus</h1><p>Ta collection et tes poses restent conservées dans ton compte.</p><button onClick={()=>navigate('profile')}>Mon compte</button><button onClick={()=>navigate('create')}>Trouver une inspiration</button></section> : tab === 'feed' ? <Discovery embedded profile={profile} onAccount={()=>{window.location.hash='profil/'+(browserStorage.accountScoped?'offer':'account');}}/> : tab === 'scan' ? <ScanGenerate profile={profile} items={items} onOpen={openIdea} onBack={() => navigate('create')} capabilities={{addScannedProducts:!limited}} onAddProducts={addScannedProducts} /> : route.startsWith('#tutoriel') ? tutorialSession ? <TutorialView key={tutorialSession.id} session={tutorialSession} items={items} onAction={tutorialAction} onOpenIdea={openIdea} onCollection={openCollection} onNew={idea => startTutorial(idea, true)} onList={() => navigate('tutorials')} onJournal={() => journalForSession(tutorialSession)} journaled={journal.entries.some(entry => entry.sessionId === tutorialSession.id)} /> : route === '#tutoriel' ? <TutorialsList sessions={tutorials.sessions} onOpen={openTutorial} onCreate={() => navigate('create')} /> : <section className="creationEmpty"><h1>Ce tutoriel n’est pas disponible</h1><button onClick={() => navigate('tutorials')}>Mes poses guidées</button></section> : tab === 'create' ? <CreateView onProfileChange={changeProfile} onMoodChange={id=>changeProfile({...profile,visualMood:id})} ideaAction={ideaAction} onIdeaBack={returnFromIdea} onPublish={publishIdea} onShareToPro={onShareToPro} onSaveIdea={saveIdea} onSaveProject={saveProjectIdea} onJournalIdea={journalForIdea} entryOptions={creationEntry} onEntryConsumed={() => setCreationEntry(null)} onRename={renameIdea} onEquipment={addOwnedEquipment} personalModel={personalModel} personalSettings={personalSettings} onPersonalization={() => { setPersonalError(''); setPersonalOpen(true); }} items={items} profile={profile} onCollection={openCollection} route={route} library={library} onOpen={openIdea} onFavorite={favoriteIdea} onSelect={selectIdea} onRoute={navigate} onTutorial={startTutorial} onDone={finishIdea} tutorials={tutorials.sessions} /> : tab === 'collection' ? <section className="collectionExperience">
@@ -412,6 +415,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     <button className="betaFeedbackLink" onClick={()=>setTour(true)}>Visiter NailMoods</button>
     <button className="betaFeedbackLink" onClick={()=>setFeedbackOpen(true)}>Aide & Support</button>
     </main>
+    {assistantOpen&&<Assistant key={social?.userId||'guest'} items={items} profile={profile} initialIdea={tab==='journal'?journal.entries[0]?.idea:library.selected||library.recent[0]} onClose={()=>setAssistantOpen(false)} onSave={saveProjectIdea} onOpen={idea=>{setAssistantOpen(false);openIdea(idea);}} onTutorial={idea=>{setAssistantOpen(false);startTutorial(idea);}} onShare={onShareToPro?idea=>{setAssistantOpen(false);onShareToPro(idea);}:null}/>}
     {feedbackOpen&&<SupportPanel screen={tab} onClose={()=>setFeedbackOpen(false)}/>}
     {collectionFiltersOpen&&<Sheet title="Réglages de la collection" className="nmCollectionSettings" onClose={()=>setCollectionFiltersOpen(false)}>
       <div className="nmDeskSettingsLinks"><button className="detailSecondary" onClick={()=>{setCollectionView('desk');setFilter('Matériel');setSearch('');try{browserStorage.setItem('nm-collection-view',JSON.stringify('desk'));}catch{setDeskError('Le choix de vue ne peut pas être enregistré.');}setCollectionFiltersOpen(false);}}>Ouvrir mon bureau</button><button className="detailSecondary" onClick={()=>{setCollectionView('photos');try{browserStorage.setItem('nm-collection-view',JSON.stringify('photos'));}catch{setDeskError('Le choix de vue ne peut pas être enregistré.');}setCollectionFiltersOpen(false);}}>Vue photo de ma collection</button><button className="detailSecondary" onClick={()=>{setCollectionFiltersOpen(false);setEquipmentOpen(true);}}>Bibliothèque du matériel</button></div>

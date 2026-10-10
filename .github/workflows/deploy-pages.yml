@@ -31,6 +31,7 @@ jobs:
       - name: Build
         env:
           VITE_DEPLOYMENT_ENV: production
+          VITE_NAILMOODS_AI_ENABLED: 'true'
           VITE_PRO_V2_ENABLED: 'true'
           VITE_POSE_CYCLE_ENABLED: 'true'
           VITE_CATALOGUE_ADMIN_ENABLED: 'true'
