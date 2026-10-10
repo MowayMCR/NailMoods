@@ -9,7 +9,7 @@ Source de configuration : `src/ads/android-config.json`.
 | NailMoods_Free_Banner_Android | `ca-app-pub-3166441503282113/1643004637` |
 | NailMoods_Free_Rewarded_Android | `ca-app-pub-3166441503282113/4704282245` |
 
-## Comportement préparé
+## Configuration des identifiants (première étape)
 
 - Gradle lit l'identifiant d'application depuis le JSON pour les builds
   `production` (`com.nailmoods.app`), y compris les bêtas fermées.
@@ -26,7 +26,7 @@ Source de configuration : `src/ads/android-config.json`.
 - Aucune configuration iOS, aucun indicateur serveur, aucune version mobile
   et aucun workflow de publication ne sont modifiés.
 
-## Suite avant activation commerciale
+## Étapes identifiées avant le complément
 
 Les identifiants iOS ont depuis été reçus et préparés dans la même PR ; voir
 `ADMOB-IOS-2026-10-10.md`. Finaliser l'association à la fiche
@@ -49,3 +49,7 @@ Documentation Google : https://developers.google.com/admob/android/test-ads
 - Aucun AAB natif compilé/signé, aucun test sur téléphone et aucun déploiement
   réalisés pour cette modification. La compilation native et le contrôle du
   manifeste final restent à effectuer lors de la préparation de la bêta.
+
+## Complément dans cette PR
+
+La préparation des identifiants décrite ci-dessus est complétée par les essais natifs de bannière/vidéo, les contrôles serveur et la notice 0.9-beta. L’ancien aperçu du fil a été retiré. Le document `ADMOB-VALIDATION-2026-10-10.md` fait foi pour le comportement actuel, les vérifications et les étapes restantes. La publicité commerciale et les crédits de génération restent désactivés.

@@ -1,8 +1,8 @@
 // Bump versions only alongside archived documents and the server policy migration.
 export const TERMS_VERSION = '0.6-beta';
-export const PRIVACY_VERSION = '0.8-beta';
+export const PRIVACY_VERSION = '0.9-beta';
 export const GUEST_CONSENT_KEY = 'nm-privacy-guest-v1';
-// No vendor is selected. No optional SDK, pixel or advertisement is loaded.
+// Commercial ads stay off. Native opt-in demos use a separate Google UMP flow.
 export const TECHNOLOGIES = Object.freeze({ analytics: true, ads: false, personalizedAds: false });
 export const DENIED = Object.freeze({ analytics_consent: false, ads_consent: false, personalized_ads_consent: false });
 export function normalizeChoices(value = {}) {

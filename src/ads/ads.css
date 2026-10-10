@@ -1,0 +1,5 @@
+/* Reserve more than the fixed native 50px banner plus the device safe area. */
+.nmAdTestDialog{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100dvh;max-height:none;border:0;background:var(--paper,#fdfaf7);color:var(--ink,#2d2229);padding:calc(90px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));overflow:auto}
+.nmAdTestDialog::backdrop{background:var(--paper,#fdfaf7)}
+.nmAdTestContent{max-width:480px;margin:auto}
+.nmAdTestContent button{min-height:48px;padding:12px 24px}
