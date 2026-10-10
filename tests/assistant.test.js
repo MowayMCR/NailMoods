@@ -62,7 +62,7 @@ test('free-text assistant ignores account moods and keeps a precise motif on the
  const noMood={...body};delete noMood.mood;assert.equal(validateRequest(noMood).prompt,body.prompt);
  const desired=plan();desired.nails.forEach(n=>{n.productId='concept-burgundy';n.accentProductId='concept-gold';n.technique='';n.drawingTechnique='';n.motif='';n.designBrief='Bordeaux et doré';});
  desired.nails[4]={...desired.nails[4],technique:'gel-3d',motif:'winged-orb',designBrief:'Petite boule dorée avec deux ailes en relief, exclusivement sur l’auriculaire'};
- const idea=ideaFromPlan(desired,{products,items});assert.equal(idea.nails[4].decoration.motif,'winged-orb');assert.match(idea.nails[4].designBrief,/deux ailes/);assert.ok(idea.nails.slice(0,4).every(n=>!n.decoration));
+ const idea=ideaFromPlan(desired,{products,items,current:{...ideaFromPlan(plan(),{products,items}),options:{mood:'cottagecore',style:'floral'}}});assert.equal(idea.options.mood,undefined);assert.equal(idea.options.style,undefined);assert.equal(idea.nails[4].decoration.motif,'winged-orb');assert.match(idea.nails[4].designBrief,/deux ailes/);assert.ok(idea.nails.slice(0,4).every(n=>!n.decoration));
  assert.deepEqual(req.text.format.schema.properties.nails.items.properties.productId.enum,products.map(p=>p.id));
  const legacy=plan();legacy.nails.forEach(n=>delete n.designBrief);assert.equal(validatePlan(legacy,products).action,'compose');
 });
