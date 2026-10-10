@@ -9,6 +9,7 @@ export const CONCEPT_COLORS=[['cassis','#813c60'],['nude','#e9c6b5'],['gold','#c
 const obj=properties=>({type:'object',properties,required:Object.keys(properties),additionalProperties:false});
 const str={type:'string'},nullableEnum=values=>({type:['string','null'],enum:[...values,null]});
 export const PLAN_SCHEMA=obj({action:{type:'string',enum:ACTIONS},message:str,title:str,shape:nullableEnum(SHAPES),length:nullableEnum(LENGTHS),level:{type:'integer',enum:[0,1,2]},collectionOnly:{type:'boolean'},editFinger:{type:['integer','null'],enum:[0,1,2,3,4,null]},nails:{type:'array',items:obj({finger:{type:'integer',enum:[0,1,2,3,4]},productId:str,accentProductId:{type:['string','null']},technique:{type:'string',enum:TECHNIQUES},drawingTechnique:{type:'string',enum:TECHNIQUES},motif:{type:'string',enum:MOTIFS}})}});
+export const TRENDS_SCHEMA=obj({message:str,cards:{type:'array',items:obj({summary:str,sourceUrl:str,plan:PLAN_SCHEMA})}});
 export function validatePlan(value,products,{collectionOnly=false}={}){
  if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).sort().join()!=PLAN_SCHEMA.required.slice().sort().join())throw Error('invalid_plan');
  if(!ACTIONS.includes(value.action)||typeof value.message!=='string'||value.message.length>5000||typeof value.title!=='string'||value.title.length>100||![null,...SHAPES].includes(value.shape)||![null,...LENGTHS].includes(value.length)||![0,1,2].includes(value.level)||typeof value.collectionOnly!=='boolean'||![null,0,1,2,3,4].includes(value.editFinger)||!Array.isArray(value.nails))throw Error('invalid_plan');
@@ -31,6 +32,7 @@ export function validateRequest(b){
 }
 export function publicProducts(rows){return rows.slice(0,100).map(r=>({id:String(r.metadata?.nailmoods?.id??r.id),name:String(r.shade_name||'Ma couleur').slice(0,100),brand:String(r.brand||'').slice(0,80),reference:String(r.reference||'').slice(0,80),color:/^#[a-f0-9]{6}$/i.test(r.hex||'')?r.hex:null,verified:r.is_verified===true,conceptual:false}));}
 export function safeSources(response,now=new Date().toISOString()){
- const map=new Map();for(const item of response.output||[])for(const part of item.content||[])for(const a of part.annotations||[]){if(a.type!=='url_citation')continue;try{const u=new URL(a.url);if(u.protocol!=='https:'||u.username||u.password)continue;map.set(u.href,{url:u.href,title:String(a.title||u.hostname).slice(0,200),accessedAt:now,publishedAt:null});}catch{}}
- return [...map.values()].slice(0,12);
+ const map=new Map();const add=a=>{try{const u=new URL(a.url);if(u.protocol!=='https:'||u.username||u.password)return;map.set(u.href,{url:u.href,title:String(a.title||u.hostname).slice(0,200),accessedAt:now,publishedAt:null});}catch{}};
+ for(const item of response.output||[]){for(const part of item.content||[])for(const a of part.annotations||[]){if(a.type==='url_citation')add(a);}if(item.type==='web_search_call')for(const a of item.action?.sources||[])add(a);}
+ return [...map.values()].slice(0,30);
 }
