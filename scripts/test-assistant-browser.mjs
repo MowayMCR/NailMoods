@@ -21,6 +21,6 @@ try{
  assert.equal(await page.evaluate(()=>window.fixtureCalls.filter(c=>!c.action).length),1);
  await page.screenshot({path:out+'/pose-actions-mobile.png',fullPage:true});
  await page.setViewportSize({width:1024,height:1366});await page.goto('http://127.0.0.1:4197/'+fixture+'?mood=cottagecore');await page.getByRole('button',{name:'Créer ma pose',exact:true}).waitFor();assert.equal(await page.locator('.nmAISheet').evaluate(el=>el.scrollWidth>el.clientWidth+1),false);await page.screenshot({path:out+'/cottagecore-tablet.png',fullPage:true});
- await page.getByText('Mon essai privé',{exact:true}).click();await page.getByRole('button',{name:'Mettre l’IA en pause',exact:true}).click();await page.getByRole('button',{name:'Réactiver mon essai IA',exact:true}).waitFor();assert.ok(await page.getByRole('status').innerText().then(t=>t.includes('en pause')));
+ await page.locator('.nmAIAdmin summary').click();await page.getByRole('button',{name:'Mettre l’IA en pause',exact:true}).click();await page.getByRole('button',{name:'Réactiver mon essai IA',exact:true}).waitFor();assert.ok(await page.getByRole('status').innerText().then(t=>t.includes('en pause')));
  assert.deepEqual(errors,[]);console.log('PASS: 4 DA, mobile/tablet, compact controls, consent, no automatic rendering, server pause.');
 }finally{await browser.close();await server.close();fs.rmSync(fixture,{force:true});}
