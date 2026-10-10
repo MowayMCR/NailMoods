@@ -27,9 +27,9 @@ export default function Assistant({items,profile,initialIdea,onClose,onSave,onOp
     if(!consent)throw Error('consent_required');
     if(navigator.onLine===false)throw Error('offline');
     const referenceImage=['realistic','illustration'].includes(mode)?await compositionImage(preview.current):mode==='vision'?attachment:undefined;
-    controller.current=new AbortController();const body={requestId:crypto.randomUUID(),threadId:thread,workspaceId:storage.workspaceId,operation:mode,prompt:text,collectionOnly:only,shape:profile.shape||'Amande',length:profile.length||'Courte',mood:profile.visualMood||'soft-glam',consent:true,...(referenceImage?{referenceImage}:{}),...(idea?{composition:minimalComposition(idea)}:{})};request.current=body;
+    controller.current=new AbortController();const body={requestId:crypto.randomUUID(),threadId:thread,workspaceId:storage.workspaceId,operation:mode,prompt:text,collectionOnly:only,shape:profile.shape||'Amande',length:profile.length||'Courte',consent:true,...(referenceImage?{referenceImage}:{}),...(idea?{composition:minimalComposition(idea)}:{})};request.current=body;
     const response=await awaitAssistantJob(social.client,body,controller.current.signal,s=>{if(mounted.current)setProgress(s==='queued'?'En attente…':'Création en cours…');});if(!mounted.current)return;
-    if(response.status==='succeeded'&&response.result)apply(response.result);else setError(response.error?message(Error(response.error)):'Demande en cours ou interrompue : consulte l’historique avant de relancer.');
+    if(response.status==='succeeded'&&response.result)apply(response.result);else {setError(response.error?message(Error(response.error)):'Demande en cours ou interrompue : consulte l’historique avant de relancer.');if(response.status==='failed')setPrompt(text);}
     const h=await assistantCall(social.client,{action:'history'});if(mounted.current)setThreads(h.threads);
    }
   }catch(e){if(mounted.current){setError(e.name==='AbortError'?'L’attente est interrompue. Le serveur peut encore terminer ; retrouve la demande dans l’historique.':e.message==='offline'?'Tu es hors ligne. La composition locale reste disponible.':e.message==='consent_required'?'Confirme les données à transmettre avant de lancer.':message(e));setPrompt(text);}}

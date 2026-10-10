@@ -53,3 +53,16 @@ test('context minimization does not transmit notes/photos/ingredients or certify
  const body=requestBody(request(),p,[],config);assert.equal(body.store,false);
  assert.equal(providerConfig(()=>undefined).enabled,false);
 });
+
+test('free-text assistant ignores account moods and keeps a precise motif on the requested finger',()=>{
+ const body={...request(),prompt:'Gryffondor Harry Potter, un vif d’or en 3D sur le petit doigt',mood:'cottagecore'};
+ const history=[{role:'assistant',content:{kind:'plan',plan:{...plan(),title:'Cottagecore',message:'Fleurs cottagecore'}}}];
+ const req=requestBody(body,products,history,config),input=JSON.parse(req.input[1].content[0].text);
+ assert.equal(input.mood,undefined);assert.equal(JSON.stringify(input).includes('cottagecore'),false);assert.match(req.input[0].content,/demande actuelle prime/);
+ const noMood={...body};delete noMood.mood;assert.equal(validateRequest(noMood).prompt,body.prompt);
+ const desired=plan();desired.nails.forEach(n=>{n.productId='concept-burgundy';n.accentProductId='concept-gold';n.technique='';n.drawingTechnique='';n.motif='';n.designBrief='Bordeaux et doré';});
+ desired.nails[4]={...desired.nails[4],technique:'gel-3d',motif:'winged-orb',designBrief:'Petite boule dorée avec deux ailes en relief, exclusivement sur l’auriculaire'};
+ const idea=ideaFromPlan(desired,{products,items});assert.equal(idea.nails[4].decoration.motif,'winged-orb');assert.match(idea.nails[4].designBrief,/deux ailes/);assert.ok(idea.nails.slice(0,4).every(n=>!n.decoration));
+ assert.deepEqual(req.text.format.schema.properties.nails.items.properties.productId.enum,products.map(p=>p.id));
+ const legacy=plan();legacy.nails.forEach(n=>delete n.designBrief);assert.equal(validatePlan(legacy,products).action,'compose');
+});

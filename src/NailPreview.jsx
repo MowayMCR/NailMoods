@@ -8,6 +8,7 @@ import './renderPrototype/ideas.css';
 import {ProNailArtwork} from './workspaces/ProNailArtwork';
 
 function Decor({ motif, color }) {
+  if(motif==='winged-orb')return <g fill={color} stroke={color} strokeWidth="1"><path d="M27 52Q16 39 7 44Q13 52 25 56M37 52Q48 39 57 44Q51 52 39 56"/><circle cx="32" cy="55" r="7"/><path d="M29 51Q32 48 35 51" fill="none" stroke="#fff8df" strokeWidth="1.5"/></g>;
   if(['flower','leaf','heart','star','moon'].includes(motif))return <g transform="scale(.64 .57777778)"><DrawnDecoration motif={motif} color={color} x={50} y={94}/></g>;
   if (motif === 'star') return <path d="m32 42 3 8 9 1-7 6 2 9-7-5-8 5 3-9-7-6 9-1Z" fill={color} />;
   if (motif === 'moon') return <path d="M38 44c-15-5-24 17-7 21 5 1 10-2 12-6-14 4-20-12-5-15Z" fill={color} />;
@@ -92,7 +93,7 @@ export default function NailPreview({idea,onSelect,selectedIndex=0,labels=[],hig
  const preview=<div className={'nailPreview illustratedNails drawnNails '+(compact?'compactNails ':'')+(onSelect?'interactiveNails ':'')} role={onSelect?'group':'img'} aria-label={onSelect?'Choisir un ongle':'Inspiration dessinée : '+(idea.description||idea.title||'')}>
  {!compact&&<span className="drawnPreviewBotanical"><AtelierArt source="botanical"/></span>}
  {idea.nails.map((nail,index)=>{
-  const settings=drawnNailSettings(nail,idea),opacity=highlightedIndices?{opacity:highlightedIndices.includes(index)?1:.16}:undefined;
+  const settings=drawnNailSettings(nail.decoration?.motif==='winged-orb'&&nail.technique==='gel-3d'?{...nail,technique:'',drawingTechnique:null}:nail,idea),opacity=highlightedIndices?{opacity:highlightedIndices.includes(index)?1:.16}:undefined;
   const ids={decorHalo:id+'decorHalo'+index};
   const svg=nail.proDesign?<svg key={index} viewBox="0 0 64 104" aria-hidden="true" style={opacity}><g transform="scale(.64 .57777778)"><ProNailArtwork nail={nail.proDesign} shape={idea.shape} length={idea.length}/></g></svg>:
    <DrawnNail key={index} {...settings} style={opacity} seed={index} ariaHidden>
