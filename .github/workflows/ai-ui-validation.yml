@@ -1,0 +1,33 @@
+name: NailMoods AI — interface Web et directions artistiques
+on:
+  pull_request:
+    paths:
+      - 'src/assistant/**'
+      - 'tests/visual/assistant.jsx'
+      - 'scripts/test-assistant-browser.mjs'
+      - '.github/workflows/ai-ui-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web-interface:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Tester le parcours et les quatre DA sans appel OpenAI
+        run: node scripts/test-assistant-browser.mjs
+        env:
+          VITE_NAILMOODS_AI_ENABLED: 'true'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nailmoods-ai-directions-artistiques
+          path: docs/nailmoods-ai/evidence/da/
+          retention-days: 14
