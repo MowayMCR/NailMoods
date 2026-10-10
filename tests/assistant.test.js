@@ -72,7 +72,7 @@ test('free-text assistant ignores account moods and keeps a precise motif on the
 });
 
 test('ten-finger creation keeps separate hands through saving, tutorials and the single photo request',async()=>{
- const ten={...plan(),shape:'Carrée',length:'Longue',level:2,nails:Array.from({length:10},(_,finger)=>({...plan().nails[finger%5],finger,productId:finger<5?'concept-burgundy':'concept-green',technique:finger===9?'gel-3d':'',drawingTechnique:'',motif:finger===9?'winged-orb':'',designBrief:finger<5?'Bordeaux main gauche':'Vert main droite'}))};
+ const ten={...plan(),shape:'Carrée',length:'Longue',level:2,nails:Array.from({length:10},(_,finger)=>({...plan().nails[finger%5],finger,productId:finger<5?'concept-burgundy':'concept-green',technique:finger===9?'gel-3d':'',drawingTechnique:'',motif:finger===9?'winged-orb':'',designBrief:(finger<5?'Bordeaux main gauche':'Vert main droite')+' motif '+finger}))};
  assert.throws(()=>validatePlan(ten,products));assert.equal(validatePlan(ten,products,{designCount:10}).nails.length,10);
  const idea=ideaFromPlan(ten,{products,items});assert.equal(idea.nails.length,5);assert.equal(idea.secondHand.nails.length,5);assert.ok(validIdea(JSON.parse(JSON.stringify(snapshotIdea(idea)))));
  const second={...idea,secondHand:{nails:idea.secondHand.nails.map(n=>({...n,color:'#112233'}))}};assert.notEqual(compositionKey(idea),compositionKey(second));
@@ -81,4 +81,16 @@ test('ten-finger creation keeps separate hands through saving, tutorials and the
  const body={...request(),designCount:10,level:2,shape:'Carrée',length:'Longue'};assert.equal(validateRequest(body).designCount,10);assert.throws(()=>validateRequest({...body,designCount:8}));
  const req=requestBody(body,products,[],config);assert.equal(req.max_output_tokens,4500);assert.equal(req.text.format.schema.properties.nails.items.properties.finger.enum.length,10);
  const r=await runProvider({body,products,config,maxUsd:1,fetcher:async url=>url.endsWith('/moderations')?moderation:mockResponse({...ten,shape:'Ronde',length:'Courte',level:0})});assert.equal(r.result.plan.shape,'Carrée');assert.equal(r.result.plan.length,'Longue');assert.equal(r.result.plan.level,2);assert.equal(r.result.plan.nails.length,10);
+});
+
+
+test('yellow is explicit, unselected collection stays out of creative prompts and ten designs cannot be mirrors',async()=>{
+ assert.equal(CONCEPT_COLORS.find(p=>p.id==='concept-yellow').color,'#f6cf38');
+ const ten={...plan(),nails:Array.from({length:10},(_,finger)=>({...plan().nails[finger%5],finger,designBrief:'Design '+finger}))};
+ assert.equal(validatePlan(ten,products,{designCount:10}).nails.length,10);
+ assert.throws(()=>validatePlan({...ten,nails:ten.nails.map(n=>({...n,designBrief:'Même motif'}))},products,{designCount:10}),/repeated_designs/);
+ assert.throws(()=>validatePlan({...ten,nails:ten.nails.map(n=>({...n,designBrief:n.finger===5?'Miroir main gauche':n.designBrief}))},products,{designCount:10}),/repeated_designs/);
+ const owned={id:'private-white',name:'Chantilly',color:'#f1efeb',conceptual:false};let sent;
+ await runProvider({body:{...request()},products:[owned],config,maxUsd:1,fetcher:async(url,o)=>{if(url.endsWith('/moderations'))return moderation;sent=JSON.parse(o.body);return mockResponse(plan());}});
+ const content=JSON.parse(sent.input[1].content[0].text);assert.ok(content.products.some(p=>p.id==='concept-yellow'));assert.ok(content.products.every(p=>p.conceptual));assert.equal(JSON.stringify(content).includes('Chantilly'),false);
 });

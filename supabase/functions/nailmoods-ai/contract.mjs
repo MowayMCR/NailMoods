@@ -5,7 +5,7 @@ export const TECHNIQUES=['','french','micro-french','reverse-french','double-fre
 export const MOTIFS=['','flower','star','moon','leaf','heart','winged-orb'];
 export const MOODS=['soft-glam','dark-feminine','cottagecore','pop-pastel'];
 export const ACTIONS=['compose','edit','tutorial','share','chat'];
-export const CONCEPT_COLORS=[['cassis','#813c60'],['nude','#e9c6b5'],['gold','#cba358'],['green','#668878'],['rose','#d39ca7'],['blue','#6674a2'],['plum','#583b65'],['white','#f4eee7'],['brown','#75462f'],['terracotta','#b5644a'],['burgundy','#7a1828'],['black','#191619']].map(([id,color])=>({id:'concept-'+id,name:'Couleur d’inspiration · '+id,color,verified:false,conceptual:true}));
+export const CONCEPT_COLORS=[['cassis','#813c60'],['nude','#e9c6b5'],['yellow','#f6cf38'],['gold','#cba358'],['green','#668878'],['rose','#d39ca7'],['blue','#6674a2'],['plum','#583b65'],['white','#f4eee7'],['brown','#75462f'],['terracotta','#b5644a'],['burgundy','#7a1828'],['black','#191619']].map(([id,color])=>({id:'concept-'+id,name:'Couleur d’inspiration · '+id,color,verified:false,conceptual:true}));
 const obj=properties=>({type:'object',properties,required:Object.keys(properties),additionalProperties:false});
 const str={type:'string'},nullableEnum=values=>({type:['string','null'],enum:[...values,null]});
 export const PLAN_SCHEMA=obj({action:{type:'string',enum:ACTIONS},message:str,title:str,shape:nullableEnum(SHAPES),length:nullableEnum(LENGTHS),level:{type:'integer',enum:[0,1,2]},collectionOnly:{type:'boolean'},editFinger:{type:['integer','null'],enum:[0,1,2,3,4,null]},nails:{type:'array',items:obj({finger:{type:'integer',enum:[0,1,2,3,4]},productId:str,accentProductId:{type:['string','null']},technique:{type:'string',enum:TECHNIQUES},drawingTechnique:{type:'string',enum:TECHNIQUES},motif:{type:'string',enum:MOTIFS},designBrief:{type:'string',maxLength:280}})}});
@@ -19,6 +19,7 @@ export function validatePlan(value,products,{collectionOnly=false,designCount=5}
  if(!n||!['accentProductId,drawingTechnique,finger,motif,productId,technique','accentProductId,designBrief,drawingTechnique,finger,motif,productId,technique'].includes(Object.keys(n).sort().join())||!Array.from({length:designCount},(_,i)=>i).includes(n.finger)||seen.has(n.finger)||!allowed.has(n.productId)||(n.accentProductId!==null&&!allowed.has(n.accentProductId))||!TECHNIQUES.includes(n.technique)||!TECHNIQUES.includes(n.drawingTechnique)||!MOTIFS.includes(n.motif)||(n.designBrief!==undefined&&(typeof n.designBrief!=='string'||n.designBrief.length>280)))throw Error('unknown_product_or_invalid_nail');seen.add(n.finger);
  }
  if(value.action==='edit'&&(value.editFinger===null||value.nails[0].finger!==value.editFinger))throw Error('invalid_edit');
+ if(value.action==='compose'&&designCount===10){const briefs=value.nails.map(n=>String(n.designBrief||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim());if(briefs.some(b=>/miroir|identique.*main|copie.*main/.test(b))||briefs.filter(Boolean).length===10&&new Set(briefs).size<10)throw Error('repeated_designs');}
  return {...value,collectionOnly:collectionOnly||value.collectionOnly};
 }
 export const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value);

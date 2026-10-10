@@ -2,7 +2,7 @@
   "assumptions": {
     "aiAdoption": 0.3,
     "textRequestsPerAIUser": 20,
-    "imageRequestsPerAIUser": 4,
+    "imageRequestsPerAIUser": 24,
     "textInputTokens": 4000,
     "textOutputTokens": 1000,
     "textInputUSDPerMillion": 0.4,
@@ -21,37 +21,37 @@
       "users": 100,
       "aiUsers": 30,
       "textRequests": 600,
-      "imageRequests": 120,
-      "aiUSD": 12.72,
-      "aiWithReserveUSD": 15.9,
-      "stressAIUSD": 63.12,
+      "imageRequests": 720,
+      "aiUSD": 60.72,
+      "aiWithReserveUSD": 75.9,
+      "stressAIUSD": 363.12,
       "supabasePlanningUSD": 35,
-      "totalPlanningUSD": 50.9,
-      "aiStorageGB": 0.36
+      "totalPlanningUSD": 110.9,
+      "aiStorageGB": 2.16
     },
     {
       "users": 1000,
       "aiUsers": 300,
       "textRequests": 6000,
-      "imageRequests": 1200,
-      "aiUSD": 127.2,
-      "aiWithReserveUSD": 159,
-      "stressAIUSD": 631.2,
+      "imageRequests": 7200,
+      "aiUSD": 607.2,
+      "aiWithReserveUSD": 759,
+      "stressAIUSD": 3631.2,
       "supabasePlanningUSD": 40,
-      "totalPlanningUSD": 199,
-      "aiStorageGB": 3.6
+      "totalPlanningUSD": 799,
+      "aiStorageGB": 21.6
     },
     {
       "users": 10000,
       "aiUsers": 3000,
       "textRequests": 60000,
-      "imageRequests": 12000,
-      "aiUSD": 1272,
-      "aiWithReserveUSD": 1590,
-      "stressAIUSD": 6312,
+      "imageRequests": 72000,
+      "aiUSD": 6072,
+      "aiWithReserveUSD": 7590,
+      "stressAIUSD": 36312,
       "supabasePlanningUSD": 85,
-      "totalPlanningUSD": 1675,
-      "aiStorageGB": 36
+      "totalPlanningUSD": 7675,
+      "aiStorageGB": 216
     }
   ]
 }
