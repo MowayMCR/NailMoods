@@ -1,5 +1,5 @@
 import React,{useEffect,useRef,useState} from 'react';
-import {ArrowUp,Search,Square,Trash2,Sparkles,TrendingUp,ImagePlus,Palette,Brush,Camera,Check,ChevronRight,ShieldCheck,Power} from 'lucide-react';
+import {ArrowUp,Square,Trash2,Sparkles,TrendingUp,ImagePlus,Palette,Brush,Camera,Check,ChevronRight,ShieldCheck,Power} from 'lucide-react';
 import Sheet from '../Sheet';
 import NailPreview from '../NailPreview';
 import AtelierArt from '../design/AtelierArt';

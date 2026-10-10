@@ -54,7 +54,7 @@ export default function CreateView({ onOpenAI, onProfileChange, onMoodChange, on
   const social=useSocial();
   const [state, setState] = useState(() => { const saved = readCreationState(browserStorage, profile); return entryOptions ? { ...saved, options: { ...saved.options, ...entryOptions, ...(entryOptions.intent === 'inspire' ? { requiredColorIds: [] } : {}) }, generated: false, selected: null } : saved; });
   useEffect(() => { if (entryOptions) onEntryConsumed(); }, []);
-  const [sourceOpen,setSourceOpen]=useState(()=>!entryOptions&&!state.generated);
+  const [sourceOpen,setSourceOpen]=useState(()=>!entryOptions);
   const [editing,setEditing]=useState(false);
   const [techniqueCategory,setTechniqueCategory]=useState('French');
   const [picker, setPicker] = useState(null);
