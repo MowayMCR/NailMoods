@@ -87,7 +87,7 @@ function IllustratedTechniqueLayer({ technique, nail, ids }) {
   return null;
 }
 
-export default function NailPreview({idea,onSelect,selectedIndex=0,labels=[],highlightedIndices,compact=false,controls=false}) {
+function SingleHandPreview({idea,onSelect,selectedIndex=0,labels=[],highlightedIndices,compact=false,controls=false}) {
  const id=useId().replace(/:/g,'');
  const rendering=renderingForIdea(idea);
  const preview=<div className={'nailPreview illustratedNails drawnNails '+(compact?'compactNails ':'')+(onSelect?'interactiveNails ':'')} role={onSelect?'group':'img'} aria-label={onSelect?'Choisir un ongle':'Inspiration dessinée : '+(idea.description||idea.title||'')}>
@@ -111,4 +111,10 @@ export default function NailPreview({idea,onSelect,selectedIndex=0,labels=[],hig
  </div>;
  if(!controls)return preview;
  return <div className="renderPreview"><div className="renderPreviewHead"><span><b>{idea.options?.proDrawing?'Dessin · '+idea.proCreation.title:rendering.label}</b><small>{idea.options?.proDrawing?'Composition personnalisée':rendering.finish} · relief {rendering.relief}</small></span><div className="illustratedModeBadge" aria-label="Mode dessin validé">Dessin NailMoods</div></div>{preview}</div>;
+}
+
+export default function NailPreview(props){
+ if(!props.idea.secondHand)return <SingleHandPreview {...props}/>;
+ const {idea,onSelect,selectedIndex=0,labels=[]}=props;
+ return <div className="nmTwoHands">{['Main gauche','Main droite'].map((hand,i)=><section className="nmHandPreview" key={hand}><small>{hand}</small><SingleHandPreview {...props} idea={{...idea,secondHand:undefined,nails:i?idea.secondHand.nails:idea.nails}} onSelect={onSelect?index=>onSelect(index+i*5):undefined} selectedIndex={selectedIndex-i*5} labels={labels}/></section>)}</div>;
 }

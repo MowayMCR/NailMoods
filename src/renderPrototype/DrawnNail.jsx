@@ -55,8 +55,8 @@ export function DrawnDecoration({motif,color,x=50,y=91}){
 export default function DrawnNail({base,accent,shape='Amande',length='Moyenne',technique='gloss',light=0,seed=0,label,children,frenchVariant,tipTechnique,matte=false,style,ariaHidden=false,withGlassMotif=true}){
  const id='nm-draw-'+useId().replace(/[^a-zA-Z0-9-]/g,''),path=nailPath(shape),deep=tint(base,ink,.36),pale=tint(base,cream,.62);
  const transparent=['jelly','glass'].includes(technique),body=technique==='milky'?tint(base,cream,.56):transparent?tint(base,cream,technique==='glass'?.77:.43):base;
- const sy=length==='Courte'?.83:length==='Longue'?1.08:1,ty=180-173*sy,reflect=light*6;
- return <svg viewBox="0 0 100 190" role="img" aria-label={label||`${shape} · ${techniques.find(([k])=>k===technique)?.[1]||technique}`} data-technique={technique} data-base={base} data-accent={accent} className="rpDrawnNail" style={style} aria-hidden={ariaHidden||undefined}>
+ const height=length==='XL'?240:190,sy=length==='Très courte'?.7:length==='Courte'?.83:length==='Longue'?1.08:length==='XL'?1.24:1,ty=(length==='XL'?230:180)-173*sy,reflect=light*6;
+ return <svg viewBox={"0 0 100 "+height} role="img" aria-label={label||`${shape} · ${techniques.find(([k])=>k===technique)?.[1]||technique}`} data-technique={technique} data-base={base} data-accent={accent} className="rpDrawnNail" style={style} aria-hidden={ariaHidden||undefined}>
  <defs>
   <clipPath id={id+'-clip'}><path d={path}/></clipPath>
   {frenchVariant&&<clipPath id={id+'-tip'}><path d={frenchPath(frenchVariant)}/></clipPath>}

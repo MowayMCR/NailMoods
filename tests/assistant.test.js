@@ -1,5 +1,9 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {validatePlan,validateRequest,CONCEPT_COLORS,safeSources,publicProducts} from '../supabase/functions/nailmoods-ai/contract.mjs';
+import {snapshotIdea,validIdea,compositionKey} from '../src/inspirations.js';
+import {buildTutorial} from '../src/tutorial.js';
+import {minimalComposition} from '../src/assistant/model.js';
+import {visualPrompt} from '../supabase/functions/nailmoods-ai/visual.mjs';
 import {runProvider,providerConfig,requestBody} from '../supabase/functions/nailmoods-ai/provider.mjs';
 import {localPlan,ideaFromPlan,productContext,tutorialFor,assistantEnabled} from '../src/assistant/model.js';
 const items=[{id:'owned-1',type:'Vernis',name:'Cassis personnel',brand:'Ma marque',reference:'Référence réelle',color:'#813c60',quantity:1},{id:'owned-2',type:'Vernis',name:'Doré personnel',color:'#cba358',quantity:1}];
@@ -65,4 +69,16 @@ test('free-text assistant ignores account moods and keeps a precise motif on the
  const idea=ideaFromPlan(desired,{products,items,current:{...ideaFromPlan(plan(),{products,items}),options:{mood:'cottagecore',style:'floral'}}});assert.equal(idea.options.mood,undefined);assert.equal(idea.options.style,undefined);assert.equal(idea.nails[4].decoration.motif,'winged-orb');assert.match(idea.nails[4].designBrief,/deux ailes/);assert.ok(idea.nails.slice(0,4).every(n=>!n.decoration));
  assert.deepEqual(req.text.format.schema.properties.nails.items.properties.productId.enum,products.map(p=>p.id));
  const legacy=plan();legacy.nails.forEach(n=>delete n.designBrief);assert.equal(validatePlan(legacy,products).action,'compose');
+});
+
+test('ten-finger creation keeps separate hands through saving, tutorials and the single photo request',async()=>{
+ const ten={...plan(),shape:'Carrée',length:'Longue',level:2,nails:Array.from({length:10},(_,finger)=>({...plan().nails[finger%5],finger,productId:finger<5?'concept-burgundy':'concept-green',technique:finger===9?'gel-3d':'',drawingTechnique:'',motif:finger===9?'winged-orb':'',designBrief:finger<5?'Bordeaux main gauche':'Vert main droite'}))};
+ assert.throws(()=>validatePlan(ten,products));assert.equal(validatePlan(ten,products,{designCount:10}).nails.length,10);
+ const idea=ideaFromPlan(ten,{products,items});assert.equal(idea.nails.length,5);assert.equal(idea.secondHand.nails.length,5);assert.ok(validIdea(JSON.parse(JSON.stringify(snapshotIdea(idea)))));
+ const second={...idea,secondHand:{nails:idea.secondHand.nails.map(n=>({...n,color:'#112233'}))}};assert.notEqual(compositionKey(idea),compositionKey(second));
+ const steps=buildTutorial(idea);assert.ok(steps.filter(s=>s.hand==='left'&&s.kind==='color').every(s=>s.products[0].id==='concept-burgundy'));assert.ok(steps.filter(s=>s.hand==='right'&&s.kind==='color').every(s=>s.products[0].id==='concept-green'));assert.ok(steps.every(s=>s.targets.every(i=>i<5)));
+ const composition=minimalComposition(idea);assert.equal(composition.nails.length,10);const brief=visualPrompt(composition,'realistic');assert.match(brief,/TWO real adult human hands/);assert.match(brief,/straight flat square/);assert.match(brief,/8 to 12 mm/);assert.match(brief,/Vert main droite/);
+ const body={...request(),designCount:10,level:2,shape:'Carrée',length:'Longue'};assert.equal(validateRequest(body).designCount,10);assert.throws(()=>validateRequest({...body,designCount:8}));
+ const req=requestBody(body,products,[],config);assert.equal(req.max_output_tokens,4500);assert.equal(req.text.format.schema.properties.nails.items.properties.finger.enum.length,10);
+ const r=await runProvider({body,products,config,maxUsd:1,fetcher:async url=>url.endsWith('/moderations')?moderation:mockResponse({...ten,shape:'Ronde',length:'Courte',level:0})});assert.equal(r.result.plan.shape,'Carrée');assert.equal(r.result.plan.length,'Longue');assert.equal(r.result.plan.level,2);assert.equal(r.result.plan.nails.length,10);
 });

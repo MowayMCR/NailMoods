@@ -18,7 +18,7 @@ const hash = value => {
 };
 
 export function compositionKey(idea) {
-  return JSON.stringify([idea.shape, idea.length, idea.nails, idea.resources.map(item => [item.id, item.equipmentCategory, item.materialStyle])]);
+  return JSON.stringify([idea.shape, idea.length, idea.nails, ...(idea.secondHand?[idea.secondHand.nails]:[]), idea.resources.map(item => [item.id, item.equipmentCategory, item.materialStyle])]);
 }
 
 export function snapshotIdea(idea, options = idea.options || {}) {
@@ -31,11 +31,12 @@ export function snapshotIdea(idea, options = idea.options || {}) {
 
 export function validIdea(idea) {
   return Boolean(idea && typeof idea.key === 'string' && typeof idea.title === 'string'
-    && Array.isArray(idea.palette) && idea.palette.length >= 1 && idea.palette.length <= (idea.options?.proDrawing ? 410 : idea.options?.manualSet ? 10 : 5)
+    && Array.isArray(idea.palette) && idea.palette.length >= 1 && idea.palette.length <= (idea.options?.proDrawing ? 410 : idea.options?.manualSet ? (idea.secondHand?20:10) : 5)
     && idea.palette.every(item => item && item.id != null && typeof item.name === 'string')
     && Array.isArray(idea.resources) && idea.resources.every(item => item && item.id != null)
     && Array.isArray(idea.nails) && idea.nails.length === 5
-    && idea.nails.every(nail => nail && idea.palette.some(item => sameId(item.id, nail.productId))
+    && (!idea.secondHand||(Array.isArray(idea.secondHand.nails)&&idea.secondHand.nails.length===5))
+    && [...idea.nails,...(idea.secondHand?.nails||[])].every(nail => nail && idea.palette.some(item => sameId(item.id, nail.productId))
       && (nail.accentProductId == null || idea.palette.some(item => sameId(item.id, nail.accentProductId))))
     && Array.isArray(idea.reasons) && idea.reasons.every(reason => typeof reason === 'string')
     && Number.isFinite(idea.minutes) && [0, 1, 2].includes(idea.rank));
@@ -85,7 +86,7 @@ export function ideaAvailability(idea, items) {
 }
 
 export function nailDetails(idea, index) {
-  const nail = idea.nails[index];
+  const nail = [...idea.nails,...(idea.secondHand?.nails||[])][index];
   const base = idea.palette.find(item => sameId(item.id, nail.productId));
   const accent = idea.palette.find(item => sameId(item.id, nail.accentProductId));
   const sticker = nail.decoration && idea.resources.find(isDecoration);

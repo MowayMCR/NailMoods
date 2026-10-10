@@ -10,13 +10,13 @@ const obj=properties=>({type:'object',properties,required:Object.keys(properties
 const str={type:'string'},nullableEnum=values=>({type:['string','null'],enum:[...values,null]});
 export const PLAN_SCHEMA=obj({action:{type:'string',enum:ACTIONS},message:str,title:str,shape:nullableEnum(SHAPES),length:nullableEnum(LENGTHS),level:{type:'integer',enum:[0,1,2]},collectionOnly:{type:'boolean'},editFinger:{type:['integer','null'],enum:[0,1,2,3,4,null]},nails:{type:'array',items:obj({finger:{type:'integer',enum:[0,1,2,3,4]},productId:str,accentProductId:{type:['string','null']},technique:{type:'string',enum:TECHNIQUES},drawingTechnique:{type:'string',enum:TECHNIQUES},motif:{type:'string',enum:MOTIFS},designBrief:{type:'string',maxLength:280}})}});
 export const TRENDS_SCHEMA=obj({message:str,cards:{type:'array',minItems:3,maxItems:3,items:obj({summary:str,sourceUrl:str,plan:{...PLAN_SCHEMA,properties:{...PLAN_SCHEMA.properties,action:{type:'string',enum:['compose']},nails:{...PLAN_SCHEMA.properties.nails,minItems:5,maxItems:5}}}})}});
-export function validatePlan(value,products,{collectionOnly=false}={}){
+export function validatePlan(value,products,{collectionOnly=false,designCount=5}={}){
  if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).sort().join()!=PLAN_SCHEMA.required.slice().sort().join())throw Error('invalid_plan');
- if(!ACTIONS.includes(value.action)||typeof value.message!=='string'||value.message.length>5000||typeof value.title!=='string'||value.title.length>100||![null,...SHAPES].includes(value.shape)||![null,...LENGTHS].includes(value.length)||![0,1,2].includes(value.level)||typeof value.collectionOnly!=='boolean'||![null,0,1,2,3,4].includes(value.editFinger)||!Array.isArray(value.nails))throw Error('invalid_plan');
+ if(!ACTIONS.includes(value.action)||typeof value.message!=='string'||value.message.length>5000||typeof value.title!=='string'||value.title.length>100||![null,...SHAPES].includes(value.shape)||![null,...LENGTHS].includes(value.length)||![0,1,2].includes(value.level)||typeof value.collectionOnly!=='boolean'||![null,...Array.from({length:designCount},(_,i)=>i)].includes(value.editFinger)||!Array.isArray(value.nails))throw Error('invalid_plan');
  const allowed=new Set(products.filter(p=>!(collectionOnly||value.collectionOnly)||!p.conceptual).map(p=>String(p.id)));
- if(value.nails.length!==(['compose','edit'].includes(value.action)?value.action==='edit'?1:5:0))throw Error('invalid_plan');
+ if(value.nails.length!==(['compose','edit'].includes(value.action)?value.action==='edit'?1:designCount:0))throw Error('invalid_plan');
  const seen=new Set();for(const n of value.nails){
- if(!n||!['accentProductId,drawingTechnique,finger,motif,productId,technique','accentProductId,designBrief,drawingTechnique,finger,motif,productId,technique'].includes(Object.keys(n).sort().join())||![0,1,2,3,4].includes(n.finger)||seen.has(n.finger)||!allowed.has(n.productId)||(n.accentProductId!==null&&!allowed.has(n.accentProductId))||!TECHNIQUES.includes(n.technique)||!TECHNIQUES.includes(n.drawingTechnique)||!MOTIFS.includes(n.motif)||(n.designBrief!==undefined&&(typeof n.designBrief!=='string'||n.designBrief.length>280)))throw Error('unknown_product_or_invalid_nail');seen.add(n.finger);
+ if(!n||!['accentProductId,drawingTechnique,finger,motif,productId,technique','accentProductId,designBrief,drawingTechnique,finger,motif,productId,technique'].includes(Object.keys(n).sort().join())||!Array.from({length:designCount},(_,i)=>i).includes(n.finger)||seen.has(n.finger)||!allowed.has(n.productId)||(n.accentProductId!==null&&!allowed.has(n.accentProductId))||!TECHNIQUES.includes(n.technique)||!TECHNIQUES.includes(n.drawingTechnique)||!MOTIFS.includes(n.motif)||(n.designBrief!==undefined&&(typeof n.designBrief!=='string'||n.designBrief.length>280)))throw Error('unknown_product_or_invalid_nail');seen.add(n.finger);
  }
  if(value.action==='edit'&&(value.editFinger===null||value.nails[0].finger!==value.editFinger))throw Error('invalid_edit');
  return {...value,collectionOnly:collectionOnly||value.collectionOnly};
@@ -24,8 +24,9 @@ export function validatePlan(value,products,{collectionOnly=false}={}){
 export const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value);
 export function validateRequest(b){
  if(!b||typeof b!=='object'||Array.isArray(b))throw Error('invalid_request');
- const keys=['requestId','threadId','workspaceId','operation','prompt','collectionOnly','shape','length','mood','referenceImage','composition','consent'];
+ const keys=['requestId','threadId','workspaceId','operation','prompt','collectionOnly','shape','length','mood','referenceImage','composition','consent','designCount','level'];
  if(Object.keys(b).some(k=>!keys.includes(k))||![b.requestId,b.threadId,b.workspaceId].every(uuid)||!['conversation','trends','realistic','illustration','vision'].includes(b.operation)||typeof b.prompt!=='string'||!b.prompt.trim()||b.prompt.length>3000||b.consent!==true||typeof b.collectionOnly!=='boolean'||!SHAPES.includes(b.shape)||!LENGTHS.includes(b.length)||(b.mood!==undefined&&!MOODS.includes(b.mood)))throw Error('invalid_request');
+ if(b.designCount!==undefined&&![5,10].includes(b.designCount)||b.level!==undefined&&![0,1,2].includes(b.level))throw Error('invalid_request');
  if(b.referenceImage!==undefined&&(typeof b.referenceImage!=='string'||b.referenceImage.length>1400000))throw Error('invalid_reference');
  if(b.composition!==undefined&&JSON.stringify(b.composition).length>12000)throw Error('invalid_composition');
  return b;

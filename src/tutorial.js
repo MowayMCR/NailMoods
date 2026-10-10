@@ -22,10 +22,11 @@ export function buildTutorial(idea, firstHand = 'left') {
     body: 'Réalise la préparation et, si nécessaire, la pose de tes capsules selon ton protocole. Applique une base seulement si tes produits la demandent. Le guide commence ensuite par la couleur.',
   }];
   for (const hand of firstHand === 'right' ? ['right', 'left'] : ['left', 'right']) {
+    const handNails=hand==='right'&&idea.secondHand?idea.secondHand.nails:idea.nails;
     const add = step => steps.push({ ...step, id: hand + '-' + step.id, hand, section: handLabels[hand] });
     for (const product of idea.palette) {
       if (product.unpainted) continue;
-      const targets = idea.nails.flatMap((nail, index) => sameId(nail.productId, product.id) ? [index] : []);
+      const targets = handNails.flatMap((nail, index) => sameId(nail.productId, product.id) ? [index] : []);
       if (!targets.length) continue;
       // Keep nail-by-nail application advice, with one validation for the color.
       const magnet = magnetic(product) && idea.resources.find(item => item.equipmentCategory === 'Aimant cat-eye');
@@ -40,9 +41,9 @@ export function buildTutorial(idea, firstHand = 'left') {
         });
     }
     for (const pattern of ['french', 'line', 'dots']) {
-      const targets = idea.nails.flatMap((nail, index) => nail.drawing === pattern ? [index] : []);
+      const targets = handNails.flatMap((nail, index) => nail.drawing === pattern ? [index] : []);
       if (!targets.length) continue;
-      const accent = uniqueProducts(targets.map(index => idea.palette.find(item => sameId(item.id, idea.nails[index].accentProductId))));
+      const accent = uniqueProducts(targets.map(index => idea.palette.find(item => sameId(item.id, handNails[index].accentProductId))));
       const tool = idea.resources.find(item => item.equipmentCategory === (pattern === 'dots' ? 'Dotting tool' : 'Pinceau'));
       const magnet = accent.some(magnetic) && idea.resources.find(item => item.equipmentCategory === 'Aimant cat-eye');
       add({ id: pattern, kind: 'drawing', title: { french: 'Dessine les pointes', line: 'Ajoute la ligne', dots: 'Ajoute les petits pois' }[pattern],
@@ -51,7 +52,7 @@ export function buildTutorial(idea, firstHand = 'left') {
         products: uniqueProducts([...accent, tool, magnet]), targets, timer: accent.some(lampProduct) ? 'lamp' : 'dry',
       });
     }
-    const stickerTargets = idea.nails.flatMap((nail, index) => nail.decoration ? [index] : []);
+    const stickerTargets = handNails.flatMap((nail, index) => nail.decoration ? [index] : []);
     if (stickerTargets.length) {
       const stickers = idea.resources.filter(isDecoration);
       add({ id: 'stickers', kind: 'sticker', title: 'Place tes décorations',

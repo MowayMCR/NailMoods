@@ -17,6 +17,7 @@ export function adaptToCollection(idea,items) {
   const adapted=enrichIdeaRendering({...idea,key:undefined,id:undefined,isPublic:false,visibility:'private',isProject:false,publicMediaPath:null,remoteId:undefined,title:(idea.title+' · ma collection').slice(0,120),intent:'collection',
     palette:unique(idea.palette.map(p=>resolve(p.id))),resources:unique(idea.resources.map(p=>resolve(p.id))),
     nails:idea.nails.map(n=>({...n,productId:resolve(n.productId).id,color:resolve(n.productId).color,finish:resolve(n.productId).finish,effect:resolve(n.productId).effect,...(n.accentProductId!=null?{accentProductId:resolve(n.accentProductId).id,accentColor:resolve(n.accentProductId).color}:{})})),
+    ...(idea.secondHand?{secondHand:{nails:idea.secondHand.nails.map(n=>({...n,productId:resolve(n.productId).id,color:resolve(n.productId).color,finish:resolve(n.productId).finish,effect:resolve(n.productId).effect,...(n.accentProductId!=null?{accentProductId:resolve(n.accentProductId).id,accentColor:resolve(n.accentProductId).color}:{})}))}}:{}),
     options:{...idea.options,intent:'collection',requiredColorIds:unique(idea.palette.map(p=>resolve(p.id))).map(p=>String(p.id)),inspirationPalette:[]},
     description:changes.length?'Une interprétation avec des teintes proches de ta collection.':'La composition retrouvée dans ta collection actuelle.',
     reasons:['Palette adaptée à ma collection',...idea.reasons].slice(0,3),adaptation:{sourceKey:idea.key,changes},createdAt:new Date().toISOString(),savedAt:new Date().toISOString()});
