@@ -133,6 +133,8 @@ jobs:
           npm run mobile:assets
           chmod +x android/gradlew
           ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain > artifacts/android/gradle.log 2>&1 || { tail -80 artifacts/android/gradle.log; exit 1; }
+          python3 scripts/ci/inspect-admob-android.py > artifacts/android/admob-manifest.json
+          cp dist-mobile/mobile-build.json artifacts/android/
           cp android/app/build/outputs/bundle/release/app-release.aab artifacts/android/
           cp android/app/build/outputs/mapping/release/mapping.txt artifacts/android/
           git rev-parse HEAD > artifacts/android/SOURCE_COMMIT.txt
