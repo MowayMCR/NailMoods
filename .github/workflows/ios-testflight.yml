@@ -16,6 +16,9 @@ on:
         default: ''
   workflow_call:
     inputs:
+      admob_test:
+        type: boolean
+        default: false
       mode:
         type: string
         default: verify
@@ -120,6 +123,7 @@ jobs:
       - name: Production Android bundle remains buildable
         env:
           NAILMOODS_MOBILE_ENV: production
+          VITE_ADMOB_TEST_ENABLED: ${{ inputs.admob_test && 'true' || 'false' }}
         run: |
           mkdir -p artifacts/android
           node scripts/build-theme-css.mjs
@@ -152,6 +156,7 @@ jobs:
       NAILMOODS_XCODE_VERSION: ${{ vars.IOS_XCODE_VERSION || '26.3' }}
       NAILMOODS_MOBILE_ENV: production
       NAILMOODS_PLATFORM: ios
+      VITE_ADMOB_TEST_ENABLED: ${{ inputs.admob_test && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
         with:

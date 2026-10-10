@@ -26,8 +26,10 @@ Deno.serve(async req=>{
    if(!Array.isArray(keys))return new Response('Verification unavailable',{status:503});
   }catch{return new Response('Verification unavailable',{status:503});}
   const verified=await verifyAdmobCallback(new URL(req.url).search.slice(1),keys,units);
+  const platform=typeof verified.adUnit==='string'?unitPlatforms.get(verified.adUnit):undefined;
+  if(!platform)return new Response('Invalid platform',{status:400});
   const server=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false}});
-  const {data,error}=await server.rpc('nm_ad_confirm_platform_reward',{p_ticket:verified.ticket,p_transaction_id:verified.transactionId,p_platform:unitPlatforms.get(verified.adUnit)});
+  const {data,error}=await server.rpc('nm_ad_confirm_platform_reward',{p_ticket:verified.ticket,p_transaction_id:verified.transactionId,p_platform:platform});
   if(error)return new Response('Verification unavailable',{status:503});
   if(!data)return new Response('Reward not eligible',{status:409});
   return new Response('OK');

@@ -1,0 +1,86 @@
+name: NailMoods AdMob beta — native verification and delivery
+on:
+  push:
+    branches: [chore/admob-android-identifiers-20261010, main]
+    paths:
+      - '.github/workflows/admob-beta-candidate.yml'
+      - '.github/workflows/ios-testflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: admob-beta-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  edge-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check --no-config supabase/functions/admob-reward/index.ts
+  apple:
+    needs: edge-check
+    uses: ./.github/workflows/ios-testflight.yml
+    with:
+      mode: ${{ github.ref_name == 'main' && 'testflight' || 'verify' }}
+      source_ref: ${{ github.sha }}
+      build_number: '30003'
+      admob_test: true
+    secrets: inherit
+  signed-android:
+    needs: edge-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Prepare signed Android beta with demo ads only
+        env:
+          NM_UPLOAD_KEYSTORE_B64: ${{ secrets.NM_UPLOAD_KEYSTORE_BASE64 }}
+          NM_UPLOAD_STORE_PASSWORD: ${{ secrets.NM_UPLOAD_STORE_PASSWORD }}
+          NM_UPLOAD_KEY_ALIAS: ${{ secrets.NM_UPLOAD_KEY_ALIAS }}
+          NM_UPLOAD_KEY_PASSWORD: ${{ secrets.NM_UPLOAD_KEY_PASSWORD }}
+          NAILMOODS_MOBILE_ENV: production
+          VITE_ADMOB_TEST_ENABLED: 'true'
+        run: |
+          set -euo pipefail
+          for variable in NM_UPLOAD_KEYSTORE_B64 NM_UPLOAD_STORE_PASSWORD NM_UPLOAD_KEY_ALIAS NM_UPLOAD_KEY_PASSWORD; do
+            [[ -n "${!variable}" ]] || { echo "Missing signing setting: $variable"; exit 1; }
+          done
+          umask 077
+          TEMP_KEYSTORE="$RUNNER_TEMP/nailmoods-upload.jks"
+          trap 'rm -f "$TEMP_KEYSTORE"' EXIT
+          printf '%s' "$NM_UPLOAD_KEYSTORE_B64" | base64 -d > "$TEMP_KEYSTORE"
+          export NM_UPLOAD_KEYSTORE="$TEMP_KEYSTORE"
+          npm ci --no-audit --no-fund
+          npm test
+          node scripts/build-theme-css.mjs
+          npm run mobile:production
+          node scripts/check-mobile-build.mjs dist-mobile production
+          npx --no-install cap sync android
+          npm run mobile:assets
+          chmod +x android/gradlew
+          ./android/gradlew -p android -PnailmoodsEnvironment=production :app:bundleRelease --console=plain
+          mkdir -p artifacts/admob-android
+          cp android/app/build/outputs/bundle/release/app-release.aab artifacts/admob-android/NailMoods-0.8.1-code13-signed.aab
+          python3 scripts/ci/inspect-admob-android.py > artifacts/admob-android/admob-manifest.json
+          jarsigner -verify -verbose -certs artifacts/admob-android/*.aab > artifacts/admob-android/signature.txt
+          grep -q 'jar verified' artifacts/admob-android/signature.txt
+          cp dist-mobile/mobile-build.json artifacts/admob-android/
+          git rev-parse HEAD > artifacts/admob-android/SOURCE_COMMIT.txt
+          sha256sum artifacts/admob-android/*.aab > artifacts/admob-android/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: NailMoods-0.8.1-code13-AdMob-test-SIGNED-AAB
+          path: artifacts/admob-android/
+          retention-days: 14
