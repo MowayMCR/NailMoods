@@ -62,7 +62,16 @@
     "Été",
     "Automne",
     "Hiver",
-    "Printemps"
+    "Printemps",
+    "Vampire",
+    "Chauve-souris",
+    "Crocs",
+    "Gouttes de sang",
+    "Dentelle gothique",
+    "Filigranes",
+    "Vitrail",
+    "Minions",
+    "Harry Potter"
   ],
   "levels": [
     "Débutant",
@@ -81,7 +90,13 @@
     "Stickers",
     "Stamping",
     "Dessin à main levée",
-    "3D"
+    "3D",
+    "Strass",
+    "Charms",
+    "Micro French",
+    "V-French",
+    "Dot art",
+    "One stroke"
   ],
   "occasions": [
     "Tous les jours",
@@ -115,6 +130,9 @@
     "Chromé",
     "Irisé",
     "Transparent",
-    "Jelly"
+    "Jelly",
+    "Glazed",
+    "Glass",
+    "Aurora"
   ]
 }

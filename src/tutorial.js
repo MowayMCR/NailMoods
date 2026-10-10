@@ -40,8 +40,12 @@ export function buildTutorial(idea, firstHand = 'left') {
           targets, timer: lampProduct(product) ? 'lamp' : 'dry',
         });
     }
+    for(const [index,nail] of handNails.entries())if(nail.art){
+      const art=nail.art,base=idea.palette.find(p=>sameId(p.id,nail.productId)),accent=idea.palette.find(p=>sameId(p.id,nail.accentProductId));
+      add({id:'art-'+index,kind:'drawing',title:['Pouce','Index','Majeur','Annulaire','Auriculaire'][index]+' · '+(art.motifs.map(m=>m.name).join(', ')||art.role),body:[nail.designBrief,...art.steps].filter(Boolean).join(' '),hint:'Matériel à prévoir : '+art.materials.join(', ')+'. Les effets exigent des produits compatibles ; une teinte seule ne remplace pas un gel 3D, un vernis magnétique ou une poudre chrome. Suis leurs notices, sans durée de polymérisation inventée.',products:uniqueProducts([base,accent]),targets:[index],motifs:art.motifs.map(m=>({name:m.name,position:{x:m.x,y:m.y,size:m.size}})),techniques:art.techniques,timer:null});
+    }
     for (const pattern of ['french', 'line', 'dots']) {
-      const targets = handNails.flatMap((nail, index) => nail.drawing === pattern ? [index] : []);
+      const targets = handNails.flatMap((nail, index) => !nail.art&&nail.drawing === pattern ? [index] : []);
       if (!targets.length) continue;
       const accent = uniqueProducts(targets.map(index => idea.palette.find(item => sameId(item.id, handNails[index].accentProductId))));
       const tool = idea.resources.find(item => item.equipmentCategory === (pattern === 'dots' ? 'Dotting tool' : 'Pinceau'));
@@ -52,7 +56,7 @@ export function buildTutorial(idea, firstHand = 'left') {
         products: uniqueProducts([...accent, tool, magnet]), targets, timer: accent.some(lampProduct) ? 'lamp' : 'dry',
       });
     }
-    const stickerTargets = handNails.flatMap((nail, index) => nail.decoration ? [index] : []);
+    const stickerTargets = handNails.flatMap((nail, index) => !nail.art&&nail.decoration ? [index] : []);
     if (stickerTargets.length) {
       const stickers = idea.resources.filter(isDecoration);
       add({ id: 'stickers', kind: 'sticker', title: 'Place tes décorations',

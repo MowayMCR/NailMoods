@@ -3,6 +3,14 @@ const slug=value=>norm(value).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
 const list=(category,labels,visible=[],extra={})=>labels.map(label=>({id:slug(label),label,category,synonyms:extra[label]?.synonyms||[],related_tags:extra[label]?.related_tags||[],visible_in_filters:visible.includes(label)}));
 
 const relation={
+ Goth:{synonyms:['gothique','gothic','goth'],related_tags:[]},
+ Vampire:{synonyms:['vampires'],related_tags:[]},
+ 'Chauve-souris':{synonyms:['chauves souris','chauve souris','bat','bats'],related_tags:[]},
+ Fleurs:{synonyms:['flowers','flower','fleur','floral'],related_tags:[]},
+ Bordeaux:{synonyms:['burgundy'],related_tags:[]},
+ Noir:{synonyms:['black'],related_tags:[]},
+ Hiver:{synonyms:['winter'],related_tags:[]},
+ Strass:{synonyms:['rhinestone','rhinestones'],related_tags:[]},
  'Clean girl':{synonyms:['clean','clean nails'],related_tags:['Minimal','Nude','Milky nails','Soap nails','Micro French','Classique']},
  Witchy:{synonyms:['sorciere','sorcière'],related_tags:['Celestial','Lunes','Dark feminine','Goth romantique']},
  'Cat-eye':{synonyms:['cat eye','cateye','magnetique','magnétique'],related_tags:['Velvet nails','Métallique']},
@@ -19,8 +27,8 @@ export const TAGS=[
  ...list('ambiance',['Witchy','Alternative','Girly','Dark feminine','Romantique','Minimal','Old money','Clean girl','Vintage','Grunge','Punk','Rock','Emo','Goth','Goth romantique','Coquette','Cottagecore','Fairycore','Celestial','Kawaii','Y2K','90s','Pastel goth','Cyber','Balletcore','Mermaidcore','Quiet luxury','Soft girl','Dreamy','Ethereal','Moody'],['Witchy','Clean girl','Romantique','Minimal'],relation),
  ...list('technique',['French','Micro French','Reverse French','Double French','Side French','Deep French','V-French','Babyboomer','Ombré','Dégradé','Accent nail','Duo alterné','Color block','Negative space','Half moon','Ruffian','Outline nails','Skittle nails','Mix & match','Monochrome','Ton sur ton','Gradient nails','Marble','Blooming gel','Aura nails','Airbrush','Watercolor','Stamping','Freehand','Line art','Dot art','One stroke','Encapsulated','3D gel','Charms','Strass','Foil','Flakes','Chrome powder','Cat-eye magnetic','Velvet nails','Glazed nails','Jelly nails','Glass nails','Syrup nails','Milky nails','Soap nails','Tortoiseshell','Crocodile','Snake print','Leopard','Cow print','Zebra'],['French','Cat-eye magnetic','Aura nails'],relation),
  ...list('finish',['Chrome','Cat-eye','Jelly','Aura','Glazed','Métallique','Paillettes','Holographique','Velours','Marbré','Brillant','Ultra brillant','Mat','Satiné','Nacré','Perlé','Scintillant','Iridescent','Aurora','Translucide','Glass','Texturé'],['Chrome','Cat-eye','Aura','Paillettes'],relation),
- ...list('theme',['Floral','Fruité','Océan','Galaxy','Animal print','Pride','Halloween','Noël','Saint-Valentin','Printemps','Automne','Été','Hiver','Mariage','Étoiles','Lunes','Soleils','Cœurs','Nœuds','Fleurs','Feuilles','Papillons','Cerises','Fraises','Citron','Champignons','Nuages','Coquillages'],['Floral','Noël'],relation),
- ...list('color',['Rose','Rouge','Bordeaux','Violet','Bleu','Vert','Jaune','Orange','Marron','Beige','Blanc','Noir','Gris','Doré','Argenté','Nude'])
+ ...list('theme',['Floral','Fruité','Océan','Galaxy','Animal print','Pride','Halloween','Noël','Saint-Valentin','Printemps','Automne','Été','Hiver','Mariage','Étoiles','Lunes','Soleils','Cœurs','Nœuds','Fleurs','Feuilles','Papillons','Cerises','Fraises','Citron','Champignons','Nuages','Coquillages','Vampire','Chauve-souris','Crocs','Gouttes de sang','Dentelle gothique','Filigranes','Vitrail','Minions','Harry Potter'],['Floral','Noël'],relation),
+ ...list('color',['Rose','Rouge','Bordeaux','Violet','Bleu','Vert','Jaune','Orange','Marron','Beige','Blanc','Noir','Gris','Doré','Argenté','Nude'],[],relation)
 ];
 export const TAG_BY_LABEL=new Map(TAGS.map(tag=>[tag.label,tag]));
 export const VISIBLE_TAGS=TAGS.filter(tag=>tag.visible_in_filters);
@@ -37,6 +45,14 @@ export const TAXONOMY={
  finishes:TAGS.filter(tag=>tag.category==='finish').map(tag=>tag.label)
 };
 export const VISIBLE_TAXONOMY={...TAXONOMY,moods:VISIBLE_TAGS.filter(tag=>['style','envie','ambiance'].includes(tag.category)).map(tag=>tag.label),techniques:VISIBLE_TAGS.filter(tag=>tag.category==='technique').map(tag=>tag.label),finishes:VISIBLE_TAGS.filter(tag=>tag.category==='finish').map(tag=>tag.label),themes:VISIBLE_TAGS.filter(tag=>tag.category==='theme').map(tag=>tag.label)};
-export function resolveTags(value,{related=true}={}){const input=norm(value);if(!input)return[];const direct=TAGS.filter(tag=>[tag.label,...tag.synonyms].some(term=>{const needle=norm(term);return input.includes(needle)||needle.includes(input)}));const expanded=related?direct.flatMap(tag=>tag.related_tags.map(label=>TAG_BY_LABEL.get(label)).filter(Boolean)):[];return [...new Map([...direct,...expanded].map(tag=>[tag.id,tag])).values()];}
+export function resolveTags(value,{related=true}={}){const input=norm(value);if(!input)return[];const direct=TAGS.filter(tag=>[tag.label,...tag.synonyms].some(term=>{const needle=norm(term);return (' '+input+' ').includes(' '+needle+' ')}));const expanded=related?direct.flatMap(tag=>tag.related_tags.map(label=>TAG_BY_LABEL.get(label)).filter(Boolean)):[];return [...new Map([...direct,...expanded].map(tag=>[tag.id,tag])).values()];}
 export function querySuggestions(value,limit=6){return resolveTags(value,{related:false}).slice(0,limit);}
 export function internalTagIds(value){return resolveTags(value).map(tag=>tag.id);}
+
+export function searchTerms(value){
+ let input=' '+norm(value).replace(/[^a-z0-9 ]/g,' ')+' ';const found=[];
+ const aliases=TAGS.flatMap(t=>[t.label,...t.synonyms].map(a=>({alias:norm(a),label:t.label}))).sort((a,b)=>b.alias.length-a.alias.length||a.label.length-b.label.length);
+ for(const {alias,label} of aliases){const term=' '+alias+' ';if(input.includes(term)){found.push(norm(label));input=input.split(term).join(' ');}}
+ const rest=input.trim().split(/\s+/).filter(v=>v&&!['nail','art','ongle','ongles','nails','avec','des','les','de','du','et','and','with','une','un','pour'].includes(v));
+ return [...new Set([...found,...rest])].slice(0,12);
+}

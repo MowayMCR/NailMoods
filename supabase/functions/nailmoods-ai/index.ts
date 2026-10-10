@@ -18,6 +18,7 @@ async function processClaim(admin:any,claim:any){
  const config=providerConfig((k:string)=>k==='OPENAI_API_KEY'?Deno.env.get(k):provider[k]);
  let result:any=null,usage:any=null,cost:number|null=null,path:string|null=null;
  try{
+  if(payload.referencePath){if(!payload.referencePath.startsWith(actor+'/'+payload.body.workspaceId+'/ai/'))throw Error('invalid_reference');const stored=await admin.storage.from('nailmoods-private').download(payload.referencePath);if(stored.error)throw Error('reference_unavailable');const bytes=new Uint8Array(await stored.data.arrayBuffer());if(bytes.length>10000000)throw Error('invalid_reference');let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));payload.body.referenceImage='data:image/png;base64,'+btoa(binary);}
   const generated=await runProvider({...payload,config,maxUsd:Number(job.reserve_usd)});
   result=generated.result;usage=generated.usage;cost=generated.cost;
   if(generated.image){path=actor+'/'+payload.body.workspaceId+'/ai/'+job.id+'.png';const r=await admin.storage.from('nailmoods-private').upload(path,generated.image,{contentType:'image/png',upsert:false});if(r.error)throw Error('storage_failed');result={...result,imagePath:path};}
@@ -81,9 +82,10 @@ Deno.serve(async req=>{
  }catch{return fail('not_allowed',403);}
  const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(body)));
  const fingerprint=[...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
+ let referencePath:string|null=null;if(body.referenceJobId){try{const source=await rpc(user,'nm_ai2_status',{p_job:body.referenceJobId});if(source.status!=='succeeded'||source.result?.kind!=='illustration'||!source.result?.imagePath?.startsWith(auth.user.id+'/'+body.workspaceId+'/ai/'))return fail('invalid_reference');referencePath=source.result.imagePath;}catch{return fail('invalid_reference');}}
  let job:any;
  try{
-  const r=await rpc(admin,'nm_ai2_enqueue',{p_user:auth.user.id,p_request:body.requestId,p_thread:body.threadId,p_workspace:body.workspaceId,p_operation:body.operation,p_fingerprint:fingerprint,p_prompt:body.prompt,p_payload:{body,products,history:history.messages||[]}});
+  const r=await rpc(admin,'nm_ai2_enqueue',{p_user:auth.user.id,p_request:body.requestId,p_thread:body.threadId,p_workspace:body.workspaceId,p_operation:body.operation,p_fingerprint:fingerprint,p_prompt:body.prompt,p_payload:{body,products,history:history.messages||[],referencePath}});
   job=r.job;
   const claim=await rpc(admin,'nm_ai2_claim',{p_user:auth.user.id});if(claim)EdgeRuntime.waitUntil(processClaim(admin,claim));
   const state=await rpc(user,'nm_ai2_status',{p_job:job.id});if(state.result?.imagePath)state.result.imageUrl=await signed(state.result.imagePath);return json(state,state.status==='queued'||state.status==='running'?202:200);

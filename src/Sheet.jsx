@@ -10,7 +10,7 @@ function revealTop() {
   const top = dialogs.at(-1);
   dialogs.forEach(item => { item.host.hidden = item !== top && !top?.keepBehind; item.host.inert = item !== top; });
 }
-export default function Sheet({ title, eyebrow = 'MON NAILMOODS', children, onClose, className = '', keepBehind = false }) {
+export default function Sheet({ title, eyebrow = 'MON NAILMOODS', children, onClose, className = '', keepBehind = false, scrollBody = false }) {
   const panel = useRef(null), host = useRef(null), close = useRef(onClose), titleId = useId();
   close.current = onClose;
   if (!host.current) { host.current = document.createElement('div'); host.current.className = 'app nmDialogHost'; }
@@ -51,5 +51,5 @@ export default function Sheet({ title, eyebrow = 'MON NAILMOODS', children, onCl
       });
     };
   }, [titleId]);
-  return createPortal(<div className="overlay" onClick={() => close.current()}><section className={'productSheet ' + className} ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={event => event.stopPropagation()}><div className="grab" /><div className="sheetTitle"><div><small>{eyebrow}</small><h2 id={titleId}>{title}</h2></div><button aria-label="Fermer" onClick={() => close.current()}><X /></button></div>{children}</section></div>, host.current);
+  return createPortal(<div className="overlay" onClick={() => close.current()}><section className={'productSheet ' + className} ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={event => event.stopPropagation()}><div className="grab" /><div className="sheetTitle"><div><small>{eyebrow}</small><h2 id={titleId}>{title}</h2></div><button aria-label="Fermer" onClick={() => close.current()}><X /></button></div>{scrollBody?<div className="nmAIScroll">{children}</div>:children}</section></div>, host.current);
 }
