@@ -42,9 +42,9 @@ test('provider is opt-in, bounded, stateless, moderated and never retries; usage
  await assert.rejects(runProvider({body:request(),products,config,maxUsd:1,fetcher:async()=>({ok:true,json:async()=>({results:[{flagged:true}]})})}),/content_not_allowed/);
 });
 test('trends require provider citations; source date remains unknown when absent; no arbitrary URL fetch',async()=>{
- const response={output:[{type:'web_search_call'},{content:[{type:'output_text',text:'Tendance documentée',annotations:[{type:'url_citation',url:'https://example.com/article',title:'Article'},{type:'url_citation',url:'javascript:alert(1)',title:'bad'}]}]}],usage:{input_tokens:100,output_tokens:200}};
+ const response={output:[{type:'web_search_call'},{content:[{type:'output_text',text:JSON.stringify({message:'Trois inspirations',cards:Array.from({length:3},()=>({summary:'French de saison',sourceUrl:'https://example.com/article',plan:plan()}))}),annotations:[{type:'url_citation',url:'https://example.com/article',title:'Article'},{type:'url_citation',url:'javascript:alert(1)',title:'bad'}]}]}],usage:{input_tokens:100,output_tokens:200}};
  const r=await runProvider({body:request('trends'),products,config,maxUsd:1,fetcher:async(url,o)=>{if(url.endsWith('/moderations'))return moderation;assert.equal(JSON.parse(o.body).max_tool_calls,1);return {ok:true,json:async()=>response};}});
- assert.equal(r.result.sources.length,1);assert.equal(r.result.sources[0].publishedAt,null);assert.ok(r.result.sources[0].accessedAt);assert.equal(r.cost,.0105);
+ assert.equal(r.result.cards.length,3);assert.equal(r.result.cards[0].plan.nails.length,5);assert.equal(r.result.sources.length,1);assert.equal(r.result.sources[0].publishedAt,null);assert.ok(r.result.sources[0].accessedAt);assert.equal(r.cost,.0105);
  assert.deepEqual(safeSources({output:[]}),[]);
  await assert.rejects(runProvider({body:request('trends'),products,config,maxUsd:1,fetcher:async url=>url.endsWith('/moderations')?moderation:mockResponse({})}),/sources_unavailable/);
 });
