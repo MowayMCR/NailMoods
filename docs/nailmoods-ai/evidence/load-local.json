@@ -1,0 +1,45 @@
+{
+  "testedAt": "2026-10-10T15:14:08.346Z",
+  "environment": "PGlite embedded PostgreSQL/WASM, single database session; Promise bursts are serialized by the driver. Synthetic provider, no API/network/storage/real concurrency capacity certification.",
+  "results": [
+    {
+      "accounts": 100,
+      "burst": 10,
+      "accepted": 10,
+      "rejected": 0,
+      "maxRunning": 2,
+      "admissionMs": 46,
+      "p50AdmissionMs": 39,
+      "p95AdmissionMs": 45,
+      "fakeDrainMs": 55,
+      "completed": 10,
+      "invariants": "pass"
+    },
+    {
+      "accounts": 1000,
+      "burst": 100,
+      "accepted": 50,
+      "rejected": 50,
+      "maxRunning": 2,
+      "admissionMs": 109,
+      "p50AdmissionMs": 86,
+      "p95AdmissionMs": 106,
+      "fakeDrainMs": 184,
+      "completed": 50,
+      "invariants": "pass"
+    },
+    {
+      "accounts": 10000,
+      "burst": 1000,
+      "accepted": 50,
+      "rejected": 950,
+      "maxRunning": 2,
+      "admissionMs": 488,
+      "p50AdmissionMs": 276,
+      "p95AdmissionMs": 465,
+      "fakeDrainMs": 197,
+      "completed": 50,
+      "invariants": "pass"
+    }
+  ]
+}
