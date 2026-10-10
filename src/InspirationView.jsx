@@ -1,3 +1,4 @@
+import {AssistantRenderEntry} from './assistant/Assistant';
 import {StorageHint} from './StorageContext';
 import AdaptCollection from './engagement/AdaptCollection.jsx';
 import {DiyEntry} from './poseCycle/DiyView';
@@ -28,7 +29,7 @@ function ProductRow({ item, items, role, onCollection }) {
   </li>;
 }
 
-export default function InspirationView({ initialVariant=false, onPublish, onSaveIdea, onRename, idea, items, profile, favorite, selected, onFavorite, onSelect, onOpen, onBack, onFavorites, onCollection, onTutorial, tutorialExists, onDone, completed, learning, onShareToPro }) {
+export default function InspirationView({ initialVariant=false, onPublish, onSaveIdea, onRename, idea, items, profile, favorite, selected, onFavorite, onSelect, onOpen, onBack, onFavorites, onCollection, onTutorial, tutorialExists, onDone, completed, learning, onShareToPro, onRenderAI }) {
   const social=useSocial();
   const [publishOpen,setPublishOpen]=useState(false),[publicTags,setPublicTags]=useState(()=>idea.publicTags??suggestTags(idea)),[visibility,setVisibility]=useState(idea.isPublic===true?'public':'private'),[publishNotice,setPublishNotice]=useState('');
   const [renaming, setRenaming] = useState(false);
@@ -58,7 +59,7 @@ export default function InspirationView({ initialVariant=false, onPublish, onSav
     <section className="detailHero"><small>SOURCE · {idea.intent==='scan'?'Scan produit / couleur':idea.intent==='photos'?'Photos d’inspiration':idea.options?.proCreation||idea.options?.proDrawing?'Dessin Pro':idea.options?.manualSet?'Composition manuelle':idea.intent==='inspire'?'Inspiration libre':'Ma collection'}</small><h1 ref={heading} tabIndex={-1}>{idea.title}</h1>{onRename && !(idea.intent==='photos'&&social?.tier==='free') && <div className="renameIdea">{renaming ? <><label>Nom de mon idée<input maxLength={80} value={title} onChange={e => setTitle(e.target.value)} /></label><button disabled={!title.trim()} onClick={() => { if (onRename(title)) setRenaming(false); }}>Enregistrer le nom</button><button onClick={() => { setTitle(idea.title); setRenaming(false); }}>Annuler</button></> : <button onClick={() => setRenaming(true)}>Renommer</button>}</div>}<p>{idea.description}</p><div className="detailBadges"><span><Clock3 />≈ {idea.minutes} min</span><span>{difficultyLabels[idea.rank]}</span><span>{idea.palette.length} vernis</span></div></section>
     <PhotoReferences photos={idea.photoSources}/><section className="detailCanvas"><div className="detailSectionTitle"><h2>Ongle par ongle</h2><span>{idea.shape} · {idea.length}</span></div>
       <p className="detailMuted">Touche un ongle pour voir sa composition. {idea.secondHand?'Les deux mains ont leur propre composition.':'La même répartition est prévue sur les deux mains.'}</p>
-      <NailPreview idea={idea} onSelect={setFinger} selectedIndex={finger} labels={fingers} controls />
+      <NailPreview idea={idea} onSelect={setFinger} selectedIndex={finger} labels={fingers} controls renderAction={<AssistantRenderEntry onOpen={onRenderAI?()=>onRenderAI(idea):null}/>} />
       <details className="fingerInspection"><summary>Détails du doigt sélectionné</summary><div className="fingerDetail" aria-live="polite"><div><small>{idea.secondHand?(finger<5?'MAIN GAUCHE':'MAIN DROITE'):'LES DEUX MAINS'}</small><h3>{fingers[finger%5]}</h3></div><ul>{nailDetails(idea, finger).map(({ label, item }) => <li key={label}><i style={{ background: item.type === 'Matériel' ? [...idea.nails,...(idea.secondHand?.nails||[])][finger].decoration?.color : item.color }} /><span><small>{label}</small><b>{item.name}</b></span></li>)}</ul></div></details>
       <p className="detailFootnote">{idea.intent === 'scan' ? 'Aperçu avec les couleurs que tu as confirmées dans Scan & Génère.' : idea.intent === 'inspire' ? 'Couleurs de style : choisis des produits adaptés pour réaliser cette inspiration.' : 'Aperçu avec les teintes enregistrées dans ta collection.'} Le dessin illustre la composition et les effets des produits.</p>
     </section>
