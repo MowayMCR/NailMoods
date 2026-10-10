@@ -10,7 +10,7 @@ permissions:
   contents: read
 concurrency:
   group: admob-beta-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
 jobs:
   edge-check:
     runs-on: ubuntu-latest

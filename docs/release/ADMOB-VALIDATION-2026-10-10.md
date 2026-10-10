@@ -1,6 +1,6 @@
 # Préparation AdMob et confidentialité — 10 octobre 2026
 
-Cette PR prépare le code et les documents. Elle ne déploie ni le site, ni les migrations, ni la fonction Edge, ni une application signée. Les blocs commerciaux Android/iOS sont enregistrés dans leurs fichiers de configuration ; les requêtes restent exclusivement sur les blocs de démonstration Google.
+La livraison du 10 octobre est autorisée. Les deux migrations sont appliquées et contrôlées en recette puis en production ; la publication du site et les livraisons natives sont suivies par les workflows. La fonction Edge commerciale reste hors déploiement. Les blocs commerciaux Android/iOS sont enregistrés dans leurs fichiers de configuration ; les requêtes restent exclusivement sur les blocs de démonstration Google.
 
 ## Comportement ajouté
 
@@ -30,7 +30,7 @@ La notice 0.9-beta décrit Google Mobile Ads/UMP, les données techniques possib
 La notice, les versions frontend et la fonction SQL `nm_legal_versions` doivent être livrées ensemble. Les anciens choix ne sont pas réécrits. Les statistiques attendront une confirmation pour la nouvelle version. Le bouton général « Tout refuser » refuse également les essais publicitaires sur cet appareil.
 
 1. Revoir puis publier le document public ; vérifier que l'URL stable présente bien 0.9-beta, accessible sans compte.
-2. Appliquer la migration revue dans l'environnement voulu, sans activer la publicité commerciale, puis livrer le build correspondant.
+2. Les deux migrations ont été appliquées en recette puis en production, compatibilité legacy en premier. Les notices 0.8 et 0.9 sont acceptées pendant la transition, le consentement réellement présenté est enregistré, et un ancien client ne peut pas activer les statistiques. Les deux plateformes conservent enabled=false et test_only=true. Livrer le build correspondant.
 3. Dans AdMob, vérifier pour les deux apps le lien, le français/anglais, le choix Refuser et le ciblage ; publier le message UMP après la notice publique. La dernière capture fournie montrait seulement un brouillon, deux apps et deux langues : les autres réglages restent à contrôler dans AdMob.
 4. En environnement de test autorisé seulement, activer les essais (flag de build et configuration serveur test_only), puis vérifier UMP/bannière/vidéo sur Android, iPhone et iPad. Un build Recette utilise l'App ID Google de démonstration ; il ne valide pas le message attaché à l'App ID NailMoods. Pour ce message, utiliser un build de vérification avec l'App ID NailMoods et les seuls blocs de démonstration.
 5. Vérifier les déclarations Play Data safety/App Store Privacy selon le binaire et les SDK effectifs, l'association des fiches publiques des stores et la validation app-ads.txt. La présence des ID n'est pas une approbation AdMob.
@@ -39,7 +39,15 @@ Si le futur endpoint SSV est déployé, le callback Google n'utilise pas de JWT 
 
 ## Vérifications
 
-`npm test` : 593 tests, 591 réussis, 2 tests d’intégration ignorés, aucun échec. Vérification ciblée finale : 21 tests réussis. Tests du contrôleur (courses asynchrones, refus, compte/offre, fermeture tardive), tests cryptographiques et tests SQL PGlite avec les rôles authenticated/anon/service_role. Vérifications de build embarqué Android/iOS et synchronisation Capacitor. Le build Android avec le flag de test explicite compile également. Le contrôle embarqué iOS exige le même `NAILMOODS_IOS_BUILD_NUMBER=30002` que sa préparation ; le contrôle est passé avec cette valeur, sans changement de numéro source. Le contrôle Deno de la fonction Edge reste à faire dans un environnement connecté : la résolution de la dépendance npm Supabase a échoué ici (connexion au registre refusée), avant l’analyse du module. Les builds locaux ne constituent ni un AAB/IPA signé ni une observation sur téléphone. Les contrôles natifs visuels, UMP réel, Apple ATT/IDFA absent et déclarations des stores restent nécessaires avant diffusion.
+Les tests applicatifs, cryptographiques et SQL PGlite passent, y compris la compatibilité des anciens clients. Le contrôle Deno du serveur AdMob est réussi dans GitHub Actions. Les compilations natives sont suivies dans le workflow AdMob beta ; elles ne remplacent pas les essais UMP et annonces sur appareil réel.
+
+Android cible le code 14 (le code 13 a déjà été livré), Apple le build 30003. Le manifeste Android compilé et les archives Apple doivent contenir les App IDs NailMoods et l'initialisation de mesure différée. Les requêtes publicitaires restent des annonces Google de démonstration. La clé Android historique a été retrouvée et son certificat contrôlé ; en l'absence de secrets Android complets dans GitHub, la signature est réalisée hors dépôt après téléchargement du bundle CI.
+
+Le conseiller sécurité ne relève pas de nouvelle catégorie d'avertissement après les migrations. Les avertissements préexistants restent suivis :
+- https://supabase.com/docs/guides/database/database-linter?lint=0014_extension_in_public
+- https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable
+- https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable
+- https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
 
 Sources primaires utilisées :
 - https://developers.google.com/admob/android/test-ads
