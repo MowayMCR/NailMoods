@@ -5,7 +5,7 @@ export const tipDrawings=new Set(['french','micro-french','reverse-french','doub
 const normal=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 export function drawingTechnique(value){return aliases[value]||value||'gloss';}
 export function drawingShape(value){const v=normal(value);return shapes.find(s=>v.includes(normal(s)))||(/coffin|ballerin/.test(v)?'Ballerine':/almond/.test(v)?'Amande':/square/.test(v)?'Carrée':'Ovale');}
-export function drawingLength(value){return /court|short/.test(normal(value))?'Courte':/long/.test(normal(value))?'Longue':'Moyenne';}
+export function drawingLength(value){return normal(value)==='xl'?'XL':/tres courte|very short/.test(normal(value))?'Très courte':/court|short/.test(normal(value))?'Courte':/long/.test(normal(value))?'Longue':'Moyenne';}
 export function drawnNailSettings(nail,idea={}){
  const base=/^#[0-9a-f]{6}$/i.test(nail.color||'')?nail.color:'#b88699';
  const accent=/^#[0-9a-f]{6}$/i.test(nail.accentColor||'')?nail.accentColor:tint(base,'#fff6eb',.55);
