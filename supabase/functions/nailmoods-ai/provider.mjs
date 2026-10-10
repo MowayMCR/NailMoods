@@ -19,7 +19,7 @@ export function textCost(usage,config,searchCalls=0){
 async function responseJson(response){if(!response.ok)throw new AIError(response.status===429?'provider_busy':'provider_failed');try{return await response.json();}catch{throw new AIError('provider_failed');}}
 export async function moderate(text,image,config,fetcher){
  const input=[{type:'text',text:String(text).slice(0,14000)}];if(image)input.push({type:'image_url',image_url:{url:image}});
- try{const r=await fetcher('https://api.openai.com/v1/moderations',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:config.moderationModel,input}),signal:AbortSignal.timeout(20000)});
+ try{const r=await fetcher('https://api.openai.com/v1/moderations',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:config.moderationModel,input}),signal:AbortSignal.timeout(12000)});
  if(!r.ok)throw Error();const data=await r.json();if(!data.results?.length||data.results.some(r=>typeof r.flagged!=='boolean'))throw Error();if(data.results.some(r=>r.flagged))throw new AIError('content_not_allowed',null,0);
  }catch(e){throw e instanceof AIError?e:new AIError('moderation_unavailable',null,0);}
 }
@@ -34,7 +34,7 @@ export async function runProvider({body,products,history=[],config,maxUsd,fetche
   const dims=new DataView(reference.buffer,reference.byteOffset,reference.byteLength);if(dims.getUint32(16)>1024||dims.getUint32(20)>1024)throw new AIError('invalid_reference',null,0);
   await moderate(body.prompt,body.referenceImage,config,fetcher);
   const form=new FormData();form.set('model',config.imageModel);form.set('prompt',prompt);form.set('n','1');form.set('size','1024x1024');form.set('quality','medium');form.set('output_format','png');form.append('image[]',new Blob([reference],{type:'image/png'}),'composition.png');
-  let payload;try{payload=await responseJson(await fetcher('https://api.openai.com/v1/images/edits',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey},body:form,signal:AbortSignal.timeout(120000)}));}catch(e){throw e instanceof AIError?e:new AIError('provider_interrupted');}
+  let payload;try{payload=await responseJson(await fetcher('https://api.openai.com/v1/images/edits',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey},body:form,signal:AbortSignal.timeout(90000)}));}catch(e){throw e instanceof AIError?e:new AIError('provider_interrupted');}
   const u=payload.usage,d=u?.input_tokens_details;
   const cost=d&&[d.text_tokens,d.image_tokens,u.output_tokens].every(v=>Number.isSafeInteger(v)&&v>=0)?(d.text_tokens*config.imageTextPrice+d.image_tokens*config.imageInputPrice+u.output_tokens*config.imageOutputPrice)/1e6:null;
   try{await moderate('Nail art generated preview','data:image/png;base64,'+payload.data?.[0]?.b64_json,config,fetcher);}catch(e){throw new AIError(e.message,u,cost);}

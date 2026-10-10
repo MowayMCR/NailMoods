@@ -1,0 +1,3 @@
+# Browser requests authenticate with auth.getUser; scheduled requests use single-use server nonces.
+[functions.nailmoods-ai]
+verify_jwt = false
