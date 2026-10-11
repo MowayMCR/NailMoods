@@ -14,7 +14,7 @@ class NailMoodsViewController: CAPBridgeViewController {
             UserDefaults.standard.set(session, forKey: "CapacitorStorage.auth:nailmoods-auth-v1")
             let route = ProcessInfo.processInfo.environment["NM_STORE_ROUTE"] ?? "accueil"
             let routeJSON = String(data: try! JSONSerialization.data(withJSONObject: [route]), encoding: .utf8)!
-            let script = fixture + "\nlocation.hash=" + routeJSON + "[0];"
+            let script = "window.__NM_NATIVE_CAPTURE=true;" + fixture + "\nlocation.hash=" + routeJSON + "[0];"
             configuration.userContentController.addUserScript(WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         }
         #endif

@@ -2,6 +2,9 @@ name: Native App Store screenshots (no upload)
 on:
   push:
     branches: [work/app-store-captures-1-0]
+concurrency:
+  group: native-store-captures
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

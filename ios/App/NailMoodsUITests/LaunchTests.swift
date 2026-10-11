@@ -63,14 +63,10 @@ final class StoreCaptureTests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.buttons[ready].firstMatch.waitForExistence(timeout: 90), "Navigation missing: " + name)
             Thread.sleep(forTimeInterval: 5)
+            XCTAssertFalse(app.staticTexts["Reprenons tranquillement"].exists)
             if route == "profil/pro" {
-                let heading = app.staticTexts["Mon espace professionnel"].firstMatch
-                XCTAssertTrue(heading.waitForExistence(timeout: 20))
-                for _ in 0..<10 {
-                    if heading.isHittable && heading.frame.minY < 220 { break }
-                    app.webViews.firstMatch.swipeUp()
-                    Thread.sleep(forTimeInterval: 1)
-                }
+                XCTAssertTrue(app.staticTexts["Mon espace professionnel"].firstMatch.exists)
+                XCTAssertTrue(app.buttons["Solo"].firstMatch.isHittable)
             }
             let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
             shot.name = name
@@ -81,7 +77,7 @@ final class StoreCaptureTests: XCTestCase {
             hierarchy.lifetime = .keepAlways
             add(hierarchy)
             if route == "journal" {
-                let book = app.buttons["Livre"].firstMatch
+                let book = app.buttons["Ouvrir mon Livre"].firstMatch
                 if book.exists { book.tap(); Thread.sleep(forTimeInterval: 2) }
                 let check = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
                 check.name = "QA-Livre"
@@ -89,6 +85,11 @@ final class StoreCaptureTests: XCTestCase {
                 add(check)
             }
             if route == "creer" {
+                let manual = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Composition manuelle")).firstMatch
+                XCTAssertTrue(manual.exists)
+                manual.tap()
+                XCTAssertTrue(app.staticTexts["Ma pose, doigt par doigt"].firstMatch.waitForExistence(timeout: 10))
+                Thread.sleep(forTimeInterval: 2)
                 let menu = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
                 menu.name = "QA-Creation"
                 menu.lifetime = .keepAlways
