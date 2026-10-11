@@ -11,9 +11,9 @@ Il n’existe pas de preuve réseau permettant d’affirmer que l’ancien build
 ## Livraison
 
 - Branche : `fix/admob-att-20261011`, PR brouillon [69](https://github.com/MowayMCR/NailMoods/pull/69).
-- Source de compilation initiale : `23a4c20a50616ccf80fcd7d6b2b7951dc26870b2`.
-- Candidat TestFlight : version **0.8.1**, build **30005**. Ce n’est pas une version commerciale 1.0.
-- [Compilation et livraison](https://github.com/MowayMCR/NailMoods/actions/runs/38148866452) : statut à confirmer dans les preuves jointes ; ne pas confondre lancement et succès.
+- Source du premier candidat ATT 30005 : `23a4c20a50616ccf80fcd7d6b2b7951dc26870b2`. Ce candidat intermédiaire ne reprenait pas encore le correctif StoreKit livré en 30004 ; ne pas le retenir comme candidat final.
+- Candidat TestFlight : version **0.8.1**, build **30006**. Ce n’est pas une version commerciale 1.0.
+- [CI intermédiaire 30005](https://github.com/MowayMCR/NailMoods/actions/runs/38148866452). La CI finale 30006 doit être contrôlée séparément ; son numéro est consigné dans les preuves finales. Ne pas confondre lancement et succès.
 - Google Mobile Ads **13.6.0**, UMP **3.1.0**, plugin Capacitor AdMob **8.2.0**. Aucun adaptateur de médiation supplémentaire déclaré dans le package audité.
 
 ## Modifications
@@ -27,13 +27,14 @@ Il n’existe pas de preuve réseau permettant d’affirmer que l’ancien build
 7. Refus UMP ou ATT : **aucune demande d’annonce iOS** dans ce candidat. Le chemin contextuel/non personnalisé sans ATT est suspendu faute de preuve réseau de non-tracking. Après double accord seulement : unités Google de démonstration, `npa:true`, sans récompense réelle.
 8. Patch natif restreint au plugin épinglé, appliqué pendant le build iOS, avec arrêt si version/méthodes changent. Aucun manifeste Google modifié pour effacer ses déclarations.
 9. Manifeste app : `NSPrivacyTracking=true`, Device ID et Advertising Data liés et utilisés pour tracking. Corrections de l’audit précédent incluses : Santé limitée à Fonctionnalités ; Contacts conservés pour le graphe social privé ; Historique de recherche ajouté.
-10. Archive signée complète conservée par CI pour l’examen Organizer. Politique 0.9-beta complétée dans le candidat ; cette branche ne publie pas automatiquement le site de production.
+10. Correctif StoreKit déjà livré en 30004 repris dans le candidat : environnement Sandbox TestFlight, actualisation des prix sans redemande d’authentification Apple, priorité des accès offerts et vérification serveur conservées. Aucun droit de compte ou réglage serveur modifié.
+11. Archive signée complète conservée par CI pour l’examen Organizer. Politique 0.9-beta complétée dans le candidat ; cette branche ne publie pas automatiquement le site de production.
 
 Les droits Plus/Pro offerts, paramètres Supabase, restrictions d’accès et quotas IA restent inchangés. Aucun identifiant d’annonce commerciale ajouté. Les essais restent soumis aux droits et au coupe-circuit serveur existants ; il n’est pas activé pour contourner un refus.
 
 ## Résultats disponibles
 
-Tests locaux : **665 tests, 663 réussis, 2 ignorés, 0 échec**. Build web : réussi. Contrôle des espaces/diff : réussi. Ces résultats n’attestent ni la compilation Swift ni le comportement réseau Google.
+Tests du premier candidat ATT : **665 tests, 663 réussis, 2 ignorés, 0 échec**. Après reprise StoreKit, 32 tests ciblés ATT/achats/contrats iOS réussis ; suite complète finale à consigner. Build web : réussi. Contrôle des espaces/diff : réussi. Ces résultats n’attestent ni la compilation Swift ni le comportement réseau Google.
 
 | Scénario | Résultat automatisé du contrôleur | iPhone/iPad physiques |
 |---|---|---|
@@ -64,14 +65,18 @@ Les 12 autres catégories restent dans [le tableau complet de 19 catégories](..
 
 Le manifeste Google annonce seulement Device ID comme tracking ; Advertising Data est déclaré Oui par prudence pour les impressions/interactions liées à l’identifiant dans le chemin autorisé. La capture matérielle doit confirmer ce classement et révéler d’éventuelles catégories supplémentaires effectivement utilisées pour tracking. Les réponses ne sont donc **pas encore une attestation des flux finaux**.
 
+## Politique publique contrôlée
+
+Le 11 octobre, l’URL https://nailmoods.com/legal/confidentialite.html répond HTTP 200 et affiche 0.9-beta. Le texte récupéré ne contient ni OpenAI ni le nouveau paragraphe ATT. Les corrections existent dans cette branche mais ne sont pas encore publiées. La conformité du texte public actuel ne peut donc pas être déclarée acquise.
+
 ## Vérifications restantes avant validation
 
 - Lire dans AdMob les messages réellement publiés pour l’ID app iOS : réglementation européenne, partenaires, refus visible, lien public de confidentialité et éventuel message IDFA. Aucun accès à cette console n’a été effectué par ce correctif.
 - Sur iPhone et iPad physiques, avec comptes fictifs éligibles aux essais, enregistrer versions iOS, build/source, état ATT et consentements pour chaque ligne du tableau. Tester aussi le refus global des demandes ATT dans Réglages, le relancement et le changement de choix depuis Réglages.
 - Observer les connexions avant opt-in, après accord, après refus/retrait et lors des rafraîchissements de bannière. Les échanges UMP nécessaires aux choix sont distincts des requêtes publicitaires. Une liste de domaines du rapport de confidentialité iOS n’est pas une preuve de contenu ; combiner observation réseau et documentation du SDK. Ne pas prétendre voir un IDFA dans des paquets TLS non déchiffrés.
 - Réinstallation : ne pas supposer qu’iOS remet forcément ATT à zéro. Tester l’état réel conservé par le système et un appareil frais/effacé pour le premier lancement. `UMP.reset()` n’est pas une procédure utilisateur et ne réinitialise pas ATT.
-- Après succès CI, vérifier le rapport statique généré depuis **l’IPA 30005** : clé ATT, manifeste app, manifestes Google/UMP intacts, collectes/tracking/finalités, signature et appareils iPhone+iPad.
-- Ouvrir **l’archive finale 30005** dans Xcode Organizer et générer le rapport Privacy Report. Le rapport JSON CI est une extraction statique, pas ce rapport Organizer. Comparer tous les SDK ; ne pas modifier leurs déclarations pour masquer le tracking.
+- Après succès CI, vérifier le rapport statique généré depuis **l’IPA 30006** : clé ATT, manifeste app, manifestes Google/UMP intacts, collectes/tracking/finalités, signature et appareils iPhone+iPad.
+- Ouvrir **l’archive finale 30006** dans Xcode Organizer et générer le rapport Privacy Report. Le rapport JSON CI est une extraction statique, pas ce rapport Organizer. Comparer tous les SDK ; ne pas modifier leurs déclarations pour masquer le tracking.
 - Actualiser la politique publique avec le texte validé avant publication App Store ; cette branche seule n’actualise pas l’URL publique.
 
 ## Sources primaires

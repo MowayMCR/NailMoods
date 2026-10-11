@@ -11,6 +11,7 @@ jobs:
     with:
       mode: testflight
       source_ref: ${{ github.sha }}
-      build_number: '30005'
+      build_number: '30006'
       admob_test: true
+      simulator_profile: phone-ipad
     secrets: inherit

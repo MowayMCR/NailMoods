@@ -16,6 +16,9 @@ on:
         default: ''
   workflow_call:
     inputs:
+      simulator_profile:
+        type: string
+        default: all
       admob_test:
         type: boolean
         default: false
@@ -158,6 +161,7 @@ jobs:
       NAILMOODS_XCODE_VERSION: ${{ vars.IOS_XCODE_VERSION || '26.3' }}
       NAILMOODS_MOBILE_ENV: production
       NAILMOODS_PLATFORM: ios
+      NAILMOODS_STOREKIT_ENVIRONMENT: Sandbox
       VITE_ADMOB_TEST_ENABLED: ${{ inputs.admob_test && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
@@ -198,6 +202,8 @@ jobs:
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/nm-simulator" -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" CODE_SIGNING_ALLOWED=NO build > artifacts/ios/simulator-build.log 2>&1 || { tail -80 artifacts/ios/simulator-build.log; exit 1; }
           python3 scripts/ci/inspect-ios.py "$RUNNER_TEMP/nm-simulator/Build/Products/Release-iphonesimulator/App.app" > artifacts/ios/simulator-inspection.json
       - name: Real native iPhone and iPad simulator launch captures
+        env:
+          NAILMOODS_SIMULATOR_PROFILE: ${{ inputs.simulator_profile || 'all' }}
         run: python3 scripts/ci/ios-simulator-captures.py "$RUNNER_TEMP/nm-simulator/Build/Products/Release-iphonesimulator/App.app"
       - name: Unsigned device archive when verifying
         if: inputs.mode != 'testflight' || github.event_name == 'pull_request'
