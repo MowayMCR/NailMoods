@@ -76,8 +76,27 @@ final class StoreCaptureTests: XCTestCase {
             XCTAssertFalse(app.alerts.firstMatch.exists, "Unexpected system dialog")
             XCTAssertFalse(app.staticTexts["Reprenons tranquillement"].exists)
             if route == "profil/pro" {
+                let structure = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "2 · Structure")).firstMatch
+                // Scroll the genuine WKWebView as a user would, then select the real step.
+                for _ in 0..<12 {
+                    if structure.exists && structure.isHittable { break }
+                    app.swipeUp(velocity: .slow)
+                }
+                XCTAssertTrue(structure.waitForExistence(timeout: 10))
+                structure.tap()
+                Thread.sleep(forTimeInterval: 2)
+                let solo = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Solo")).firstMatch
+                if solo.exists && !solo.isHittable { app.swipeUp(velocity: .slow) }
+                let diagnostic = XCTAttachment(string: app.debugDescription)
+                diagnostic.name = "QA-Pro-hierarchy"
+                diagnostic.lifetime = .keepAlways
+                add(diagnostic)
+                let proCheck = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+                proCheck.name = "QA-Pro"
+                proCheck.lifetime = .keepAlways
+                add(proCheck)
                 XCTAssertTrue(app.staticTexts["Mon espace professionnel"].firstMatch.exists)
-                XCTAssertTrue(app.buttons["Solo"].firstMatch.isHittable)
+                XCTAssertTrue(solo.exists && solo.isHittable)
             }
             let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
             shot.name = name

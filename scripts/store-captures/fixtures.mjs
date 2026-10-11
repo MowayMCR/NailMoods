@@ -25,7 +25,7 @@ const data={user,session,rows,space,feed:ideas.map((idea,i)=>({id:rows.inspirati
 function inject(data){
   const originalFetch=window.fetch.bind(window);window.__nmCaptureRequests=[];window.__nmCaptureErrors=[];window.addEventListener('error',e=>window.__nmCaptureErrors.push(e.message));window.addEventListener('unhandledrejection',e=>window.__nmCaptureErrors.push(String(e.reason)));
   localStorage.setItem('nailmoods-auth-v1',JSON.stringify(data.session));
-  if(window.__NM_NATIVE_CAPTURE){const timer=setInterval(()=>{if(location.hash!=='#profil/pro')return;const editor=document.getElementById('pro-v2-title')?.closest('section');const buttons=editor?.querySelectorAll('nav[aria-label="Configuration de la vitrine"] button');if(!buttons?.[1]||buttons[1].disabled)return;if(buttons[1].getAttribute('aria-current')!=='step'){buttons[1].click();return;}if(editor.querySelector('fieldset legend')?.textContent==='Comment exerces-tu ?'){editor.scrollIntoView({block:'start'});clearInterval(timer);}},300);}
+
   window.fetch=async(input,init={})=>{const url=new URL(typeof input==='string'?input:input.url,location.href);if(!url.hostname.endsWith('.supabase.co')){if(url.origin!==location.origin)throw new Error('External network blocked for screenshots');return originalFetch(input,init);}const path=url.pathname;let body={};try{body=JSON.parse(init.body||'{}');}catch{}window.__nmCaptureRequests.push({path,body});let result=[];
     if(path.includes('/auth/v1/user'))result=data.user;
     else if(path.includes('/auth/v1/token'))result=data.session;
