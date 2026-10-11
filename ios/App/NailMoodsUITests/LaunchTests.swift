@@ -63,6 +63,17 @@ final class StoreCaptureTests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.buttons[ready].firstMatch.waitForExistence(timeout: 90), "Navigation missing: " + name)
             Thread.sleep(forTimeInterval: 5)
+            // StoreKit can ask for a sandbox Apple account on a fresh simulator.
+            // Dismiss the system sheet; never enter or use account credentials.
+            let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+            for _ in 0..<3 {
+                let systemCancel = springboard.buttons["Cancel"].firstMatch
+                let appCancel = app.alerts.buttons["Cancel"].firstMatch
+                if systemCancel.exists { systemCancel.tap(); Thread.sleep(forTimeInterval: 2) }
+                else if appCancel.exists { appCancel.tap(); Thread.sleep(forTimeInterval: 2) }
+                else { break }
+            }
+            XCTAssertFalse(app.alerts.firstMatch.exists, "Unexpected system dialog")
             XCTAssertFalse(app.staticTexts["Reprenons tranquillement"].exists)
             if route == "profil/pro" {
                 XCTAssertTrue(app.staticTexts["Mon espace professionnel"].firstMatch.exists)
