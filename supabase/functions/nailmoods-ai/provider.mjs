@@ -4,6 +4,7 @@ import {visualPrompt} from './visual.mjs';
 import {qualityRequest,qualityDecision} from './quality.mjs';
 import {createMaster,validateArt} from './master.mjs';
 import {assessPalette,repairColorReferences,assertPaletteRepairPreserved} from './palette.mjs';
+import {duplicateDesignFingers,assertDesignRepairPreserved,resolveSource,assertSourceRepairPreserved} from './recovery.mjs';
 export class AIError extends Error {constructor(code,usage=null,cost=null){super(code);this.usage=usage;this.cost=cost;}}
 const safeValidationCode=e=>typeof e?.message==='string'&&/^[a-z_]{1,64}$/.test(e.message)?e.message:e instanceof SyntaxError?'invalid_json':'validation_failed';
 const outputText=p=>(p.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==='output_text').map(x=>x.text).join('\n');
@@ -32,6 +33,19 @@ export async function moderate(text,image,config,fetcher){
  try{const r=await fetcher('https://api.openai.com/v1/moderations',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:config.moderationModel,input}),signal:AbortSignal.timeout(10000)});
  if(!r.ok)throw Error();const data=await r.json();if(!data.results?.length||data.results.some(r=>typeof r.flagged!=='boolean'))throw Error();if(data.results.some(r=>r.flagged))throw new AIError('content_not_allowed',null,0);
  }catch(e){throw e instanceof AIError?e:new AIError('moderation_unavailable',null,0);}
+}
+async function repairOnce(request,errorCode,config,maxUsd,fetcher,usage,cost,validationCode){
+ const bound=new TextEncoder().encode(JSON.stringify(request)).length*config.inputPrice/1e6+request.max_output_tokens*config.outputPrice/1e6;
+ usage={...usage,validationFailure:validationCode,repair:{...usage.repair,status:'failed',attempts:0}};
+ if(cost===null||cost+bound>maxUsd)throw new AIError(errorCode,{...usage,repair:{...usage.repair,reason:'repair_budget_exceeded'}},cost);
+ usage.repair.attempts=1;
+ let payload;
+ try{payload=await responseJson(await fetcher('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey,'Content-Type':'application/json'},body:JSON.stringify(request),signal:AbortSignal.timeout(45000)}));}
+ catch(e){throw new AIError(errorCode,{...usage,repair:{...usage.repair,reason:e instanceof AIError?e.message:'provider_interrupted'}},null);}
+ const additional=textCost(payload.usage,config);cost=cost===null||additional===null?null:cost+additional;
+ usage={...usage,repairUsage:payload.usage,input_tokens:(usage.input_tokens||0)+(payload.usage?.input_tokens||0),output_tokens:(usage.output_tokens||0)+(payload.usage?.output_tokens||0)};
+ try{if(payload.status&&payload.status!=='completed')throw Error('incomplete_response');await moderate(outputText(payload),null,config,fetcher);return {payload,value:JSON.parse(outputText(payload)),usage,cost};}
+ catch(e){throw new AIError(errorCode,{...usage,validationFailure:safeValidationCode(e),repair:{...usage.repair,reason:safeValidationCode(e)}},cost);}
 }
 export async function runProvider({body,products,history=[],config,maxUsd,fetcher=fetch}){
  if(!config.enabled||!config.apiKey||!(maxUsd>0))throw new AIError('provider_disabled',null,0);
@@ -74,41 +88,39 @@ export async function runProvider({body,products,history=[],config,maxUsd,fetche
   const sources=safeSources(payload);if(!sources.length)throw new AIError('sources_unavailable',usage,cost);
   let validationFailure='json';try{
    const value=JSON.parse(outputText(payload));validationFailure='cards';if(typeof value.message!=='string'||!Array.isArray(value.cards)||value.cards.length!==3)throw Error();
-   const canonical=url=>{const u=new URL(url);for(const key of [...u.searchParams.keys()])if(key.startsWith('utm_'))u.searchParams.delete(key);u.hash='';return u.href;};
-   const cards=value.cards.map(c=>{validationFailure='card_fields';if(typeof c.summary!=='string'||typeof c.sourceUrl!=='string'||c.plan?.action!=='compose')throw Error();validationFailure='source_match';const source=sources.find(s=>canonical(s.url)===canonical(c.sourceUrl));if(!source)throw Error();validationFailure='plan';return {summary:c.summary.slice(0,120),source,plan:validatePlan(c.plan,pool,{collectionOnly:body.collectionOnly})};});
+   const validateCards=v=>v.cards.map(c=>{validationFailure='card_fields';if(typeof c.summary!=='string'||typeof c.sourceUrl!=='string'||c.plan?.action!=='compose')throw Error('invalid_card');validationFailure='source_match';const source=resolveSource(sources,c.sourceUrl);if(!source)throw Error('source_match');validationFailure='plan';return {summary:c.summary.slice(0,120),source,plan:validatePlan(c.plan,pool,{collectionOnly:body.collectionOnly})};});
+   let cards;
+   try{cards=validateCards(value);}catch(e){
+    if(e.message!=='source_match')throw e;
+    const repairedRequest={...request,tools:undefined,tool_choice:undefined,max_tool_calls:undefined,include:undefined,input:[...request.input,{role:'user',content:JSON.stringify({task:'repair_source_urls_only',original:value,sources,instructions:'Corrige UNIQUEMENT sourceUrl dans les trois cartes. Reprends exactement une URL de la liste des sources effectivement consultées qui soutient la proposition. Ne modifie aucun plan, motif, couleur, résumé ou message. Ne fais aucune nouvelle recherche. Si aucune source ne soutient une carte, ne lui attribue pas une source arbitraire.'})}]};
+    repairedRequest.text={format:{...request.text.format,schema:{...TRENDS_SCHEMA,properties:{...TRENDS_SCHEMA.properties,cards:{...TRENDS_SCHEMA.properties.cards,items:{...TRENDS_SCHEMA.properties.cards.items,properties:{...TRENDS_SCHEMA.properties.cards.items.properties,sourceUrl:{type:'string',enum:sources.map(s=>s.url)}}}}}}}};
+    const out=await repairOnce(repairedRequest,'sources_repair_failed',config,maxUsd,fetcher,usage,cost,'source_match');usage=out.usage;cost=out.cost;
+    try{assertSourceRepairPreserved(value,out.value);cards=validateCards(out.value);usage.repair.status='succeeded';}catch(error){throw new AIError('sources_repair_failed',{...usage,validationFailure:safeValidationCode(error),repair:{...usage.repair,status:'failed',reason:safeValidationCode(error)}},cost);}
+   }
    return {result:{kind:'trends',message:value.message.slice(0,160),cards,products:pool,sources,searchedAt:new Date().toISOString()},usage,cost};
-  }catch{throw new AIError('invalid_response',{...usage,validationFailure},cost);}
+  }catch(e){if(e instanceof AIError)throw e;throw new AIError('invalid_response',{...usage,validationFailure},cost);}
 
  }
  let validationFailure='json';
  try{
   const value=JSON.parse(outputText(payload));validationFailure='plan';
-  const validate=value=>{const p=validatePlan(value,pool,{collectionOnly:body.collectionOnly,designCount:body.designCount||5});if(['compose','edit'].includes(p.action)){p.shape=body.shape;p.length=body.length;if(body.level!==undefined)p.level=body.level;}return p;};
+  const validate=value=>{const p=validatePlan(value,pool,{collectionOnly:body.collectionOnly,designCount:body.designCount||5,checkDesigns:false});if(['compose','edit'].includes(p.action)){p.shape=body.shape;p.length=body.length;if(body.level!==undefined)p.level=body.level;}return p;};
   let plan=validate(value);const local=repairColorReferences(plan);plan=validate(local.plan);
   usage={...usage,palette:assessPalette(plan,pool,body.prompt),repair:{localColorReferences:local.changed,attempts:0,status:'not_needed'}};
   try{validateArt(plan,body.prompt,pool);}catch(original){
-   // Structural/theme/motif failures are never retried or weakened.
-   if(original.message!=='requested_palette_missing')throw original;
+   // Genuine invalid data/off-theme motifs stay blocking; repair is bounded once per job.
+   if(!['requested_palette_missing','repeated_designs'].includes(original.message))throw original;
+   const designRepair=original.message==='repeated_designs',targets=designRepair?duplicateDesignFingers(plan):[],errorCode=designRepair?'plan_repair_failed':'palette_repair_failed';
    const missing=usage.palette.missingFamilies;
    const repairRequest=requestBody(body,pool,[],config);
-   repairRequest.input.push({role:'user',content:[{type:'input_text',text:JSON.stringify({task:'repair_palette_only',validationCode:original.message,missingFamilies:missing,originalPlan:plan,instructions:'Répare UNIQUEMENT les références de couleurs, paletteNotes et les couleurs des étapes du tutoriel. Conserve strictement action, intention, univers, composition, exclusions, chaque doigt, toutes les signatures, techniques, finitions, motifs, descriptions, justifications, positions, tailles et matériel. Ne supprime ni ajoute aucun motif. Utilise uniquement les couleurs disponibles. Ne contourne aucune contrainte collectionOnly. Respecte les couleurs explicites du texte.'})}]});
-   const bound=new TextEncoder().encode(JSON.stringify(repairRequest)).length*config.inputPrice/1e6+repairRequest.max_output_tokens*config.outputPrice/1e6;
-   usage={...usage,validationFailure:original.message,repair:{...usage.repair,status:'failed'}};
-   if(cost===null||cost+bound>maxUsd)throw new AIError('palette_repair_failed',{...usage,repair:{...usage.repair,reason:'repair_budget_exceeded'}},cost);
-   usage.repair={...usage.repair,attempts:1};
-   let repairedPayload;
-   try{repairedPayload=await responseJson(await fetcher('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey,'Content-Type':'application/json'},body:JSON.stringify(repairRequest),signal:AbortSignal.timeout(45000)}));}
-   catch(e){throw new AIError('palette_repair_failed',{...usage,repair:{...usage.repair,reason:e instanceof AIError?e.message:'provider_interrupted'}},null);}
-   const repairCost=textCost(repairedPayload.usage,config);cost=cost===null||repairCost===null?null:cost+repairCost;
-   usage={...usage,repairUsage:repairedPayload.usage,input_tokens:(usage.input_tokens||0)+(repairedPayload.usage?.input_tokens||0),output_tokens:(usage.output_tokens||0)+(repairedPayload.usage?.output_tokens||0)};
+   repairRequest.input.push({role:'user',content:[{type:'input_text',text:JSON.stringify({task:designRepair?'repair_repeated_designs_only':'repair_palette_only',validationCode:original.message,targetFingers:targets,missingFamilies:missing,originalPlan:plan,instructions:designRepair?'Varie uniquement les doigts targetFingers avec un motif, geste ou placement réellement distinct lié au thème demandé. Préserve tous les autres doigts exactement. Conserve toutes les bases, couleurs, finitions, intention, forme, longueur et niveau. Préserve chaque motif existant avec description, justification et technique ; tu peux adapter sa position/taille et ajouter un motif compatible sur les doigts ciblés. Répercute les gestes dans les étapes de ces seuls doigts. Ne résous pas la diversité en changeant seulement la signature ou la couleur. Les exclusions restent strictes.':'Répare UNIQUEMENT les références de couleurs, paletteNotes et les couleurs des étapes du tutoriel. Conserve strictement action, intention, univers, composition, exclusions, chaque doigt, toutes les signatures, techniques, finitions, motifs, descriptions, justifications, positions, tailles et matériel. Ne supprime ni ajoute aucun motif. Utilise uniquement les couleurs disponibles. Ne contourne aucune contrainte collectionOnly. Respecte les couleurs explicites du texte.'})}]});
+   const out=await repairOnce(repairRequest,errorCode,config,maxUsd,fetcher,usage,cost,original.message);usage=out.usage;cost=out.cost;
    try{
-    if(repairedPayload.status&&repairedPayload.status!=='completed')throw Error('incomplete_response');
-    await moderate(outputText(repairedPayload),null,config,fetcher);
-    const repaired=validate(JSON.parse(outputText(repairedPayload)));assertPaletteRepairPreserved(plan,repaired);validateArt(repaired,body.prompt,pool);
+    const repaired=validate(out.value);if(designRepair)assertDesignRepairPreserved(plan,repaired,targets);else assertPaletteRepairPreserved(plan,repaired);validateArt(repaired,body.prompt,pool);
     plan=repaired;usage={...usage,palette:assessPalette(plan,pool,body.prompt),repair:{...usage.repair,status:'succeeded'}};
-   }catch(e){throw new AIError('palette_repair_failed',{...usage,validationFailure:safeValidationCode(e),repair:{...usage.repair,reason:safeValidationCode(e)}},cost);}
+   }catch(e){throw new AIError(errorCode,{...usage,validationFailure:safeValidationCode(e),repair:{...usage.repair,reason:safeValidationCode(e)}},cost);}
   }
-  plan.title=plan.title.replace(/^pause\b/i,'Pose');const master=createMaster(plan,pool,body);
+  validatePlan(plan,pool,{collectionOnly:body.collectionOnly,designCount:body.designCount||5});plan.title=plan.title.replace(/^pause\b/i,'Pose');const master=createMaster(plan,pool,body);
   return {result:{kind:'plan',plan,master,products:pool},usage,cost};
  }catch(e){if(e instanceof AIError)throw e;throw new AIError('invalid_response',{...usage,validationFailure:validationFailure==='plan'?safeValidationCode(e):validationFailure},cost);}
 }

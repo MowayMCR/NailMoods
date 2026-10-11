@@ -1,3 +1,4 @@
+import {duplicateDesignFingers} from './recovery.mjs';
 // Shared, dependency-free contract. Product identities are resolved against owned rows.
 export const SHAPES=['Amande','Carrée','Ovale','Ronde','Coffin / Ballerine','Stiletto'];
 export const LENGTHS=['Très courte','Courte','Moyenne','Longue','XL'];
@@ -12,7 +13,7 @@ export const ART_SCHEMA=obj({role:{type:'string',enum:['principal','accompagneme
 export const DIRECTION_SCHEMA=obj({intention:{type:'string',maxLength:300},universe:{type:'string',maxLength:100},paletteNotes:{type:'string',maxLength:250},composition:{type:'string',maxLength:350},avoid:{type:'array',maxItems:8,items:{type:'string',maxLength:80}},minimalist:{type:'boolean'}});
 export const PLAN_SCHEMA=obj({action:{type:'string',enum:ACTIONS},message:str,title:str,shape:nullableEnum(SHAPES),length:nullableEnum(LENGTHS),level:{type:'integer',enum:[0,1,2]},collectionOnly:{type:'boolean'},direction:DIRECTION_SCHEMA,editFinger:{type:['integer','null'],enum:[0,1,2,3,4,null]},nails:{type:'array',items:obj({finger:{type:'integer',enum:[0,1,2,3,4]},productId:str,accentProductId:{type:['string','null']},technique:{type:'string',enum:TECHNIQUES},drawingTechnique:{type:'string',enum:TECHNIQUES},motif:{type:'string',enum:MOTIFS},designBrief:{type:'string',maxLength:280},art:ART_SCHEMA})}});
 export const TRENDS_SCHEMA=obj({message:str,cards:{type:'array',minItems:3,maxItems:3,items:obj({summary:str,sourceUrl:str,plan:{...PLAN_SCHEMA,properties:{...PLAN_SCHEMA.properties,action:{type:'string',enum:['compose']},nails:{...PLAN_SCHEMA.properties.nails,minItems:5,maxItems:5}}}})}});
-export function validatePlan(value,products,{collectionOnly=false,designCount=5}={}){
+export function validatePlan(value,products,{collectionOnly=false,designCount=5,checkDesigns=true}={}){
  if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).sort().join()!=PLAN_SCHEMA.required.filter(k=>value.direction!==undefined||k!=='direction').slice().sort().join())throw Error('invalid_plan');
  if(!ACTIONS.includes(value.action)||typeof value.message!=='string'||value.message.length>5000||typeof value.title!=='string'||value.title.length>100||![null,...SHAPES].includes(value.shape)||![null,...LENGTHS].includes(value.length)||![0,1,2].includes(value.level)||typeof value.collectionOnly!=='boolean'||![null,...Array.from({length:designCount},(_,i)=>i)].includes(value.editFinger)||!Array.isArray(value.nails))throw Error('invalid_plan');
  const allowed=new Set(products.filter(p=>!(collectionOnly||value.collectionOnly)||!p.conceptual).map(p=>String(p.id)));
@@ -22,7 +23,7 @@ export function validatePlan(value,products,{collectionOnly=false,designCount=5}
  }
  if(value.direction!==undefined){if(!value.direction||Object.keys(value.direction).sort().join()!==DIRECTION_SCHEMA.required.slice().sort().join()||typeof value.direction.minimalist!=='boolean'||!Array.isArray(value.direction.avoid)||value.direction.avoid.some(v=>typeof v!=='string'||v.length>80)||['intention','universe','paletteNotes','composition'].some(k=>typeof value.direction[k]!=='string'||value.direction[k].length>350))throw Error('invalid_direction');}
  if(value.action==='edit'&&(value.editFinger===null||value.nails[0].finger!==value.editFinger))throw Error('invalid_edit');
- if(value.action==='compose'&&designCount===10){const briefs=value.nails.map(n=>String(n.designBrief||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim());if(briefs.some(b=>/miroir|identique.*main|copie.*main/.test(b))||briefs.filter(Boolean).length===10&&new Set(briefs).size<10)throw Error('repeated_designs');}
+ if(checkDesigns&&value.action==='compose'&&designCount===10){const briefs=value.nails.map(n=>String(n.designBrief||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim());if(briefs.some(b=>/miroir|identique.*main|copie.*main/.test(b))||(value.direction&&value.nails.every(n=>n.art)?duplicateDesignFingers(value).length>0:briefs.filter(Boolean).length===10&&new Set(briefs).size<10))throw Error('repeated_designs');}
  return {...value,collectionOnly:collectionOnly||value.collectionOnly};
 }
 export const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value);

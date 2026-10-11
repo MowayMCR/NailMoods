@@ -18,7 +18,7 @@ test('master is shared by image specification, persisted pose, tutorial and safe
 test('off-theme cultural objects, color-only duplicates and incompatible difficulty fail before images',()=>{
  const p=plan();p.nails[4].motif='winged-orb';assert.throws(()=>validateArt(p,body.prompt),/unrelated_motif/);
  assert.doesNotThrow(()=>validateArt(p,'Harry Potter vif d’or'));assert.throws(()=>validateArt(p,'Vampire, aucun Vif d’or'),/unrelated_motif/);
- const duplicate=plan();duplicate.nails[1].art.signature=duplicate.nails[0].art.signature;assert.throws(()=>validateArt(duplicate,body.prompt),/repeated_designs/);
+ const duplicate=plan();duplicate.nails[1].art=structuredClone(duplicate.nails[0].art);assert.throws(()=>validateArt(duplicate,body.prompt),/repeated_designs/);
  const easy=plan();easy.level=0;easy.nails[0].art.techniques=['gel-3d'];easy.nails[0].art.motifs[0].technique='gel-3d';assert.throws(()=>validateArt(easy,body.prompt),/difficulty_mismatch/);
 });
 test('a right ring edit preserves nine stable fingers, direction, shape and original request',()=>{

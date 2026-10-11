@@ -1,5 +1,6 @@
 import {TECHNIQUES} from './contract.mjs';
 import {assessPalette} from './palette.mjs';
+import {duplicateDesignFingers} from './recovery.mjs';
 const norm=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const culturalRequest=request=>/vif d.or|snitch|harry potter|poudlard/.test(norm(request))&&!/(sans|aucun|pas de|ni|without|no).{0,30}(vif d.or|snitch|harry potter)/.test(norm(request));
 export const fingerId=i=>(i<5?'left':'right')+'-'+['thumb','index','middle','ring','little'][i%5];
@@ -10,7 +11,6 @@ export function validateArt(plan,request,products=[]){
  if(!plan.direction)return; // Reading old snapshots does not invent an artistic validation.
  const requested=norm(request),present=new Set(plan.nails.flatMap(n=>n.art?.techniques||[]));
  if(plan.action==='compose')for(const [pattern,technique] of [[/\bfrench\b/,'french'],[/\baura\b/,'aura'],[/\b3d\b/,'gel-3d'],[/strass|rhinestone/,'rhinestones'],[/cat.?eye/,'cat-eye']])if(pattern.test(requested)&&!present.has(technique)&&!(technique==='french'&&[...present].some(t=>t.endsWith('french'))))throw Error('missing_technique');
- const signatures=[];
  for(const n of plan.nails){const a=n.art;
   if(!a||!['principal','accompagnement','accent'].includes(a.role)||typeof a.signature!=='string'||!a.signature.trim()||a.signature.length>180||!Array.isArray(a.techniques)||a.techniques.length>6||a.techniques.some(t=>!TECHNIQUES.includes(t)||!t)||!Array.isArray(a.colorProductIds)&&a.colorProductIds!==undefined||a.colorProductIds?.length>24||!Array.isArray(a.motifs)||a.motifs.length>5||!Array.isArray(a.steps)||!a.steps.length||a.steps.length>6||a.steps.some(v=>typeof v!=='string'||v.length>200)||!Array.isArray(a.materials)||a.materials.some(v=>typeof v!=='string'||v.length>80))throw Error('invalid_art');
   for(const m of a.motifs){if(!m||['name','description','rationale'].some(k=>typeof m[k]!=='string'||!m[k].trim()||m[k].length>180)||![m.x,m.y,m.size].every(Number.isFinite)||m.x<0||m.x>100||m.y<0||m.y>100||m.size<5||m.size>100||!a.techniques.includes(m.technique))throw Error('invalid_motif');
@@ -19,10 +19,9 @@ export function validateArt(plan,request,products=[]){
    if(/vif d.or|snitch|winged.orb/.test(norm(JSON.stringify(m)))&&!culturalRequest(request))throw Error('unrelated_motif');
   }
   if(plan.level===0&&a.techniques.some(t=>['gel-3d','one-stroke','encapsulated'].includes(t))&&!/3d|one.stroke|encapsul/.test(norm(request)))throw Error('difficulty_mismatch');
-  signatures.push(norm(a.signature).replace(/gauche|droite|left|right|pouce|index|majeur|annulaire|auriculaire|thumb|middle|ring|little|\d/g,'').replace(/\b(noir|black|blanc|white|bleu|blue|rouge|red|rose|pink|jaune|yellow|bordeaux|burgundy|prune|plum|violet|purple|vert|green|or|gold|marron|brown|nude|beige|cassis|terracotta)\b/g,'').replace(/\s+/g,' ').trim());
  }
- if(plan.action==='compose'&&plan.nails.length===10&&new Set(signatures).size!==10)throw Error('repeated_designs');
  if(plan.action==='compose'){const motifs=norm(plan.nails.map(n=>[n.designBrief,...n.art.motifs.map(m=>m.name+' '+m.description)].join(' ')).join(' '));for(const [theme,required] of [[/beetlejuice|beetle.?juice|beatlejuice/,/rayur|stripe|spiral|sandworm|ver de sable|beetlejuice/],[/minions?/,/minion|lunette|goggle|salopette|overall/],[/vampire/,/chauve.?souris|\bbat\b|croc|fang|sang|blood|dentelle|lace/]])if(theme.test(requested)&&!required.test(motifs))throw Error('missing_essential_motif');}
+ if(plan.action==='compose'&&plan.nails.length===10&&duplicateDesignFingers(plan).length)throw Error('repeated_designs');
  if(products.length&&plan.action==='compose'){const palette=assessPalette(plan,products,request);if(palette.missingFamilies.length)throw Error('requested_palette_missing');return palette;}
 }
 export function createMaster(plan,products,body){
