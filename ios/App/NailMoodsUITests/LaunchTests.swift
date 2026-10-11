@@ -92,7 +92,7 @@ final class StoreCaptureTests: XCTestCase {
                 if heading.frame.width > 0 && abs(delta) > 0.035 {
                     let fromY: CGFloat = delta > 0 ? 0.75 : 0.30
                     let toY: CGFloat = delta > 0 ? max(0.20, fromY - min(delta, 0.50)) : min(0.80, fromY + min(-delta, 0.50))
-                    app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: fromY)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: toY)))
+                    app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: fromY)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: toY)), withVelocity: .slow, thenHoldForDuration: 0.25)
                     Thread.sleep(forTimeInterval: 1)
                 }
                 let diagnostic = XCTAttachment(string: app.debugDescription)
@@ -108,7 +108,7 @@ final class StoreCaptureTests: XCTestCase {
             }
             if route == "fil" && app.frame.width < 500 {
                 // A natural short scroll keeps the full inspiration cards above the footer.
-                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.65)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.65)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)), withVelocity: .slow, thenHoldForDuration: 0.25)
                 Thread.sleep(forTimeInterval: 1)
             }
             let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
