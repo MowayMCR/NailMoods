@@ -85,10 +85,10 @@ final class StoreCaptureTests: XCTestCase {
                 XCTAssertTrue(structure.waitForExistence(timeout: 10))
                 structure.tap()
                 Thread.sleep(forTimeInterval: 2)
-                let solo = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Solo")).firstMatch
+                let solo = app.switches.matching(NSPredicate(format: "label BEGINSWITH %@", "Solo")).firstMatch
                 let heading = app.staticTexts["Mon espace professionnel"].firstMatch
                 let height = app.frame.height
-                let delta = (heading.frame.minY - 175) / height
+                let delta = (heading.frame.minY - 120) / height
                 if heading.frame.width > 0 && abs(delta) > 0.035 {
                     let fromY: CGFloat = delta > 0 ? 0.75 : 0.30
                     let toY: CGFloat = delta > 0 ? max(0.20, fromY - min(delta, 0.50)) : min(0.80, fromY + min(-delta, 0.50))
@@ -108,7 +108,7 @@ final class StoreCaptureTests: XCTestCase {
             }
             if route == "fil" && app.frame.width < 500 {
                 // A natural short scroll keeps the full inspiration cards above the footer.
-                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.65)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)), withVelocity: .slow, thenHoldForDuration: 0.25)
+                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)), withVelocity: .slow, thenHoldForDuration: 0.25)
                 Thread.sleep(forTimeInterval: 1)
             }
             let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())

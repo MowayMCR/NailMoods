@@ -313,3 +313,6 @@
  .app .nmAtelierSources .sourceCardGrid .sourceCard>small{font-size:11px;line-height:1.4}
  .app .nmAtelierSources .nmIllustratedHeading{margin-bottom:14px}
 }
+
+/* Keep native status-bar text on an opaque surface while pages scroll. */
+.nm-native .app::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--safe-area-inset-top,env(safe-area-inset-top,0px));background:var(--backgroundPrimary);pointer-events:none;z-index:1000}
