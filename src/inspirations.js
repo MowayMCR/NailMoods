@@ -154,7 +154,9 @@ export function renameInspiration(library, key, title) {
 // Idempotent save uses the existing favorite library, never a parallel collection.
 export function saveInspiration(library, idea) {
   const saved = snapshotIdea(idea);
-  return rememberIdea({ ...library, favorites: library.favorites.some(item => item.key === saved.key) ? library.favorites : [saved, ...library.favorites] }, saved);
+  const visualUpdated = ['illustration','realistic'].includes(saved.savedVisual) && Boolean(saved.photo || saved.mediaPath);
+  const favorites = library.favorites.some(item => item.key === saved.key) ? library.favorites.map(item => item.key === saved.key && visualUpdated && item.isPublic !== true ? { ...saved, title: item.title, savedAt: item.savedAt } : item) : [saved, ...library.favorites];
+  return rememberIdea({ ...library, favorites }, saved);
 }
 
 export function saveProject(library, idea) {
