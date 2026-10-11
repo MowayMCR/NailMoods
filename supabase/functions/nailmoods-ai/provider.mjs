@@ -44,7 +44,7 @@ async function repairOnce(request,errorCode,config,maxUsd,fetcher,usage,cost,val
  try{payload=await responseJson(await fetcher('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey,'Content-Type':'application/json'},body:JSON.stringify(request),signal:AbortSignal.timeout(45000)}));}
  catch(e){throw new AIError(errorCode,{...usage,repair:{...usage.repair,reason:e instanceof AIError?e.message:'provider_interrupted'}},null);}
  const additional=textCost(payload.usage,config);cost=cost===null||additional===null?null:cost+additional;
- usage={...usage,repairUsage:payload.usage,input_tokens:(usage.input_tokens||0)+(payload.usage?.input_tokens||0),output_tokens:(usage.output_tokens||0)+(payload.usage?.output_tokens||0)};
+ usage={...usage,repairUsage:payload.usage,total_tokens:(usage.total_tokens||((usage.input_tokens||0)+(usage.output_tokens||0)))+(payload.usage?.total_tokens||((payload.usage?.input_tokens||0)+(payload.usage?.output_tokens||0))),input_tokens:(usage.input_tokens||0)+(payload.usage?.input_tokens||0),output_tokens:(usage.output_tokens||0)+(payload.usage?.output_tokens||0)};
  try{if(payload.status&&payload.status!=='completed')throw Error('incomplete_response');await moderate(outputText(payload),null,config,fetcher);return {payload,value:JSON.parse(outputText(payload)),usage,cost};}
  catch(e){throw new AIError(errorCode,{...usage,validationFailure:safeValidationCode(e),repair:{...usage.repair,reason:safeValidationCode(e)}},cost);}
 }

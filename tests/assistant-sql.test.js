@@ -62,3 +62,12 @@ test('validation and failed palette repair refund exactly once without consuming
  await configure(db);await login(db,A,'service_role');
  for(const error of ['invalid_response','palette_repair_failed','plan_repair_failed','sources_repair_failed','structure_repair_failed','unusable_image']){const j=(await begin(db)).job;assert.equal(await finish(db,j,{error,cost:.00313,result:null}),true);assert.equal(await finish(db,j,{error,cost:.00313,result:null}),false);await db.exec('reset role');const saved=(await db.query('select status,error_code,accounted_usd from private.ai2_jobs where id=$1',[j.id])).rows[0];assert.equal(saved.status,'failed');assert.equal(saved.error_code,error);assert.equal(Number(saved.accounted_usd),.00313);const ledger=(await db.query('select event,quantity from private.ai2_ledger where job_id=$1',[j.id])).rows;assert.equal(ledger.filter(r=>r.event==='refund').length,1);assert.equal(ledger.filter(r=>r.event==='consume').length,0);await login(db,A);assert.equal((await db.query('select nm_ai2_access() a')).rows[0].a.balance.manual,2);await login(db,A,'service_role');}
  }finally{await db.close();}});
+
+test('Free, Plus and Pro exhausted allocations cannot regenerate unlimited credits',async()=>{
+ for(const tier of ['free','plus','pro']){const db=await fixture();try{
+ await configure(db);await db.exec(`update private.account_entitlements set tier='${tier}' where user_id='${A}';update private.ai2_grants set remaining=0 where user_id='${A}';update private.ai2_config set monthly_plus=3,monthly_pro=10,daily_requests=20;`);
+ await login(db,A,'service_role');const count=tier==='free'?0:tier==='plus'?3:10;
+ for(let i=0;i<count;i++){const j=(await begin(db)).job;await finish(db,j,{cost:.001});}
+ await assert.rejects(begin(db),/insufficient_credits/);await assert.rejects(begin(db),/insufficient_credits/);
+ }finally{await db.close();}}
+});
