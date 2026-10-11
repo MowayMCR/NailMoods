@@ -21,13 +21,16 @@ def inspect(app, signed=False):
     assert manifest['NSPrivacyTracking'] is False
     approved_data_types = {'Name','EmailAddress','UserID','Contacts','Health','PhotosorVideos','EmailsOrTextMessages',
                            'OtherUserContent','PurchaseHistory','ProductInteraction','OtherDiagnosticData',
-                           'CoarseLocation','CustomerSupport','OtherDataTypes'}
+                           'CoarseLocation','CustomerSupport','OtherDataTypes','SearchHistory'}
     declared_types = {d['NSPrivacyCollectedDataType'] for d in manifest['NSPrivacyCollectedDataTypes']}
     assert declared_types == {'NSPrivacyCollectedDataType'+t for t in approved_data_types}, 'Unexpected or invalid Apple privacy data type'
     sdk_manifests = list(app.rglob('PrivacyInfo.xcprivacy'))
     assert len(sdk_manifests) > 1, 'Missing embedded SDK privacy manifests'
     privacy_resources = [{'path':str(p.relative_to(app)),
-                          'accessedAPIs':plistlib.loads(p.read_bytes()).get('NSPrivacyAccessedAPITypes',[])}
+                          'accessedAPIs':plistlib.loads(p.read_bytes()).get('NSPrivacyAccessedAPITypes',[]),
+                         'collectedData':plistlib.loads(p.read_bytes()).get('NSPrivacyCollectedDataTypes',[]),
+                         'tracking':plistlib.loads(p.read_bytes()).get('NSPrivacyTracking'),
+                         'trackingDomains':plistlib.loads(p.read_bytes()).get('NSPrivacyTrackingDomains',[])}
                          for p in sdk_manifests]
     public = app/'public'
     build = json.loads((public/'mobile-build.json').read_text())
