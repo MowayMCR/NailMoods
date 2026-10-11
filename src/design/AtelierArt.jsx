@@ -10,6 +10,7 @@ export default function AtelierArt({source,className=''}) {
   useEffect(()=>{const root=document.documentElement;const update=()=>setMood(root.dataset.mood||'soft-glam');update();const observer=new MutationObserver(update);observer.observe(root,{attributes:true,attributeFilter:['data-mood']});return()=>observer.disconnect();},[]);
   const theme={'soft-glam':'soft','dark-feminine':'dark',cottagecore:'cottage','pop-pastel':'pop'}[mood]||'soft';
   const individual={ai:'create',inspire:'inspiration',universes:'inspiration',collection:'collection',manual:'create',atelier:'create',photos:'poses',journal:'poses',planning:'planning',guides:'planning',preferences:'preferences',fil:'fil',scan:'scan',projects:'poses',messages:'fil',profile:'inspiration',po:'po',connections:'connections',outfit:'inspiration',trainer:'create'}[source];
+  if(['ai','manual','trainer','outfit','atelier','photos'].includes(source))return <img className={'nmAtelierArt nmAtelierArt--'+source+' '+className} src={import.meta.env.BASE_URL+'atelier/tiles-v3/'+source+'.webp'} alt="" aria-hidden="true" loading="lazy" width="512" height="512"/>;
   if(individual)return <img className={'nmAtelierArt nmAtelierArt--'+source+' '+className} src={import.meta.env.BASE_URL+'atelier/moods-v2/'+theme+'-'+individual+'.webp'} alt="" aria-hidden="true" loading="lazy" width="512" height="512"/>;
   const navigation=navigationCells[source]!==undefined;
   const index=navigation?navigationCells[source]:cells[source];

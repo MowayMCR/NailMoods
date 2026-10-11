@@ -27,7 +27,7 @@ export function productFromRow(row,table) {
 }
 export function ideaRow(idea) {
   const snapshot=clone(idea);
-  return {title:idea.title,mood:idea.options?.mood || null,is_public:idea.isPublic === true,media_path:idea.mediaPath || null,public_media_path:idea.isPublic === true ? (idea.publicMediaPath || null) : null,snapshot};
+  return {title:idea.title,mood:idea.options?.mood || null,is_public:idea.isPublic === true,media_path:idea.mediaPath || null,public_media_path:idea.isPublic === true && idea.publicationVisual !== 'drawing' ? (idea.publicMediaPath || null) : null,snapshot};
 }
 export function journalRow(entry) {
   const snapshot = clone(entry);
