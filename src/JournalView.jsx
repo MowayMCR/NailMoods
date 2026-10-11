@@ -157,7 +157,7 @@ function JournalDetail({ entry, profile, items, media, onNavigate, onSave, onDel
   </div>;
 }
 
-export default function JournalView({ onFavorites, library, profile, journal, sessions, items, media, route, draftIdea, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate, onShareToPro }) {
+export default function JournalView({ onBook,onFavorites, library, profile, journal, sessions, items, media, route, draftIdea, onNavigate, onSave, onDelete, onDismiss, onIdea, onCollection, onCreate, onShareToPro }) {
   const storage=useStorage();
   const [salonNotice,setSalonNotice]=useState(null);
   const hasDraft=Boolean(storage.getItem('nm-journal-draft:new') && storage.getItem('nm-journal-draft:new')!=='null');
@@ -186,6 +186,7 @@ export default function JournalView({ onFavorites, library, profile, journal, se
   if (path) return <div className="journalPage"><section className="journalEmpty"><BookHeart /><h1>Cette pose n’est pas disponible</h1><button className="journalPrimary" onClick={() => onNavigate('')}>Retrouver mon journal</button></section></div>;
   return <div className="journalPage nmPoseLanding">
     <section className="journalHero"><h1>Mes poses</h1><p>Mes idées et mes souvenirs.</p><div className="poseTabs" aria-label="Rangement de mes poses">{[['a-essayer','À essayer'],['en-cours','En cours'],['realisees','Réalisées']].map(([key,label])=><button key={key} aria-pressed={listSection===key} onClick={()=>onNavigate(key)}>{label}</button>)}</div></section>
+    <div className="nmPoseLibraryLinks"><button onClick={onBook}><BookHeart size={18}/>Ouvrir mon Livre</button><button onClick={onFavorites}><Heart size={18}/>Mes favoris</button></div>
     <div className="nmPoseQuickGrid" aria-label="Mes échanges et mon planning">
       {import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&<button className="nmIllustratedTile" onClick={()=>{window.location.hash='creer/planning';}}><AtelierArt source="planning"/><b>Mon calendrier</b><small>Mes dates et mes projets</small></button>}
       <MessengerTile illustrated/>

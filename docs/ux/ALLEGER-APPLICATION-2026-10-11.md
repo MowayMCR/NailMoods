@@ -36,3 +36,19 @@
 ## À valider avec Marie
 
 Ordre final des tuiles ; aspect du nouveau cadre ; reconnaissance des pictogrammes ; autres écrans signalés pendant sa recette. Cette préparation ne clôture pas la validation artistique du moteur IA.
+
+## Validation et intégration Web — 11 octobre, après les deux planches
+
+Marie a validé les deux planches et demandé la mise en ligne Web, les textes de tuiles centrés et des titres habillés. Cette instruction remplace la suspension de déploiement en tête de ce document. Aucun nouveau build mobile n’est autorisé.
+
+Compléments intégrés :
+
+- Page directe `#creer/nailmoods-ai`, sans portal, backdrop, verrouillage du défilement ou piège de focus. Instance conservée pendant les passages vers la fiche/tutoriel dans le même compte ; autorisation réinitialisée en quittant la page. Une nouvelle création réinitialise toujours le consentement.
+- Trois vues au-dessus du visuel, libellés accessibles ; réutilisation du cache et des mêmes paramètres, aucune génération ajoutée à la navigation.
+- Une entrée de sauvegarde avec choix idée privée / projet privé, réutilisant les callbacks de bibliothèque et le dépôt de projets déjà utilisés. Publication volontaire séparée. La préparation DIY reste disponible.
+- Mes poses conserve À essayer / En cours / Réalisées et ajoute Livre / favoris ; ouverture de la même collection en mode Livre.
+- Prototype conservé dans Outils avancés, hors de la grille. Titres Créer et IA illustrés, textes des tuiles centrés.
+- Fil monté à la demande puis conservé dans le même compte pour garder recherche et filtres au retour. Défilement par route réutilisé.
+- Tutoriel : consignes et état courant visibles ; conseils et matériel de l’étape dépliables, minuteur et contrôles conservés.
+
+Limite : le maintien de la création concerne la session Web en cours ; il ne remplace pas l’enregistrement ou l’historique serveur après fermeture/rechargement. Aucun changement de secret, de quota, de modèle, de permission, de schéma ou d’accès IA. La validation artistique du moteur reste une mission distincte.
