@@ -11,17 +11,12 @@ const moderation={ok:true,json:async()=>({results:[{flagged:false}]})};
 const response=(p,search=false)=>({ok:true,json:async()=>({status:'completed',usage:{input_tokens:100,output_tokens:200},output:[...(search?[{type:'web_search_call',action:{sources:[{url:'https://example.com/halloween/',title:'Halloween'}]}}]:[]),{content:[{type:'output_text',text:JSON.stringify(p)}]}]})});
 test('same labels are accepted when specified motifs and placements differ; color-only copies still fail',()=>{
  const p=plan();assert.doesNotThrow(()=>validatePlan(p,CONCEPT_COLORS,{designCount:10}));assert.doesNotThrow(()=>validateArt(p,body.prompt,CONCEPT_COLORS));
- p.nails[1].art=structuredClone(p.nails[0].art);p.nails[1].productId='concept-purple';assert.deepEqual(duplicateDesignFingers(p),[1]);assert.throws(()=>validateArt(p,body.prompt,CONCEPT_COLORS),/repeated_designs/);
+ p.nails[1].art=structuredClone(p.nails[0].art);p.nails[1].productId='concept-purple';assert.deepEqual(duplicateDesignFingers(p),[1]);assert.ok(validateArt(p,body.prompt,CONCEPT_COLORS).warnings.includes('repeated_designs'));
 });
-test('one repair changes only the repeated finger, preserves theme/motifs and keeps cumulative cost',async()=>{
- const bad=plan();bad.nails[1].art=structuredClone(bad.nails[0].art);const fixed=structuredClone(bad);fixed.nails[1].art.motifs[0].y=80;fixed.nails[1].art.steps=['Dessine le casque près du bord libre'];let calls=0;
- const r=await runProvider({body,products:[],config,maxUsd:1,fetcher:async(url,o)=>{if(url.endsWith('/moderations'))return moderation;calls++;if(calls===2){const req=JSON.parse(o.body);assert.match(JSON.stringify(req.input),/repair_repeated_designs_only/);}return response(calls===1?bad:fixed);}});
- assert.equal(calls,2);assert.equal(r.cost,.001);assert.equal(r.usage.repair.attempts,1);assert.equal(r.usage.repair.status,'succeeded');assert.deepEqual(r.result.plan.nails[0],bad.nails[0]);assert.deepEqual(r.result.plan.nails[9],bad.nails[9]);
- const mutation=structuredClone(fixed);mutation.nails[9].productId='concept-yellow';assert.throws(()=>assertDesignRepairPreserved(bad,mutation,[1]),/repair_changed_composition/);
-});
-test('a failed design repair never loops or accepts identical designs',async()=>{
+test('similar designs are accepted privately without a paid artistic repair',async()=>{
  const bad=plan();bad.nails[1].art=structuredClone(bad.nails[0].art);let calls=0;
- await assert.rejects(runProvider({body,products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(bad);}}),e=>e.message==='plan_repair_failed'&&e.cost===.001&&e.usage.repair.attempts===1&&e.usage.validationFailure==='repeated_designs');assert.equal(calls,2);
+ const r=await runProvider({body,products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(bad);}});
+ assert.equal(calls,1);assert.equal(r.cost,.0005);assert.ok(r.usage.warnings.includes('repeated_designs'));assert.equal(r.result.master.nails.length,10);assert.deepEqual(r.result.plan.nails,bad.nails);
 });
 test('source comparison tolerates only harmless URL variations and never another page or host',()=>{
  const sources=[{url:'https://example.com/halloween/?a=1&b=2'}];assert.ok(resolveSource(sources,'https://example.com/halloween?utm_source=x&b=2&a=1#top'));assert.equal(resolveSource(sources,'https://other.com/halloween?a=1&b=2'),null);assert.equal(resolveSource(sources,'https://example.com/other?a=1&b=2'),null);assert.equal(resolveSource(sources,'javascript:alert(1)'),null);
@@ -36,4 +31,19 @@ test('unverified citations and modified plans remain blocked after one repair',a
  for(const changedPlan of [false,true]){let calls=0;const old=cards('https://example.com/unknown');const next=cards(changedPlan?'https://example.com/halloween/':'https://other.com/unverified');if(changedPlan)next.cards[0].plan.nails[0].productId='concept-yellow';
   await assert.rejects(runProvider({body:{...body,operation:'trends',prompt:'Halloween',designCount:5},products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(calls===1?old:next,calls===1);}}),e=>e.message==='sources_repair_failed'&&e.usage.repair.attempts===1);assert.equal(calls,2);
  }
+});
+
+test('a bad citation cannot discard the other two sourced cards or trigger a paid retry',async()=>{
+ const value=cards('https://example.com/halloween/');value.cards[1].sourceUrl='https://unknown.com/fake';let calls=0;
+ const r=await runProvider({body:{...body,operation:'trends',prompt:'Halloween',designCount:5},products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(value,true);}});
+ assert.equal(calls,1);assert.equal(r.result.cards.length,2);assert.equal(r.usage.omittedCards[0].code,'source_match');assert.ok(r.result.cards.every(c=>c.source.url==='https://example.com/halloween/'));
+});
+
+test('one surviving sourced card is displayed; arbitrary data references remain fatal',async()=>{
+ const value=cards('https://example.com/halloween/');value.cards[1].sourceUrl='https://unknown.com/fake';value.cards[2].plan.nails[0].productId='PRIVATE-UNAUTHORIZED';let calls=0;
+ const r=await runProvider({body:{...body,operation:'trends',prompt:'Halloween'},products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(value,true);}});assert.equal(calls,1);assert.equal(r.result.cards.length,1);assert.equal(r.usage.omittedCards.length,2);assert.ok(!JSON.stringify(r.usage).includes('PRIVATE-UNAUTHORIZED'));
+});
+test('structural repair is one extra call and restores the requested fingers, master and tutorial',async()=>{
+ const bad=plan();bad.nails.pop();let calls=0;
+ const r=await runProvider({body,products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(calls===1?bad:plan());}});assert.equal(calls,2);assert.equal(r.usage.repair.attempts,1);assert.equal(r.result.master.nails.length,10);
 });

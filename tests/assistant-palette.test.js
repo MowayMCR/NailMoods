@@ -22,23 +22,12 @@ test('actual duplicate swatches are counted once, and explicit alternative palet
 test('local reference repair preserves every motif, position and technique without remote requests',()=>{
  const p=plan();p.nails[0].art.colorProductIds=['concept-white'];const {plan:q,changed}=repairColorReferences(p);assert.equal(changed,true);assert.ok(q.nails[0].art.colorProductIds.includes('concept-black'));assert.deepEqual(q.nails.map(n=>n.art.motifs),p.nails.map(n=>n.art.motifs));assert.deepEqual(p.nails[0].art.colorProductIds,['concept-white']);
 });
-test('one bounded structured repair restores Beetlejuice green, preserving the composition and tutorial',async()=>{
- const original=plan('Beetlejuice',colors.filter(c=>c!=='lime')),repaired=fixedPalette(original);let calls=0;
- const r=await runProvider({body,products:[],config,maxUsd:1,fetcher:async(url,o)=>{if(url.endsWith('/moderations'))return moderation;calls++;if(calls===2){const request=JSON.parse(o.body);assert.match(JSON.stringify(request.input),/repair_palette_only/);assert.equal(request.store,false);}return response(calls===1?original:repaired);}});
- assert.equal(calls,2);assert.equal(r.cost,.001);assert.equal(r.usage.repair.attempts,1);assert.equal(r.usage.repair.status,'succeeded');assert.deepEqual(r.usage.palette.missingFamilies,[]);assert.deepEqual(r.result.plan.nails.map(n=>n.art.motifs),original.nails.map(n=>n.art.motifs));
- const idea=ideaFromPlan(r.result.plan,{products:r.result.products,master:r.result.master});assert.equal(tutorialFor(idea).filter(s=>s.motifs).length,10);assert.deepEqual(r.result.master.validation.palette.expectedFamilies,['black','white','purple','green']);
+test('missing emblematic colors remain warnings without an extra paid call',async()=>{
+ const original=plan('Beetlejuice',colors.filter(c=>c!=='lime'));let calls=0;
+ const r=await runProvider({body,products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(original);}});
+ assert.equal(calls,1);assert.equal(r.cost,.0005);assert.ok(r.usage.warnings.includes('requested_palette_missing'));assert.equal(r.usage.repair.attempts,0);assert.equal(r.result.master.nails.length,10);
+ const idea=ideaFromPlan(r.result.plan,{products:r.result.products,master:r.result.master});assert.equal(tutorialFor(idea).filter(s=>s.motifs).length,10);
 });
-test('failed repair stops after one retry, retains cost and reports a private-data-free technical reason',async()=>{
- let calls=0;const bad=plan('Beetlejuice',colors.filter(c=>c!=='lime'));
- await assert.rejects(runProvider({body,products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(bad);}}),e=>e.message==='palette_repair_failed'&&e.cost===.001&&e.usage.validationFailure==='requested_palette_missing'&&e.usage.repair.attempts===1&&!JSON.stringify(e.usage).includes('Rayures'));
- assert.equal(calls,2);assert.match(AI_MESSAGES.palette_repair_failed,/aucun jeton/);assert.match(AI_MESSAGES.palette_repair_failed,/manuellement/);
-});
-test('repair cannot delete motifs or change other fingers and is skipped if its upper cost exceeds the reservation',async()=>{
- const original=plan('Beetlejuice',colors.filter(c=>c!=='lime')),mutated=fixedPalette(original);mutated.nails[0].art.motifs=[];let calls=0;
- await assert.rejects(runProvider({body,products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(calls===1?original:mutated);}}),e=>e.message==='palette_repair_failed'&&e.usage.validationFailure==='repair_changed_composition');assert.equal(calls,2);
- const request=requestBody(body,CONCEPT_COLORS,[],config),initialBound=new TextEncoder().encode(JSON.stringify(request)).length*config.inputPrice/1e6+request.max_output_tokens*config.outputPrice/1e6;calls=0;
- await assert.rejects(runProvider({body,products:[],config,maxUsd:initialBound+.001,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(original);}}),e=>e.message==='palette_repair_failed'&&e.usage.repair.attempts===0&&e.usage.repair.reason==='repair_budget_exceeded');assert.equal(calls,1);
-});
-test('structural, essential motif and unrelated motif failures remain blocking with no paid repair',async()=>{
- for(const [mutate,reason] of [[p=>p.nails.pop(),'invalid_plan'],[p=>p.nails.forEach((n,i)=>{n.designBrief='Uni '+String.fromCharCode(65+i);n.art.motifs=[];}),'missing_essential_motif'],[p=>p.nails[0].motif='winged-orb','unrelated_motif']]){const bad=plan();mutate(bad);let calls=0;await assert.rejects(runProvider({body,products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(bad);}}),e=>e.message==='invalid_response'&&e.usage.validationFailure===reason);assert.equal(calls,1);}
+test('missing essential motifs and unrelated artistic objects are diagnostic warnings',async()=>{
+ for(const [mutate,reason] of [[p=>p.nails.forEach((n,i)=>{n.designBrief='Uni '+i;n.art.motifs=[];}),'missing_essential_motif'],[p=>p.nails[0].motif='winged-orb','unrelated_motif']]){const bad=plan();mutate(bad);let calls=0;const r=await runProvider({body,products:[],config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;calls++;return response(bad);}});assert.ok(r.usage.warnings.includes(reason));assert.equal(calls,1);}
 });

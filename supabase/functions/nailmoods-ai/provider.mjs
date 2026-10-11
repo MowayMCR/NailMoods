@@ -1,3 +1,4 @@
+import {validationCategory} from './validation.mjs';
 import {PLAN_SCHEMA,TRENDS_SCHEMA,validatePlan,safeSources,CONCEPT_COLORS} from './contract.mjs';
 import {pngBytes} from '../ai-internal/photoreal.mjs';
 import {visualPrompt} from './visual.mjs';
@@ -5,7 +6,7 @@ import {qualityRequest,qualityDecision} from './quality.mjs';
 import {createMaster,validateArt} from './master.mjs';
 import {assessPalette,repairColorReferences,assertPaletteRepairPreserved} from './palette.mjs';
 import {duplicateDesignFingers,assertDesignRepairPreserved,resolveSource,assertSourceRepairPreserved} from './recovery.mjs';
-export class AIError extends Error {constructor(code,usage=null,cost=null){super(code);this.usage=usage;this.cost=cost;}}
+export class AIError extends Error {constructor(code,usage=null,cost=null){super(code);this.usage={...(usage||{}),errorCategory:validationCategory(usage?.validationFailure||code)};this.cost=cost;}}
 const safeValidationCode=e=>typeof e?.message==='string'&&/^[a-z_]{1,64}$/.test(e.message)?e.message:e instanceof SyntaxError?'invalid_json':'validation_failed';
 const outputText=p=>(p.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==='output_text').map(x=>x.text).join('\n');
 export function providerConfig(env){
@@ -63,9 +64,10 @@ export async function runProvider({body,products,history=[],config,maxUsd,fetche
   let cost=d&&[d.text_tokens,d.image_tokens,u.output_tokens].every(v=>Number.isSafeInteger(v)&&v>=0)?(d.text_tokens*config.imageTextPrice+d.image_tokens*config.imageInputPrice+u.output_tokens*config.imageOutputPrice)/1e6:null;
   try{await moderate('Nail art generated preview','data:image/png;base64,'+payload.data?.[0]?.b64_json,config,fetcher);}catch(e){throw new AIError(e.message,u,cost);}
   let image;try{image=pngBytes('data:image/png;base64,'+payload.data?.[0]?.b64_json,10000000);}catch{throw new AIError('invalid_image',u,cost);}
-  let quality={status:'unverified',humanValidated:false,summary:'Contrôle automatique indisponible. Validation visuelle nécessaire.'},qualityUsage=null;
+  let quality={status:'unverified',accepted:true,humanValidated:false,summary:'Diagnostic automatique indisponible. Tu peux consulter et modifier cette création.'},qualityUsage=null;
   try{const q=qualityRequest({...body.composition,operation:body.operation},body.referenceImage,'data:image/png;base64,'+payload.data[0].b64_json,config.textModel);const checked=await responseJson(await fetcher('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey,'Content-Type':'application/json'},body:JSON.stringify(q),signal:AbortSignal.timeout(30000)}));qualityUsage=checked.usage;const qc=textCost(qualityUsage,config);cost=cost===null||qc===null?null:cost+qc;quality=qualityDecision(JSON.parse(outputText(checked)),body.composition.nails.length);}catch{if(!qualityUsage)cost=null;}
-  return {image,result:{kind:body.operation,synthetic:true,qualityValidated:false,quality,masterId:body.composition.master?.id||null,masterRevision:body.composition.master?.revision||null,message:quality.status==='nonconforming'?'Ce visuel présente des écarts et n’est pas validé.':'Aperçu synthétique à valider visuellement.'},usage:{model:config.imageModel,...u,qualityModel:config.textModel,qualityUsage},cost};
+  if(quality.status==='unusable')throw new AIError('unusable_image',{...u,qualityModel:config.textModel,qualityUsage,validationFailure:quality.criticalFailures?.filter(c=>['anatomy','wrong_count'].includes(c))},cost);
+  return {image,result:{kind:body.operation,synthetic:true,qualityValidated:false,quality,masterId:body.composition.master?.id||null,masterRevision:body.composition.master?.revision||null,message:quality.status==='warning'?'Création disponible. Des imperfections sont signalées ; tu peux la personnaliser.':'Création disponible dans ton espace privé.'},usage:{model:config.imageModel,...u,qualityModel:config.textModel,qualityUsage},cost};
  }
  if(!config.textModel||!config.inputPrice||!config.outputPrice)throw new AIError('budget_configuration_required',null,0);
  if(!pool.length)throw new AIError('color_confirmation_required',null,0);
@@ -87,15 +89,15 @@ export async function runProvider({body,products,history=[],config,maxUsd,fetche
  if(body.operation==='trends'){
   const sources=safeSources(payload);if(!sources.length)throw new AIError('sources_unavailable',usage,cost);
   let validationFailure='json';try{
-   const value=JSON.parse(outputText(payload));validationFailure='cards';if(typeof value.message!=='string'||!Array.isArray(value.cards)||value.cards.length!==3)throw Error();
-   const validateCards=v=>v.cards.map(c=>{validationFailure='card_fields';if(typeof c.summary!=='string'||typeof c.sourceUrl!=='string'||c.plan?.action!=='compose')throw Error('invalid_card');validationFailure='source_match';const source=resolveSource(sources,c.sourceUrl);if(!source)throw Error('source_match');validationFailure='plan';return {summary:c.summary.slice(0,120),source,plan:validatePlan(c.plan,pool,{collectionOnly:body.collectionOnly})};});
+   const value=JSON.parse(outputText(payload));validationFailure='cards';if(typeof value.message!=='string'||!Array.isArray(value.cards)||value.cards.length<1||value.cards.length>3)throw Error();
+   const validateCards=v=>v.cards.flatMap((c,index)=>{try{validationFailure='card_fields';if(typeof c.summary!=='string'||typeof c.sourceUrl!=='string'||c.plan?.action!=='compose')throw Error('invalid_card');validationFailure='source_match';const source=resolveSource(sources,c.sourceUrl);if(!source)throw Error('source_match');validationFailure='plan';const plan=validatePlan(c.plan,pool,{collectionOnly:body.collectionOnly});validateArt(plan,body.prompt,pool);return [{summary:c.summary.slice(0,120),source,plan}];}catch(e){usage.omittedCards=[...(usage.omittedCards||[]),{index,code:safeValidationCode(e),category:'repairable'}];return [];}});
    let cards;
-   try{cards=validateCards(value);}catch(e){
+   try{cards=validateCards(value);if(!cards.length)throw Error('source_match');}catch(e){
     if(e.message!=='source_match')throw e;
     const repairedRequest={...request,tools:undefined,tool_choice:undefined,max_tool_calls:undefined,include:undefined,input:[...request.input,{role:'user',content:JSON.stringify({task:'repair_source_urls_only',original:value,sources,instructions:'Corrige UNIQUEMENT sourceUrl dans les trois cartes. Reprends exactement une URL de la liste des sources effectivement consultées qui soutient la proposition. Ne modifie aucun plan, motif, couleur, résumé ou message. Ne fais aucune nouvelle recherche. Si aucune source ne soutient une carte, ne lui attribue pas une source arbitraire.'})}]};
     repairedRequest.text={format:{...request.text.format,schema:{...TRENDS_SCHEMA,properties:{...TRENDS_SCHEMA.properties,cards:{...TRENDS_SCHEMA.properties.cards,items:{...TRENDS_SCHEMA.properties.cards.items,properties:{...TRENDS_SCHEMA.properties.cards.items.properties,sourceUrl:{type:'string',enum:sources.map(s=>s.url)}}}}}}}};
     const out=await repairOnce(repairedRequest,'sources_repair_failed',config,maxUsd,fetcher,usage,cost,'source_match');usage=out.usage;cost=out.cost;
-    try{assertSourceRepairPreserved(value,out.value);cards=validateCards(out.value);usage.repair.status='succeeded';}catch(error){throw new AIError('sources_repair_failed',{...usage,validationFailure:safeValidationCode(error),repair:{...usage.repair,status:'failed',reason:safeValidationCode(error)}},cost);}
+    try{assertSourceRepairPreserved(value,out.value);cards=validateCards(out.value);if(!cards.length)throw Error('source_match');usage.repair.status='succeeded';}catch(error){throw new AIError('sources_repair_failed',{...usage,validationFailure:safeValidationCode(error),repair:{...usage.repair,status:'failed',reason:safeValidationCode(error)}},cost);}
    }
    return {result:{kind:'trends',message:value.message.slice(0,160),cards,products:pool,sources,searchedAt:new Date().toISOString()},usage,cost};
   }catch(e){if(e instanceof AIError)throw e;throw new AIError('invalid_response',{...usage,validationFailure},cost);}
@@ -107,20 +109,18 @@ export async function runProvider({body,products,history=[],config,maxUsd,fetche
   const validate=value=>{const p=validatePlan(value,pool,{collectionOnly:body.collectionOnly,designCount:body.designCount||5,checkDesigns:false});if(['compose','edit'].includes(p.action)){p.shape=body.shape;p.length=body.length;if(body.level!==undefined)p.level=body.level;}return p;};
   let plan=validate(value);const local=repairColorReferences(plan);plan=validate(local.plan);
   usage={...usage,palette:assessPalette(plan,pool,body.prompt),repair:{localColorReferences:local.changed,attempts:0,status:'not_needed'}};
-  try{validateArt(plan,body.prompt,pool);}catch(original){
-   // Genuine invalid data/off-theme motifs stay blocking; repair is bounded once per job.
-   if(!['requested_palette_missing','repeated_designs'].includes(original.message))throw original;
-   const designRepair=original.message==='repeated_designs',targets=designRepair?duplicateDesignFingers(plan):[],errorCode=designRepair?'plan_repair_failed':'palette_repair_failed';
-   const missing=usage.palette.missingFamilies;
-   const repairRequest=requestBody(body,pool,[],config);
-   repairRequest.input.push({role:'user',content:[{type:'input_text',text:JSON.stringify({task:designRepair?'repair_repeated_designs_only':'repair_palette_only',validationCode:original.message,targetFingers:targets,missingFamilies:missing,originalPlan:plan,instructions:designRepair?'Varie uniquement les doigts targetFingers avec un motif, geste ou placement réellement distinct lié au thème demandé. Préserve tous les autres doigts exactement. Conserve toutes les bases, couleurs, finitions, intention, forme, longueur et niveau. Préserve chaque motif existant avec description, justification et technique ; tu peux adapter sa position/taille et ajouter un motif compatible sur les doigts ciblés. Répercute les gestes dans les étapes de ces seuls doigts. Ne résous pas la diversité en changeant seulement la signature ou la couleur. Les exclusions restent strictes.':'Répare UNIQUEMENT les références de couleurs, paletteNotes et les couleurs des étapes du tutoriel. Conserve strictement action, intention, univers, composition, exclusions, chaque doigt, toutes les signatures, techniques, finitions, motifs, descriptions, justifications, positions, tailles et matériel. Ne supprime ni ajoute aucun motif. Utilise uniquement les couleurs disponibles. Ne contourne aucune contrainte collectionOnly. Respecte les couleurs explicites du texte.'})}]});
-   const out=await repairOnce(repairRequest,errorCode,config,maxUsd,fetcher,usage,cost,original.message);usage=out.usage;cost=out.cost;
-   try{
-    const repaired=validate(out.value);if(designRepair)assertDesignRepairPreserved(plan,repaired,targets);else assertPaletteRepairPreserved(plan,repaired);validateArt(repaired,body.prompt,pool);
-    plan=repaired;usage={...usage,palette:assessPalette(plan,pool,body.prompt),repair:{...usage.repair,status:'succeeded'}};
-   }catch(e){throw new AIError(errorCode,{...usage,validationFailure:safeValidationCode(e),repair:{...usage.repair,reason:safeValidationCode(e)}},cost);}
-  }
+  usage.warnings=validateArt(plan,body.prompt,pool)?.warnings||[];
   validatePlan(plan,pool,{collectionOnly:body.collectionOnly,designCount:body.designCount||5});plan.title=plan.title.replace(/^pause\b/i,'Pose');const master=createMaster(plan,pool,body);
   return {result:{kind:'plan',plan,master,products:pool},usage,cost};
- }catch(e){if(e instanceof AIError)throw e;throw new AIError('invalid_response',{...usage,validationFailure:validationFailure==='plan'?safeValidationCode(e):validationFailure},cost);}
+ }catch(e){if(e instanceof AIError)throw e;
+  const code=validationFailure==='json'?'invalid_json':safeValidationCode(e);
+  if(validationCategory(code)==='repairable'){
+   const repairedRequest=requestBody(body,pool,[],config);
+   repairedRequest.input.push({role:'user',content:[{type:'input_text',text:JSON.stringify({task:'repair_structure_only',validationCode:code,originalResponse:outputText(payload),instructions:'Corrige seulement la structure JSON indispensable. Préserve intention, motifs, couleurs, techniques et doigts valides. Respecte exactement les paramètres demandés et les identifiants produits autorisés. N’ajoute aucun objet culturel hors sujet. Ne simplifie pas la composition pour un critère artistique.'})}]});
+   const out=await repairOnce(repairedRequest,'structure_repair_failed',config,maxUsd,fetcher,usage,cost,code);usage=out.usage;cost=out.cost;
+   try{let plan=validatePlan(out.value,pool,{collectionOnly:body.collectionOnly,designCount:body.designCount||5});if(['compose','edit'].includes(plan.action)){plan.shape=body.shape;plan.length=body.length;if(body.level!==undefined)plan.level=body.level;}const local=repairColorReferences(plan);plan=validatePlan(local.plan,pool,{collectionOnly:body.collectionOnly,designCount:body.designCount||5});usage.warnings=validateArt(plan,body.prompt,pool)?.warnings||[];usage.repair.status='succeeded';plan.title=plan.title.replace(/^pause\b/i,'Pose');return {result:{kind:'plan',plan,master:createMaster(plan,pool,body),products:pool},usage,cost};}
+   catch(error){throw new AIError('structure_repair_failed',{...usage,validationFailure:safeValidationCode(error),repair:{...usage.repair,status:'failed'}},cost);}
+  }
+  throw new AIError('invalid_response',{...usage,validationFailure:code},cost);
+ }
 }

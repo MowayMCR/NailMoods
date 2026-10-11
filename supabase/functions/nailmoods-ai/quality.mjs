@@ -4,7 +4,7 @@ export const QUALITY_SCHEMA=object({scores:object(Object.fromEntries(scores.map(
 export function qualityDecision(report,count){
  if(!report||!report.scores||scores.some(k=>!Number.isInteger(report.scores[k])||report.scores[k]<0||report.scores[k]>5)||!Array.isArray(report.criticalFailures)||!Array.isArray(report.fingers)||report.fingers.length!==count||new Set(report.fingers.map(f=>f.id)).size!==count||report.fingers.some(f=>!Array.from({length:count},(_,i)=>(i<5?'left':'right')+'-'+['thumb','index','middle','ring','little'][i%5]).includes(f.id)))throw Error('invalid_quality_report');
  const rejected=report.criticalFailures.length>0||['fidelity','universe','artistry','complexity','shapeLength','motifs','consistency','materials'].some(k=>report.scores[k]<4)||report.fingers.some(f=>f.missing?.length||f.moved?.length);
- return {...report,status:rejected?'nonconforming':'pending_human',automatic:true,humanValidated:false};
+ return {...report,status:report.criticalFailures.some(c=>['anatomy','wrong_count'].includes(c))?'unusable':rejected?'warning':'accepted',accepted:!report.criticalFailures.some(c=>['anatomy','wrong_count'].includes(c)),automatic:true,humanValidated:false};
 }
 export function qualityRequest(composition,reference,generated,model){
  const count=composition.nails.length;

@@ -16,10 +16,10 @@ test('master is shared by image specification, persisted pose, tutorial and safe
  const tags=suggestTags(idea);assert.ok(tags.moods.includes('Goth'));assert.ok(tags.themes.includes('Vampire'));assert.ok(tags.themes.includes('Halloween'));assert.ok(tags.themes.includes('Chauve-souris'));assert.ok(!Object.values(tags).flat().includes('Harry Potter'));assert.ok(!JSON.stringify(tags).includes('Pinceau'));
 });
 test('off-theme cultural objects, color-only duplicates and incompatible difficulty fail before images',()=>{
- const p=plan();p.nails[4].motif='winged-orb';assert.throws(()=>validateArt(p,body.prompt),/unrelated_motif/);
- assert.doesNotThrow(()=>validateArt(p,'Harry Potter vif d’or'));assert.throws(()=>validateArt(p,'Vampire, aucun Vif d’or'),/unrelated_motif/);
- const duplicate=plan();duplicate.nails[1].art=structuredClone(duplicate.nails[0].art);assert.throws(()=>validateArt(duplicate,body.prompt),/repeated_designs/);
- const easy=plan();easy.level=0;easy.nails[0].art.techniques=['gel-3d'];easy.nails[0].art.motifs[0].technique='gel-3d';assert.throws(()=>validateArt(easy,body.prompt),/difficulty_mismatch/);
+ const p=plan();p.nails[4].motif='winged-orb';assert.ok(validateArt(p,body.prompt).warnings.includes('unrelated_motif'));
+ assert.doesNotThrow(()=>validateArt(p,'Harry Potter vif d’or'));assert.ok(validateArt(p,'Vampire, aucun Vif d’or').warnings.includes('unrelated_motif'));
+ const duplicate=plan();duplicate.nails[1].art=structuredClone(duplicate.nails[0].art);assert.ok(validateArt(duplicate,body.prompt).warnings.includes('repeated_designs'));
+ const easy=plan();easy.level=0;easy.nails[0].art.techniques=['gel-3d'];easy.nails[0].art.motifs[0].technique='gel-3d';assert.ok(validateArt(easy,body.prompt).warnings.includes('difficulty_mismatch'));
 });
 test('a right ring edit preserves nine stable fingers, direction, shape and original request',()=>{
  const first=createMaster(plan(),CONCEPT_COLORS,body),p=plan();p.action='edit';p.editFinger=8;p.nails=[{...p.nails[8],designBrief:'Dentelle adaptée'}];
@@ -29,8 +29,8 @@ test('a right ring edit preserves nine stable fingers, direction, shape and orig
 });
 test('a beautiful image with a missing motif is nonconforming; automatic assessment never grants human approval',()=>{
  const report={scores:Object.fromEntries(['fidelity','universe','artistry','complexity','shapeLength','motifs','consistency','materials','tutorial','tags'].map(k=>[k,5])),criticalFailures:[],fingers:Array.from({length:10},(_,i)=>({id:fingerId(i),observed:'Motif',missing:[],moved:[],uncertain:false})),summary:'Test'};
- assert.equal(qualityDecision(report,10).status,'pending_human');assert.equal(qualityDecision(report,10).humanValidated,false);
- report.fingers[8].missing=['Strass'];assert.equal(qualityDecision(report,10).status,'nonconforming');report.criticalFailures=['anatomy'];assert.equal(qualityDecision(report,10).status,'nonconforming');
+ assert.equal(qualityDecision(report,10).status,'accepted');assert.equal(qualityDecision(report,10).humanValidated,false);
+ report.fingers[8].missing=['Strass'];assert.equal(qualityDecision(report,10).status,'warning');report.criticalFailures=['anatomy'];assert.equal(qualityDecision(report,10).status,'unusable');
 });
 test('multitechnique retains all four effects in the master, tutorial and tags',()=>{
  const p=plan();p.nails[0].art.techniques=['french','aura','gel-3d','rhinestones'];p.nails[0].art.motifs[0].technique='french';const master=createMaster(p,CONCEPT_COLORS,{...body,prompt:'French Aura relief 3D strass'}),idea=ideaFromPlan(p,{products:CONCEPT_COLORS,master});

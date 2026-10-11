@@ -36,12 +36,12 @@ test('local renderer handles creative examples, exact single-finger edits and an
  assert.equal(localPlan('Explique-moi les étapes').action,'tutorial');
  assert.equal(localPlan('Envoie cette inspiration à ma PO').action,'share');
 });
-test('provider is opt-in, bounded, stateless, moderated and never retries; usage is retained after invalid output',async()=>{
+test('provider is opt-in, bounded, stateless, moderated and bounded to one structural repair; failed cost is retained',async()=>{
  let paid=0,mod=0;const fetcher=async(url,o)=>{if(url.endsWith('/moderations')){mod++;return moderation;}paid++;const b=JSON.parse(o.body);assert.equal(b.store,false);assert.equal(b.max_output_tokens,4000);assert.equal(b.text.format.strict,true);assert.equal(b.input.some(i=>JSON.stringify(i).includes('SECRET-PROFILE')),false);return mockResponse(plan());};
  await assert.rejects(runProvider({body:request(),products,config:{...config,enabled:false},maxUsd:1,fetcher}),/provider_disabled/);assert.equal(paid,0);
  await assert.rejects(runProvider({body:request(),products,config,maxUsd:.000001,fetcher}),/operation_budget_exceeded/);assert.equal(paid,0);
  const r=await runProvider({body:request(),products,config,maxUsd:1,fetcher});assert.equal(r.result.kind,'plan');assert.equal(r.cost,.0005);assert.equal(paid,1);assert.equal(mod,2);
- await assert.rejects(runProvider({body:request(),products,config,maxUsd:1,fetcher:async url=>url.endsWith('/moderations')?moderation:mockResponse({nonsense:true})}),e=>e.message==='invalid_response'&&e.cost===.0005);
+ await assert.rejects(runProvider({body:request(),products,config,maxUsd:1,fetcher:async url=>url.endsWith('/moderations')?moderation:mockResponse({nonsense:true})}),e=>e.message==='structure_repair_failed'&&e.cost===.001&&e.usage.repair.attempts===1);
  paid=0;await assert.rejects(runProvider({body:request(),products,config,maxUsd:1,fetcher:async url=>{if(url.endsWith('/moderations'))return moderation;paid++;throw Error('timeout');}}),/provider_interrupted/);assert.equal(paid,1);
  await assert.rejects(runProvider({body:request(),products,config,maxUsd:1,fetcher:async()=>({ok:true,json:async()=>({results:[{flagged:true}]})})}),/content_not_allowed/);
 });
@@ -88,8 +88,8 @@ test('yellow is explicit, unselected collection stays out of creative prompts an
  assert.equal(CONCEPT_COLORS.find(p=>p.id==='concept-yellow').color,'#f6cf38');
  const ten={...plan(),nails:Array.from({length:10},(_,finger)=>({...plan().nails[finger%5],finger,designBrief:'Design '+finger}))};
  assert.equal(validatePlan(ten,products,{designCount:10}).nails.length,10);
- assert.throws(()=>validatePlan({...ten,nails:ten.nails.map(n=>({...n,designBrief:'Même motif'}))},products,{designCount:10}),/repeated_designs/);
- assert.throws(()=>validatePlan({...ten,nails:ten.nails.map(n=>({...n,designBrief:n.finger===5?'Miroir main gauche':n.designBrief}))},products,{designCount:10}),/repeated_designs/);
+ assert.doesNotThrow(()=>validatePlan({...ten,nails:ten.nails.map(n=>({...n,designBrief:'Même motif'}))},products,{designCount:10}));
+ assert.doesNotThrow(()=>validatePlan({...ten,nails:ten.nails.map(n=>({...n,designBrief:n.finger===5?'Miroir main gauche':n.designBrief}))},products,{designCount:10}));
  const owned={id:'private-white',name:'Chantilly',color:'#f1efeb',conceptual:false};let sent;
  await runProvider({body:{...request()},products:[owned],config,maxUsd:1,fetcher:async(url,o)=>{if(url.endsWith('/moderations'))return moderation;sent=JSON.parse(o.body);return mockResponse(plan());}});
  const content=JSON.parse(sent.input[1].content[0].text);assert.ok(content.products.some(p=>p.id==='concept-yellow'));assert.ok(content.products.every(p=>p.conceptual));assert.equal(JSON.stringify(content).includes('Chantilly'),false);
