@@ -21,6 +21,6 @@ for label,needles,dimensions in [('iPhone_1206x2622',['iPhone 16 Pro','iPhone 17
         assert r.returncode==0,'Native UI test failed; evidence retained'
         # Export manifest records preserve XCTest attachment display names.
         print((attachments/'manifest.json').read_text(),flush=True)
-        results.append({'folder':label,'device':device['name'],'runtime':runtime,'expectedPixels':dimensions,'sourceCommit':'fdf9851da0548f61b0939ff8daea69c0a9036956','appVersion':'0.8.1','fixtures':'Synthetic only, remote fetch mocked, actual UI and inspiration engine'})
+        results.append({'folder':label,'device':device['name'],'runtime':runtime,'expectedPixels':dimensions,'sourceCommit':os.environ.get('GITHUB_SHA'),'baseCommit':'fdf9851da0548f61b0939ff8daea69c0a9036956','appVersion':'0.8.1','fixtures':'Synthetic only, remote fetch mocked, actual UI and inspiration engine'})
     finally:sim('shutdown',udid)
 (out/'capture-source.json').write_text(json.dumps(results,indent=2))

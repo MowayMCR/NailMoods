@@ -2,26 +2,26 @@ import Capacitor
 import WebKit
 
 class NailMoodsViewController: CAPBridgeViewController {
-    // Screenshot fixtures are enabled only on simulator launches, never on devices.
-    override func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
-        let configuration = super.webViewConfiguration(for: instanceConfiguration)
+    // Install after Capacitor creates its content controller and before loadWebView.
+    private func configureStoreCapture() {
         #if targetEnvironment(simulator)
-        if ProcessInfo.processInfo.environment["NM_STORE_CAPTURE"] == "1",
-           let fixtureURL = Bundle.main.url(forResource: "fixture", withExtension: "js", subdirectory: "public"),
-           let sessionURL = Bundle.main.url(forResource: "session", withExtension: "json", subdirectory: "public"),
-           let fixture = try? String(contentsOf: fixtureURL, encoding: .utf8),
-           let session = try? String(contentsOf: sessionURL, encoding: .utf8) {
-            UserDefaults.standard.set(session, forKey: "CapacitorStorage.auth:nailmoods-auth-v1")
-            let route = ProcessInfo.processInfo.environment["NM_STORE_ROUTE"] ?? "accueil"
-            let routeJSON = String(data: try! JSONSerialization.data(withJSONObject: [route]), encoding: .utf8)!
-            let script = "window.__NM_NATIVE_CAPTURE=true;" + fixture + "\nlocation.hash=" + routeJSON + "[0];"
-            configuration.userContentController.addUserScript(WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        guard ProcessInfo.processInfo.environment["NM_STORE_CAPTURE"] == "1" else { return }
+        guard let fixtureURL = Bundle.main.url(forResource: "fixture", withExtension: "js", subdirectory: "public"),
+              let sessionURL = Bundle.main.url(forResource: "session", withExtension: "json", subdirectory: "public"),
+              let fixture = try? String(contentsOf: fixtureURL, encoding: .utf8),
+              let session = try? String(contentsOf: sessionURL, encoding: .utf8) else {
+            fatalError("Screenshot fixtures missing; refusing capture launch")
         }
+        UserDefaults.standard.set(session, forKey: "CapacitorStorage.auth:nailmoods-auth-v1")
+        let route = ProcessInfo.processInfo.environment["NM_STORE_ROUTE"] ?? "accueil"
+        let routeJSON = String(data: try! JSONSerialization.data(withJSONObject: [route]), encoding: .utf8)!
+        let script = "window.__NM_NATIVE_CAPTURE=true;" + fixture + "\nlocation.hash=" + routeJSON + "[0];"
+        webView?.configuration.userContentController.addUserScript(WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         #endif
-        return configuration
     }
 
     override func capacitorDidLoad() {
+        configureStoreCapture()
         bridge?.registerPluginInstance(NailMoodsStoreKitPlugin())
         bridge?.registerPluginInstance(NailMoodsCalendarPlugin())
     }

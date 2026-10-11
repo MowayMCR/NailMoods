@@ -83,6 +83,14 @@ final class StoreCaptureTests: XCTestCase {
                 check.name = "QA-Livre"
                 check.lifetime = .keepAlways
                 add(check)
+                let cover = app.buttons["Ouvrir Mon livre de poses"].firstMatch
+                XCTAssertTrue(cover.waitForExistence(timeout: 10))
+                cover.tap()
+                Thread.sleep(forTimeInterval: 2)
+                let spread = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+                spread.name = "QA-Livre-ouvert"
+                spread.lifetime = .keepAlways
+                add(spread)
             }
             if route == "creer" {
                 let manual = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Composition manuelle")).firstMatch
