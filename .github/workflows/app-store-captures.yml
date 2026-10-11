@@ -1,0 +1,38 @@
+name: Native App Store screenshots (no upload)
+on:
+  push:
+    branches: [work/app-store-captures-1-0]
+permissions:
+  contents: read
+jobs:
+  screenshots:
+    runs-on: macos-15
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Select Xcode 26
+        run: |
+          XCODE_PATH=$(find /Applications -maxdepth 1 -name 'Xcode_26*.app' | sort | tail -1)
+          test -n "$XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+          xcodebuild -version
+      - name: Build actual commercial iOS assets
+        run: node scripts/build-ios.mjs production
+      - name: Add simulator-only fictitious account and content
+        run: |
+          node scripts/store-captures/fixtures.mjs
+          cp scripts/store-captures/generated/fixture.js ios/App/App/public/fixture.js
+          cp scripts/store-captures/generated/session.json ios/App/App/public/session.json
+      - name: Capture native iPhone and iPad
+        run: python3 scripts/store-captures/native.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: NailMoods-AppStore-native-captures
+          path: artifacts/store-captures
+          retention-days: 14

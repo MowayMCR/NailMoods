@@ -44,3 +44,56 @@ final class LaunchTests: XCTestCase {
         }
     }
 }
+
+
+final class StoreCaptureTests: XCTestCase {
+    func testOfficialScreens() {
+        continueAfterFailure = false
+        XCUIDevice.shared.orientation = .portrait
+        let app = XCUIApplication()
+        let screens = [("01-Accueil", "accueil", "Créer"),
+                       ("02-Collection", "collection", "Collection"),
+                       ("03-Creer", "creer", "Créer"),
+                       ("04-Mes-poses", "journal", "Mes poses"),
+                       ("05-Decouvrir", "fil", "Fil"),
+                       ("06-Espace-Pro", "profil/pro", "Créer")]
+        for (name, route, ready) in screens {
+            app.terminate()
+            app.launchEnvironment = ["NM_STORE_CAPTURE": "1", "NM_STORE_ROUTE": route]
+            app.launch()
+            XCTAssertTrue(app.buttons[ready].firstMatch.waitForExistence(timeout: 90), "Navigation missing: " + name)
+            Thread.sleep(forTimeInterval: 5)
+            if route == "profil/pro" {
+                let heading = app.staticTexts["Mon espace professionnel"].firstMatch
+                XCTAssertTrue(heading.waitForExistence(timeout: 20))
+                for _ in 0..<10 {
+                    if heading.isHittable && heading.frame.minY < 220 { break }
+                    app.webViews.firstMatch.swipeUp()
+                    Thread.sleep(forTimeInterval: 1)
+                }
+            }
+            let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+            shot.name = name
+            shot.lifetime = .keepAlways
+            add(shot)
+            let hierarchy = XCTAttachment(string: app.debugDescription)
+            hierarchy.name = name + "-hierarchy"
+            hierarchy.lifetime = .keepAlways
+            add(hierarchy)
+            if route == "journal" {
+                let book = app.buttons["Livre"].firstMatch
+                if book.exists { book.tap(); Thread.sleep(forTimeInterval: 2) }
+                let check = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+                check.name = "QA-Livre"
+                check.lifetime = .keepAlways
+                add(check)
+            }
+            if route == "creer" {
+                let menu = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+                menu.name = "QA-Creation"
+                menu.lifetime = .keepAlways
+                add(menu)
+            }
+        }
+    }
+}
