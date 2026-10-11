@@ -28,12 +28,20 @@ export function textCost(usage,config,searchCalls=0){
  if(!Number.isSafeInteger(usage?.input_tokens)||!Number.isSafeInteger(usage?.output_tokens)||usage.input_tokens<0||usage.output_tokens<0)return null;
  return (usage.input_tokens*config.inputPrice+usage.output_tokens*config.outputPrice)/1e6+searchCalls*(config.searchPrice||0);
 }
-async function responseJson(response){if(!response.ok){let detail;try{const e=(await response.json()).error;const safe=v=>typeof v==='string'&&/^[a-z0-9_.-]{1,64}$/i.test(v)?v:null;detail={httpStatus:response.status,providerCode:safe(e?.code),providerParam:safe(e?.param)};}catch{detail={httpStatus:response.status};}throw new AIError(detail.providerCode==='moderation_blocked'?'content_not_allowed':response.status===429?'provider_busy':'provider_failed',detail);}try{return await response.json();}catch{throw new AIError('provider_failed');}}
-export async function moderate(text,image,config,fetcher){
- const input=[{type:'text',text:String(text).slice(0,14000)}];if(image)input.push({type:'image_url',image_url:{url:image}});
+const safeProviderValue=v=>typeof v==='string'&&/^[a-z0-9_.:/-]{1,160}$/i.test(v)?v:null;
+async function responseJson(response,stage='provider_response',endpoint=null){
+ const requestId=safeProviderValue(response.headers?.get?.('x-request-id'));const meta={stage,endpoint,httpStatus:response.status||200,providerRequestId:requestId};
+ if(!response.ok){let detail;try{const e=(await response.json()).error;const md=e?.moderation_details;detail={...meta,providerCode:safeProviderValue(e?.code),providerParam:safeProviderValue(e?.param),providerType:safeProviderValue(e?.type),moderationStage:['input','output','unknown'].includes(md?.moderation_stage)?md.moderation_stage:null,moderationCategories:Array.isArray(md?.categories)?md.categories.filter(c=>['harassment','hate','sexual','violence','self-harm','illicit','sexual/minors','harassment/threatening','hate/threatening','violence/graphic','self-harm/intent','self-harm/instructions','illicit/violent'].includes(c)).slice(0,12):[]};}catch{detail=meta;}
+  throw new AIError(detail.providerCode==='moderation_blocked'?'content_not_allowed':response.status===429?'provider_busy':'provider_failed',detail);
+ }
+ try{const value=await response.json();value._requestMeta=meta;return value;}catch{throw new AIError('provider_failed',meta);}
+}
+export async function moderate(text,image,config,fetcher,stage='preflight_moderation'){
+ const input=[{type:'text',text:String(text).slice(0,60000)}];if(image)input.push({type:'image_url',image_url:{url:image}});
  try{const r=await fetcher('https://api.openai.com/v1/moderations',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:config.moderationModel,input}),signal:AbortSignal.timeout(10000)});
- if(!r.ok)throw Error();const data=await r.json();if(!data.results?.length||data.results.some(r=>typeof r.flagged!=='boolean'))throw Error();if(data.results.some(r=>r.flagged))throw new AIError('content_not_allowed',null,0);
- }catch(e){throw e instanceof AIError?e:new AIError('moderation_unavailable',null,0);}
+ const meta={stage,endpoint:'/v1/moderations',httpStatus:r.status||200,providerRequestId:safeProviderValue(r.headers?.get?.('x-request-id'))};
+ if(!r.ok)throw new AIError('moderation_unavailable',meta,0);const data=await r.json();if(!data.results?.length||data.results.some(r=>typeof r.flagged!=='boolean'))throw new AIError('moderation_unavailable',meta,0);if(data.results.some(r=>r.flagged))throw new AIError('content_not_allowed',meta,0);
+ }catch(e){throw e instanceof AIError?e:new AIError('moderation_unavailable',{stage,endpoint:'/v1/moderations'},0);}
 }
 async function repairOnce(request,errorCode,config,maxUsd,fetcher,usage,cost,validationCode){
  const bound=new TextEncoder().encode(JSON.stringify(request)).length*config.inputPrice/1e6+request.max_output_tokens*config.outputPrice/1e6;
@@ -54,20 +62,25 @@ export async function runProvider({body,products,history=[],config,maxUsd,fetche
  const pool=body.collectionOnly?products.filter(p=>!p.conceptual&&/^#[a-f0-9]{6}$/i.test(p.color||'')):CONCEPT_COLORS;
  if(visual){
   if(!config.imageModel||!config.imageMax||!config.imageTextPrice||!config.imageInputPrice||!config.imageOutputPrice||config.imageMax>maxUsd)throw new AIError('budget_configuration_required',null,0);
-  let reference,prompt;try{reference=pngBytes(body.referenceImage,body.referenceJobId?10000000:1000000);prompt=visualPrompt(body.composition,body.operation);}catch{throw new AIError('composition_required',null,0);}
+  const direct=body.operation==='illustration'&&body.composition?.master?.revision===1&&!body.referenceJobId;let reference,prompt;try{reference=body.referenceImage?pngBytes(body.referenceImage,body.referenceJobId?10000000:1000000):null;if(!direct&&!reference)throw Error('invalid_reference');prompt=visualPrompt(body.composition,body.operation);}catch{throw new AIError('composition_required',null,0);}
   const qaTemplate=qualityRequest({...body.composition,operation:body.operation},'[reference]','[generated]',config.textModel);const qaTokens=new TextEncoder().encode(JSON.stringify(qaTemplate)).length+2*(config.visionMax||4096);const qaBound=(qaTokens*config.inputPrice+2000*config.outputPrice)/1e6;if(!config.textModel||!config.inputPrice||!config.outputPrice||config.imageMax+qaBound>maxUsd)throw new AIError('operation_budget_exceeded',null,0);
-  const dims=new DataView(reference.buffer,reference.byteOffset,reference.byteLength);if(dims.getUint32(16)>1024||dims.getUint32(20)>1024)throw new AIError('invalid_reference',null,0);
-  await moderate(body.prompt,body.referenceImage,config,fetcher);
-  const form=new FormData();form.set('model',config.imageModel);form.set('prompt',prompt);form.set('n','1');form.set('size','1024x1024');form.set('quality','medium');form.set('output_format','png');form.append('image[]',new Blob([reference],{type:'image/png'}),'composition.png');
-  let payload;try{payload=await responseJson(await fetcher('https://api.openai.com/v1/images/edits',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey},body:form,signal:AbortSignal.timeout(75000)}));}catch(e){throw e instanceof AIError?e:new AIError('provider_interrupted');}
+  if(reference){const dims=new DataView(reference.buffer,reference.byteOffset,reference.byteLength);if(dims.getUint32(16)>1024||dims.getUint32(20)>1024)throw new AIError('invalid_reference',null,0);}
+  const endpoint=direct?'/v1/images/generations':'/v1/images/edits';
+  const digest=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join('');
+  const requestAudit={endpoint,route:direct?'generation':'edit',model:config.imageModel,size:'1024x1024',quality:'medium',outputFormat:'png',n:1,moderation:'auto',promptCharacters:prompt.length,promptSha256:await digest(new TextEncoder().encode(prompt)),referenceSent:!direct,referenceBytes:!direct?reference.length:0,referenceSha256:!direct?await digest(reference):null,masterRevision:body.composition.master?.revision||null,nailCount:body.composition.nails.length};
+  try{await moderate(prompt,direct?null:body.referenceImage,config,fetcher,'image_input_moderation');}catch(e){throw new AIError(e.message,{...e.usage,requestAudit},e.cost);}
+  let requestBody,headers={Authorization:'Bearer '+config.apiKey};
+  if(direct){headers['Content-Type']='application/json';requestBody=JSON.stringify({model:config.imageModel,prompt,n:1,size:'1024x1024',quality:'medium',output_format:'png',moderation:'auto'});}
+  else{const form=new FormData();for(const [k,v] of Object.entries({model:config.imageModel,prompt,n:'1',size:'1024x1024',quality:'medium',output_format:'png',moderation:'auto'}))form.set(k,v);form.append('image[]',new Blob([reference],{type:'image/png'}),'composition.png');requestBody=form;}
+  let payload;try{payload=await responseJson(await fetcher('https://api.openai.com'+endpoint,{method:'POST',headers,body:requestBody,signal:AbortSignal.timeout(75000)}),'image_generation',endpoint);}catch(e){throw e instanceof AIError?new AIError(e.message,{...e.usage,requestAudit},e.cost):new AIError('provider_interrupted',{stage:'image_generation',endpoint,requestAudit});}
   const u=payload.usage,d=u?.input_tokens_details;
   let cost=d&&[d.text_tokens,d.image_tokens,u.output_tokens].every(v=>Number.isSafeInteger(v)&&v>=0)?(d.text_tokens*config.imageTextPrice+d.image_tokens*config.imageInputPrice+u.output_tokens*config.imageOutputPrice)/1e6:null;
-  try{await moderate('Nail art generated preview','data:image/png;base64,'+payload.data?.[0]?.b64_json,config,fetcher);}catch(e){throw new AIError(e.message,u,cost);}
-  let image;try{image=pngBytes('data:image/png;base64,'+payload.data?.[0]?.b64_json,10000000);}catch{throw new AIError('invalid_image',u,cost);}
+  try{await moderate('Nail art generated preview','data:image/png;base64,'+payload.data?.[0]?.b64_json,config,fetcher,'image_output_moderation');}catch(e){throw new AIError(e.message,{...u,...e.usage,requestAudit},cost);}
+  let image;try{image=pngBytes('data:image/png;base64,'+payload.data?.[0]?.b64_json,10000000);}catch{throw new AIError('invalid_image',{...u,stage:'image_decode',requestAudit},cost);}
   let quality={status:'unverified',accepted:true,humanValidated:false,summary:'Diagnostic automatique indisponible. Tu peux consulter et modifier cette création.'},qualityUsage=null;
   try{const q=qualityRequest({...body.composition,operation:body.operation},body.referenceImage,'data:image/png;base64,'+payload.data[0].b64_json,config.textModel);const checked=await responseJson(await fetcher('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+config.apiKey,'Content-Type':'application/json'},body:JSON.stringify(q),signal:AbortSignal.timeout(30000)}));qualityUsage=checked.usage;const qc=textCost(qualityUsage,config);cost=cost===null||qc===null?null:cost+qc;quality=qualityDecision(JSON.parse(outputText(checked)),body.composition.nails.length);}catch{if(!qualityUsage)cost=null;}
-  if(quality.status==='unusable')throw new AIError('unusable_image',{...u,qualityModel:config.textModel,qualityUsage,validationFailure:quality.criticalFailures?.filter(c=>['anatomy','wrong_count'].includes(c))},cost);
-  return {image,result:{kind:body.operation,synthetic:true,qualityValidated:false,quality,masterId:body.composition.master?.id||null,masterRevision:body.composition.master?.revision||null,message:quality.status==='warning'?'Création disponible. Des imperfections sont signalées ; tu peux la personnaliser.':'Création disponible dans ton espace privé.'},usage:{model:config.imageModel,...u,qualityModel:config.textModel,qualityUsage},cost};
+  if(quality.status==='unusable')throw new AIError('unusable_image',{...u,stage:'nailmoods_quality',requestAudit,qualityModel:config.textModel,qualityUsage,validationFailure:quality.criticalFailures?.filter(c=>['anatomy','wrong_count'].includes(c))},cost);
+  return {image,result:{kind:body.operation,synthetic:true,qualityValidated:false,quality,masterId:body.composition.master?.id||null,masterRevision:body.composition.master?.revision||null,message:quality.status==='warning'?'Création disponible. Des imperfections sont signalées ; tu peux la personnaliser.':'Création disponible dans ton espace privé.'},usage:{model:config.imageModel,...u,stage:'image_delivered',providerRequestId:payload._requestMeta?.providerRequestId,requestAudit,qualityModel:config.textModel,qualityUsage},cost};
  }
  if(!config.textModel||!config.inputPrice||!config.outputPrice)throw new AIError('budget_configuration_required',null,0);
  if(!pool.length)throw new AIError('color_confirmation_required',null,0);
