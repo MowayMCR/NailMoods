@@ -54,3 +54,9 @@ export function withResultMedia(idea,result){
  if(!idea||!['illustration','realistic'].includes(result.kind)||!result.imagePath)return idea;
  return {...idea,ai:{...idea.ai,media:{...idea.ai?.media,[result.kind]:{jobId:result.jobId||result.imagePath.split('/').at(-1).replace(/\.png$/,''),path:result.imagePath,quality:result.quality||null,masterRevision:result.masterRevision||idea.ai?.master?.revision||null}},validation:{...idea.ai?.validation,artistic:result.quality?.status||'unverified'}}};
 }
+
+// Existing poses own their settings during image rendering and targeted edits.
+export function poseRequestSettings(idea,options,operation,targetFinger=null){
+ if(idea&&(['illustration','realistic'].includes(operation)||targetFinger!==null))return {shape:idea.shape,length:idea.length,level:idea.rank,designCount:idea.secondHand?10:5,collectionOnly:idea.ai?.master?.collectionOnly??options.collectionOnly};
+ return options;
+}
