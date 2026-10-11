@@ -15,6 +15,7 @@ test('saving realism reads only an owned completed job, archives privately, and 
  await saveRealisticCopy(client,{...saved,ai:{media:{realistic:{jobId:'job-newer'}}}});assert.equal(calls.length,2);assert.equal(calls[1].jobId,'job-newer');
  assert.deepEqual(await publicationMedia(null,saved,'drawing'),{publicationVisual:'drawing',publicMediaPath:null});
  const chosen=await publicationMedia(null,saved,'realistic');assert.equal(chosen.photo,saved.photo);assert.equal(chosen.publicMediaPath,null);assert.equal(chosen.isPublic,undefined);assert.equal(calls.length,2);
+ const changed=await publicationMedia(client,{...saved,publicationVisual:'realistic',publicMediaPath:'previous-public',ai:{media:{realistic:{jobId:'another-job'}}}},'realistic');assert.equal(changed.publicMediaPath,null);assert.equal(changed.savedRenderingJobId,'another-job');
  await assert.rejects(publicationMedia(null,saved,'unsupported'),/render_unavailable/);
 });
 test('wrong image kind or inaccessible job cannot become a public photo',async()=>{

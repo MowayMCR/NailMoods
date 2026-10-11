@@ -18,5 +18,5 @@ export async function publicationMedia(client,idea,choice){
  if(choice==='drawing')return {publicationVisual:'drawing',publicMediaPath:null};
  if(choice!=='realistic'||!hasRealistic(idea))throw Error('render_unavailable');
  const photo=hasCurrentCopy(idea)?idea.photo||idea.mediaPath:await readRealistic(client,idea);
- return {publicationVisual:'realistic',savedVisual:'realistic',savedRenderingJobId:idea.ai?.media?.realistic?.jobId||idea.savedRenderingJobId,photo,mediaPath:photo.startsWith('data:image/')?null:idea.mediaPath,publicMediaPath:idea.publicationVisual==='realistic'?idea.publicMediaPath||null:null};
+ return {publicationVisual:'realistic',savedVisual:'realistic',savedRenderingJobId:idea.ai?.media?.realistic?.jobId||idea.savedRenderingJobId,photo,mediaPath:photo.startsWith('data:image/')?null:idea.mediaPath,publicMediaPath:hasCurrentCopy(idea)&&idea.publicationVisual==='realistic'?idea.publicMediaPath||null:null};
 }
