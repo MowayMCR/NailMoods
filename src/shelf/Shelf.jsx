@@ -37,6 +37,9 @@ export function ShelfDecor() {
       <ellipse key={i} cx={x} cy={y} rx="5.2" ry="12" transform={`rotate(${r} ${x} ${y})`} fill="var(--shelf-leaf)" opacity={.4+(i%4)*.12}/>)}
   </svg>;
 }
+function FloralCorner({opposite=false}){
+ return <svg className={'nmShelfFloralCorner'+(opposite?' nmShelfFloralCorner--opposite':'')} viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M12 86Q18 20 86 12" fill="none" stroke="var(--shelf-leaf)" strokeWidth="1.5"/>{[[20,59,-30],[36,31,35],[65,19,60]].map(([x,y,r],i)=><ellipse key={i} cx={x} cy={y} rx="5" ry="11" transform={`rotate(${r} ${x} ${y})`} fill="var(--shelf-leaf)" opacity=".55"/>)}<g transform="translate(21 21)">{[0,60,120,180,240,300].map(a=><ellipse key={a} cx="0" cy="-10" rx="5" ry="9" transform={`rotate(${a})`} fill="var(--surfacePrimary)" stroke="var(--shelf-line)" strokeWidth=".7"/>)}<circle r="4" fill="var(--shelf-plank)"/></g></svg>;
+}
 const shortLabel = p => p.reference && String(p.reference).length<=10 ? p.reference :
   String(p.name||'Mon produit').replace(/\s*[-–·]\s*(gel|led|nail|vernis|polish).*$/i,'');
 
@@ -44,8 +47,8 @@ export default function Shelf({items=[], onSelect, selectedId, mini=false, varia
   const rows=Array.from({length:Math.ceil(items.length/5)},(_,i)=>items.slice(i*5,i*5+5));
   if(!rows.length)return null;
   return <div className={'nmShelf '+(mini?'nmShelfMini':'')} data-testid="illustrated-shelf">
-    <div className="nmShelfNiche" data-variant={mini?'open':variant} style={{'--shelf-frame':`url(${import.meta.env.BASE_URL}atelier/collection-v2/frame.webp)`}}>
-      {!mini&&variant==='botanical'&&<img className="nmDrawnFrame" src={import.meta.env.BASE_URL+'atelier/collection-v2/frame.webp'} alt=""/>}
+    <div className="nmShelfNiche" data-variant={mini?'open':variant}>
+      {!mini&&variant==='botanical'&&<><FloralCorner/><FloralCorner opposite/></>}
       
       {rows.map((row,index)=><div className="nmShelfRow" key={index} role="group" aria-label={'Étagère '+(index+1)}>
         <img className="nmDrawnPlank" src={import.meta.env.BASE_URL+'atelier/collection-v2/plank.webp'} alt=""/><div className="nmShelfBottles">{row.map(p=>{

@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {isOwnHandle} from '../src/social/compactActions.js';
+test('own public ID is recognized despite display formatting, without hiding another member',()=>{assert.equal(isOwnHandle('@MarieNailMoods','marienailmoods'),true);assert.equal(isOwnHandle(' marienailmoods ','@MarieNailMoods'),true);assert.equal(isOwnHandle('marienailmoods2','marienailmoods'),false);assert.equal(isOwnHandle('other.member','marienailmoods'),false);});
+test('unknown identity never labels an unrelated member as the current user',()=>{assert.equal(isOwnHandle('other.member',undefined),false);assert.equal(isOwnHandle('',null),false);});

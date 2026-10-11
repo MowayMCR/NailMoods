@@ -1,4 +1,5 @@
 import React from 'react';
+import {outfitEnabled} from '../poseCycle/OutfitFlow';
 import MoodGlyph from '../MoodGlyph';
 import AtelierArt from './AtelierArt';
 import {productColor} from '../colorAnalysis';
@@ -14,6 +15,7 @@ export default function HomeBento({profile, items, onCreate, onNavigate, onScan}
       <button className="nmIllustratedTile" data-home="collection" onClick={()=>onNavigate('collection')}><AtelierArt source="collection"/><b>Ma collection</b><small>Mes produits, mes couleurs</small>{colors.length>0&&<span className="nmHomeProductColors" aria-label="Quelques couleurs de ma collection">{colors.map(p=><i key={p.id} style={{background:productColor(p)}} data-product-hex={productColor(p)}/>)}</span>}</button>
       <button className="nmIllustratedTile" data-home="guides" onClick={()=>onNavigate('tutorials')}><AtelierArt source="guides"/><b>Mes guides</b><small>Un geste après l’autre</small></button>
       <button className="nmIllustratedTile" data-home="scan" onClick={onScan}><AtelierArt source="scan"/><b>Scan &amp; Génère</b><small>Une idée avec mes vernis</small></button>
+      {outfitEnabled()&&<button className="nmIllustratedTile" data-home="planning" onClick={()=>{window.location.hash='creer/planning?from=accueil';}}><AtelierArt source="planning"/><b>Mon calendrier</b><small>Mes prochaines poses</small></button>}
     </div>
   </div>;
 }
