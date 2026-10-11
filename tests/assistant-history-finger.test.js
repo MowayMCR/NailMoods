@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {requestBody} from '../supabase/functions/nailmoods-ai/provider.mjs';
 import {validateRequest,CONCEPT_COLORS} from '../supabase/functions/nailmoods-ai/contract.mjs';
 import {createMaster} from '../supabase/functions/nailmoods-ai/master.mjs';
-import {ideaFromPlan} from '../src/assistant/model.js';
+import {ideaFromPlan,poseRequestSettings} from '../src/assistant/model.js';
 import {preferredVisual,saveVisualCopy} from '../src/assistant/publicationMedia.js';
 const body={requestId:'11111111-1111-4111-8111-111111111111',threadId:'22222222-2222-4222-8222-222222222222',workspaceId:'33333333-3333-4333-8333-333333333333',operation:'conversation',consent:true,prompt:'Garde cette pose de fleurs, change index droit',shape:'Ronde',length:'Moyenne',level:1,collectionOnly:false,designCount:10};
 const plan=()=>({action:'compose',message:'Fleurs',title:'Fleurs',shape:'Ronde',length:'Moyenne',level:1,collectionOnly:false,editFinger:null,nails:Array.from({length:10},(_,finger)=>({finger,productId:'concept-rose',accentProductId:null,technique:'line',drawingTechnique:'line',motif:'',designBrief:'Fleur '+finger}))});
@@ -26,4 +26,10 @@ test('save prefers available AI output and honors selected drawing over realism'
  const client={functions:{invoke:async(_,{body})=>{calls.push(body);return{data:{status:'succeeded',result:{kind:body.jobId==='drawing'?'illustration':'realistic',imageUrl:'https://owned.test/image'}}};}}};
  const saved=await saveVisualCopy(client,idea,'illustration');assert.equal(saved.savedVisual,'illustration');assert.equal(saved.savedRenderingJobId,'drawing');assert.equal(saved.isPublic,false);assert.ok(saved.photo.startsWith('data:image/'));await saveVisualCopy(client,saved,'illustration');assert.equal(calls.length,1);
  const wrong={functions:{invoke:async()=>({data:{status:'succeeded',result:{kind:'realistic',imageUrl:'https://wrong'}}})}};await assert.rejects(saveVisualCopy(wrong,idea,'illustration'),/render_unavailable/);
+});
+
+test('history pose settings override stale five-finger form for right-hand edits and rendering',()=>{
+ const master=createMaster(plan(),CONCEPT_COLORS,body),idea=ideaFromPlan(plan(),{products:CONCEPT_COLORS,master}),stale={shape:'Amande',length:'Courte',level:0,designCount:5,collectionOnly:true};
+ for(const operation of ['conversation','illustration']){const settings=poseRequestSettings(idea,stale,operation,6);assert.deepEqual(settings,{shape:'Ronde',length:'Moyenne',level:1,designCount:10,collectionOnly:false});validateRequest({...body,...settings,operation,targetFinger:6,composition:{master}});}
+ assert.equal(poseRequestSettings(idea,stale,'realistic').designCount,10);assert.deepEqual(poseRequestSettings(idea,stale,'conversation'),stale);
 });
