@@ -4,6 +4,7 @@ out=pathlib.Path('artifacts/store-captures');out.mkdir(parents=True,exist_ok=Tru
 def sim(*args):return subprocess.check_output(['xcrun','simctl',*args],timeout=300)
 inventory=json.loads(sim('list','devices','available','-j'))['devices']
 runtime,devices=sorted([(r,d) for r,d in inventory.items() if 'iOS-26' in r])[-1]
+retake=os.environ.get("NM_STORE_RETAKE")=="true"
 results=[]
 for label,needles,dimensions in [('iPhone_1206x2622',['iPhone 16 Pro','iPhone 17 Pro'],(1206,2622)),('iPad_2048x2732',['iPad Air 13','iPad Pro (12.9-inch)'],(2048,2732))]:
     device=next((d for needle in needles for d in devices if needle in d['name'] and 'Max' not in d['name']),None)
@@ -14,13 +15,13 @@ for label,needles,dimensions in [('iPhone_1206x2622',['iPhone 16 Pro','iPhone 17
         if device['state']!='Booted':sim('boot',udid)
         sim('bootstatus',udid,'-b');sim('status_bar',udid,'override','--time','9:41','--batteryState','charged','--batteryLevel','100')
         result=out/(label+'.xcresult');log=out/(label+'.log')
-        command=['xcodebuild','test','-project','ios/App/App.xcodeproj','-scheme','App','-configuration','Release','-destination','id='+udid,'-derivedDataPath',os.environ['RUNNER_TEMP']+'/nm-store','-clonedSourcePackagesDirPath',os.environ['RUNNER_TEMP']+'/nm-spm','-resultBundlePath',str(result),'-parallel-testing-enabled','NO','-only-testing:NailMoodsUITests/StoreCaptureTests','CODE_SIGNING_ALLOWED=NO']
+        command=['xcodebuild','test','-project','ios/App/App.xcodeproj','-scheme','App','-configuration','Release','-destination','id='+udid,'-derivedDataPath',os.environ['RUNNER_TEMP']+'/nm-store','-clonedSourcePackagesDirPath',os.environ['RUNNER_TEMP']+'/nm-spm','-resultBundlePath',str(result),'-parallel-testing-enabled','NO','-only-testing:NailMoodsUITests/StoreCaptureTests/'+('testRetakeScreens' if retake else 'testOfficialScreens'),'CODE_SIGNING_ALLOWED=NO']
         with log.open('w') as f:r=subprocess.run(command,stdout=f,stderr=subprocess.STDOUT,timeout=1200)
         if r.returncode:print('\n'.join(log.read_text(errors='replace').splitlines()[-100:]),flush=True)
         attachments=out/(label+'-attachments');subprocess.check_call(['xcrun','xcresulttool','export','attachments','--path',str(result),'--output-path',str(attachments)])
         assert r.returncode==0,'Native UI test failed; evidence retained'
         # Export manifest records preserve XCTest attachment display names.
         print((attachments/'manifest.json').read_text(),flush=True)
-        results.append({'folder':label,'device':device['name'],'runtime':runtime,'expectedPixels':dimensions,'sourceCommit':os.environ.get('GITHUB_SHA'),'baseCommit':'fdf9851da0548f61b0939ff8daea69c0a9036956','appVersion':'0.8.1','fixtures':'Synthetic only, remote fetch mocked, actual UI and inspiration engine'})
+        results.append({'folder':label,'device':device['name'],'runtime':runtime,'expectedPixels':dimensions,'sourceCommit':os.environ.get('GITHUB_SHA'),'baseCommit':'fdf9851da0548f61b0939ff8daea69c0a9036956','appVersion':'0.8.1','captureMode':'targeted retake' if retake else 'full set','fixtures':'Synthetic only, remote fetch mocked, actual UI and inspiration engine'})
     finally:sim('shutdown',udid)
 (out/'capture-source.json').write_text(json.dumps(results,indent=2))

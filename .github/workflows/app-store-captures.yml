@@ -32,6 +32,8 @@ jobs:
           cp scripts/store-captures/generated/fixture.js ios/App/App/public/fixture.js
           cp scripts/store-captures/generated/session.json ios/App/App/public/session.json
       - name: Capture native iPhone and iPad
+        env:
+          NM_STORE_RETAKE: ${{ contains(github.event.head_commit.message, '[retake-store-shots]') }}
         run: python3 scripts/store-captures/native.py
       - uses: actions/upload-artifact@v4
         if: always()
