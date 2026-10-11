@@ -26,10 +26,11 @@
 | Messagerie / connexions | Les états envoyé, reçu et accepté ne doivent pas se confondre. | Pictogramme évolutif invitation / attente / message, infobulle correspondante. |
 | Salon / modération | Validation, attribution et droits d’équipe doivent rester visibles. | Pas de masquage des informations qui déterminent les droits ou la publication. |
 
-## Vérification prévue
+## Vérification réalisée
 
-- Build Web et tests existants, sans requête OpenAI.
+- Build Web réussi ; 629 tests existants réussis, 2 ignorés ; 2 tests supplémentaires pour la reconnaissance de son propre ID réussis. Aucun appel OpenAI.
 - Recette navigateur des quatre DA : nouvelle grille, retour du calendrier, coins floraux, actions compactes, ID propre sans invitation, détails repliables, noms accessibles et cibles tactiles.
+- Recette navigateur réussie : https://github.com/MowayMCR/NailMoods/actions/runs/38120248727 ; captures Créer, publication et cadre dans les quatre DA contrôlées visuellement. Les contrôles existants des fenêtres IA sur petits écrans et tablette restent réussis.
 - Captures de préparation dans les artefacts CI de la PR ; aucune publication en Production.
 
 ## À valider avec Marie
