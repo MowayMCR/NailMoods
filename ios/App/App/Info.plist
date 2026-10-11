@@ -4,6 +4,8 @@
 <dict>
 	<key>GADApplicationIdentifier</key><string>ca-app-pub-3166441503282113~5431040554</string>
 	<key>GADDelayAppMeasurementInit</key><true/>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Avec ton accord, Google peut utiliser l’identifiant publicitaire de cet appareil pour relier l’activité publicitaire à celle d’autres apps et sites et mesurer l’efficacité des annonces. Le refus ne change pas ton accès à NailMoods.</string>
 	<key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>

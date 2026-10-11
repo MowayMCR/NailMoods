@@ -1,0 +1,10 @@
+{
+  "run": 38141444914,
+  "artifact": 11703986966,
+  "zipSha256": "d7477e14f48fd3bd9f62d9efde89ec07bd174651a105eee2a2ab724e4c57284a",
+  "ipaSha256": "1bb9f7d408f933da15172f7472d51b0383075aaaa44a872207b9addb3b899fed",
+  "source": "GitHub Actions signed build 30004",
+  "publicPolicyChecked": "https://nailmoods.com/legal/confidentialite.html",
+  "publicPolicySha256": "59046a2334eb430dee497e6d5a1cd66851fc75e10344b56b6b0e8945d71da3ca",
+  "checkedAt": "2026-10-11"
+}

@@ -9,6 +9,7 @@ if(!/^ca-app-pub-\d{16}~\d{10}$/.test(admobConfig.applicationId))throw Error('In
 const admobAppId=environment==='production'?admobConfig.applicationId:'ca-app-pub-3940256099942544~1458002511';
 const env={...process.env,NAILMOODS_MOBILE_ENV:environment,NAILMOODS_PLATFORM:'ios'};
 const run=(cmd,args)=>{const r=spawnSync(cmd,args,{env,stdio:'inherit'});if(r.status!==0)process.exit(r.status||1);};
+run(process.execPath,['scripts/patch-admob-ios-privacy.mjs']);
 run(process.execPath,['scripts/build-mobile.mjs',environment]);
 run(process.execPath,['scripts/ios-assets.mjs']);
 run('npx',['--no-install','cap','sync','ios']);
