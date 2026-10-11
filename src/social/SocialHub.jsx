@@ -3,18 +3,22 @@ import {BlockedAccounts,SafetyActions} from '../support/SafetyActions';
 import ShareCard,{ShareDetails} from './ShareCard';
 import {poShareService} from './poShareService';
 import React,{useEffect,useState,useRef} from 'react';
-import {MessageCircle,Users,ChevronRight,RefreshCw,Send,CheckCheck,Search,ShieldBan} from 'lucide-react';
+import {MessageCircle,Users,ChevronRight,RefreshCw,Send,CheckCheck,Search,ShieldBan,UserPlus,Clock3} from 'lucide-react';
 import Sheet from '../Sheet';
+import IconAction from '../design/IconAction';
+import {isOwnHandle} from './compactActions.js';
 import PublicProfile from '../identity/PublicProfile.jsx';
 import {useSocial,socialCall} from './SocialContext';
 import {mergeMessages,notificationLabel,messageId} from './messageState';
 import './social-beta.css';
 export {socialCall} from './SocialContext';
-export function ConnectionAction({client,handle}) {
+export function ConnectionAction({client,handle,compact=false}) {
  const s=useSocial(),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false);
  const relation=s?.rows.find(r=>r.handle===handle||r.pro_handle===handle);
  const label=relation?.status==='accepted'?'Écrire un message':relation?relation.outgoing?'Demande envoyée':'Répondre à l’invitation':'Inviter à se connecter';
- return <div><button className="detailSecondary" disabled={busy||relation?.outgoing&&relation.status==='pending'} onClick={async()=>{if(relation){if(relation.status==='accepted'){s.setView(null);s.setActivePeer(relation);}else s.setView('received');return;}setBusy(true);try{const r=await socialCall(client,'request',{handle});setNotice(r.status==='accepted'?'Vous êtes déjà connecté·es.':r.outgoing?'Demande envoyée.':'Une invitation t’attend dans Mes connexions.');await s?.refresh();}catch{setNotice('Invitation impossible. Vérifie que ce profil est visible et différent du tien.');}finally{setBusy(false);}}}>{busy?'Envoi…':label}</button>{notice&&<p role="status">{notice}</p>}</div>;
+ if(isOwnHandle(handle,s?.identity?.username))return null;
+ const Action=compact?IconAction:'button',Icon=relation?.status==='accepted'?MessageCircle:relation?Clock3:UserPlus;
+ return <div className={compact?'nmConnectionCompact':''}><Action {...(compact?{icon:Icon,label:busy?'Envoi…':label}: {className:'detailSecondary'})} disabled={busy||relation?.outgoing&&relation.status==='pending'} onClick={async()=>{if(relation){if(relation.status==='accepted'){s.setView(null);s.setActivePeer(relation);}else s.setView('received');return;}setBusy(true);try{const r=await socialCall(client,'request',{handle});setNotice(r.status==='accepted'?'Vous êtes déjà connecté·es.':r.outgoing?'Demande envoyée.':'Une invitation t’attend dans Mes connexions.');await s?.refresh();}catch{setNotice('Invitation impossible. Vérifie que ce profil est visible et différent du tien.');}finally{setBusy(false);}}}>{!compact&&(busy?'Envoi…':label)}</Action>{notice&&<p role="status">{notice}</p>}</div>;
 }
 export function Conversation({client,peer,onClose}) {
  const s=useSocial(),alive=useRef(true),loading=useRef(false),initial=useRef(true),scroller=useRef(null),draft=useRef(null);
