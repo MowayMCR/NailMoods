@@ -204,6 +204,7 @@ jobs:
         run: |
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/NailMoods-unsigned.xcarchive" -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" CODE_SIGNING_ALLOWED=NO archive > artifacts/ios/unsigned-archive.log 2>&1 || { tail -80 artifacts/ios/unsigned-archive.log; exit 1; }
           python3 scripts/ci/inspect-ios.py "$RUNNER_TEMP/NailMoods-unsigned.xcarchive/Products/Applications/App.app" > artifacts/ios/unsigned-inspection.json
+          python3 scripts/ci/privacy-report.py "$RUNNER_TEMP/NailMoods-unsigned.xcarchive/Products/Applications/App.app" artifacts/ios/unsigned-privacy-report.json
       - name: Check Apple identity has been confirmed
         if: inputs.mode == 'testflight' && github.event_name != 'pull_request'
         env:
@@ -227,6 +228,7 @@ jobs:
         run: |
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/NailMoods.xcarchive" -clonedSourcePackagesDirPath "$RUNNER_TEMP/nm-spm" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' archive > artifacts/ios/archive.log 2>&1 || { tail -80 artifacts/ios/archive.log; exit 1; }
           python3 scripts/ci/inspect-ios.py "$RUNNER_TEMP/NailMoods.xcarchive/Products/Applications/App.app" --signed > artifacts/ios/archive-inspection.json
+          python3 scripts/ci/privacy-report.py "$RUNNER_TEMP/NailMoods.xcarchive/Products/Applications/App.app" artifacts/ios/archive-privacy-report.json
           xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/NailMoods.xcarchive" -exportOptionsPlist "$NM_SIGNING_DIR/ExportOptions.plist" -exportPath artifacts/ios/export > artifacts/ios/export.log 2>&1 || { tail -80 artifacts/ios/export.log; exit 1; }
           ipa=(artifacts/ios/export/*.ipa)
           [[ ${#ipa[@]} -eq 1 && -f "${ipa[0]}" ]] || { echo 'Exactly one IPA required'; exit 1; }
