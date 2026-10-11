@@ -1,6 +1,6 @@
 # Confidentialité Apple — audit du 11 octobre 2026
 
-**Mise à jour ATT du 11 octobre : candidat 30005 avec suivi publicitaire autorisé uniquement après UMP + ATT ; validation physique et rapport Organizer encore requis. Ne pas publier automatiquement.**
+**Mise à jour ATT du 11 octobre : candidat 30006 avec suivi publicitaire autorisé uniquement après UMP + ATT ; validation physique et rapport Organizer encore requis. Ne pas publier automatiquement.**
 Remplace le tableau du 2 octobre. Source : IPA signé 0.8.1 build 30004, commit 8ab902924684d6ca26f33b684c32955cba26ca34, Actions 38141444914. Code commun main fdf9851. Les corrections ci-dessous ne sont pas dans l'IPA signé 30004.
 
 L'ancien tableau avait 12 catégories. Ajouter les 7 catégories suivantes si elles ne sont pas déjà saisies : Santé, Contacts, Identifiant d'appareil, Données publicitaires, Données de crash, Données de performances et Historique de recherche. Cible : 19 catégories pour ce périmètre. Ce document n'est pas une lecture des réponses enregistrées dans la console Apple.
