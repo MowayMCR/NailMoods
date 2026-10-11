@@ -291,3 +291,12 @@ test('Salon references only a synchronized existing creation and refuses offline
  assert.equal(JSON.parse(store.storage.getItem(JOURNAL)).entries[0].title,'Correction en attente');
  await assert.rejects(store.storage.remoteContentId('profiles','salon-pose'),/invalid_content_kind/);store.close();
 });
+test('publishing drawing preserves the private realism without sharing it; explicitly choosing realism creates its public copy',async()=>{
+ const repo=backend(),calls=[];const media={download:async p=>{calls.push(p);return new Blob(['test'],{type:'image/png'});},uploadPublic:async()=>({path:'A/WA/inspirations/public-realism.png'})};
+ const store=make(memory(),repo,'A','WA',{media});await store.load();
+ const idea={key:'saved-pose',title:'Pose test',nails:[{color:'#123456'}],photo:'A/WA/inspirations/private.png',mediaPath:'A/WA/inspirations/private.png',savedVisual:'realistic',publicationVisual:'drawing',isPublic:true};
+ const put=value=>store.storage.setItem(LIBRARY,JSON.stringify({favorites:[],projects:[],recent:[value],selected:null}));
+ put(idea);assert.equal(await store.flush(),true);assert.equal(calls.length,0);assert.equal(repo.rows.inspirations[0].media_path,idea.mediaPath);assert.equal(repo.rows.inspirations[0].public_media_path,null);
+ put({...idea,publicationVisual:'realistic'});assert.equal(await store.flush(),true);assert.deepEqual(calls,[idea.mediaPath]);assert.equal(repo.rows.inspirations[0].public_media_path,'A/WA/inspirations/public-realism.png');
+ put({...idea,isPublic:false});assert.equal(await store.flush(),true);assert.equal(repo.rows.inspirations[0].is_public,false);assert.equal(repo.rows.inspirations[0].public_media_path,null);store.close();
+});

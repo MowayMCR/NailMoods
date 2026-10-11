@@ -120,7 +120,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
               const file = dataUrlToBlob(photo);
               const kind = op.table === 'journal_entries' ? 'journal' : op.table === 'profiles' ? 'avatar' : 'inspiration';
               const privateCopy = await media.upload({userId,workspaceId,kind,objectId:op.rowId,file});
-              const publicCopy = op.values.visibility === 'public' || op.values.is_public === true
+              const publicCopy = op.values.visibility === 'public' || op.values.is_public === true && snapshot?.publicationVisual !== 'drawing'
                 ? await media.uploadPublic({userId,workspaceId,kind,objectId:op.rowId,file}) : null;
               const next = fork(state), values = {...op.values};
               if(op.table==='journal_entries')values.photo_url = privateCopy.path;
@@ -133,7 +133,7 @@ export function createAccountStore({storage,repo,userId,workspaceId,onStatus=()=
               save(next);
             }
             const current=state.queue[0];
-            if(current?.values?.media_path && !current.values.public_media_path && (current.values.visibility==='public'||current.values.is_public===true)){
+            if(current?.values?.media_path && !current.values.public_media_path && current.values.snapshot?.publicationVisual !== 'drawing' && (current.values.visibility==='public'||current.values.is_public===true)){
               const file=await media.download(current.values.media_path);
               const published=await media.uploadPublic({userId,workspaceId,kind:current.table==='journal_entries'?'journal':'inspiration',objectId:current.rowId,file});
               const next=fork(state),values={...current.values,public_media_path:published.path,snapshot:{...current.values.snapshot,publicMediaPath:published.path}};

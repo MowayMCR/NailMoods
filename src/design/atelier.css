@@ -264,3 +264,5 @@
 
 
 .app .nmFilArtHeading{justify-content:flex-start}.app .nmFilArtHeading>div{min-width:0}
+
+.app .nmFilArtHeading{height:auto;min-height:0;position:static;z-index:auto;padding:0;border:0;background:transparent;box-shadow:none}.app .nmFilArtHeading::before,.app .nmFilArtHeading::after{display:none}.nmPublicationVisual{border:0;padding:12px 0;display:flex;gap:8px;flex-wrap:wrap}.nmPublicationVisual legend{font-weight:700}.nmPublicationVisual button{border:1px solid var(--borderDefault);border-radius:14px;padding:10px 16px;background:var(--surfacePrimary);color:var(--textPrimary)}.nmPublicationVisual button[aria-pressed=true]{background:var(--cardHighlight);border-color:var(--a)}.nmPublicationVisual p{flex-basis:100%;font-size:13px}.nmPublicationVisual img{width:100%;max-width:360px;border-radius:18px}
