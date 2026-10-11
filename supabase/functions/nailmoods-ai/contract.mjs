@@ -28,9 +28,10 @@ export function validatePlan(value,products,{collectionOnly=false,designCount=5,
 export const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value);
 export function validateRequest(b){
  if(!b||typeof b!=='object'||Array.isArray(b))throw Error('invalid_request');
- const keys=['requestId','threadId','workspaceId','operation','prompt','collectionOnly','shape','length','mood','referenceImage','referenceJobId','composition','consent','designCount','level'];
+ const keys=['requestId','threadId','workspaceId','operation','prompt','collectionOnly','shape','length','mood','referenceImage','referenceJobId','composition','consent','designCount','level','targetFinger'];
  if(Object.keys(b).some(k=>!keys.includes(k))||![b.requestId,b.threadId,b.workspaceId].every(uuid)||!['conversation','trends','realistic','illustration','vision'].includes(b.operation)||typeof b.prompt!=='string'||!b.prompt.trim()||b.prompt.length>3000||b.consent!==true||typeof b.collectionOnly!=='boolean'||!SHAPES.includes(b.shape)||!LENGTHS.includes(b.length)||(b.mood!==undefined&&!MOODS.includes(b.mood)))throw Error('invalid_request');
  if(b.designCount!==undefined&&![5,10].includes(b.designCount)||b.level!==undefined&&![0,1,2].includes(b.level))throw Error('invalid_request');
+ if(b.targetFinger!==undefined&&(!Number.isInteger(b.targetFinger)||b.targetFinger<0||b.targetFinger>=(b.designCount||5)||!b.composition?.master||!['conversation','illustration'].includes(b.operation)))throw Error('invalid_targeted_edit');
  if(b.referenceJobId!==undefined&&!uuid(b.referenceJobId))throw Error('invalid_reference');
  if(b.referenceImage!==undefined&&(typeof b.referenceImage!=='string'||b.referenceImage.length>1400000))throw Error('invalid_reference');
  if(b.composition!==undefined&&JSON.stringify(b.composition).length>40000)throw Error('invalid_composition');

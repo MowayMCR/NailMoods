@@ -39,3 +39,4 @@
 .app .engagementCreation .drawingIdeaCard .chooseIdea{background:var(--a);color:var(--textOnAccent,#fff)}
 .app .engagementCreation .drawingIdeaCard .chooseIdea:disabled{opacity:.65}
 .app .inspirationPage .drawnNails.interactiveNails button>svg{max-height:150px}
+.nmSavedAIVisual{width:100%;overflow:hidden;border-radius:18px}.nmSavedAIVisual img{display:block;width:100%;max-height:65dvh;object-fit:contain;background:var(--surfaceSecondary)}
