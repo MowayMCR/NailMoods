@@ -32,3 +32,15 @@
 @media(min-width:850px){.nmAIPage .nmAIPageBody{max-width:760px;margin:auto}.nmAIPageHeading{justify-content:center}.nmAIPage .nmAIHeroImage img{max-height:680px}.nmAIPage .nmAIHasVisual>.nmAIPreview{width:100%}}
 @media(max-width:359px){.nmAIPageHeading>.nmAtelierArt{width:58px;height:58px;flex-basis:58px}.nmAIPageHeading{gap:10px}.nmAIPage .nmAIOutputActions svg{width:15px;height:15px}.nmAIPage .nmAIOutputActions{gap:5px}}
 .nmAIPage .nmAIOutputActions{position:static;bottom:auto;background:transparent;z-index:auto}
+/* The direct AI page has its own breathing room; never hugs phone edges. */
+.app .nmAIPage{box-sizing:border-box;padding:12px 16px calc(32px + env(safe-area-inset-bottom));max-width:920px}
+.nmAIPage .detailToolbar{margin:0 0 10px}.nmAIPage .detailToolbar button{min-height:44px}
+.nmAIPageHeading{gap:12px;margin:0 0 10px}.nmAIPageHeading>.nmAtelierArt{width:58px;height:58px;flex:0 0 58px}.nmAIPageHeading>div{min-width:0}.nmAIPageHeading small{font-size:9px;letter-spacing:.1em}.nmAIPageHeading h1{font-size:clamp(26px,5vw,34px);margin:4px 0 0;letter-spacing:-.025em}
+.nmAIPage .nmAIQuickTools{margin:0 0 8px}.nmAIPage .nmAIQuickTools button{min-height:44px;font-size:12px}
+.nmAILead{font-size:13px;line-height:1.5;color:var(--textSecondary);margin:0 0 12px}
+.nmAIPage .nmAIComposer{gap:12px;padding:16px;border:1px solid var(--borderDefault);border-radius:22px;background:var(--surfacePrimary);box-sizing:border-box}
+.nmAIPage .nmAIShapeRow{gap:10px}.nmAIPage .nmAIShapeRow select{min-height:44px;font-size:13px}
+.nmAIPage .nmAIChoices button{min-height:44px;font-size:11px}.nmAIPage .nmAIComposer textarea{min-height:100px;font-size:14px;line-height:1.5;resize:vertical}.nmAIPage .nmAIComposer>.nmAIPrimary{min-height:48px}
+.nmAIPage .nmAIConsent{padding-top:12px;margin:0}.nmAIPage .nmAICheck{gap:10px;font-size:12px;line-height:1.5}.nmAIPage .nmAITrial{margin:0;font-size:11px}
+.nmAIPage .nmAIAlert{font-size:13px;line-height:1.5;border-radius:16px;padding:14px;margin:12px 0}
+@media(min-width:760px){.app .nmAIPage{padding-inline:28px}.nmAIPageHeading{justify-content:flex-start}.nmAIPage .nmAIComposer{padding:22px}.nmAIPage .nmAIPageBody{max-width:760px;margin:auto}}

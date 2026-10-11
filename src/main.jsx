@@ -60,7 +60,7 @@ import PersonalPoseBook from './poseBook/PersonalPoseBook.jsx';
 import { JOURNAL_KEY, putJournalEntry, readJournal, removeJournalEntry } from './journal';
 import TutorialView, { TutorialBanner, TutorialsList } from './TutorialView';
 import { TUTORIAL_KEY, readTutorials, newTutorial, addTutorial, actOnTutorial, markIdeaDone } from './tutorial';
-import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, toggleFavorite, saveInspiration, saveProject as saveIdeaProject, renameInspiration } from './inspirations';
+import { INSPIRATIONS_KEY, readInspirations, rememberIdea, snapshotIdea, validIdea, toggleFavorite, saveInspiration, saveProject as saveIdeaProject, renameInspiration } from './inspirations';
 import PersonalizationPanel from './PersonalizationView';
 import './design-system.css';
 import './finish.css';
@@ -116,7 +116,7 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
   const assistantActive=route==='#creer/nailmoods-ai';
   useEffect(()=>{if(tab==='feed')setFeedMounted(true);},[tab]);
   useEffect(()=>{if(assistantActive)setAssistantOpen(true);},[assistantActive]);
-  function openAssistant(idea){assistantOrigin.current=window.location.hash||'#creer';setAssistantIdea(idea||null);setAssistantOpen(true);window.location.hash='creer/nailmoods-ai';}
+  function openAssistant(idea){assistantOrigin.current=window.location.hash||'#creer';setAssistantIdea(validIdea(idea)?idea:null);setAssistantOpen(true);window.location.hash='creer/nailmoods-ai';}
   function closeAssistant(){window.location.hash=assistantOrigin.current==='#creer/nailmoods-ai'?'creer':assistantOrigin.current;}
   const journalAllowed=!browserStorage.accountScoped||tierCapabilities(browserStorage.accountTier).journal;
   const locked=(!journalAllowed&&tab==='journal')||(limited && (tab==='collection'||['#favoris','#projets'].includes(route)||route.startsWith('#tutoriel')));

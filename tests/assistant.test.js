@@ -94,3 +94,13 @@ test('yellow is explicit, unselected collection stays out of creative prompts an
  await runProvider({body:{...request()},products:[owned],config,maxUsd:1,fetcher:async(url,o)=>{if(url.endsWith('/moderations'))return moderation;sent=JSON.parse(o.body);return mockResponse(plan());}});
  const content=JSON.parse(sent.input[1].content[0].text);assert.ok(content.products.some(p=>p.id==='concept-yellow'));assert.ok(content.products.every(p=>p.conceptual));assert.equal(JSON.stringify(content).includes('Chantilly'),false);
 });
+
+
+test('the creative request schema does not suggest legacy cultural symbols',()=>{
+ for(const prompt of ['Univers de Beetlejuice pour Halloween','Pose vampire gothique','Minions','Harry Potter']){
+ const req=requestBody({...request(),prompt,designCount:10},products,[],config);
+ assert.deepEqual(req.text.format.schema.properties.nails.items.properties.motif.enum,['']);
+ assert.ok(req.text.format.schema.properties.nails.items.properties.art.properties.motifs);
+ assert.equal(JSON.stringify(req.text.format.schema).includes('winged-orb'),false);
+ }
+});
