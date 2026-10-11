@@ -1,4 +1,5 @@
 import React, { useId } from 'react';
+import {ReferenceImage} from './PhotoReferences';
 import { normalize } from './creationEngine';
 import { renderingForIdea } from './techniqueRendering';
 import DrawnNail,{DrawnDecoration} from './renderPrototype/DrawnNail';
@@ -121,6 +122,7 @@ function SingleHandPreview({idea,onSelect,selectedIndex=0,labels=[],highlightedI
 }
 
 export default function NailPreview(props){
+ if(!props.forceSchema&&!props.onSelect&&['illustration','realistic'].includes(props.idea.savedVisual)&&(props.idea.photo||props.idea.mediaPath))return <div className="nmSavedAIVisual"><ReferenceImage src={props.idea.photo||props.idea.mediaPath} alt={(props.idea.savedVisual==='illustration'?'Dessin IA : ':'Rendu réaliste IA : ')+props.idea.title}/></div>;
  if(!props.idea.secondHand)return <SingleHandPreview {...props}/>;
  const {idea,onSelect,selectedIndex=0,labels=[]}=props;
  return <div className="nmTwoHands">{['Main gauche','Main droite'].map((hand,i)=><section className="nmHandPreview" key={hand}><small>{hand}</small><SingleHandPreview {...props} renderAction={i?null:props.renderAction} idea={{...idea,secondHand:undefined,nails:i?idea.secondHand.nails:idea.nails}} onSelect={onSelect?index=>onSelect(index+i*5):undefined} selectedIndex={selectedIndex-i*5} labels={labels}/></section>)}</div>;
