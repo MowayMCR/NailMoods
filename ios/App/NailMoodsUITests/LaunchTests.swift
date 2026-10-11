@@ -86,7 +86,15 @@ final class StoreCaptureTests: XCTestCase {
                 structure.tap()
                 Thread.sleep(forTimeInterval: 2)
                 let solo = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Solo")).firstMatch
-                if solo.exists && !solo.isHittable { app.swipeUp(velocity: .slow) }
+                let heading = app.staticTexts["Mon espace professionnel"].firstMatch
+                let height = app.frame.height
+                let delta = (heading.frame.minY - 175) / height
+                if heading.frame.width > 0 && abs(delta) > 0.035 {
+                    let fromY: CGFloat = delta > 0 ? 0.75 : 0.30
+                    let toY: CGFloat = delta > 0 ? max(0.20, fromY - min(delta, 0.50)) : min(0.80, fromY + min(-delta, 0.50))
+                    app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: fromY)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: toY)))
+                    Thread.sleep(forTimeInterval: 1)
+                }
                 let diagnostic = XCTAttachment(string: app.debugDescription)
                 diagnostic.name = "QA-Pro-hierarchy"
                 diagnostic.lifetime = .keepAlways
@@ -97,6 +105,11 @@ final class StoreCaptureTests: XCTestCase {
                 add(proCheck)
                 XCTAssertTrue(app.staticTexts["Mon espace professionnel"].firstMatch.exists)
                 XCTAssertTrue(solo.exists && solo.isHittable)
+            }
+            if route == "fil" && app.frame.width < 500 {
+                // A natural short scroll keeps the full inspiration cards above the footer.
+                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.65)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+                Thread.sleep(forTimeInterval: 1)
             }
             let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
             shot.name = name
