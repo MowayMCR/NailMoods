@@ -16,7 +16,7 @@ async function processClaim(admin:any,claim:any){
  if(!claim)return;
  const {job,payload,provider}=claim,actor=job.user_id;
  const config=providerConfig((k:string)=>k==='OPENAI_API_KEY'?Deno.env.get(k):provider[k]);
- let result:any=null,usage:any=null,cost:number|null=null,path:string|null=null;
+ let result:any=null,usage:any=null,cost:number|null=null,path:string|null=null,errorCode:string|null=null,validationFailure:string|null=null;
  try{
   if(payload.referencePath){if(!payload.referencePath.startsWith(actor+'/'+payload.body.workspaceId+'/ai/'))throw Error('invalid_reference');const stored=await admin.storage.from('nailmoods-private').download(payload.referencePath);if(stored.error)throw Error('reference_unavailable');const bytes=new Uint8Array(await stored.data.arrayBuffer());if(bytes.length>10000000)throw Error('invalid_reference');let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));payload.body.referenceImage='data:image/png;base64,'+btoa(binary);}
   const generated=await runProvider({...payload,config,maxUsd:Number(job.reserve_usd)});
@@ -26,10 +26,10 @@ async function processClaim(admin:any,claim:any){
   if(!completed&&path)await admin.storage.from('nailmoods-private').remove([path]);
  }catch(e){
   if(e instanceof AIError){usage=e.usage;cost=e.cost;}
-  const code=e instanceof AIError?e.message:'service_interrupted';
+  const code=e instanceof AIError?e.message:'service_interrupted';errorCode=code;const reason=usage?.validationFailure;validationFailure=typeof reason==='string'&&/^[a-z_]{1,64}$/.test(reason)?reason:null;
   try{await rpc(admin,'nm_ai2_finish',{p_user:actor,p_job:job.id,p_result:path?{imagePath:path}:null,p_usage:usage,p_cost:cost,p_error:code});}catch{console.error(JSON.stringify({event:'ai_finalization_pending',jobId:job.id}));}
  }
- console.log(JSON.stringify({event:'ai_job_finished',jobId:job.id,operation:job.operation,durationMs:Date.now()-Date.parse(job.started_at),costKnown:cost!==null}));
+ console.log(JSON.stringify({event:'ai_job_finished',jobId:job.id,operation:job.operation,durationMs:Date.now()-Date.parse(job.started_at),costKnown:cost!==null,errorCode,validationFailure,repairAttempts:usage?.repair?.attempts||0}));
 }
 Deno.serve(async req=>{
  if(req.method==='OPTIONS')return new Response('ok',{headers:cors});if(req.method!=='POST')return fail('method_not_allowed',405);

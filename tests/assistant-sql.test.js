@@ -57,3 +57,8 @@ test('production pilot: only allowlisted administrators can access, reserve or s
  await login(db,B);assert.equal((await db.query('select nm_ai2_access() a')).rows[0].a.uiAccess,false);await assert.rejects(db.query('select nm_ai2_switch(true)'),/not_allowed/);
  await login(db,B,'service_role');await assert.rejects(begin(db,{user:B,workspace:WB}),/ai_disabled/);
  }finally{await db.close();}});
+
+test('validation and failed palette repair refund exactly once without consuming NailMoods credits',async()=>{const db=await fixture();try{
+ await configure(db);await login(db,A,'service_role');
+ for(const error of ['invalid_response','palette_repair_failed']){const j=(await begin(db)).job;assert.equal(await finish(db,j,{error,cost:.00313,result:null}),true);assert.equal(await finish(db,j,{error,cost:.00313,result:null}),false);await db.exec('reset role');const saved=(await db.query('select status,error_code,accounted_usd from private.ai2_jobs where id=$1',[j.id])).rows[0];assert.equal(saved.status,'failed');assert.equal(saved.error_code,error);assert.equal(Number(saved.accounted_usd),.00313);const ledger=(await db.query('select event,quantity from private.ai2_ledger where job_id=$1',[j.id])).rows;assert.equal(ledger.filter(r=>r.event==='refund').length,1);assert.equal(ledger.filter(r=>r.event==='consume').length,0);await login(db,A);assert.equal((await db.query('select nm_ai2_access() a')).rows[0].a.balance.manual,2);await login(db,A,'service_role');}
+ }finally{await db.close();}});
