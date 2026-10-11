@@ -13,7 +13,7 @@ Il n’existe pas de preuve réseau permettant d’affirmer que l’ancien build
 - Branche : `fix/admob-att-20261011`, PR brouillon [69](https://github.com/MowayMCR/NailMoods/pull/69).
 - Source du premier candidat ATT 30005 : `23a4c20a50616ccf80fcd7d6b2b7951dc26870b2`. Ce candidat intermédiaire ne reprenait pas encore le correctif StoreKit livré en 30004 ; ne pas le retenir comme candidat final.
 - Candidat TestFlight : version **0.8.1**, build **30006**. Ce n’est pas une version commerciale 1.0.
-- [CI intermédiaire 30005](https://github.com/MowayMCR/NailMoods/actions/runs/38148866452). [CI finale 30006](https://github.com/MowayMCR/NailMoods/actions/runs/38149907464), source `134c1287dec9b7a2042453a6379a59c0ea9ca197`, à contrôler séparément. Ne pas confondre lancement et succès.
+- [CI intermédiaire 30005](https://github.com/MowayMCR/NailMoods/actions/runs/38148866452). [CI finale 30006](https://github.com/MowayMCR/NailMoods/actions/runs/38149907464), source `134c1287dec9b7a2042453a6379a59c0ea9ca197`, **succès** : archive signée, validation/upload Apple et traitement final réussis. Apple retourne `VALID` et `IN_BETA_TESTING` pour le groupe interne Nailmoods ; externe `READY_FOR_BETA_SUBMISSION`, sans publication App Store.
 - Google Mobile Ads **13.6.0**, UMP **3.1.0**, plugin Capacitor AdMob **8.2.0**. Aucun adaptateur de médiation supplémentaire déclaré dans le package audité.
 
 ## Modifications
@@ -38,7 +38,7 @@ Lecture seule de la configuration publicitaire en production, le 11 octobre : iO
 
 ## Résultats disponibles
 
-Tests du premier candidat ATT : **665 tests, 663 réussis, 2 ignorés, 0 échec**. Après reprise StoreKit, 32 tests ciblés ATT/achats/contrats iOS réussis ; **suite complète finale : 679 tests, 677 réussis, 2 ignorés, 0 échec**. Build web : réussi. Contrôle des espaces/diff : réussi. Ces résultats n’attestent ni la compilation Swift ni le comportement réseau Google.
+Tests du premier candidat ATT : **665 tests, 663 réussis, 2 ignorés, 0 échec**. Après reprise StoreKit, 32 tests ciblés ATT/achats/contrats iOS réussis ; **suite complète finale : 679 tests, 677 réussis, 2 ignorés, 0 échec**. Build web : réussi. Contrôle des espaces/diff : réussi. La compilation Swift Release, les lancements natifs sur simulateurs iPhone 17 Pro et iPad Pro 13 pouces (M5), iOS 26.2, et la régression Android ont également réussi en CI. Ces lancements ne testent pas les consentements réels ni le comportement réseau Google.
 
 | Scénario | Résultat automatisé du contrôleur | iPhone/iPad physiques |
 |---|---|---|
@@ -80,7 +80,7 @@ Le 11 octobre, l’URL https://nailmoods.com/legal/confidentialite.html répond 
 - Sur iPhone et iPad physiques, avec comptes fictifs éligibles aux essais, enregistrer versions iOS, build/source, état ATT et consentements pour chaque ligne du tableau. Tester aussi le refus global des demandes ATT dans Réglages, le relancement et le changement de choix depuis Réglages.
 - Observer les connexions avant opt-in, après accord, après refus/retrait et lors des rafraîchissements de bannière. Les échanges UMP nécessaires aux choix sont distincts des requêtes publicitaires. Une liste de domaines du rapport de confidentialité iOS n’est pas une preuve de contenu ; combiner observation réseau et documentation du SDK. Ne pas prétendre voir un IDFA dans des paquets TLS non déchiffrés.
 - Réinstallation : ne pas supposer qu’iOS remet forcément ATT à zéro. Tester l’état réel conservé par le système et un appareil frais/effacé pour le premier lancement. `UMP.reset()` n’est pas une procédure utilisateur et ne réinitialise pas ATT.
-- Après succès CI, vérifier le rapport statique généré depuis **l’IPA 30006** : clé ATT, manifeste app, manifestes Google/UMP intacts, collectes/tracking/finalités, signature et appareils iPhone+iPad.
+- Contrôle statique **IPA 30006 réalisé** : provenance source et build vérifiés ; ZIP SHA-256 `2b58c331a168079b1583169ddefe4d26a8d8f552da8a8dfa2c487539cb8005f7` conforme à l’artefact GitHub ; signature valide, iPhone+iPad, clé ATT présente, mesure différée, 5 manifestes et union de 19 catégories. Manifeste app tracking Oui, Device ID et Advertising Data liés/tracking Oui. Rapports conservés dans `evidence/30006-*`. L’archive complète reste dans l’artefact [CI finale](https://github.com/MowayMCR/NailMoods/actions/runs/38149907464) jusqu’au 25 octobre 2026 ; la récupérer avant expiration. Ce contrôle statique ne valide pas les flux après refus.
 - Ouvrir **l’archive finale 30006** dans Xcode Organizer et générer le rapport Privacy Report. Le rapport JSON CI est une extraction statique, pas ce rapport Organizer. Comparer tous les SDK ; ne pas modifier leurs déclarations pour masquer le tracking.
 - Politique publique rectifiée et vérifiée après déploiement. Relire le texte à la lumière des flux physiques finaux et des contrats restant à vérifier dans l’audit initial.
 

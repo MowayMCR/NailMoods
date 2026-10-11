@@ -1,0 +1,16 @@
+[
+  {
+    "label": "iphone",
+    "device": "iPhone 17 Pro",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-2",
+    "screenshot": "portrait and iPad landscape in XCTest attachments",
+    "scope": "Native navigation launch and supported orientation; no login, camera or purchase validation"
+  },
+  {
+    "label": "ipad-large",
+    "device": "iPad Pro 13-inch (M5)",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-2",
+    "screenshot": "portrait and iPad landscape in XCTest attachments",
+    "scope": "Native navigation launch and supported orientation; no login, camera or purchase validation"
+  }
+]
