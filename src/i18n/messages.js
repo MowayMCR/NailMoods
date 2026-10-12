@@ -1,6 +1,6 @@
 // Pilot translations for the release 1.0 internationalization infrastructure.
 // Important: only these keys are translated. Full-screen localization is NOT complete.
-export const messages = Object.freeze({
+const pilotMessages = {
   fr: {
     'nav.home': 'Accueil', 'nav.feed': 'Fil', 'nav.create': 'Créer',
     'nav.collection': 'Collection', 'nav.journal': 'Mes poses',
@@ -43,4 +43,110 @@ export const messages = Object.freeze({
     'settings.language.note': 'Vertaling in voorbereiding: sommige schermen zijn nog in het Frans.',
     'settings.language.local': 'Deze voorkeur wordt op dit apparaat opgeslagen.',
   },
-});
+};
+
+const homeMessages = {
+  "fr": {
+    "home.inspire": "Inspire-moi",
+    "home.mood": "Une nouvelle idée selon mon mood",
+    "home.create": "Créer une idée",
+    "home.shortcuts": "Mes raccourcis",
+    "home.universes": "Mes univers",
+    "home.myStyle": "Ce qui me ressemble",
+    "home.collection": "Ma collection",
+    "home.products": "Mes produits, mes couleurs",
+    "home.colors": "Quelques couleurs de ma collection",
+    "home.guides": "Mes guides",
+    "home.steps": "Un geste après l’autre",
+    "home.scan": "Scan & Génère",
+    "home.polishes": "Une idée avec mes vernis",
+    "home.calendar": "Mon calendrier",
+    "home.next": "Mes prochaines poses"
+  },
+  "en": {
+    "home.inspire": "Inspire me",
+    "home.mood": "A new idea to match my mood",
+    "home.create": "Create an idea",
+    "home.shortcuts": "My shortcuts",
+    "home.universes": "My styles",
+    "home.myStyle": "What feels like me",
+    "home.collection": "My collection",
+    "home.products": "My products, my colours",
+    "home.colors": "Some colours from my collection",
+    "home.guides": "My guides",
+    "home.steps": "One step at a time",
+    "home.scan": "Scan & Generate",
+    "home.polishes": "An idea using my polishes",
+    "home.calendar": "My calendar",
+    "home.next": "My upcoming nail looks"
+  },
+  "es": {
+    "home.inspire": "Inspírame",
+    "home.mood": "Una nueva idea según mi mood",
+    "home.create": "Crear una idea",
+    "home.shortcuts": "Mis accesos directos",
+    "home.universes": "Mis estilos",
+    "home.myStyle": "Lo que me representa",
+    "home.collection": "Mi colección",
+    "home.products": "Mis productos, mis colores",
+    "home.colors": "Algunos colores de mi colección",
+    "home.guides": "Mis guías",
+    "home.steps": "Un paso a la vez",
+    "home.scan": "Escanea y genera",
+    "home.polishes": "Una idea con mis esmaltes",
+    "home.calendar": "Mi calendario",
+    "home.next": "Mis próximas manicuras"
+  },
+  "de": {
+    "home.inspire": "Inspiriere mich",
+    "home.mood": "Eine neue Idee passend zu meiner Stimmung",
+    "home.create": "Eine Idee erstellen",
+    "home.shortcuts": "Meine Verknüpfungen",
+    "home.universes": "Meine Stile",
+    "home.myStyle": "Was zu mir passt",
+    "home.collection": "Meine Sammlung",
+    "home.products": "Meine Produkte, meine Farben",
+    "home.colors": "Einige Farben aus meiner Sammlung",
+    "home.guides": "Meine Anleitungen",
+    "home.steps": "Schritt für Schritt",
+    "home.scan": "Scannen & Generieren",
+    "home.polishes": "Eine Idee mit meinen Nagellacken",
+    "home.calendar": "Mein Kalender",
+    "home.next": "Meine nächsten Nail-Designs"
+  },
+  "it": {
+    "home.inspire": "Ispirami",
+    "home.mood": "Una nuova idea secondo il mio mood",
+    "home.create": "Crea un’idea",
+    "home.shortcuts": "Le mie scorciatoie",
+    "home.universes": "I miei stili",
+    "home.myStyle": "Ciò che mi rappresenta",
+    "home.collection": "La mia collezione",
+    "home.products": "I miei prodotti, i miei colori",
+    "home.colors": "Alcuni colori della mia collezione",
+    "home.guides": "Le mie guide",
+    "home.steps": "Un passo alla volta",
+    "home.scan": "Scansiona e genera",
+    "home.polishes": "Un’idea con i miei smalti",
+    "home.calendar": "Il mio calendario",
+    "home.next": "Le mie prossime manicure"
+  },
+  "nl": {
+    "home.inspire": "Inspireer me",
+    "home.mood": "Een nieuw idee passend bij mijn mood",
+    "home.create": "Maak een idee",
+    "home.shortcuts": "Mijn snelkoppelingen",
+    "home.universes": "Mijn stijlen",
+    "home.myStyle": "Wat bij mij past",
+    "home.collection": "Mijn collectie",
+    "home.products": "Mijn producten, mijn kleuren",
+    "home.colors": "Enkele kleuren uit mijn collectie",
+    "home.guides": "Mijn handleidingen",
+    "home.steps": "Stap voor stap",
+    "home.scan": "Scan en genereer",
+    "home.polishes": "Een idee met mijn nagellak",
+    "home.calendar": "Mijn kalender",
+    "home.next": "Mijn volgende nageldesigns"
+  }
+};
+export const messages = Object.freeze(Object.fromEntries(Object.keys(pilotMessages).map(locale => [locale, Object.freeze({...pilotMessages[locale], ...homeMessages[locale]})])));
