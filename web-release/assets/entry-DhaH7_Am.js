@@ -1,2 +1,0 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/main-4PDWym8F.js","assets/rolldown-runtime-C0FnF6B9.js","assets/preload-helper-BZ1Pz5am.js","assets/dist-BUaBGHqH.js","assets/client-1N_VjV6i.js","assets/themes-UbfXNgdY.js","assets/main-Kb6VMgf_.css"])))=>i.map(i=>d[i]);
-import{t as e}from"./preload-helper-BZ1Pz5am.js";import{n as t,t as n}from"./themes-UbfXNgdY.js";try{let e=JSON.parse(localStorage.getItem(`nm-boot-mood-v2`)||`null`);n(t(e?.id))}catch{n(t())}await e(()=>import(`./main-4PDWym8F.js`),__vite__mapDeps([0,1,2,3,4,5,6]));

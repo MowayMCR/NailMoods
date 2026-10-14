@@ -35,4 +35,12 @@ body{margin:0;background:var(--backgroundPrimary);color:var(--textPrimary)}
 
 .nmIllustratedSplash .nmSplashLoading button{min-height:46px;justify-content:center;align-items:center;padding:12px 18px;border:1px solid var(--borderActive);border-radius:14px;background:var(--surfaceSecondary);color:var(--textPrimary);font:600 14px/1.4 system-ui,sans-serif;cursor:pointer;max-width:100%;white-space:normal}.nmIllustratedSplash .nmSplashLoading .nmButton-primary{background:var(--accentPrimary);color:var(--textOnAccent)}.nmIllustratedSplash button:focus-visible{outline:3px solid var(--borderActive);outline-offset:3px}
 
+/* The first HTML frame uses the same approved artwork as the React splash. */
+#nm-boot .nmBootConnectionArt{display:none}
+:root:not([data-mood]) #nm-boot [data-art-mood="soft-glam"],
+:root[data-mood="soft-glam"] #nm-boot [data-art-mood="soft-glam"],
+:root[data-mood="dark-feminine"] #nm-boot [data-art-mood="dark-feminine"],
+:root[data-mood="cottagecore"] #nm-boot [data-art-mood="cottagecore"],
+:root[data-mood="pop-pastel"] #nm-boot [data-art-mood="pop-pastel"]{display:block}
+
 #nm-boot button{background:var(--accentPrimary);color:var(--textOnAccent);border:0;border-radius:14px;padding:14px 20px;min-height:44px;font:inherit}
