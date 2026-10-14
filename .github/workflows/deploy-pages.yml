@@ -3,6 +3,9 @@ name: Deploy NailMoods to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+    paths: [web-release/**, .github/workflows/deploy-pages.yml]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +14,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
   cancel-in-progress: true
 
 jobs:
@@ -24,28 +27,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install dependencies
-        run: npm ci
-      - name: Test
-        run: npm test
-      - name: Build
-        env:
-          VITE_DEPLOYMENT_ENV: production
-          VITE_NAILMOODS_AI_ENABLED: 'true'
-          VITE_PRO_V2_ENABLED: 'true'
-          VITE_POSE_CYCLE_ENABLED: 'true'
-          VITE_CATALOGUE_ADMIN_ENABLED: 'true'
-          VITE_PO_LOOP_ENABLED: 'true'
-          VITE_SALON_ENABLED: 'true'
-          VITE_SUPABASE_URL: https://rvqmtnqvzzxzwfxfyjcg.supabase.co
-          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_EZthbmym16fnDWx9W6RkEg_ublzI88l
-        run: npm run build
+      # Sources are maintained in the private integration repository.
+      # Publish only its verified browser bundle; never copy server or native sources.
+      - name: Verify and stage the approved web bundle
+        run: |
+          cd web-release
+          node -e "const r=require('./release.json');if(r.environment!=='production'||r.adMode!=='staff-simulation-only')process.exit(1)"
+          cd ..
+          mkdir -p dist
+          cp -R web-release/. dist/
       - name: Conserver la Web App de recette séparée
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
           path: validation-source
-      - name: Construire la même version en recette
+      - name: Préserver la version historique du lien de recette
         working-directory: validation-source
         env:
           VITE_DEPLOYMENT_ENV: recette
@@ -60,13 +56,22 @@ jobs:
         run: |
           mkdir -p dist/validation-pro-v2
           cp -R validation-source/dist/. dist/validation-pro-v2/
+      - name: Restore deterministic recognition assets and verify all published bytes
+        run: |
+          cp -R validation-source/dist/recognition dist/
+          cd dist
+          sha256sum --check SHA256SUMS.txt
+          rm SHA256SUMS.txt
       - name: Setup Pages
+        if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
       - name: Upload artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

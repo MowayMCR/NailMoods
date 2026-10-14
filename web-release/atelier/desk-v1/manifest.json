@@ -1,0 +1,380 @@
+{
+  "lime-ongles": {
+    "width": 370,
+    "height": 326,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 1
+  },
+  "buffer": {
+    "width": 351,
+    "height": 284,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 2
+  },
+  "repousse-cuticules": {
+    "width": 372,
+    "height": 346,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 3
+  },
+  "pince-cuticules": {
+    "width": 311,
+    "height": 343,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 4
+  },
+  "ciseaux-cuticules": {
+    "width": 334,
+    "height": 349,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 5
+  },
+  "brosse-poussiere": {
+    "width": 324,
+    "height": 346,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 6
+  },
+  "brosse-ongles": {
+    "width": 350,
+    "height": 288,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 7
+  },
+  "clips-depose": {
+    "width": 340,
+    "height": 322,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 8
+  },
+  "spatule": {
+    "width": 373,
+    "height": 326,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 9
+  },
+  "pince-precision": {
+    "width": 350,
+    "height": 331,
+    "sourceSheet": "exec-99429aea-b77f-421a-8926-4c84341a9734.png",
+    "cell": 10
+  },
+  "lampe-uv": {
+    "width": 384,
+    "height": 266,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 1
+  },
+  "lampe-led": {
+    "width": 325,
+    "height": 253,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 2
+  },
+  "lampe-uv-led": {
+    "width": 410,
+    "height": 319,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 3
+  },
+  "capsules": {
+    "width": 371,
+    "height": 347,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 4
+  },
+  "coupe-capsules": {
+    "width": 240,
+    "height": 347,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 5
+  },
+  "chablons": {
+    "width": 337,
+    "height": 272,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 6
+  },
+  "dual-forms": {
+    "width": 356,
+    "height": 338,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 7
+  },
+  "pinces-maintien": {
+    "width": 342,
+    "height": 299,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 8
+  },
+  "repose-main": {
+    "width": 383,
+    "height": 270,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 9
+  },
+  "tapis": {
+    "width": 409,
+    "height": 278,
+    "sourceSheet": "exec-0ff66da4-257e-4901-9749-865bfb1dcdb7.png",
+    "cell": 10
+  },
+  "pinceau-liner": {
+    "width": 322,
+    "height": 355,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 1
+  },
+  "pinceau-detail": {
+    "width": 324,
+    "height": 353,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 2
+  },
+  "pinceau-plat": {
+    "width": 315,
+    "height": 358,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 3
+  },
+  "pinceau-degrade": {
+    "width": 349,
+    "height": 359,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 4
+  },
+  "dotting-tool": {
+    "width": 312,
+    "height": 350,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 5
+  },
+  "eponge": {
+    "width": 292,
+    "height": 296,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 6
+  },
+  "palette": {
+    "width": 325,
+    "height": 298,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 7
+  },
+  "attrape-strass": {
+    "width": 326,
+    "height": 349,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 8
+  },
+  "aimant-cat-eye": {
+    "width": 352,
+    "height": 337,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 9
+  },
+  "stickers": {
+    "width": 374,
+    "height": 345,
+    "sourceSheet": "exec-e7b445bb-d010-48a1-a73c-471b1d11e675.png",
+    "cell": 10
+  },
+  "tampon-stamping": {
+    "width": 305,
+    "height": 299,
+    "sourceSheet": "exec-75735923-7f12-4758-afee-12ac89250b7d.png",
+    "cell": 1
+  },
+  "plaques-stamping": {
+    "width": 398,
+    "height": 318,
+    "sourceSheet": "exec-75735923-7f12-4758-afee-12ac89250b7d.png",
+    "cell": 2
+  },
+  "raclette-stamping": {
+    "width": 345,
+    "height": 262,
+    "sourceSheet": "exec-75735923-7f12-4758-afee-12ac89250b7d.png",
+    "cell": 3
+  },
+  "ponceuse": {
+    "width": 409,
+    "height": 322,
+    "sourceSheet": "exec-75735923-7f12-4758-afee-12ac89250b7d.png",
+    "cell": 4
+  },
+  "embouts-ponceuse": {
+    "width": 303,
+    "height": 287,
+    "sourceSheet": "exec-75735923-7f12-4758-afee-12ac89250b7d.png",
+    "cell": 5
+  },
+  "aspirateur": {
+    "width": 407,
+    "height": 316,
+    "sourceSheet": "exec-75735923-7f12-4758-afee-12ac89250b7d.png",
+    "cell": 6
+  },
+  "strass": {
+    "width": 322,
+    "height": 289,
+    "sourceSheet": "exec-75735923-7f12-4758-afee-12ac89250b7d.png",
+    "cell": 7
+  },
+  "autre": {
+    "width": 377,
+    "height": 290,
+    "sourceSheet": "exec-75735923-7f12-4758-afee-12ac89250b7d.png",
+    "cell": 8
+  },
+  "pot": {
+    "width": 219,
+    "height": 300,
+    "sourceSheet": "exec-75735923-7f12-4758-afee-12ac89250b7d.png",
+    "cell": 9
+  },
+  "vase-rose": {
+    "width": 236,
+    "height": 297,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 1
+  },
+  "vase-ivory": {
+    "width": 233,
+    "height": 297,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 2
+  },
+  "vase-cassis": {
+    "width": 242,
+    "height": 299,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 3
+  },
+  "vase-glass": {
+    "width": 232,
+    "height": 300,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 4
+  },
+  "vase-round": {
+    "width": 300,
+    "height": 271,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 5
+  },
+  "vase-pitcher": {
+    "width": 248,
+    "height": 291,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 6
+  },
+  "frame-rose": {
+    "width": 275,
+    "height": 303,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 7
+  },
+  "frame-ivory": {
+    "width": 282,
+    "height": 302,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 8
+  },
+  "frame-gold": {
+    "width": 305,
+    "height": 339,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 9
+  },
+  "frame-wide": {
+    "width": 382,
+    "height": 272,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 10
+  },
+  "art-flowers": {
+    "width": 245,
+    "height": 351,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 11
+  },
+  "art-leaves": {
+    "width": 233,
+    "height": 356,
+    "sourceSheet": "exec-ff2f5a3d-a669-4ec3-971e-14d2db56c92e.png",
+    "cell": 12
+  },
+  "flower-rose": {
+    "width": 266,
+    "height": 349,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 1
+  },
+  "flower-cosmos": {
+    "width": 249,
+    "height": 345,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 2
+  },
+  "flower-dahlia": {
+    "width": 289,
+    "height": 347,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 3
+  },
+  "leaf-sage": {
+    "width": 257,
+    "height": 346,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 4
+  },
+  "leaf-rose": {
+    "width": 307,
+    "height": 295,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 5
+  },
+  "flower-branch": {
+    "width": 286,
+    "height": 283,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 6
+  },
+  "bouquet-one": {
+    "width": 280,
+    "height": 301,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 7
+  },
+  "bouquet-two": {
+    "width": 310,
+    "height": 294,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 8
+  },
+  "bouquet-leaves": {
+    "width": 351,
+    "height": 352,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 9
+  },
+  "bouquet-full": {
+    "width": 377,
+    "height": 358,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 10
+  },
+  "reward-technique": {
+    "width": 238,
+    "height": 339,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 11
+  },
+  "reward-reuse": {
+    "width": 283,
+    "height": 335,
+    "sourceSheet": "exec-1ffd47e4-4b64-4f50-b4e5-ad9f4250d09b.png",
+    "cell": 12
+  }
+}
