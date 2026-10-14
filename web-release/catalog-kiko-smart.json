@@ -1,0 +1,2776 @@
+{
+  "version": "KIKO-Smart-2026-10-03",
+  "checkedAt": "2026-10-03",
+  "source": "Official KIKO France, selected product only",
+  "count": 64,
+  "products": [
+    {
+      "catalogId": "nm-kiko-smart-01",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Clear",
+      "reference": "01",
+      "shadeCode": "01",
+      "sku": "KM000000779001B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-01-47275/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385035918"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385035918",
+          "rawBarcode": "8059385035918",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-01-47275/"
+        }
+      ],
+      "gtin": "08059385035918"
+    },
+    {
+      "catalogId": "nm-kiko-smart-02",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Satin Light Beige",
+      "reference": "02",
+      "shadeCode": "02",
+      "sku": "KM000000779002B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-02-47276/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385035925"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385035925",
+          "rawBarcode": "8059385035925",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-02-47276/"
+        }
+      ],
+      "gtin": "08059385035925",
+      "catalogColor": "#f1dcd1",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-02-47276/",
+        "field": "selected.hex_color",
+        "sourceSha256": "5fcca1434ab8e5168938a2c9323b486ee4ba21ff84dea910300cc26a7753d8cf"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-03",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Nude Beige",
+      "reference": "03",
+      "shadeCode": "03",
+      "sku": "KM000000017003B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-03-7395/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911313"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911313",
+          "rawBarcode": "8025272911313",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-03-7395/"
+        }
+      ],
+      "gtin": "08025272911313",
+      "catalogColor": "#f2d3c6",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-03-7395/",
+        "field": "selected.hex_color",
+        "sourceSha256": "c6abcad3ad7b1003088536eec660f2d513eaec5a58764bafed3dc0fdfbfc614f"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-04",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Rosy Nude",
+      "reference": "04",
+      "shadeCode": "04",
+      "sku": "KM000000779004B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-04-47278/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385035949"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385035949",
+          "rawBarcode": "8059385035949",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-04-47278/"
+        }
+      ],
+      "gtin": "08059385035949",
+      "catalogColor": "#eececb",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-04-47278/",
+        "field": "selected.hex_color",
+        "sourceSha256": "d8e278186adf0aff4196e5519be01631f8bed727bc836cbfe623057cb6966c44"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-05",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Taupe",
+      "reference": "05",
+      "shadeCode": "05",
+      "sku": "KM000000017005B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-05-7397/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911337"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911337",
+          "rawBarcode": "8025272911337",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-05-7397/"
+        }
+      ],
+      "gtin": "08025272911337",
+      "catalogColor": "#b1a097",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-05-7397/",
+        "field": "selected.hex_color",
+        "sourceSha256": "5c7f3d4f8ddf70a847133e348cdade9955c0609b01dc858f6d6e5db15c382b10"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-06",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Dark Mauve",
+      "reference": "06",
+      "shadeCode": "06",
+      "sku": "KM000000779006B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-06-47280/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385035963"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385035963",
+          "rawBarcode": "8059385035963",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-06-47280/"
+        }
+      ],
+      "gtin": "08059385035963",
+      "catalogColor": "#8e6665",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-06-47280/",
+        "field": "selected.hex_color",
+        "sourceSha256": "146679301b11b03bff5f8e950d4ad053cb40aaf6ec259e3cfc68534e9d9873a1"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-07",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Vintage Rose",
+      "reference": "07",
+      "shadeCode": "07",
+      "sku": "KM000000017007B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-07-7399/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911351"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911351",
+          "rawBarcode": "8025272911351",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-07-7399/"
+        }
+      ],
+      "gtin": "08025272911351",
+      "catalogColor": "#a85467",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-07-7399/",
+        "field": "selected.hex_color",
+        "sourceSha256": "7c9bdbab04197865cb29de9571933ff3554ad35b4ae5a1ec265c18e132053dbb"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-10",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Geranium Red",
+      "reference": "10",
+      "shadeCode": "10",
+      "sku": "KM000000017010B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-10-7402/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911382"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911382",
+          "rawBarcode": "8025272911382",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-10-7402/"
+        }
+      ],
+      "gtin": "08025272911382",
+      "catalogColor": "#e93c1a",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-10-7402/",
+        "field": "selected.hex_color",
+        "sourceSha256": "5a5e63ed196e4783a369feb3dfbb678c042408f941ea5a6b7bb3c27819ec9e38"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-101",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "White French",
+      "reference": "101",
+      "shadeCode": "101",
+      "sku": "KM000000017101B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-101-7491/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272912228"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272912228",
+          "rawBarcode": "8025272912228",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-101-7491/"
+        }
+      ],
+      "gtin": "08025272912228",
+      "catalogColor": "#f6f6f6",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-101-7491/",
+        "field": "selected.hex_color",
+        "sourceSha256": "e87395de8c7b8579aa8a4a70db3192d2e96ccb57fae98690a74b3a66f5aa2159"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-102",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Peach French",
+      "reference": "102",
+      "shadeCode": "102",
+      "sku": "KM000000017102B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-102-7492/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272912235"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272912235",
+          "rawBarcode": "8025272912235",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-102-7492/"
+        }
+      ],
+      "gtin": "08025272912235",
+      "catalogColor": "#ffe0d8",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-102-7492/",
+        "field": "selected.hex_color",
+        "sourceSha256": "f2a1eb1502c1a405371817bdd2c0a782b5db5aaefd8c28aa461198e5ada30a7b"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-103",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Rosy French",
+      "reference": "103",
+      "shadeCode": "103",
+      "sku": "KM000000779103B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-103-47346/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036601"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036601",
+          "rawBarcode": "8059385036601",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-103-47346/"
+        }
+      ],
+      "gtin": "08059385036601",
+      "catalogColor": "#ffdfe4",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-103-47346/",
+        "field": "selected.hex_color",
+        "sourceSha256": "85df9fa52158a95e9c53f3e63cc51a3f655559109c5435aa95f25d7f183ebb5f"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-11",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Fire Red",
+      "reference": "11",
+      "shadeCode": "11",
+      "sku": "KM000000017011B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-11-7403/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911399"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911399",
+          "rawBarcode": "8025272911399",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-11-7403/"
+        }
+      ],
+      "gtin": "08025272911399",
+      "catalogColor": "#dd2333",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-11-7403/",
+        "field": "selected.hex_color",
+        "sourceSha256": "3da944ce142d3dd1bbeb4ef88fd40699e31049837e11001af85d9e22649c7e55"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-12",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Scarlet Red",
+      "reference": "12",
+      "shadeCode": "12",
+      "sku": "KM000000779012B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-12-47285/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036014"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036014",
+          "rawBarcode": "8059385036014",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-12-47285/"
+        }
+      ],
+      "gtin": "08059385036014",
+      "catalogColor": "#a01e3e",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-12-47285/",
+        "field": "selected.hex_color",
+        "sourceSha256": "00bdeb796346cd2278c45d5a1b0792c0e2fbdfdc18da106dc6821310afcc0af9"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-13",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Ruby Red",
+      "reference": "13",
+      "shadeCode": "13",
+      "sku": "KM000000779013B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-13-47286/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036021"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036021",
+          "rawBarcode": "8059385036021",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-13-47286/"
+        }
+      ],
+      "gtin": "08059385036021",
+      "catalogColor": "#88002b",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-13-47286/",
+        "field": "selected.hex_color",
+        "sourceSha256": "2e0e718de2041f879a8e157c25796cb21d058e01e955c6e751206d62326da032"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-14",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Rouge Noir",
+      "reference": "14",
+      "shadeCode": "14",
+      "sku": "KM000000779014B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-14-47289/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036038"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036038",
+          "rawBarcode": "8059385036038",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-14-47289/"
+        }
+      ],
+      "gtin": "08059385036038",
+      "catalogColor": "#530024",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-14-47289/",
+        "field": "selected.hex_color",
+        "sourceSha256": "95126b11db4b47d4e8be74fc4c13448fcdf4eac5513f57f9ac4f320e02dcb258"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-15",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Cranberry",
+      "reference": "15",
+      "shadeCode": "15",
+      "sku": "KM000000017015B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-15-7410/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911436"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911436",
+          "rawBarcode": "8025272911436",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-15-7410/"
+        }
+      ],
+      "gtin": "08025272911436",
+      "catalogColor": "#7d013b",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-15-7410/",
+        "field": "selected.hex_color",
+        "sourceSha256": "66fe55eb4651e8ea8a7e7364c206c78e1f300aa6d492dbdc87022318f834fc75"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-150",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Nacred Arabian White",
+      "reference": "150",
+      "shadeCode": "150",
+      "sku": "KM000000203150B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-150-7405/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272978675"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272978675",
+          "rawBarcode": "8025272978675",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-150-7405/"
+        }
+      ],
+      "gtin": "08025272978675",
+      "catalogColor": "#ebe7e3",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-150-7405/",
+        "field": "selected.hex_color",
+        "sourceSha256": "8d06b595b3fbb58baaeadfba00d19f402a4ca093a77fb33fbdea63d0fbc58ce1"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-153",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Muget Green",
+      "reference": "153",
+      "shadeCode": "153",
+      "sku": "KM000000203153B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-153-7411/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272978705"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272978705",
+          "rawBarcode": "8025272978705",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-153-7411/"
+        }
+      ],
+      "gtin": "08025272978705",
+      "catalogColor": "#9aa180",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-153-7411/",
+        "field": "selected.hex_color",
+        "sourceSha256": "410b594047d254eebcbebe0006f6b5021f7cdae63e019965f2aa95f521048cc6"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-16",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Dark Wine",
+      "reference": "16",
+      "shadeCode": "16",
+      "sku": "KM000000779016B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-16-47291/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036052"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036052",
+          "rawBarcode": "8059385036052",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-16-47291/"
+        }
+      ],
+      "gtin": "08059385036052",
+      "catalogColor": "#620040",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-16-47291/",
+        "field": "selected.hex_color",
+        "sourceSha256": "b1b7c6edd9d19d3f6d1533d5a410609f8c70339ece86ea04a083198438764ecb"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-18",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Magenta",
+      "reference": "18",
+      "shadeCode": "18",
+      "sku": "KM000000779018B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-18-47292/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036069"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036069",
+          "rawBarcode": "8059385036069",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-18-47292/"
+        }
+      ],
+      "gtin": "08059385036069",
+      "catalogColor": "#e2136b",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-18-47292/",
+        "field": "selected.hex_color",
+        "sourceSha256": "f98271fab536d8df4a4e3e0c628d97dffadb63e5c425ed060193ff8bcab11a58"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-19",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Hot Pink",
+      "reference": "19",
+      "shadeCode": "19",
+      "sku": "KM000000017019B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-19-7416/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911474"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911474",
+          "rawBarcode": "8025272911474",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-19-7416/"
+        }
+      ],
+      "gtin": "08025272911474",
+      "catalogColor": "#ce1966",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-19-7416/",
+        "field": "selected.hex_color",
+        "sourceSha256": "0cb5f92cae24ee0d849c7790043cde0abc60288b1522c10be602208fdf4fef6a"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-21",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Golden Rose",
+      "reference": "21",
+      "shadeCode": "21",
+      "sku": "KM000000017021B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-21-7418/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911498"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911498",
+          "rawBarcode": "8025272911498",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-21-7418/"
+        }
+      ],
+      "gtin": "08025272911498",
+      "catalogColor": "#eb84b5",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-21-7418/",
+        "field": "selected.hex_color",
+        "sourceSha256": "89866aa052e549d1acebfa4f75f843b1a953423e6ba59e871427a4ae769f9fe9"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-22",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Comfy Rose",
+      "reference": "22",
+      "shadeCode": "22",
+      "sku": "KM000000779022B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-22-47295/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8059385036090"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036090",
+          "rawBarcode": "8059385036090",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-22-47295/"
+        }
+      ],
+      "gtin": "08059385036090",
+      "catalogColor": "#f3a5cc",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-22-47295/",
+        "field": "selected.hex_color",
+        "sourceSha256": "c887480fd27e4949f32df3dc9b81357e99bfe6e75c06a7d4bf93876dae2c8951"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-23",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Golden Lilac",
+      "reference": "23",
+      "shadeCode": "23",
+      "sku": "KM000000017023B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-23-7420/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911511"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911511",
+          "rawBarcode": "8025272911511",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-23-7420/"
+        }
+      ],
+      "gtin": "08025272911511",
+      "catalogColor": "#dbabe1",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-23-7420/",
+        "field": "selected.hex_color",
+        "sourceSha256": "9d29cf6c58c75ba9be22e3ade28bedda518aede7ec22d419589d1ddd365ed972"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-24",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Metallic Imperial Violet",
+      "reference": "24",
+      "shadeCode": "24",
+      "sku": "KM000000017024B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-24-7421/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911528"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911528",
+          "rawBarcode": "8025272911528",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-24-7421/"
+        }
+      ],
+      "gtin": "08025272911528",
+      "catalogColor": "#4a0062",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-24-7421/",
+        "field": "selected.hex_color",
+        "sourceSha256": "c1f0b3a8975d984201466f64629cbbfe902f3e71dedec3b747439077ca15c1a8"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-25",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Purple",
+      "reference": "25",
+      "shadeCode": "25",
+      "sku": "KM000000017025B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-25-7422/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911535"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911535",
+          "rawBarcode": "8025272911535",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-25-7422/"
+        }
+      ],
+      "gtin": "08025272911535",
+      "catalogColor": "#4f2584",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-25-7422/",
+        "field": "selected.hex_color",
+        "sourceSha256": "d24dce7da09c4045446a02ac53f2c24e13f2e73f3514c70dd62101a8dc96eafe"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-26",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pastel Light Blue",
+      "reference": "26",
+      "shadeCode": "26",
+      "sku": "KM000000017026B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-26-7423/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911542"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911542",
+          "rawBarcode": "8025272911542",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-26-7423/"
+        }
+      ],
+      "gtin": "08025272911542",
+      "catalogColor": "#dee8f4",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-26-7423/",
+        "field": "selected.hex_color",
+        "sourceSha256": "90b6beeb2e026293624cf63e9be30b978e004d0a06b81eafba15437bc5f7e12a"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-27",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Light Blue",
+      "reference": "27",
+      "shadeCode": "27",
+      "sku": "KM000000017027B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-27-7424/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911559"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911559",
+          "rawBarcode": "8025272911559",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-27-7424/"
+        }
+      ],
+      "gtin": "08025272911559",
+      "catalogColor": "#9dc2ff",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-27-7424/",
+        "field": "selected.hex_color",
+        "sourceSha256": "519cd7730c9c073e50f6ee5d1bc09d277a4ba726019bdb17fd7a42951289bc46"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-28",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Iridescent Violet Blue",
+      "reference": "28",
+      "shadeCode": "28",
+      "sku": "KM000000017028B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-28-7425/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911566"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911566",
+          "rawBarcode": "8025272911566",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-28-7425/"
+        }
+      ],
+      "gtin": "08025272911566",
+      "catalogColor": "#4a4cd4",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-28-7425/",
+        "field": "selected.hex_color",
+        "sourceSha256": "705daa8fa5ccb15f0a282866dc8fff24d33d409a678d5667e6b409149448145d"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-30",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Cobalt",
+      "reference": "30",
+      "shadeCode": "30",
+      "sku": "KM000000017030B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-30-7426/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911573"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911573",
+          "rawBarcode": "8025272911573",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-30-7426/"
+        }
+      ],
+      "gtin": "08025272911573",
+      "catalogColor": "#002c76",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-30-7426/",
+        "field": "selected.hex_color",
+        "sourceSha256": "a06b4cae936b7c83ad931cac1f332842659067021ac9a708227e0c7961402396"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-32",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Peacock Green",
+      "reference": "32",
+      "shadeCode": "32",
+      "sku": "KM000000651001B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-32-41971/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8059385025896"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385025896",
+          "rawBarcode": "8059385025896",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-32-41971/"
+        }
+      ],
+      "gtin": "08059385025896"
+    },
+    {
+      "catalogId": "nm-kiko-smart-34",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Cool Gold",
+      "reference": "34",
+      "shadeCode": "34",
+      "sku": "KM000000017034B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-34-7430/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911610"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911610",
+          "rawBarcode": "8025272911610",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-34-7430/"
+        }
+      ],
+      "gtin": "08025272911610",
+      "catalogColor": "#d5c6ae",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-34-7430/",
+        "field": "selected.hex_color",
+        "sourceSha256": "d09a0e50900d7c8abdf5da03249f1903b4b86b9dc65f3b051a9ee86d7021ef20"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-39",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Vintage Red",
+      "reference": "39",
+      "shadeCode": "39",
+      "sku": "KM000000779039B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-39-47305/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036212"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036212",
+          "rawBarcode": "8059385036212",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-39-47305/"
+        }
+      ],
+      "gtin": "08059385036212",
+      "catalogColor": "#cb4041",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-39-47305/",
+        "field": "selected.hex_color",
+        "sourceSha256": "6fa49a1a31b1d0820b44e5dc84e2d7f37b3f9372d2bc8c89302f89b329da6427"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-41",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Dark Chocolate",
+      "reference": "41",
+      "shadeCode": "41",
+      "sku": "KM000000779041B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-41-47306/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036229"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036229",
+          "rawBarcode": "8059385036229",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-41-47306/"
+        }
+      ],
+      "gtin": "08059385036229",
+      "catalogColor": "#463227",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-41-47306/",
+        "field": "selected.hex_color",
+        "sourceSha256": "84c2f46abcc5774bde2173cc93a29c8c47095558fd5c6e728b41cf83466e21d7"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-42",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Golden White",
+      "reference": "42",
+      "shadeCode": "42",
+      "sku": "KM000000779042B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-42-47307/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8059385036236"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036236",
+          "rawBarcode": "8059385036236",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-42-47307/"
+        }
+      ],
+      "gtin": "08059385036236"
+    },
+    {
+      "catalogId": "nm-kiko-smart-43",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Silver",
+      "reference": "43",
+      "shadeCode": "43",
+      "sku": "KM000000017043B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-43-7436/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911672"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911672",
+          "rawBarcode": "8025272911672",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-43-7436/"
+        }
+      ],
+      "gtin": "08025272911672",
+      "catalogColor": "#b3b0af",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-43-7436/",
+        "field": "selected.hex_color",
+        "sourceSha256": "a0dc41504965cb1f97c0fe24b2fb548044381d7dd73b45fa425c1a53322b7a05"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-45",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Black",
+      "reference": "45",
+      "shadeCode": "45",
+      "sku": "KM000000017045B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-45-7438/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911696"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911696",
+          "rawBarcode": "8025272911696",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-45-7438/"
+        }
+      ],
+      "gtin": "08025272911696",
+      "catalogColor": "#101010",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-45-7438/",
+        "field": "selected.hex_color",
+        "sourceSha256": "0d494cebdfa60b56751f381256e5eae4e1fc74f28e8859b60f555d4f57a4ab38"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-48",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Camelia",
+      "reference": "48",
+      "shadeCode": "48",
+      "sku": "KM000000017048B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-48-7441/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911726"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911726",
+          "rawBarcode": "8025272911726",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-48-7441/"
+        }
+      ],
+      "gtin": "08025272911726",
+      "catalogColor": "#f8a3a4",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-48-7441/",
+        "field": "selected.hex_color",
+        "sourceSha256": "994ce806eafd778b9ad8ccae9b27159b16f6efa8e062fb88ec99bbd3ee9d0d53"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-49",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Azalea",
+      "reference": "49",
+      "shadeCode": "49",
+      "sku": "KM000000779049B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-49-47311/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8059385036274"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036274",
+          "rawBarcode": "8059385036274",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-49-47311/"
+        }
+      ],
+      "gtin": "08059385036274",
+      "catalogColor": "#ff8187",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-49-47311/",
+        "field": "selected.hex_color",
+        "sourceSha256": "57e4a2c4fbb758d6d3d45063f4562e5cb105e1a8cf21e12c52c1848ef4a3ee3b"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-51",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Medium Nude",
+      "reference": "51",
+      "shadeCode": "51",
+      "sku": "KM000000017051B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-51-7444/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911757"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911757",
+          "rawBarcode": "8025272911757",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-51-7444/"
+        }
+      ],
+      "gtin": "08025272911757",
+      "catalogColor": "#c8908c",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-51-7444/",
+        "field": "selected.hex_color",
+        "sourceSha256": "6797f19b00ccf60159dd913e713347529ed4f4034ad7031e69a8ea5db211a835"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-53",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Light Rosy Chestnut",
+      "reference": "53",
+      "shadeCode": "53",
+      "sku": "KM000000017053B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-53-7446/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911771"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911771",
+          "rawBarcode": "8025272911771",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-53-7446/"
+        }
+      ],
+      "gtin": "08025272911771",
+      "catalogColor": "#ad5e50",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-53-7446/",
+        "field": "selected.hex_color",
+        "sourceSha256": "5dab9d9b7ec55ebc813efbc7a61fb0ffb6d45fedb2786b1965a0fa4a3526ca33"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-54",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Vintage Rose",
+      "reference": "54",
+      "shadeCode": "54",
+      "sku": "KM000000017054B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-54-7447/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911788"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911788",
+          "rawBarcode": "8025272911788",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-54-7447/"
+        }
+      ],
+      "gtin": "08025272911788",
+      "catalogColor": "#ff9ba2",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-54-7447/",
+        "field": "selected.hex_color",
+        "sourceSha256": "fa8d798e9f6144564d4e1a738aa6378ce76f596d501f49b520e961e051943342"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-55",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Light Rose",
+      "reference": "55",
+      "shadeCode": "55",
+      "sku": "KM000000779055B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-55-47316/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8059385036328"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036328",
+          "rawBarcode": "8059385036328",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-55-47316/"
+        }
+      ],
+      "gtin": "08059385036328",
+      "catalogColor": "#e1b7be",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-55-47316/",
+        "field": "selected.hex_color",
+        "sourceSha256": "fe296af82d513284407aeb0844d6c6127ed44f1ad7ae21763988a7c6186e2b21"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-56",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Greyish Taupe",
+      "reference": "56",
+      "shadeCode": "56",
+      "sku": "KM000000017056B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-56-7449/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911801"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911801",
+          "rawBarcode": "8025272911801",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-56-7449/"
+        }
+      ],
+      "gtin": "08025272911801",
+      "catalogColor": "#a98f91",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-56-7449/",
+        "field": "selected.hex_color",
+        "sourceSha256": "51df013b73fd9d533e00afcdd074b12f0a5259e466de29c6a53acb846ebd9938"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-57",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Rosy Taupe",
+      "reference": "57",
+      "shadeCode": "57",
+      "sku": "KM000000779057B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-57-47318/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036342"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036342",
+          "rawBarcode": "8059385036342",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-57-47318/"
+        }
+      ],
+      "gtin": "08059385036342",
+      "catalogColor": "#876163",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-57-47318/",
+        "field": "selected.hex_color",
+        "sourceSha256": "8b47b359a4a575971bfa4ee4ac0ce808fb31a501d21e48d4d0b0677cc661e8e5"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-58",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Yellow",
+      "reference": "58",
+      "shadeCode": "58",
+      "sku": "KM000000779058B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-58-47319/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036359"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036359",
+          "rawBarcode": "8059385036359",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-58-47319/"
+        }
+      ],
+      "gtin": "08059385036359",
+      "catalogColor": "#ffdc3b",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-58-47319/",
+        "field": "selected.hex_color",
+        "sourceSha256": "c9f8800316b17cacebbcc66605e2ec09ecead4f647062db1ff193738c6738f16"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-63",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Light Geranium",
+      "reference": "63",
+      "shadeCode": "63",
+      "sku": "KM000000017063B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-63-7456/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911870"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911870",
+          "rawBarcode": "8025272911870",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-63-7456/"
+        }
+      ],
+      "gtin": "08025272911870",
+      "catalogColor": "#fa4408",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-63-7456/",
+        "field": "selected.hex_color",
+        "sourceSha256": "543b5abb47bd23b5ddbfc4fb99aebad475690c78d897c337da8f1dd18127322f"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-64",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Deep Red",
+      "reference": "64",
+      "shadeCode": "64",
+      "sku": "KM000000779064B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-64-47322/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036380"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036380",
+          "rawBarcode": "8059385036380",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-64-47322/"
+        }
+      ],
+      "gtin": "08059385036380",
+      "catalogColor": "#d50d01",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-64-47322/",
+        "field": "selected.hex_color",
+        "sourceSha256": "6fd82f707b1cd10934df87b3a4e2a189ba69a3b669991bed9e55743e04a1b0b8"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-65",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Strawberry Pink",
+      "reference": "65",
+      "shadeCode": "65",
+      "sku": "KM000000017065B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-65-7458/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911894"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911894",
+          "rawBarcode": "8025272911894",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-65-7458/"
+        }
+      ],
+      "gtin": "08025272911894",
+      "catalogColor": "#ff737c",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-65-7458/",
+        "field": "selected.hex_color",
+        "sourceSha256": "c5a6409d55e92000f73de92913bfcde69242442e932a737725044cb6a98f2523"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-66",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Fuchsia",
+      "reference": "66",
+      "shadeCode": "66",
+      "sku": "KM000000017066B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-66-7459/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911900"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911900",
+          "rawBarcode": "8025272911900",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-66-7459/"
+        }
+      ],
+      "gtin": "08025272911900",
+      "catalogColor": "#ff1c5c",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-66-7459/",
+        "field": "selected.hex_color",
+        "sourceSha256": "ee986925d56ce9c3f174238b0e381a941afed32311560d18d2f14a867c95d066"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-67",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Light Crimson",
+      "reference": "67",
+      "shadeCode": "67",
+      "sku": "KM000000017067B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-67-7460/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911917"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911917",
+          "rawBarcode": "8025272911917",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-67-7460/"
+        }
+      ],
+      "gtin": "08025272911917",
+      "catalogColor": "#763236",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-67-7460/",
+        "field": "selected.hex_color",
+        "sourceSha256": "e7a94729c68444a33b29063124faa27daf726e58a2946ee1fc98656bef650cd5"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-70",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Dark Vermillion",
+      "reference": "70",
+      "shadeCode": "70",
+      "sku": "KM000000779070B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-70-47326/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8059385036427"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036427",
+          "rawBarcode": "8059385036427",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-70-47326/"
+        }
+      ],
+      "gtin": "08059385036427",
+      "catalogColor": "#740411",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-70-47326/",
+        "field": "selected.hex_color",
+        "sourceSha256": "0da7441951fc063928c7a010eca2b54dc35ddfb28ad249f62389ddfcf76b2702"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-71",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Orchid",
+      "reference": "71",
+      "shadeCode": "71",
+      "sku": "KM000000017071B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-71-7464/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911955"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911955",
+          "rawBarcode": "8025272911955",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-71-7464/"
+        }
+      ],
+      "gtin": "08025272911955",
+      "catalogColor": "#a32960",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-71-7464/",
+        "field": "selected.hex_color",
+        "sourceSha256": "f57c74b225493914466f5b117b2f84d53b70149b37abd36059b467a638d7b526"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-72",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Cyclamen",
+      "reference": "72",
+      "shadeCode": "72",
+      "sku": "KM000000017072B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-72-7465/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272911962"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911962",
+          "rawBarcode": "8025272911962",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-72-7465/"
+        }
+      ],
+      "gtin": "08025272911962",
+      "catalogColor": "#d04c87",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-72-7465/",
+        "field": "selected.hex_color",
+        "sourceSha256": "6e1aedd61a2680748cb9a174524f8c83554980aeb4fdb739cd5485bbd44a6e33"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-73",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Candy Pink",
+      "reference": "73",
+      "shadeCode": "73",
+      "sku": "KM000000017073B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-73-7466/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272911979"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272911979",
+          "rawBarcode": "8025272911979",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-73-7466/"
+        }
+      ],
+      "gtin": "08025272911979",
+      "catalogColor": "#ff85b4",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-73-7466/",
+        "field": "selected.hex_color",
+        "sourceSha256": "7f23107beb92eab71bad4a354522bd41c678c128577b57fe44c9da7d0a7e1267"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-75",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pastel Lilac",
+      "reference": "75",
+      "shadeCode": "75",
+      "sku": "KM000000779075B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-75-47330/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036465"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036465",
+          "rawBarcode": "8059385036465",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-75-47330/"
+        }
+      ],
+      "gtin": "08059385036465",
+      "catalogColor": "#e6bede",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-75-47330/",
+        "field": "selected.hex_color",
+        "sourceSha256": "6f299da69d9589721068b9286244601b47fdd509981b6c11b9f62b191e8ae302"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-76",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Lavender",
+      "reference": "76",
+      "shadeCode": "76",
+      "sku": "KM000000017076B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-76-7469/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272912006"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272912006",
+          "rawBarcode": "8025272912006",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-76-7469/"
+        }
+      ],
+      "gtin": "08025272912006",
+      "catalogColor": "#aba8c5",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-76-7469/",
+        "field": "selected.hex_color",
+        "sourceSha256": "6e2c085a479dedabc1a34538e530ab3c24783c66d073d8cdd7beeac23420df6c"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-77",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pastel Violet",
+      "reference": "77",
+      "shadeCode": "77",
+      "sku": "KM000000017077B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-77-7470/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272912013"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272912013",
+          "rawBarcode": "8025272912013",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-77-7470/"
+        }
+      ],
+      "gtin": "08025272912013",
+      "catalogColor": "#9f7fab",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-77-7470/",
+        "field": "selected.hex_color",
+        "sourceSha256": "952ff58ba8529cc791dbe1bcc6e6707afad6b097f8239a7fc90f13f3f5a5ac27"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-79",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Denim Grey Blue",
+      "reference": "79",
+      "shadeCode": "79",
+      "sku": "KM000000017079B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-79-7472/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272912037"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272912037",
+          "rawBarcode": "8025272912037",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-79-7472/"
+        }
+      ],
+      "gtin": "08025272912037",
+      "catalogColor": "#455e6e",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-79-7472/",
+        "field": "selected.hex_color",
+        "sourceSha256": "121607ad7e91777082cd251eacf1517aadc445d0940aa310e88a02165168c9df"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-81",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Light Blue",
+      "reference": "81",
+      "shadeCode": "81",
+      "sku": "KM000000017081B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-81-7474/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272912051"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272912051",
+          "rawBarcode": "8025272912051",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-81-7474/"
+        }
+      ],
+      "gtin": "08025272912051",
+      "catalogColor": "#a3c4e2",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-81-7474/",
+        "field": "selected.hex_color",
+        "sourceSha256": "67fb3d5af46da8ab8cfa0b35a5f676418b511a1735d97120266a712ca0763130"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-82",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Emerald",
+      "reference": "82",
+      "shadeCode": "82",
+      "sku": "KM000000779082B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-82-47336/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8059385036502"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036502",
+          "rawBarcode": "8059385036502",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-82-47336/"
+        }
+      ],
+      "gtin": "08059385036502",
+      "catalogColor": "#00393c",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-82-47336/",
+        "field": "selected.hex_color",
+        "sourceSha256": "ee9f60c3cecc35147c56eb204a2032467acaadf976daf0d4e0777c622cd25ceb"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-84",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Dark Tiffany",
+      "reference": "84",
+      "shadeCode": "84",
+      "sku": "KM000000017084B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-84-7477/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "finish": "Brillant",
+      "barcodeAliases": [
+        "8025272912082"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272912082",
+          "rawBarcode": "8025272912082",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-84-7477/"
+        }
+      ],
+      "gtin": "08025272912082",
+      "catalogColor": "#98c2b8",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-84-7477/",
+        "field": "selected.hex_color",
+        "sourceSha256": "da52a82bafc013a9ee36adbf3ef6caf7c213ecc50c3ba46b0a698d46c00db1a6"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-96",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Pearly Anthracite",
+      "reference": "96",
+      "shadeCode": "96",
+      "sku": "KM000000017096B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-96-7489/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8025272912204"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08025272912204",
+          "rawBarcode": "8025272912204",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-96-7489/"
+        }
+      ],
+      "gtin": "08025272912204",
+      "catalogColor": "#414143",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-96-7489/",
+        "field": "selected.hex_color",
+        "sourceSha256": "a3b4cc1c85299570d95205d101715f9771eeb48451194a0d18af55b2fb30d62f"
+      }
+    },
+    {
+      "catalogId": "nm-kiko-smart-97",
+      "catalogVersion": "KIKO-Smart-2026-10-03",
+      "brand": "KIKO Milano",
+      "collection": "Smart Fast Dry Nail Lacquer",
+      "collectionAliases": [
+        "Smart Nail Lacquer",
+        "Smart Fast Dry",
+        "Smart"
+      ],
+      "name": "Iridescent Unicorn",
+      "reference": "97",
+      "shadeCode": "97",
+      "sku": "KM000000779097B",
+      "skuUnique": true,
+      "type": "Vernis",
+      "sourceType": "vernis classique",
+      "url": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-97-47343/",
+      "sourceCheckedAt": "2026-10-03",
+      "identityStatus": "Officiel vérifié",
+      "lamp": "Non",
+      "usage": "Couleur seule",
+      "barcodeAliases": [
+        "8059385036571"
+      ],
+      "scanVariants": [
+        {
+          "gtin": "08059385036571",
+          "rawBarcode": "8059385036571",
+          "symbology": "EAN-13",
+          "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-97-47343/"
+        }
+      ],
+      "gtin": "08059385036571",
+      "catalogColor": "#e9e5e3",
+      "colorValidated": true,
+      "colorSource": "official_hex",
+      "colorEvidence": {
+        "source": "https://www.kikocosmetics.com/fr-fr/p/smart-nail-lacquer-97-47343/",
+        "field": "selected.hex_color",
+        "sourceSha256": "0cf7ef6f188b0467bb23205ab88ad6c9b03e78ad098856aa3fbe5ddcd7cf5e79"
+      }
+    }
+  ]
+}
