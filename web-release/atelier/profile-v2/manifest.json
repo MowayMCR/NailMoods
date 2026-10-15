@@ -1,0 +1,374 @@
+{
+  "soft-glam": {
+    "livre": {
+      "file": "soft-glam/livre.webp",
+      "source": "exec-1510f175-8ae2-4624-bdb9-c7793a2faea4.png",
+      "width": 720,
+      "height": 407,
+      "bytes": 94508
+    },
+    "miroir": {
+      "file": "soft-glam/miroir.webp",
+      "source": "exec-3066a323-b27d-42d0-bcec-c5383d2913cc.png",
+      "width": 572,
+      "height": 820,
+      "bytes": 135140
+    },
+    "pinceaux": {
+      "file": "soft-glam/pinceaux.webp",
+      "source": "exec-fa5e8bcb-fdeb-4e13-b7f8-0c950bae9411.png",
+      "width": 645,
+      "height": 820,
+      "bytes": 173602
+    },
+    "vernis": {
+      "file": "soft-glam/vernis.webp",
+      "source": "exec-9c06b5e0-ce57-4b50-90ae-bb2589840c85.png",
+      "width": 720,
+      "height": 434,
+      "bytes": 123676
+    },
+    "photo": {
+      "file": "soft-glam/photo.webp",
+      "source": "exec-35e6ed33-eb62-4a3e-a404-ace6e206f9c0.png",
+      "width": 720,
+      "height": 565,
+      "bytes": 94296
+    },
+    "envies": {
+      "file": "soft-glam/envies.webp",
+      "source": "exec-ff264d36-13d7-4ec6-a3bf-00ea0e86fa40.png",
+      "width": 720,
+      "height": 614,
+      "bytes": 132986
+    },
+    "lampe": {
+      "file": "soft-glam/lampe.webp",
+      "source": "exec-9e511370-44a7-4bf6-947a-6cb7d6773746.png",
+      "width": 536,
+      "height": 820,
+      "bytes": 85774
+    },
+    "inspirations": {
+      "file": "soft-glam/inspirations.webp",
+      "source": "exec-f3c6f6ac-3033-4ded-8169-669a3b092399.png",
+      "width": 720,
+      "height": 513,
+      "bytes": 140276
+    },
+    "recompenses": {
+      "file": "soft-glam/recompenses.webp",
+      "source": "exec-74e1205b-deb6-472d-9fd8-b9132ebf9b41.png",
+      "width": 720,
+      "height": 736,
+      "bytes": 243970
+    },
+    "planning": {
+      "file": "soft-glam/planning.webp",
+      "source": "exec-1ee134d6-ba55-4c44-8288-9879940bc024.png",
+      "width": 720,
+      "height": 450,
+      "bytes": 114562
+    },
+    "salon": {
+      "file": "soft-glam/salon.webp",
+      "source": "exec-a3b940f3-2011-4aa2-ba8e-21c30c0f95c2.png",
+      "width": 720,
+      "height": 760,
+      "bytes": 255422
+    },
+    "vitrine": {
+      "file": "soft-glam/vitrine.webp",
+      "source": "exec-74821867-6729-4224-afdc-8f78ed4fa687.png",
+      "width": 720,
+      "height": 416,
+      "bytes": 106314
+    },
+    "decor": {
+      "file": "soft-glam/decor.webp",
+      "source": "exec-5b05f0eb-7414-4d38-9e8a-aebd947e0e21.png",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 240140
+    }
+  },
+  "dark-feminine": {
+    "livre": {
+      "file": "dark-feminine/livre.webp",
+      "source": "exec-d68016a5-56a8-4fd6-b67f-ab4c34ff4960.png",
+      "width": 720,
+      "height": 442,
+      "bytes": 140946
+    },
+    "miroir": {
+      "file": "dark-feminine/miroir.webp",
+      "source": "exec-27b2feb9-13ec-4751-974c-61187c640afd.png",
+      "width": 579,
+      "height": 820,
+      "bytes": 181020
+    },
+    "pinceaux": {
+      "file": "dark-feminine/pinceaux.webp",
+      "source": "exec-7d36f0e4-750c-431a-996a-b83bc2121fe0.png",
+      "width": 557,
+      "height": 820,
+      "bytes": 180184
+    },
+    "vernis": {
+      "file": "dark-feminine/vernis.webp",
+      "source": "exec-1577f446-1749-4ccd-afde-2f8ebf6ba5c0.png",
+      "width": 720,
+      "height": 527,
+      "bytes": 173274
+    },
+    "photo": {
+      "file": "dark-feminine/photo.webp",
+      "source": "exec-3cad9d95-2828-4762-aa2c-e4e6c75f748f.png",
+      "width": 720,
+      "height": 528,
+      "bytes": 154822
+    },
+    "envies": {
+      "file": "dark-feminine/envies.webp",
+      "source": "exec-d4868914-5d9d-435b-ba27-5d99b534e3f7.png",
+      "width": 720,
+      "height": 643,
+      "bytes": 165738
+    },
+    "lampe": {
+      "file": "dark-feminine/lampe.webp",
+      "source": "exec-c16663bc-b66d-4eb0-bab8-7752222a3168.png",
+      "width": 494,
+      "height": 820,
+      "bytes": 116534
+    },
+    "inspirations": {
+      "file": "dark-feminine/inspirations.webp",
+      "source": "exec-ce8de5bd-c6fb-4270-9eac-6e84a2262e95.png",
+      "width": 720,
+      "height": 389,
+      "bytes": 109238
+    },
+    "recompenses": {
+      "file": "dark-feminine/recompenses.webp",
+      "source": "exec-89555dd8-bc3c-43fa-adc5-1b10a1fc4ebf.png",
+      "width": 720,
+      "height": 689,
+      "bytes": 193252
+    },
+    "planning": {
+      "file": "dark-feminine/planning.webp",
+      "source": "exec-4b477b17-a1dc-48db-84ea-1c177dc2e254.png",
+      "width": 720,
+      "height": 424,
+      "bytes": 99458
+    },
+    "salon": {
+      "file": "dark-feminine/salon.webp",
+      "source": "exec-9fb50891-300d-487c-b0fc-0c46173b81e1.png",
+      "width": 659,
+      "height": 820,
+      "bytes": 248944
+    },
+    "vitrine": {
+      "file": "dark-feminine/vitrine.webp",
+      "source": "exec-ce7fda12-eb32-4efc-95d9-0923bf874036.png",
+      "width": 720,
+      "height": 458,
+      "bytes": 108340
+    },
+    "decor": {
+      "file": "dark-feminine/decor.webp",
+      "source": "exec-8d276667-ec0c-40b6-8317-05e85f67098c.png",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 306102
+    }
+  },
+  "cottagecore": {
+    "livre": {
+      "file": "cottagecore/livre.webp",
+      "source": "exec-26159619-03a0-4a82-bf7b-5767775d398b.png",
+      "width": 720,
+      "height": 373,
+      "bytes": 96362
+    },
+    "miroir": {
+      "file": "cottagecore/miroir.webp",
+      "source": "exec-0e7225a6-91a5-4d94-aeed-ad9bb9f3a647.png",
+      "width": 698,
+      "height": 820,
+      "bytes": 212092
+    },
+    "pinceaux": {
+      "file": "cottagecore/pinceaux.webp",
+      "source": "exec-8ace7ce5-0f00-492b-87a3-f82a8f0d5673.png",
+      "width": 687,
+      "height": 820,
+      "bytes": 170948
+    },
+    "vernis": {
+      "file": "cottagecore/vernis.webp",
+      "source": "exec-15cc609d-f2a7-409e-a9dd-efd127d19fc5.png",
+      "width": 720,
+      "height": 445,
+      "bytes": 106388
+    },
+    "photo": {
+      "file": "cottagecore/photo.webp",
+      "source": "exec-cd7dd4e2-a803-4a46-a88b-48f44d2ff4ec.png",
+      "width": 720,
+      "height": 631,
+      "bytes": 133796
+    },
+    "envies": {
+      "file": "cottagecore/envies.webp",
+      "source": "exec-c27dccd0-f96d-4dfa-a9c6-b4816a5e440c.png",
+      "width": 720,
+      "height": 714,
+      "bytes": 167474
+    },
+    "lampe": {
+      "file": "cottagecore/lampe.webp",
+      "source": "exec-af6a0fee-46a9-415e-9d88-baf36b84457a.png",
+      "width": 539,
+      "height": 820,
+      "bytes": 121692
+    },
+    "inspirations": {
+      "file": "cottagecore/inspirations.webp",
+      "source": "exec-1ee01b21-e2da-432a-b774-015b58e40773.png",
+      "width": 720,
+      "height": 429,
+      "bytes": 130242
+    },
+    "recompenses": {
+      "file": "cottagecore/recompenses.webp",
+      "source": "exec-81d10fac-4c80-4c2b-a0f6-e876b3b8b706.png",
+      "width": 720,
+      "height": 695,
+      "bytes": 197742
+    },
+    "planning": {
+      "file": "cottagecore/planning.webp",
+      "source": "exec-a58fc185-95c9-4bbc-b9db-84c4f92c6e9e.png",
+      "width": 720,
+      "height": 419,
+      "bytes": 91776
+    },
+    "salon": {
+      "file": "cottagecore/salon.webp",
+      "source": "exec-de62632f-ac04-465b-be04-004e05a39dcd.png",
+      "width": 720,
+      "height": 781,
+      "bytes": 264200
+    },
+    "vitrine": {
+      "file": "cottagecore/vitrine.webp",
+      "source": "exec-d9b0c80f-0cd3-49ab-a39b-ab98f88fe3d2.png",
+      "width": 720,
+      "height": 448,
+      "bytes": 126162
+    },
+    "decor": {
+      "file": "cottagecore/decor.webp",
+      "source": "exec-76809eb7-3e1b-4307-86b5-50850beacf31.png",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 371862
+    }
+  },
+  "pop-pastel": {
+    "livre": {
+      "file": "pop-pastel/livre.webp",
+      "source": "exec-5c45a245-b394-45f1-aea2-a50822bd2092.png",
+      "width": 720,
+      "height": 467,
+      "bytes": 122328
+    },
+    "miroir": {
+      "file": "pop-pastel/miroir.webp",
+      "source": "exec-861f06ea-9e91-4e86-b251-30b68265f05e.png",
+      "width": 686,
+      "height": 820,
+      "bytes": 184202
+    },
+    "pinceaux": {
+      "file": "pop-pastel/pinceaux.webp",
+      "source": "exec-bab34622-0722-42fa-8ef5-aad6e1ef7f8b.png",
+      "width": 719,
+      "height": 820,
+      "bytes": 176436
+    },
+    "vernis": {
+      "file": "pop-pastel/vernis.webp",
+      "source": "exec-4de6269c-0a5a-4b63-a0a5-da42eff4c1af.png",
+      "width": 720,
+      "height": 617,
+      "bytes": 116930
+    },
+    "photo": {
+      "file": "pop-pastel/photo.webp",
+      "source": "exec-0e0ed88f-cb80-44fa-b8f4-31ef02771b10.png",
+      "width": 720,
+      "height": 543,
+      "bytes": 109208
+    },
+    "envies": {
+      "file": "pop-pastel/envies.webp",
+      "source": "exec-b6270016-9f08-4022-bfdc-b8eca7a7c77d.png",
+      "width": 720,
+      "height": 656,
+      "bytes": 125700
+    },
+    "lampe": {
+      "file": "pop-pastel/lampe.webp",
+      "source": "exec-0e04d79d-440d-4da9-84af-479eaa5b00c4.png",
+      "width": 602,
+      "height": 820,
+      "bytes": 95572
+    },
+    "inspirations": {
+      "file": "pop-pastel/inspirations.webp",
+      "source": "exec-d84836e8-09c0-4f79-8785-93928ece5df3.png",
+      "width": 720,
+      "height": 395,
+      "bytes": 102144
+    },
+    "recompenses": {
+      "file": "pop-pastel/recompenses.webp",
+      "source": "exec-d1f4a3d4-0192-4a3e-b2b1-6f9e8d4ae3bb.png",
+      "width": 720,
+      "height": 748,
+      "bytes": 184502
+    },
+    "planning": {
+      "file": "pop-pastel/planning.webp",
+      "source": "exec-7d2b5fd1-d904-4c6c-82b6-15a29b82f716.png",
+      "width": 720,
+      "height": 384,
+      "bytes": 69590
+    },
+    "salon": {
+      "file": "pop-pastel/salon.webp",
+      "source": "exec-3a6f0f29-bfaf-4fb0-87d6-2304a475097e.png",
+      "width": 589,
+      "height": 820,
+      "bytes": 217524
+    },
+    "vitrine": {
+      "file": "pop-pastel/vitrine.webp",
+      "source": "exec-0d9e5652-d279-4688-a659-6ae1f1f87032.png",
+      "width": 720,
+      "height": 484,
+      "bytes": 111708
+    },
+    "decor": {
+      "file": "pop-pastel/decor.webp",
+      "source": "exec-5ae79409-523e-4900-ae86-1db60d46a3f1.png",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 218290
+    }
+  }
+}
