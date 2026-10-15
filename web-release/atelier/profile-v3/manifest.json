@@ -1,0 +1,236 @@
+{
+  "version": 3,
+  "layout": {
+    "wallEnd": 0.56,
+    "deskEnd": 0.94,
+    "backSupport": 0.7,
+    "frontSupport": 0.93
+  },
+  "note": "Generated reconstructed assets; independently cropped surfaces and alpha-bounded props.",
+  "themes": {
+    "soft-glam": {
+      "livre": {
+        "file": "soft-glam/livre.webp",
+        "source": "exec-1510f175-8ae2-4624-bdb9-c7793a2faea4.png",
+        "width": 720,
+        "height": 407,
+        "bytes": 94508
+      },
+      "pinceaux": {
+        "file": "soft-glam/pinceaux.webp",
+        "source": "exec-fa5e8bcb-fdeb-4e13-b7f8-0c950bae9411.png",
+        "width": 645,
+        "height": 820,
+        "bytes": 173602
+      },
+      "photo": {
+        "file": "soft-glam/photo.webp",
+        "source": "exec-35e6ed33-eb62-4a3e-a404-ace6e206f9c0.png",
+        "width": 720,
+        "height": 565,
+        "bytes": 94296
+      },
+      "envies": {
+        "file": "soft-glam/envies.webp",
+        "source": "exec-ff264d36-13d7-4ec6-a3bf-00ea0e86fa40.png",
+        "width": 720,
+        "height": 614,
+        "bytes": 132986
+      },
+      "lampe": {
+        "file": "soft-glam/lampe.webp",
+        "source": "exec-9e511370-44a7-4bf6-947a-6cb7d6773746.png",
+        "width": 536,
+        "height": 820,
+        "bytes": 85774
+      },
+      "inspirations": {
+        "file": "soft-glam/inspirations.webp",
+        "source": "exec-f3c6f6ac-3033-4ded-8169-669a3b092399.png",
+        "width": 720,
+        "height": 513,
+        "bytes": 140276
+      },
+      "recompenses": {
+        "file": "soft-glam/recompenses.webp",
+        "source": "exec-74e1205b-deb6-472d-9fd8-b9132ebf9b41.png",
+        "width": 720,
+        "height": 736,
+        "bytes": 243970
+      },
+      "wall": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png top 0–52.5% of quadrant",
+      "desk": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png 53.2–78% of quadrant",
+      "front": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png 82–100% of quadrant",
+      "miroir": "exec-41fae16e-7b89-48b8-bb6c-ee0c0aa2888f.png quadrant alpha crop",
+      "planning": "exec-d477897c-887b-401f-94a2-e4d17fd5e243.png quadrant alpha crop"
+    },
+    "dark-feminine": {
+      "livre": {
+        "file": "dark-feminine/livre.webp",
+        "source": "exec-d68016a5-56a8-4fd6-b67f-ab4c34ff4960.png",
+        "width": 720,
+        "height": 442,
+        "bytes": 140946
+      },
+      "pinceaux": {
+        "file": "dark-feminine/pinceaux.webp",
+        "source": "exec-7d36f0e4-750c-431a-996a-b83bc2121fe0.png",
+        "width": 557,
+        "height": 820,
+        "bytes": 180184
+      },
+      "photo": {
+        "file": "dark-feminine/photo.webp",
+        "source": "exec-3cad9d95-2828-4762-aa2c-e4e6c75f748f.png",
+        "width": 720,
+        "height": 528,
+        "bytes": 154822
+      },
+      "envies": {
+        "file": "dark-feminine/envies.webp",
+        "source": "exec-d4868914-5d9d-435b-ba27-5d99b534e3f7.png",
+        "width": 720,
+        "height": 643,
+        "bytes": 165738
+      },
+      "lampe": {
+        "file": "dark-feminine/lampe.webp",
+        "source": "exec-c16663bc-b66d-4eb0-bab8-7752222a3168.png",
+        "width": 494,
+        "height": 820,
+        "bytes": 116534
+      },
+      "inspirations": {
+        "file": "dark-feminine/inspirations.webp",
+        "source": "exec-ce8de5bd-c6fb-4270-9eac-6e84a2262e95.png",
+        "width": 720,
+        "height": 389,
+        "bytes": 109238
+      },
+      "recompenses": {
+        "file": "dark-feminine/recompenses.webp",
+        "source": "exec-89555dd8-bc3c-43fa-adc5-1b10a1fc4ebf.png",
+        "width": 720,
+        "height": 689,
+        "bytes": 193252
+      },
+      "wall": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png top 0–52.5% of quadrant",
+      "desk": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png 53.2–78% of quadrant",
+      "front": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png 82–100% of quadrant",
+      "miroir": "exec-41fae16e-7b89-48b8-bb6c-ee0c0aa2888f.png quadrant alpha crop",
+      "planning": "exec-d477897c-887b-401f-94a2-e4d17fd5e243.png quadrant alpha crop"
+    },
+    "cottagecore": {
+      "livre": {
+        "file": "cottagecore/livre.webp",
+        "source": "exec-26159619-03a0-4a82-bf7b-5767775d398b.png",
+        "width": 720,
+        "height": 373,
+        "bytes": 96362
+      },
+      "pinceaux": {
+        "file": "cottagecore/pinceaux.webp",
+        "source": "exec-8ace7ce5-0f00-492b-87a3-f82a8f0d5673.png",
+        "width": 687,
+        "height": 820,
+        "bytes": 170948
+      },
+      "photo": {
+        "file": "cottagecore/photo.webp",
+        "source": "exec-cd7dd4e2-a803-4a46-a88b-48f44d2ff4ec.png",
+        "width": 720,
+        "height": 631,
+        "bytes": 133796
+      },
+      "envies": {
+        "file": "cottagecore/envies.webp",
+        "source": "exec-c27dccd0-f96d-4dfa-a9c6-b4816a5e440c.png",
+        "width": 720,
+        "height": 714,
+        "bytes": 167474
+      },
+      "lampe": {
+        "file": "cottagecore/lampe.webp",
+        "source": "exec-af6a0fee-46a9-415e-9d88-baf36b84457a.png",
+        "width": 539,
+        "height": 820,
+        "bytes": 121692
+      },
+      "inspirations": {
+        "file": "cottagecore/inspirations.webp",
+        "source": "exec-1ee01b21-e2da-432a-b774-015b58e40773.png",
+        "width": 720,
+        "height": 429,
+        "bytes": 130242
+      },
+      "recompenses": {
+        "file": "cottagecore/recompenses.webp",
+        "source": "exec-81d10fac-4c80-4c2b-a0f6-e876b3b8b706.png",
+        "width": 720,
+        "height": 695,
+        "bytes": 197742
+      },
+      "wall": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png top 0–52.5% of quadrant",
+      "desk": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png 53.2–78% of quadrant",
+      "front": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png 82–100% of quadrant",
+      "miroir": "exec-41fae16e-7b89-48b8-bb6c-ee0c0aa2888f.png quadrant alpha crop",
+      "planning": "exec-d477897c-887b-401f-94a2-e4d17fd5e243.png quadrant alpha crop"
+    },
+    "pop-pastel": {
+      "livre": {
+        "file": "pop-pastel/livre.webp",
+        "source": "exec-5c45a245-b394-45f1-aea2-a50822bd2092.png",
+        "width": 720,
+        "height": 467,
+        "bytes": 122328
+      },
+      "pinceaux": {
+        "file": "pop-pastel/pinceaux.webp",
+        "source": "exec-bab34622-0722-42fa-8ef5-aad6e1ef7f8b.png",
+        "width": 719,
+        "height": 820,
+        "bytes": 176436
+      },
+      "photo": {
+        "file": "pop-pastel/photo.webp",
+        "source": "exec-0e0ed88f-cb80-44fa-b8f4-31ef02771b10.png",
+        "width": 720,
+        "height": 543,
+        "bytes": 109208
+      },
+      "envies": {
+        "file": "pop-pastel/envies.webp",
+        "source": "exec-b6270016-9f08-4022-bfdc-b8eca7a7c77d.png",
+        "width": 720,
+        "height": 656,
+        "bytes": 125700
+      },
+      "lampe": {
+        "file": "pop-pastel/lampe.webp",
+        "source": "exec-0e04d79d-440d-4da9-84af-479eaa5b00c4.png",
+        "width": 602,
+        "height": 820,
+        "bytes": 95572
+      },
+      "inspirations": {
+        "file": "pop-pastel/inspirations.webp",
+        "source": "exec-d84836e8-09c0-4f79-8785-93928ece5df3.png",
+        "width": 720,
+        "height": 395,
+        "bytes": 102144
+      },
+      "recompenses": {
+        "file": "pop-pastel/recompenses.webp",
+        "source": "exec-d1f4a3d4-0192-4a3e-b2b1-6f9e8d4ae3bb.png",
+        "width": 720,
+        "height": 748,
+        "bytes": 184502
+      },
+      "wall": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png top 0–52.5% of quadrant",
+      "desk": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png 53.2–78% of quadrant",
+      "front": "exec-fad09e4c-9f38-4ea5-91b5-dca9d5a1f199.png 82–100% of quadrant",
+      "miroir": "exec-41fae16e-7b89-48b8-bb6c-ee0c0aa2888f.png quadrant alpha crop",
+      "planning": "exec-d477897c-887b-401f-94a2-e4d17fd5e243.png quadrant alpha crop"
+    }
+  }
+}
