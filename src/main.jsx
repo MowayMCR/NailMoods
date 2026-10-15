@@ -52,6 +52,8 @@ import { colorFamilies, colorFamilyChange, productColor } from './colorAnalysis'
 import CreateView from './CreateView';
 import './style.css';
 import ProfileView from './ProfileView';
+import useLocale from './i18n/useLocale.js';
+import { t } from './i18n/locale.js';
 import { defaultProfile } from './profileOptions';
 import HomeView from './HomeView';
 import ScanGenerate from './ScanGenerate.jsx';
@@ -91,6 +93,7 @@ const readThemeBackup = storage => { try { return window.localStorage.getItem(th
 const saveThemeBackup = (storage, theme) => { try { window.localStorage.setItem(themeBackupKey(storage), theme); } catch { /* The account profile remains the source of truth. */ } };
 
 function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, syncNotice, profileExtras, media, onShareToPro }) {
+  const uiLocale=useLocale();
   const browserStorage=useStorage();
   const social=useSocial();
   const [assistantOpen,setAssistantOpen]=useState(()=>window.location.hash==='#creer/nailmoods-ai');
@@ -438,8 +441,8 @@ function App({ onThemeChange, accountAccess, appearanceExtras, identityExtras, s
     </Sheet>}
 
     {shelfSelection&&<ProductFocus selection={shelfSelection} product={usedById.get(String(shelfSelection.product.id))||shelfSelection.product} onClose={()=>setShelfSelection(null)} onFile={()=>{setSaveError('');setEdit({...defaults,...materialDefaults,...items.find(p=>String(p.id)===String(shelfSelection.product.id))});}} onCreate={()=>createWith(shelfSelection.product)} onFavorite={()=>persist(items.map(p=>String(p.id)===String(shelfSelection.product.id)?{...p,fav:!p.fav}:p))} onPose={p=>openJournal(p.id)}/>}{proShelvesOpen&&<Sheet title="L’étagère des PO" onClose={()=>setProShelvesOpen(false)}><ProShelfDirectory client={social?.client}/></Sheet>}
-    <nav>{[['home', Home, 'Accueil'], ['feed', FeedMark, 'Fil'], ['create', Plus, 'Créer'], ['collection', Library, 'Collection'], ['journal', BookHeart, 'Mes poses']].map(([id, Icon, label]) =>
-      <button data-tour={id} key={id} className={tab === id || tab === 'scan' && id === 'create' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'create' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span>{label}{limited && id==='collection' ? ' · Plus' : ''}</span></button>
+    <nav>{[['home', Home, 'nav.home'], ['feed', FeedMark, 'nav.feed'], ['create', Plus, 'nav.create'], ['collection', Library, 'nav.collection'], ['journal', BookHeart, 'nav.journal']].map(([id, Icon, label]) =>
+      <button data-tour={id} key={id} className={tab === id || tab === 'scan' && id === 'create' ? 'on' : ''} aria-current={tab === id || tab === 'scan' && id === 'create' ? 'page' : undefined} onClick={() => navigate(id)}><Icon /><span lang={import.meta.env.VITE_I18N_BETA_ENABLED === 'true' ? uiLocale : 'fr'}>{t(label, import.meta.env.VITE_I18N_BETA_ENABLED === 'true' ? uiLocale : 'fr')}{limited && id==='collection' ? ' · Plus' : ''}</span></button>
     )}</nav>
 
     <TutorialTimerRuntime tutorials={tutorials} onOpen={openTutorial}/>{import.meta.env.VITE_POSE_CYCLE_ENABLED==='true'&&<PlanningRuntime preferences={profile.planningNotifications}/>}
