@@ -1,0 +1,26 @@
+{
+  "soft-glam": {
+    "file": "soft-glam.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "585bcd38a44159351bd4e17a97ec34aa534b245f9045829f27e08cc7130322b2"
+  },
+  "dark-feminine": {
+    "file": "dark-feminine.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "4d7f970a8fa3a3794cba1496b47066c9b0466a772ccebecb4026bce8c3dcd19f"
+  },
+  "cottagecore": {
+    "file": "cottagecore.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "0ddd2755bc510f9665a2004a5541f4c3544638679b01777dd99365b1e610ecfc"
+  },
+  "pop-pastel": {
+    "file": "pop-pastel.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "1fa33996b06c5afa894c551b7eae6f3fbe5094fee264fc02af98d67960942c43"
+  }
+}
