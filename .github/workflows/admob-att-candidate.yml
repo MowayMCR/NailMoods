@@ -1,0 +1,17 @@
+name: NailMoods ATT guarded TestFlight candidate
+on:
+  push:
+    branches: [fix/admob-att-20261011]
+    paths: ['.github/workflows/admob-att-candidate.yml']
+permissions:
+  contents: read
+jobs:
+  apple:
+    uses: ./.github/workflows/ios-testflight.yml
+    with:
+      mode: testflight
+      source_ref: ${{ github.sha }}
+      build_number: '30006'
+      admob_test: true
+      simulator_profile: phone-ipad
+    secrets: inherit

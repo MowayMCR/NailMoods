@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-10-11T15:49:55.126147+00:00",
+  "method": "Read-only visible AdMob console, authenticated",
+  "europeanMessage": {
+    "name": "NailMoods — Consentement publicitaire.",
+    "published": true,
+    "apps": [
+      "Nailmoods Android",
+      "NailMoods_iOS iOS"
+    ],
+    "privacyURL": "https://nailmoods.com/legal/confidentialite.html",
+    "defaultLanguage": "fr",
+    "additionalLanguages": 1,
+    "rejectEnabled": true,
+    "manageOptionsEnabled": true,
+    "closeRejectEnabled": false,
+    "geography": "EEA, UK, Switzerland",
+    "previewPartners": 210,
+    "partnerListReviewed": false
+  },
+  "idfaMessage": {
+    "status": "Draft",
+    "published": false
+  },
+  "mutations": []
+}
