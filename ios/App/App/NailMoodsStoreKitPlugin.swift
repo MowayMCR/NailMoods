@@ -30,27 +30,37 @@ public class NailMoodsStoreKitPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     deinit { updates?.cancel() }
     private func payload(_ result: VerificationResult<Transaction>, _ transaction: Transaction) -> [String: Any] {
-        return ["signedTransaction": result.jwsRepresentation, "transactionId": String(transaction.id), "productId": transaction.productID]
+        let environment: String
+        switch transaction.environment {
+        case .sandbox: environment = "Sandbox"
+        case .production: environment = "Production"
+        default: environment = "Xcode"
+        }
+        return ["signedTransaction": result.jwsRepresentation, "transactionId": String(transaction.id), "productId": transaction.productID, "environment": environment]
     }
     @objc func getEnvironment(_ call: CAPPluginCall) {
+        // TestFlight builds explicitly route to Sandbox. This is only a routing
+        // hint: apple-verify checks the signed transaction and Server API before
+        // granting access. Never authenticate just to load or refresh prices.
+        if Bundle.main.object(forInfoDictionaryKey: "NailMoodsStoreKitEnvironment") as? String == "Sandbox" {
+            call.resolve(["environment": "Sandbox", "source": "testflight_build"])
+            return
+        }
         Task {
             do {
-                var result: VerificationResult<AppTransaction>
-                do { result = try await AppTransaction.shared }
-                catch {
-                    guard call.getBool("refresh") == true else { throw error }
-                    result = try await AppTransaction.refresh()
-                }
-                if case .unverified = result, call.getBool("refresh") == true {
-                    result = try await AppTransaction.refresh()
-                }
+                let result = try await AppTransaction.shared
                 guard case .verified(let app) = result else { call.reject("app_not_verified"); return }
                 switch app.environment {
                 case .production: call.resolve(["environment": "Production"])
                 case .sandbox: call.resolve(["environment": "Sandbox"])
                 default: call.reject("local_storekit_not_server_verifiable")
                 }
-            } catch { call.reject("environment_unavailable") }
+            } catch {
+                // Record only the OS domain/code, never credentials or JWS data.
+                let failure = error as NSError
+                NSLog("NailMoods StoreKit environment unavailable: %@ (%ld)", failure.domain, failure.code)
+                call.reject("environment_unavailable")
+            }
         }
     }
     @objc func getProducts(_ call: CAPPluginCall) {
