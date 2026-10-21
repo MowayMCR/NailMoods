@@ -42,3 +42,16 @@ test('different request IDs allow layout variation without forcing themes',()=>{
  assert.ok(!a.includes('Minions'));
  assert.match(compositionGuidance({...base,operation:'vision'}),/photo fournie prime/);
 });
+
+test('server provider injects the optional grammar only into fresh plans',async()=>{
+ const {requestBody}=await import('../supabase/functions/nailmoods-ai/provider.mjs');
+ const settings={shape:'Amande',length:'Courte',collectionOnly:false,...base};
+ const compose=requestBody(settings,[],[],{textModel:'test'});
+ assert.match(compose.input[0].content,/GUIDE DE COMPOSITION ORIGINALE/);
+ assert.match(compose.input[0].content,/Tu es NailMoods AI/);
+ assert.equal(compose.input[1].content[0].type,'input_text');
+ const editing=requestBody({...settings,targetFinger:2},[],[],{textModel:'test'});
+ assert.doesNotMatch(editing.input[0].content,/GUIDE DE COMPOSITION ORIGINALE/);
+ const uniform=requestBody({...settings,prompt:'Une pose unie'},[],[],{textModel:'test'});
+ assert.doesNotMatch(uniform.input[0].content,/GUIDE DE COMPOSITION ORIGINALE/);
+});
