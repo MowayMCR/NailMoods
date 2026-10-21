@@ -211,3 +211,23 @@ export function compositionGuidance(body={}) {
     (body.operation==='vision'?'La photo fournie prime sur la proposition de placement. ':'')+
     'Ne prétends jamais que le gabarit vient de Pinterest ou d’une artiste.';
 }
+
+
+const themeNorm=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+export function minionsRequested(request){
+ const s=themeNorm(request);
+ return /\bminions?\b/.test(s)&&!/(?:sans|aucun|pas de|evite|without|no)\s+(?:de\s+|des\s+)?minions?\b|ne\s+veux\s+pas\s+de\s+minions?\b/.test(s);
+}
+export function iconicThemeGuidance(request){
+ if(!minionsRequested(request))return '';
+ return ' PRIORITÉ THÉMATIQUE MINIONS (si et seulement si demandés) : la lecture du motif prime sur la variété abstraite. Au moins deux ongles principaux sur dix (ou un sur cinq) doivent évoquer clairement un visage jaune avec lunettes noires reconnaissables : un ou deux verres complets avec bord noir épais, pont et sangle horizontale, sur fond jaune. Au moins deux autres sur dix (ou un sur cinq) doivent montrer des salopettes bleues reconnaissables : bavette centrale bleue et bretelles visibles, éventuellement couture/poche, sur fond jaune. Les autres ongles peuvent être des accompagnements bleu denim ou jaune, avec rappels de ces détails. Pas de simple cercle flottant, de carré isolé, de croix ou de bande sans rapport identifiable ; ne fais pas dix pictogrammes vagues pour respecter artificiellement "dix différents". Privilégie le contraste et des détails assez gros pour tenir dans un ongle. Respecte toute interdiction explicite de l’utilisatrice.';
+}
+export function missingIconicFeatures(plan,request){
+ if(!minionsRequested(request)||plan?.action!=='compose'||!Array.isArray(plan?.nails))return [];
+ const normNail=n=>themeNorm([n.designBrief,n.art?.signature,...(n.art?.motifs||[]).flatMap(m=>[m.name,m.description])].join(' '));
+ const nails=plan.nails.map(normNail);
+ const goggles=nails.filter(s=>/lunett|goggle|verres?\b|bandeau.*oeil/.test(s)).length;
+ const overalls=nails.filter(s=>/salopette|overall|bavette|bretelle|denim.*poche/.test(s)).length;
+ const min=plan.nails.length===10?2:1;
+ return goggles<min||overalls<min?['missing_essential_motif']:[];
+}
