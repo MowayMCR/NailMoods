@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "journeyRevision": "20261022-v2",
+  "journeyRevision": "20261022-v3",
   "environment": "production",
-  "sourceCommit": "8337786f4f3b5607b34866e66213b9c9fc048e85",
-  "builtAt": "2026-10-22T10:08:25.507814+00:00",
+  "sourceCommit": "f06b34e3de13a50902f69ef9771e9842c193653e",
+  "builtAt": "2026-10-22T13:49:32.766554+00:00",
   "adMode": "staff-simulation-only",
   "termsVersion": "1.0",
   "privacyVersion": "1.0"
