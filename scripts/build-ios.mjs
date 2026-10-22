@@ -3,6 +3,8 @@ import {mobileVersion} from './mobile-version.mjs';
 import {readFileSync,writeFileSync} from 'node:fs';
 const environment=process.argv[2];
 if(!['recette','production'].includes(environment))throw Error('Usage: node scripts/build-ios.mjs recette|production');
+const storekitEnvironment=process.env.NAILMOODS_STOREKIT_ENVIRONMENT||'Automatic';
+if(!['Automatic','Sandbox'].includes(storekitEnvironment))throw Error('Invalid StoreKit environment: commercial routing must not be forced by this build');
 const admobConfig=JSON.parse(readFileSync(new URL('../src/ads/ios-config.json',import.meta.url),'utf8'));
 if(!/^ca-app-pub-\d{16}~\d{10}$/.test(admobConfig.applicationId))throw Error('Invalid AdMob iOS application ID');
 // Application identity is independent of ad units: beta requests stay on demo units.
@@ -16,6 +18,9 @@ const bundle=env.NAILMOODS_IOS_BUNDLE_ID||(environment==='production'?'com.nailm
 if(!/^[A-Za-z][A-Za-z0-9-]*(\.[A-Za-z0-9-]+)+$/.test(bundle))throw Error('Invalid iOS bundle identifier');
 const plist='ios/App/App/Info.plist';
 let xml=readFileSync(plist,'utf8').replace(/<key>CFBundleDisplayName<\/key>\s*<string>[^<]*<\/string>/,'<key>CFBundleDisplayName</key><string>'+(environment==='production'?'NailMoods':'NailMoods Recette')+'</string>');
+const storekitKey=/<key>NailMoodsStoreKitEnvironment<\/key>\s*<string>[^<]*<\/string>/;
+if(!storekitKey.test(xml))throw Error('Missing StoreKit environment in Info.plist');
+xml=xml.replace(storekitKey,'<key>NailMoodsStoreKitEnvironment</key><string>'+storekitEnvironment+'</string>');
 const admobKey=/<key>GADApplicationIdentifier<\/key>\s*<string>[^<]*<\/string>/;
 if(!admobKey.test(xml))throw Error('Missing AdMob application identifier in Info.plist');
 xml=xml.replace(admobKey,'<key>GADApplicationIdentifier</key><string>'+admobAppId+'</string>');

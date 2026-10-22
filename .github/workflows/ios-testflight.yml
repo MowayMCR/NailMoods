@@ -158,6 +158,7 @@ jobs:
       NAILMOODS_XCODE_VERSION: ${{ vars.IOS_XCODE_VERSION || '26.3' }}
       NAILMOODS_MOBILE_ENV: production
       NAILMOODS_PLATFORM: ios
+      NAILMOODS_STOREKIT_ENVIRONMENT: Sandbox
       VITE_ADMOB_TEST_ENABLED: ${{ inputs.admob_test && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4

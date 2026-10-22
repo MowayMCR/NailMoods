@@ -1,0 +1,17 @@
+name: NailMoods StoreKit Sandbox — TestFlight 30004
+on:
+  push:
+    branches: [fix/ios-storekit-sandbox-20261011]
+    paths: ['.github/workflows/storekit-sandbox-testflight.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  testflight:
+    uses: ./.github/workflows/ios-testflight.yml
+    with:
+      mode: testflight
+      source_ref: ${{ github.sha }}
+      build_number: '30004'
+      admob_test: true
+    secrets: inherit
