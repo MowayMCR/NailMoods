@@ -10,24 +10,29 @@ def inspect(app, signed=False):
     assert info['CFBundleDisplayName'] == 'NailMoods', 'Unexpected display name'
     assert info['CFBundleVersion'] == os.environ['NAILMOODS_IOS_BUILD_NUMBER'], 'Build number mismatch'
     assert info['ITSAppUsesNonExemptEncryption'] is False
+    expected_storekit = os.environ.get('NAILMOODS_STOREKIT_ENVIRONMENT', 'Automatic')
+    assert info.get('NailMoodsStoreKitEnvironment') == expected_storekit, 'StoreKit routing mismatch'
     for key in ['NSCameraUsageDescription', 'NSPhotoLibraryUsageDescription', 'NSPhotoLibraryAddUsageDescription']:
         assert isinstance(info.get(key), str) and info[key].strip(), 'Missing camera SDK purpose string: ' + key
-    assert 'NSUserTrackingUsageDescription' not in info, 'Unexpected ATT'
+    assert isinstance(info.get('NSUserTrackingUsageDescription'), str) and info['NSUserTrackingUsageDescription'].strip(), 'Missing ATT purpose string'
     expected_admob=json.loads(pathlib.Path('src/ads/ios-config.json').read_text())['applicationId']
     assert info.get('GADApplicationIdentifier') == expected_admob, 'AdMob application mismatch'
     assert info.get('GADDelayAppMeasurementInit') is True, 'AdMob measurement must be delayed'
     assert 'UIInterfaceOrientationLandscapeLeft' in info['UISupportedInterfaceOrientations~ipad']
     manifest = plistlib.loads((app/'PrivacyInfo.xcprivacy').read_bytes())
-    assert manifest['NSPrivacyTracking'] is False
+    assert manifest['NSPrivacyTracking'] is True
     approved_data_types = {'Name','EmailAddress','UserID','Contacts','Health','PhotosorVideos','EmailsOrTextMessages',
                            'OtherUserContent','PurchaseHistory','ProductInteraction','OtherDiagnosticData',
-                           'CoarseLocation','CustomerSupport','OtherDataTypes'}
+                           'CoarseLocation','CustomerSupport','OtherDataTypes','SearchHistory','DeviceID','AdvertisingData'}
     declared_types = {d['NSPrivacyCollectedDataType'] for d in manifest['NSPrivacyCollectedDataTypes']}
     assert declared_types == {'NSPrivacyCollectedDataType'+t for t in approved_data_types}, 'Unexpected or invalid Apple privacy data type'
     sdk_manifests = list(app.rglob('PrivacyInfo.xcprivacy'))
     assert len(sdk_manifests) > 1, 'Missing embedded SDK privacy manifests'
     privacy_resources = [{'path':str(p.relative_to(app)),
-                          'accessedAPIs':plistlib.loads(p.read_bytes()).get('NSPrivacyAccessedAPITypes',[])}
+                          'accessedAPIs':plistlib.loads(p.read_bytes()).get('NSPrivacyAccessedAPITypes',[]),
+                         'collectedData':plistlib.loads(p.read_bytes()).get('NSPrivacyCollectedDataTypes',[]),
+                         'tracking':plistlib.loads(p.read_bytes()).get('NSPrivacyTracking'),
+                         'trackingDomains':plistlib.loads(p.read_bytes()).get('NSPrivacyTrackingDomains',[])}
                          for p in sdk_manifests]
     public = app/'public'
     build = json.loads((public/'mobile-build.json').read_text())
@@ -49,6 +54,7 @@ def inspect(app, signed=False):
         assert entitlements.get('get-task-allow',False) is False
     return {'bundle':info['CFBundleIdentifier'],'version':info['CFBundleShortVersionString'],
             'build':info['CFBundleVersion'],'sdk':info['DTSDKName'],'devices':info['UIDeviceFamily'],
+            'storekitEnvironment':info['NailMoodsStoreKitEnvironment'],
             'sdkPrivacyManifests':len(sdk_manifests),'privacyResources':privacy_resources,
             'admobAppId':info.get('GADApplicationIdentifier'),'admobMeasurementDelayed':info.get('GADDelayAppMeasurementInit'),'signatureVerified':signed,'IAPlus':'compiled closed'}
 
