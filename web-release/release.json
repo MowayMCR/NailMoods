@@ -1,10 +1,1 @@
-{
-  "version": "1.0.0",
-  "journeyRevision": "20261022-v5",
-  "environment": "production",
-  "sourceCommit": "7b8ed8e5e9386c29e44fc2e6caab24e484a63e6a",
-  "builtAt": "2026-10-22T14:41:25.239314+00:00",
-  "adMode": "staff-simulation-only",
-  "termsVersion": "1.0",
-  "privacyVersion": "1.0"
-}
+{"version":"1.0.0","journeyRevision":"20261104-drawn-v1","environment":"production","sourceCommit":"b3e70324374a93f47ff952045a83879d8887a842","builtAt":"2026-11-04T19:52:53.347Z","adMode":"staff-simulation-only","termsVersion":"1.0","privacyVersion":"1.0","curatedDrawings":52}
