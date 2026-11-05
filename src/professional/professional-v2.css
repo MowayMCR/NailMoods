@@ -13,3 +13,5 @@
 @media(min-width:360px) and (max-width:759px){.proV2Portfolio>article:first-child{grid-column:1/-1}}
 .proV2Portfolio .renderPreview,.proV2Portfolio .nailPreview{width:100%;max-width:none}.proV2Portfolio .renderPreviewHead{display:none}
 @media(max-width:520px){.proV2Portfolio{grid-template-columns:1fr}.proV2Portfolio>article:first-child{grid-column:auto}.proV2Portfolio .nailPreview{min-height:180px}}
+
+@media(max-width:430px){.proV2Editor>nav.proV2Actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.proV2Editor>nav.proV2Actions button{font-size:13px;padding:10px 4px;min-height:44px}}
