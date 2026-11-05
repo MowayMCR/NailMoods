@@ -21,6 +21,7 @@ cc42d3b60ff6248a8ecfbacc6a2d88a7d6b0d5c483c2b31edb033b552221430d  ./assets/entry
 1d1136e763921496ace8e78b55a095b6cc3a5b002d26c5c259df393e10c96367  ./assets/entry-Ce1JLb4z.js
 01d2a38a7e687678d896fc0f9c340ca099b04457360599984d976f66efb79c05  ./assets/entry-Ch8U-ZUX.js
 34ead66a71a90334ed3326677483a2c9fed3afbfaab436cf1e95b7e7c5af2ee9  ./assets/entry-ClJBSOs9.js
+57c8b84bf2e908af8686d7f0355a3ca7b527554091f8f74a6b686bb39b5b4273  ./assets/entry-CqsUnZpZ.js
 b9d1eca9922d8d77b431bae957bdd05917d19b29927d4c32a279d2e7dfc481dd  ./assets/entry-DHqYhSPd.js
 bcd5d780563dd6903caa6c7490ff8ed8f9289dee133ff435a0eb8c6256c9d0ac  ./assets/entry-DPQwAg55.js
 1a7d5d1134d16cd6e94183b19f9a6f1372cc347eed0dd2b1aa5e12f82acfb870  ./assets/entry-DrMd9PXb.js
@@ -39,6 +40,7 @@ c536ac2a7b0250336d7ae6273cea4a4721c0fc1eff2b28ca53be9ec7702d7426  ./assets/esm-C
 d5732b281b849c5072958ce1c2d8c1ef0af148edf1f3c75e0aad7cda1dcb062e  ./assets/exceljs.min-C1j2HQXe.js
 a8e0271462b3d619a927aeb60ae97db88e0ab631cc95cec2d410020679d6abb8  ./assets/index-B4PR5zFu.js
 53f5fde33bc1705c72f850973630d6fe6ae892ae3499718250133f846755ef9d  ./assets/index-BEcuI2kb.js
+0fe5dc285734ef07033cb5bd152fb3648ac83babe3d24cb6b54e50702d1362ef  ./assets/index-BYlan06c.js
 d33e1eb5ede622908f251dc3f8aef0a12b5026a3f19be6dac6377a0ca226be0b  ./assets/index-Bj-Jp6I6.js
 5e88a9f6b32578aae4ff51a4f4366ea77cfce3fa36339d01f134a5477aedb744  ./assets/index-C1FWQ3CC.js
 39e6a3830762cd224e95ef07ec05b0ae9e44dcd9ff492bd7cde454b5b86869b9  ./assets/index-C2UP_xy2.js
@@ -56,6 +58,7 @@ a40366b90a64fdf92eb5e551a54654265804f4ce0cedde8754d99783f162746f  ./assets/index
 6b41d10fc03fc6eb26c48209d5637cb78e4af7abd2cd5536929ff0d5782cc10a  ./assets/main--V-fffF2.css
 1b320e21ce1e8998121d7f7b0a417b31f14f86460bb5f6382fc6dc49a1d8f5fc  ./assets/main-2weGvmtd.css
 b3da62dcf862058e61dc45e379b056a10d80737f4bda93d1a83b54b397369151  ./assets/main-6TC9ReoQ.js
+bede38e73aaf21e10e71a0b3189a6469ae1d021ae36e339ec8a78312949a9f12  ./assets/main-AgD7zgsZ.js
 945b2c0fab557725639ddefb6d9258ce425a5abc85b6e4d4b6d39cae4af1b394  ./assets/main-B0HsbmRT.css
 1ad3de10f22110db3739685c5f2d1187930467ad739d43ff9311bdffc4b367f2  ./assets/main-B6lPKGsV.css
 1dcb4e2a267f4b66ba32df6720db92f64db1848779bd78bfb4a4b92c98e61e91  ./assets/main-BAFoExRM.css
@@ -68,6 +71,7 @@ b9cd5d6ad231f9e63409ecc11e3b0f3aa9334a9d03b968d3796631b9f05973b5  ./assets/main-
 4c6e7b6f6a86626dc6486815ebccf522493a0b220e2e8da3df31ca73e13baf27  ./assets/main-CFbBvyF8.css
 a8e2056dd699c7bba744b931efc217538b7d265578a81ea83471acfbc83dea3a  ./assets/main-CKIioEfB.js
 c14d25556f099cdba0bc75c5aeee4302507f9f0607e1cd3c9ef95fce90b71fcc  ./assets/main-CL1sfJgu.css
+9588be85f438ca13dfbdf5c75eecf165dd62d4e91a5038cf360c9b00f094f3d1  ./assets/main-CYWe2m4U.css
 b8945a83169752e49b25d3159e4c2357819912d20bd32a4bf95e008039a9cb4e  ./assets/main-CcETv-Xj.css
 2ca3de32f26105774d2ae5c837d84ad212272f17bf3dd72aefe841413c57b088  ./assets/main-Cda8Olh0.js
 06cabb7b59f3de19d2966490c4834481928e20fde6d74849a191a734e365ce67  ./assets/main-CqDWqXWa.js
@@ -178,6 +182,10 @@ c0c90a336d4b44205a2ea864c634124660498e8821dd896812c57f59f6ae119f  ./atelier/desk
 0d5dd8bb77b0b72d6a7a225c167601c20362a185ff3a716d539dbd4a227f4ee8  ./atelier/desk-v1/vase-pitcher.webp
 42ba3d4719351fcc62b68a93328878fc1b621b4da52d7890232b78d8f6941810  ./atelier/desk-v1/vase-rose.webp
 8a092bc5c06266c7c50c107265cabf805ec92139c225d57ce15e7bb8c53ffaa5  ./atelier/desk-v1/vase-round.webp
+9f1006b0afc1c989529a9cf559430b3ad5a692600f8d13d04931970588075520  ./atelier/envies-carnet-cottage-v1.webp
+e8694f32115a02c1bb94fc03209f1b5f4536ef46424f5904e352ae8eb5c2bbcb  ./atelier/envies-carnet-dark-v1.webp
+9be302159f695edcb1878c951514eea860a478937064861100be426c79ea223d  ./atelier/envies-carnet-pop-v1.webp
+9aac57ea7b6fb392b2373ce966bad52a1fd4d5feb01616c1ba0d1721ed808627  ./atelier/envies-carnet-v1.webp
 2444d4d24df56faaa315add020b9d4bd70b61c301230399a7f00c966b3048fe1  ./atelier/fil-v1.webp
 b0fc348e8f6d914acf581bb2d374a1ca0ccf12b552343d0feaabbeeacba3ad8b  ./atelier/illustrations-v1.webp
 50b9bef941a5f482035971bcac64100f830ba152cfd988ece252663799be81d7  ./atelier/inspirations-hiver/01_hiver_givre/01_voile_de_neige.webp
@@ -470,7 +478,7 @@ de319362281848eb5ed96720b462340af977b4fc9de7ee95173c339aaef40890  ./icons/README
 d739a5baff665635d58b1a22ee75d4a6fc9f05ee98fd988d53a44def659a9751  ./icons/nailmoods-effects-themes.png
 cdc151d4e4e1c8c40e577aed2f0ca6bc073739ef691130bce45b7602ca28fcae  ./icons/nailmoods-styles.png
 1fe5cf66e7340f9589c2b1b384ef5bf3326639cb419b1bb26100da89550751d0  ./icons/nailmoods-techniques.png
-6505c94a0891290bd0491262f2e17a7e20cc108d014e0d7ad3f602c302a1fc37  ./index.html
+d80b8431c4ef95dc71b3e17c9665318e2f6738065cbdad4e3f784ab1ced4f88a  ./index.html
 8c5dadc47afb77a3072f0afa41871bc8d3b492d10cfc663b2a4a3786b9a00742  ./legal/archives/2026-09-22/conditions-0.3-beta.html
 a9091f3a1c202178780aac68f5949d3583e2abd05a38a24b8d8b32e59e1b10d8  ./legal/archives/2026-09-22/confidentialite-0.4-beta.html
 b201e10b67e886660383746265b1dc7de5e3de69f883c3839899416cbc0bd266  ./legal/archives/2026-09-22/editor.js
@@ -554,4 +562,4 @@ c7f5ace62ac0ad065e71e9c6725f1d7cdf82e7eda8fba532cbb9563964da7098  ./recognition/
 0bc6ce3e5fbbd0cd89706cf2fd70960e3372f4f01ee24265b26990808aaeb286  ./recognition/tesseract-core.wasm.js
 576b7df7e3393e137e51849357c9adb53fe7ac1bb69bfa06cf3d61520f182c6d  ./recognition/worker.min.js
 e8af31edb56d0522f4de74495839385ef019ba8bc90d38e5ecb2f18795d86fb2  ./recognition/zxing_reader.wasm
-085e9accee5eaf884ff0d2e84aa935c1104bd4dcc885e46bafb178fa08a9ef36  ./release.json
+8d90ac382c002e4fe9f8d267e593581c6274693829cef4a125bd81de7143c892  ./release.json
