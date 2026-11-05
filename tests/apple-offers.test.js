@@ -9,10 +9,10 @@ test('Apple environment failure keeps catalog and manually granted access visibl
  const result=await loadAppleOffers(client,false,store,async()=>{throw Error('environment_unavailable');});
  assert.deepEqual(result.products,products);assert.equal(result.state,state);assert.equal(result.context,null);
  assert.equal(result.error.message,'environment_unavailable');
- assert.match(appleError(result.error),/Actualiser les offres/);
+ assert.match(appleError(result.error),/sans demander de connexion Apple/);
  assert.doesNotMatch(appleError(result.error),/ton achat reste/);
 });
-test('explicit refresh reaches environment recovery and enables server-approved offers',async()=>{
+test('refresh reloads server eligibility and keeps offered accounts protected',async()=>{
  const context={enabled:true,canPurchase:false,manualPriority:true};
  const result=await loadAppleOffers(client,true,store,async(c,refresh)=>{assert.equal(c,client);assert.equal(refresh,true);return context;});
  assert.equal(result.context,context);assert.equal(result.error,null);

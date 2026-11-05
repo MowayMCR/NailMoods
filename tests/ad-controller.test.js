@@ -6,7 +6,8 @@ const deferred=()=>{let resolve;const promise=new Promise(r=>{resolve=r;});retur
 function fixture(platform='ios'){
  const calls=[],store=new Map();let state={rights:{effectiveTier:'free',instituteActive:false},config:{enabled:true,testOnly:true}};
  const preferences={get:async({key})=>({value:store.get(key)}),set:async({key,value})=>{store.set(key,value);},remove:async({key})=>{store.delete(key);}};
- const AdMob={};for(const name of ['initialize','prepareRewardVideoAd','showRewardVideoAd','showBanner','removeBanner','showPrivacyOptionsForm'])AdMob[name]=async options=>{calls.push([name,options]);};
+ const AdMob={};for(const name of ['initialize','prepareRewardVideoAd','showRewardVideoAd','showBanner','removeBanner','showPrivacyOptionsForm','authorizeAdSession','suspendAdSession','requestTrackingAuthorization'])AdMob[name]=async options=>{calls.push([name,options]);};
+ AdMob.privacySnapshot=async()=>({att:'authorized',umpTrackingAllowed:true});
  AdMob.requestConsentInfo=async()=>({canRequestAds:true,privacyOptionsRequirementStatus:'REQUIRED'});
  const client={rpc:async()=>({data:state})};
  const sdk={AdMob,AdmobConsentStatus:{REQUIRED:'REQUIRED'}};
@@ -20,7 +21,7 @@ test('Android and iOS tests use only demo units and never credit an SDK reward',
   assert.deepEqual(f.calls.find(([n])=>n==='prepareRewardVideoAd')[1],{adId:TEST_REWARDED_UNITS[platform],isTesting:true,npa:true});
   await f.ads.showBanner(f.client);
   assert.equal(f.calls.find(([n])=>n==='showBanner')[1].adId,TEST_BANNER_UNITS[platform]);
-  await f.ads.stop();assert.equal(f.calls.at(-1)[0],'removeBanner');
+  await f.ads.stop();assert.ok(f.calls.some(([n])=>n==='removeBanner'));
  }
 });
 test('Stored refusal and paid, institute, web or disabled accounts never load the SDK',async()=>{
@@ -75,4 +76,44 @@ test('A slow reconsider cannot override a newer refusal',async()=>{
  const reconsider=f.ads.reconsider();await started.promise;const decline=f.ads.decline();gate.resolve();
  await Promise.all([reconsider,decline]);assert.equal(f.store.get('nm-ads-refused'),'true');
  await assert.rejects(f.ads.showRewarded(f.client));
+});
+test('iOS requests ATT only after affirmative UMP and waits for authorization',async()=>{
+ const f=fixture();let att='notDetermined';
+ f.AdMob.requestConsentInfo=async()=>{f.calls.push(['UMP']);return {canRequestAds:true};};
+ f.AdMob.privacySnapshot=async()=>({att,umpTrackingAllowed:true});
+ f.AdMob.requestTrackingAuthorization=async()=>{f.calls.push(['ATT']);att='authorized';};
+ await f.ads.showRewarded(f.client);
+ const order=f.calls.map(([n])=>n);
+ assert.ok(order.indexOf('UMP')<order.indexOf('ATT'));
+ assert.ok(order.indexOf('ATT')<order.indexOf('authorizeAdSession'));
+ assert.ok(order.indexOf('authorizeAdSession')<order.indexOf('initialize'));
+});
+test('UMP Reject All with canRequestAds=true never requests ATT or starts iOS ads',async()=>{
+ const f=fixture();f.AdMob.privacySnapshot=async()=>({att:'notDetermined',umpTrackingAllowed:false});
+ await assert.rejects(f.ads.showRewarded(f.client),/ads_consent_required/);
+ assert.equal(f.calls.some(([n])=>['requestTrackingAuthorization','initialize','prepareRewardVideoAd','showRewardVideoAd'].includes(n)),false);
+});
+test('Denied, restricted, unknown and unresolved ATT never initialize iOS ads',async()=>{
+ for(const att of ['denied','restricted','unknown','notDetermined']){
+  const f=fixture();f.AdMob.privacySnapshot=async()=>({att,umpTrackingAllowed:true});
+  await assert.rejects(f.ads.showBanner(f.client),/ads_tracking_refused/);
+  assert.equal(f.calls.some(([n])=>n==='initialize'||n==='showBanner'),false);
+  if(att!=='notDetermined')assert.equal(f.calls.some(([n])=>n==='requestTrackingAuthorization'),false);
+ }
+});
+test('ATT or UMP revoked while preparing a video prevents presentation',async()=>{
+ for(const privacy of [{att:'denied',umpTrackingAllowed:true},{att:'authorized',umpTrackingAllowed:false}]){
+  const f=fixture();f.AdMob.prepareRewardVideoAd=async()=>{f.AdMob.privacySnapshot=async()=>privacy;};
+  await assert.rejects(f.ads.showRewarded(f.client));
+  assert.equal(f.calls.some(([n])=>n==='showRewardVideoAd'),false);
+  assert.ok(f.calls.some(([n])=>n==='suspendAdSession'));
+ }
+});
+test('Reconsider and a new installation never manufacture an ATT grant',async()=>{
+ for(const priorRefusal of [false,true]){
+  const f=fixture();f.AdMob.privacySnapshot=async()=>({att:'denied',umpTrackingAllowed:true});
+  if(priorRefusal){await f.ads.decline();await f.ads.reconsider();}
+  await assert.rejects(f.ads.showRewarded(f.client),/ads_tracking_refused/);
+  assert.equal(f.calls.some(([n])=>n==='initialize'),false);
+ }
 });

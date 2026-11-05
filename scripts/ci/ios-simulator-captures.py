@@ -12,7 +12,11 @@ runtime, devices = sorted(groups)[-1]
 (out/'inventory.json').write_text(json.dumps({'runtime':runtime,'devices':devices},indent=2))
 print('Native capture runtime: '+runtime,flush=True)
 selections=[]
-for label, needle in [('iphone','iPhone'),('ipad-mini','iPad mini'),('ipad-standard','iPad (A16)'),('ipad-large','iPad Pro 13')]:
+profile = os.environ.get('NAILMOODS_SIMULATOR_PROFILE', 'all')
+assert profile in ('all', 'phone-ipad'), 'Unknown simulator profile'
+targets = [('iphone','iPhone'),('ipad-mini','iPad mini'),('ipad-standard','iPad (A16)'),('ipad-large','iPad Pro 13')]
+if profile == 'phone-ipad': targets = [targets[0], targets[-1]]
+for label, needle in targets:
     match = next((device for device in devices if needle in device['name']),None)
     if match is None and label=='ipad-standard':
         match=next((device for device in devices if 'iPad Air 11' in device['name']),None)

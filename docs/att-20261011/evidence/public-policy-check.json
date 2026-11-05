@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://nailmoods.com/legal/confidentialite.html",
+    "status": 200,
+    "openAI": true,
+    "ATTparagraph": true
+  },
+  {
+    "url": "https://nailmoods.com/legal/archives/2026-10-11/confidentialite-0.9-beta-avant-audit.html",
+    "status": 200,
+    "openAI": false,
+    "ATTparagraph": false
+  }
+]

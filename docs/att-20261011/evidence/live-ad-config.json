@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-11T15:11:57.784532+00:00",
+  "readOnly": true,
+  "rows": [
+    {
+      "platform": "android",
+      "enabled": true,
+      "test_only": true,
+      "daily_limit": 1
+    },
+    {
+      "platform": "ios",
+      "enabled": true,
+      "test_only": true,
+      "daily_limit": 1
+    }
+  ],
+  "writesPerformed": false
+}

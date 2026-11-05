@@ -1,0 +1,77 @@
+{
+  "bundle": "com.nailmoods.app",
+  "version": "0.8.1",
+  "build": "30004",
+  "sdk": "iphoneos26.2",
+  "devices": [
+    1,
+    2
+  ],
+  "storekitEnvironment": "Sandbox",
+  "sdkPrivacyManifests": 5,
+  "privacyResources": [
+    {
+      "path": "PrivacyInfo.xcprivacy",
+      "accessedAPIs": [
+        {
+          "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+          "NSPrivacyAccessedAPITypeReasons": [
+            "CA92.1"
+          ]
+        },
+        {
+          "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
+          "NSPrivacyAccessedAPITypeReasons": [
+            "C617.1"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "Frameworks/Capacitor.framework/PrivacyInfo.xcprivacy",
+      "accessedAPIs": []
+    },
+    {
+      "path": "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+      "accessedAPIs": [
+        {
+          "NSPrivacyAccessedAPITypeReasons": [
+            "35F9.1"
+          ],
+          "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime"
+        },
+        {
+          "NSPrivacyAccessedAPITypeReasons": [
+            "CA92.1"
+          ],
+          "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults"
+        },
+        {
+          "NSPrivacyAccessedAPITypeReasons": [
+            "E174.1"
+          ],
+          "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace"
+        }
+      ]
+    },
+    {
+      "path": "Frameworks/UserMessagingPlatform.framework/PrivacyInfo.xcprivacy",
+      "accessedAPIs": [
+        {
+          "NSPrivacyAccessedAPITypeReasons": [
+            "CA92.1"
+          ],
+          "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults"
+        }
+      ]
+    },
+    {
+      "path": "Frameworks/Cordova.framework/PrivacyInfo.xcprivacy",
+      "accessedAPIs": []
+    }
+  ],
+  "admobAppId": "ca-app-pub-3166441503282113~5431040554",
+  "admobMeasurementDelayed": true,
+  "signatureVerified": true,
+  "IAPlus": "compiled closed"
+}

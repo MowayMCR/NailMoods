@@ -1,0 +1,29 @@
+{
+  "bundle": "com.nailmoods.app",
+  "build": "30006",
+  "uploadAccepted": true,
+  "processingState": "VALID",
+  "buildId": "e1754c59-e81f-4af4-a8da-957d253e7823",
+  "existingGroups": [
+    {
+      "id": "b334d917-15f9-486e-a7b5-6f8153c07af7",
+      "name": "Nailmoods",
+      "internal": true
+    }
+  ],
+  "groupAssignment": "Prepared: existing groups identified; no public App Store release",
+  "betaBuildDetails": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "groupPreparation": [
+    {
+      "id": "b334d917-15f9-486e-a7b5-6f8153c07af7",
+      "name": "Nailmoods",
+      "internal": true,
+      "allBuilds": true,
+      "assigned": true
+    }
+  ]
+}

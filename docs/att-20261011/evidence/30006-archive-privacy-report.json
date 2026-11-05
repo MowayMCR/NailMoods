@@ -1,0 +1,573 @@
+{
+  "kind": "shipped-manifest-static-report",
+  "notXcodeOrganizerReport": true,
+  "notRuntimeProof": true,
+  "bundle": "com.nailmoods.app",
+  "version": "0.8.1",
+  "build": "30006",
+  "manifests": [
+    {
+      "path": "Frameworks/Capacitor.framework/PrivacyInfo.xcprivacy",
+      "sha256": "1bac827f49b2b8a5358491b9698203bf191791a6f1ba3a3ace3b1285d52d2d17",
+      "manifest": {
+        "NSPrivacyAccessedAPITypes": [],
+        "NSPrivacyCollectedDataTypes": [],
+        "NSPrivacyTrackingDomains": [],
+        "NSPrivacyTracking": false
+      }
+    },
+    {
+      "path": "Frameworks/Cordova.framework/PrivacyInfo.xcprivacy",
+      "sha256": "5a9b8fc0cddb10201bb47cc2804b3f004c7251476622d25bfc4eb54ed46e1084",
+      "manifest": {
+        "NSPrivacyCollectedDataTypes": [],
+        "NSPrivacyAccessedAPITypes": [],
+        "NSPrivacyTrackingDomains": [],
+        "NSPrivacyTracking": false
+      }
+    },
+    {
+      "path": "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+      "sha256": "69fb112582fc23fc06c635c961d262a3f7b4b5654d284787491de3000dadf9d2",
+      "manifest": {
+        "NSPrivacyCollectedDataTypes": [
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherDiagnosticData",
+            "NSPrivacyCollectedDataTypeLinked": false,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+              "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCoarseLocation",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+              "NSPrivacyCollectedDataTypePurposeAnalytics",
+              "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypePerformanceData",
+            "NSPrivacyCollectedDataTypeLinked": false,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+              "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCrashData",
+            "NSPrivacyCollectedDataTypeLinked": false,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeAdvertisingData",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+              "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeProductInteraction",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAnalytics",
+              "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": true,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+              "NSPrivacyCollectedDataTypePurposeAnalytics",
+              "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising"
+            ]
+          }
+        ],
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPITypeReasons": [
+              "35F9.1"
+            ],
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime"
+          },
+          {
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ],
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults"
+          },
+          {
+            "NSPrivacyAccessedAPITypeReasons": [
+              "E174.1"
+            ],
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace"
+          }
+        ]
+      }
+    },
+    {
+      "path": "Frameworks/UserMessagingPlatform.framework/PrivacyInfo.xcprivacy",
+      "sha256": "45b7adb99fcd2d962a1c800fbfcc1325b57a7fa4165f416182323bb5ffe9c900",
+      "manifest": {
+        "NSPrivacyCollectedDataTypes": [
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCoarseLocation",
+            "NSPrivacyCollectedDataTypeLinked": false,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypePerformanceData",
+            "NSPrivacyCollectedDataTypeLinked": false,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeProductInteraction",
+            "NSPrivacyCollectedDataTypeLinked": false,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          }
+        ],
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ],
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults"
+          }
+        ]
+      }
+    },
+    {
+      "path": "PrivacyInfo.xcprivacy",
+      "sha256": "3a44a3b03849790eb5192a21b5b9ecb198fecf0eaa1031fd5c0adf0657e47836",
+      "manifest": {
+        "NSPrivacyTracking": true,
+        "NSPrivacyTrackingDomains": [],
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "C617.1"
+            ]
+          }
+        ],
+        "NSPrivacyCollectedDataTypes": [
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeHealth",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeContacts",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeName",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeEmailAddress",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeUserID",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypePhotosorVideos",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeEmailsOrTextMessages",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherUserContent",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+              "NSPrivacyCollectedDataTypePurposeProductPersonalization"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypePurchaseHistory",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeProductInteraction",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherDiagnosticData",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCoarseLocation",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCustomerSupport",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherDataTypes",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeSearchHistory",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": true,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeAdvertisingData",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": true,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+              "NSPrivacyCollectedDataTypePurposeAnalytics"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "collectedDataUnion": [
+    {
+      "type": "NSPrivacyCollectedDataTypeAdvertisingData",
+      "linked": true,
+      "trackingDeclared": true,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+        "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+      ],
+      "sources": [
+        "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeCoarseLocation",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+        "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+      ],
+      "sources": [
+        "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+        "Frameworks/UserMessagingPlatform.framework/PrivacyInfo.xcprivacy",
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeContacts",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeCrashData",
+      "linked": false,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAnalytics"
+      ],
+      "sources": [
+        "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeCustomerSupport",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeDeviceID",
+      "linked": true,
+      "trackingDeclared": true,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+        "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+      ],
+      "sources": [
+        "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeEmailAddress",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeEmailsOrTextMessages",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeHealth",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeName",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeOtherDataTypes",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeOtherDiagnosticData",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+        "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+      ],
+      "sources": [
+        "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeOtherUserContent",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeProductPersonalization"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypePerformanceData",
+      "linked": false,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+        "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+      ],
+      "sources": [
+        "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+        "Frameworks/UserMessagingPlatform.framework/PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypePhotosorVideos",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeProductInteraction",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+        "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+      ],
+      "sources": [
+        "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+        "Frameworks/UserMessagingPlatform.framework/PrivacyInfo.xcprivacy",
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypePurchaseHistory",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeSearchHistory",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    },
+    {
+      "type": "NSPrivacyCollectedDataTypeUserID",
+      "linked": true,
+      "trackingDeclared": false,
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAnalytics",
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "sources": [
+        "PrivacyInfo.xcprivacy"
+      ]
+    }
+  ],
+  "warnings": [
+    "SDK declarations describe possible SDK practices; App Store answers require actual app configuration and behavior.",
+    "No ATT prompt does not prove that no tracking occurs.",
+    "Do not edit third-party SDK manifests to suppress declarations."
+  ]
+}

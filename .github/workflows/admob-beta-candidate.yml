@@ -1,10 +1,9 @@
 name: NailMoods AdMob beta — native verification and delivery
 on:
   push:
-    branches: [chore/admob-android-identifiers-20261010, main]
+    branches: [chore/admob-android-identifiers-20261010]
     paths:
       - '.github/workflows/admob-beta-candidate.yml'
-      - '.github/workflows/ios-testflight.yml'
   workflow_dispatch:
 permissions:
   contents: read
