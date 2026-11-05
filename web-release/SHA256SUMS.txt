@@ -22,6 +22,7 @@ cc42d3b60ff6248a8ecfbacc6a2d88a7d6b0d5c483c2b31edb033b552221430d  ./assets/entry
 01d2a38a7e687678d896fc0f9c340ca099b04457360599984d976f66efb79c05  ./assets/entry-Ch8U-ZUX.js
 34ead66a71a90334ed3326677483a2c9fed3afbfaab436cf1e95b7e7c5af2ee9  ./assets/entry-ClJBSOs9.js
 57c8b84bf2e908af8686d7f0355a3ca7b527554091f8f74a6b686bb39b5b4273  ./assets/entry-CqsUnZpZ.js
+95d473082a492c9a9f6ab17dc366c226c8672714d03f78f0a1452765e3261432  ./assets/entry-D69UK5x-.js
 b9d1eca9922d8d77b431bae957bdd05917d19b29927d4c32a279d2e7dfc481dd  ./assets/entry-DHqYhSPd.js
 bcd5d780563dd6903caa6c7490ff8ed8f9289dee133ff435a0eb8c6256c9d0ac  ./assets/entry-DPQwAg55.js
 1a7d5d1134d16cd6e94183b19f9a6f1372cc347eed0dd2b1aa5e12f82acfb870  ./assets/entry-DrMd9PXb.js
@@ -38,6 +39,7 @@ c536ac2a7b0250336d7ae6273cea4a4721c0fc1eff2b28ca53be9ec7702d7426  ./assets/esm-C
 341a09c845babb52ed38ca6d175af2d67f2ad7aa4e687e0186463f7490672167  ./assets/esm-D6Exhw9z.js
 58743d5afe3155a5367af537c7267816f0711a5d0fc77f81fa59abcbc67b3e14  ./assets/esm-DbuutJ8T.js
 d5732b281b849c5072958ce1c2d8c1ef0af148edf1f3c75e0aad7cda1dcb062e  ./assets/exceljs.min-C1j2HQXe.js
+605edc2645db59b7db9bff0c02702a7c66916e7fd650877810b0c8b4c83a034a  ./assets/index-AbnAMhcF.js
 a8e0271462b3d619a927aeb60ae97db88e0ab631cc95cec2d410020679d6abb8  ./assets/index-B4PR5zFu.js
 53f5fde33bc1705c72f850973630d6fe6ae892ae3499718250133f846755ef9d  ./assets/index-BEcuI2kb.js
 0fe5dc285734ef07033cb5bd152fb3648ac83babe3d24cb6b54e50702d1362ef  ./assets/index-BYlan06c.js
@@ -62,6 +64,7 @@ bede38e73aaf21e10e71a0b3189a6469ae1d021ae36e339ec8a78312949a9f12  ./assets/main-
 945b2c0fab557725639ddefb6d9258ce425a5abc85b6e4d4b6d39cae4af1b394  ./assets/main-B0HsbmRT.css
 1ad3de10f22110db3739685c5f2d1187930467ad739d43ff9311bdffc4b367f2  ./assets/main-B6lPKGsV.css
 1dcb4e2a267f4b66ba32df6720db92f64db1848779bd78bfb4a4b92c98e61e91  ./assets/main-BAFoExRM.css
+961552589e131bf175e5af475607193097e0c7427e7187b0ad628e7ae788d0ea  ./assets/main-BNCrVf-F.css
 f9b90bacee76b80d2e25f50f5c9c19b6a74df2f0c2457b56ce9ceebc0b2d5061  ./assets/main-BTG32QzZ.js
 efb59dc0d564d037f10d5a4120a1978625625025a1e69cc4a2e02783f6b0308f  ./assets/main-BTNGSLAu.js
 bcf51a1d2a5ebdd2051e2e120fd6b5ef34deb3779c895316c22bf9e1c68b7788  ./assets/main-BVTEpEoF.js
@@ -77,6 +80,7 @@ b8945a83169752e49b25d3159e4c2357819912d20bd32a4bf95e008039a9cb4e  ./assets/main-
 06cabb7b59f3de19d2966490c4834481928e20fde6d74849a191a734e365ce67  ./assets/main-CqDWqXWa.js
 f178584ee4a5565daa97389f21e2acf7131df0142c535b00591acdd757e14ab0  ./assets/main-CtR9vTEP.css
 c1ac3cdffdce2ff07c78678a200f887bf408756648035f4854344fd967ab39f3  ./assets/main-Cwz4ICEu.js
+55b1aa274857c376a1691c99786c7da8d6edea03b20430ae24dfaa0a281a416f  ./assets/main-D-BdFKxV.js
 92240ee18f0536bf6701a080b60dfaaeabd35641f246832821744d7c7f2e18f2  ./assets/main-D1YFWtBG.css
 e5ecd74517ca7ac7c9f6abfea5a344df5967469c19fd8d1b0f39231ff6207b1c  ./assets/main-DE9frs9Y.js
 560e6330d93ef5c3a306eff83e6de99ed3bbf0b1ad62d455ad92a947f776f96b  ./assets/main-DGRoCXgX.js
@@ -187,6 +191,7 @@ e8694f32115a02c1bb94fc03209f1b5f4536ef46424f5904e352ae8eb5c2bbcb  ./atelier/envi
 9be302159f695edcb1878c951514eea860a478937064861100be426c79ea223d  ./atelier/envies-carnet-pop-v1.webp
 9aac57ea7b6fb392b2373ce966bad52a1fd4d5feb01616c1ba0d1721ed808627  ./atelier/envies-carnet-v1.webp
 2444d4d24df56faaa315add020b9d4bd70b61c301230399a7f00c966b3048fe1  ./atelier/fil-v1.webp
+a920fe1416867bd28845d4bae597423534e70f543ede574f5c21e4353a455933  ./atelier/hand-pencil-neutral-v1.webp
 b0fc348e8f6d914acf581bb2d374a1ca0ccf12b552343d0feaabbeeacba3ad8b  ./atelier/illustrations-v1.webp
 50b9bef941a5f482035971bcac64100f830ba152cfd988ece252663799be81d7  ./atelier/inspirations-hiver/01_hiver_givre/01_voile_de_neige.webp
 3cf92f881d609216dd84425b21d20c1fdbe0ede2411d23699b24d8005c432231  ./atelier/inspirations-hiver/01_hiver_givre/02_glace_bleue.webp
@@ -281,6 +286,7 @@ eedc623f5f82bb2986a135dc86f8dd03578019249f972cd2ba81ebf0537ed8ad  ./atelier/mood
 a427427ce25768776f0b23e1a83c045d3786df789d1fc8b235e48a798abbee6f  ./atelier/moods-v2/soft-poses.webp
 af52276f8b7a38abd73e2b5ccf689afb879b01a69d8aea6dc8b43c196c2ffee8  ./atelier/moods-v2/soft-preferences.webp
 31435f262b873035df94b57553102e279b1e30f0b25238c9d651b2cdf7a2f6b8  ./atelier/moods-v2/soft-scan.webp
+bbe9f33781049c552fc2cb9d20954de642cf9e6d962724979d274ed1786e2de1  ./atelier/nail-pencil-material-v1.webp
 c3c8446cb4d881cf58a2e0433a4eb8ddf78497cd99d552325dcb84ba45b1f8dc  ./atelier/navigation-v1.webp
 97004fc0e901b4c83a8e404e9afba7ec614db95dd0042edaffee1040954f5ec1  ./atelier/offers-20261014/connection-board.webp
 5af6dec169209ebe54865254ec11551ec9f867a479e15eb942878c3a0fd8725d  ./atelier/offers-20261014/offers-board.webp
@@ -478,7 +484,7 @@ de319362281848eb5ed96720b462340af977b4fc9de7ee95173c339aaef40890  ./icons/README
 d739a5baff665635d58b1a22ee75d4a6fc9f05ee98fd988d53a44def659a9751  ./icons/nailmoods-effects-themes.png
 cdc151d4e4e1c8c40e577aed2f0ca6bc073739ef691130bce45b7602ca28fcae  ./icons/nailmoods-styles.png
 1fe5cf66e7340f9589c2b1b384ef5bf3326639cb419b1bb26100da89550751d0  ./icons/nailmoods-techniques.png
-d80b8431c4ef95dc71b3e17c9665318e2f6738065cbdad4e3f784ab1ced4f88a  ./index.html
+d3835c4241676f1c13e1131e471d0a98262335e15e301547b1ca78fc16015987  ./index.html
 8c5dadc47afb77a3072f0afa41871bc8d3b492d10cfc663b2a4a3786b9a00742  ./legal/archives/2026-09-22/conditions-0.3-beta.html
 a9091f3a1c202178780aac68f5949d3583e2abd05a38a24b8d8b32e59e1b10d8  ./legal/archives/2026-09-22/confidentialite-0.4-beta.html
 b201e10b67e886660383746265b1dc7de5e3de69f883c3839899416cbc0bd266  ./legal/archives/2026-09-22/editor.js
@@ -562,4 +568,4 @@ c7f5ace62ac0ad065e71e9c6725f1d7cdf82e7eda8fba532cbb9563964da7098  ./recognition/
 0bc6ce3e5fbbd0cd89706cf2fd70960e3372f4f01ee24265b26990808aaeb286  ./recognition/tesseract-core.wasm.js
 576b7df7e3393e137e51849357c9adb53fe7ac1bb69bfa06cf3d61520f182c6d  ./recognition/worker.min.js
 e8af31edb56d0522f4de74495839385ef019ba8bc90d38e5ecb2f18795d86fb2  ./recognition/zxing_reader.wasm
-8d90ac382c002e4fe9f8d267e593581c6274693829cef4a125bd81de7143c892  ./release.json
+ecec5ffe1d76b28e4994aa9e8e9fce27bdcc1e94b5481f7ffd29055ea774ecb9  ./release.json
