@@ -1,3 +1,4 @@
+import {missingIconicFeatures} from './compositionLibrary.mjs';
 import {TECHNIQUES} from './contract.mjs';
 import {assessPalette} from './palette.mjs';
 import {duplicateDesignFingers} from './recovery.mjs';
@@ -11,6 +12,7 @@ export function validateArt(plan,request,products=[]){
  if(plan.nails.some(n=>n.motif==='winged-orb'||/vif d.or|snitch/.test(norm(n.designBrief)))&&!culturalRequest(request))warn('unrelated_motif');
  if(!plan.direction)return {warnings}; // Reading old snapshots does not invent an artistic validation.
  const requested=norm(request),present=new Set(plan.nails.flatMap(n=>n.art?.techniques||[]));
+ for(const issue of missingIconicFeatures(plan,request))warn(issue);
  if(plan.action==='compose')for(const [pattern,technique] of [[/\bfrench\b/,'french'],[/\baura\b/,'aura'],[/\b3d\b/,'gel-3d'],[/strass|rhinestone/,'rhinestones'],[/cat.?eye/,'cat-eye']])if(pattern.test(requested)&&!present.has(technique)&&!(technique==='french'&&[...present].some(t=>t.endsWith('french'))))warn('missing_technique');
  for(const n of plan.nails){const a=n.art;
   if(!a||!['principal','accompagnement','accent'].includes(a.role)||typeof a.signature!=='string'||!a.signature.trim()||a.signature.length>180||!Array.isArray(a.techniques)||a.techniques.length>6||a.techniques.some(t=>!TECHNIQUES.includes(t)||!t)||!Array.isArray(a.colorProductIds)&&a.colorProductIds!==undefined||a.colorProductIds?.length>24||!Array.isArray(a.motifs)||a.motifs.length>5||!Array.isArray(a.steps)||!a.steps.length||a.steps.length>6||a.steps.some(v=>typeof v!=='string'||v.length>200)||!Array.isArray(a.materials)||a.materials.some(v=>typeof v!=='string'||v.length>80))throw Error('invalid_art');
