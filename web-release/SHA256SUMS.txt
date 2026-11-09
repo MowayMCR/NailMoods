@@ -138,7 +138,7 @@ c9a453565fb9f608c49c758b6a64847cf781bbe4a6a174ce621a0052f238471e  ./atelier/cray
 c5b8e31a38bbaed1c574ed3ae3d6c416b6cc2466e01d859e9192f5f21a1a4d23  ./atelier/crayonne-v1/peppermint-c5b8e31a38bb.webp
 41e3acbf5364da7fbd4ac6743e2e1d85c4b35ed5dc1629f7a66bd8e23f61142f  ./atelier/crayonne-v1/plaid-bands-41e3acbf5364.webp
 ff4c9c4e975c1f0b904280dc4c6b44b4fb7e276650211a0622d3f6ccf323103e  ./atelier/crayonne-v1/plaid-lines-ff4c9c4e975c.webp
-5c061c1469f5a98473284f78f53a53a798f0141cd8f840ba3bbc411186c965ac  ./atelier/crayonne-v1/provenance.json
+1f37458d77f1199839f0c99db5ecdc440a50269cbdd38908a3c1aa351f16e2a6  ./atelier/crayonne-v1/provenance.json
 869797811c127dd1f60c4c15aeef79a2960faf3c49089e90b52336b05f6d2ea9  ./atelier/crayonne-v1/reverse-stroke-869797811c12.webp
 b26d97732da2eb9961fb4a0ea37f9876ef61ca53ef003a4c56152170b8afee3b  ./atelier/crayonne-v1/ribbon-b26d97732da2.webp
 3ae5e825bd036409ea10d814b6f5b7c407499e8e27743b72f33661c57d8c8030  ./atelier/crayonne-v1/ronde-l-3ae5e825bd03.webp
