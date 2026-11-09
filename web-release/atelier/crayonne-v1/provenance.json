@@ -3,923 +3,739 @@
   "assets": [
     {
       "id": "ronde-xs",
-      "sha256": "ec6b38759bee6fbb90e4f78b4447ed221c939d81a2eb651924c0ab36cffa6936",
-      "source": "07_formes_individuelles/ronde-xs.png"
+      "sha256": "ec6b38759bee6fbb90e4f78b4447ed221c939d81a2eb651924c0ab36cffa6936"
     },
     {
       "id": "ronde-s",
-      "sha256": "03515ba9a98571f9a949fe8a9bff098f88fa15d520601eea59b116195b2c41df",
-      "source": "07_formes_individuelles/ronde-s.png"
+      "sha256": "03515ba9a98571f9a949fe8a9bff098f88fa15d520601eea59b116195b2c41df"
     },
     {
       "id": "ronde-m",
-      "sha256": "f905b672598308542681f160bc679f70eaa39e8df6cea08c042491f4922d0814",
-      "source": "07_formes_individuelles/ronde-m.png"
+      "sha256": "f905b672598308542681f160bc679f70eaa39e8df6cea08c042491f4922d0814"
     },
     {
       "id": "ronde-l",
-      "sha256": "3ae5e825bd036409ea10d814b6f5b7c407499e8e27743b72f33661c57d8c8030",
-      "source": "07_formes_individuelles/ronde-l.png"
+      "sha256": "3ae5e825bd036409ea10d814b6f5b7c407499e8e27743b72f33661c57d8c8030"
     },
     {
       "id": "ronde-xl",
-      "sha256": "7c849849ccf9082d6ddbb39c6695280e946976e292f0184fe3eb5df5a07c2d61",
-      "source": "07_formes_individuelles/ronde-xl.png"
+      "sha256": "7c849849ccf9082d6ddbb39c6695280e946976e292f0184fe3eb5df5a07c2d61"
     },
     {
       "id": "ovale-xs",
-      "sha256": "31b67156d9c6fa5c5e04ee5685b23e6d9ec015d49833d466f825905cd8752609",
-      "source": "07_formes_individuelles/ovale-xs.png"
+      "sha256": "31b67156d9c6fa5c5e04ee5685b23e6d9ec015d49833d466f825905cd8752609"
     },
     {
       "id": "ovale-s",
-      "sha256": "7e885de04f2dd9771005428b64c0abdd31be16a1e2189803053592e10e9ba7e7",
-      "source": "07_formes_individuelles/ovale-s.png"
+      "sha256": "7e885de04f2dd9771005428b64c0abdd31be16a1e2189803053592e10e9ba7e7"
     },
     {
       "id": "ovale-m",
-      "sha256": "a9128df06cf9aa4534ca0e34562bbf2796651f2f1284b4446823d531842cd632",
-      "source": "07_formes_individuelles/ovale-m.png"
+      "sha256": "a9128df06cf9aa4534ca0e34562bbf2796651f2f1284b4446823d531842cd632"
     },
     {
       "id": "ovale-l",
-      "sha256": "47e2ee1d6870a3c2a647db385c1f2a840317e0d029cbbd0fba9c05d55e27e34a",
-      "source": "07_formes_individuelles/ovale-l.png"
+      "sha256": "47e2ee1d6870a3c2a647db385c1f2a840317e0d029cbbd0fba9c05d55e27e34a"
     },
     {
       "id": "ovale-xl",
-      "sha256": "c9a453565fb9f608c49c758b6a64847cf781bbe4a6a174ce621a0052f238471e",
-      "source": "07_formes_individuelles/ovale-xl.png"
+      "sha256": "c9a453565fb9f608c49c758b6a64847cf781bbe4a6a174ce621a0052f238471e"
     },
     {
       "id": "carree-xs",
-      "sha256": "9e7502df24996f0f89c5adb88b1beeb3047fd5c27e21e66659f56513b96909ad",
-      "source": "07_formes_individuelles/carree-xs.png"
+      "sha256": "9e7502df24996f0f89c5adb88b1beeb3047fd5c27e21e66659f56513b96909ad"
     },
     {
       "id": "carree-s",
-      "sha256": "9de45633f57e587272a02ce543f53fff708738e3e7b630ea179242eb17207d7a",
-      "source": "07_formes_individuelles/carree-s.png"
+      "sha256": "9de45633f57e587272a02ce543f53fff708738e3e7b630ea179242eb17207d7a"
     },
     {
       "id": "carree-m",
-      "sha256": "db7e10f67f3ba02d0a92f77347bae25acd2d2b2392f0ac6a1ec38707bc33c31c",
-      "source": "07_formes_individuelles/carree-m.png"
+      "sha256": "db7e10f67f3ba02d0a92f77347bae25acd2d2b2392f0ac6a1ec38707bc33c31c"
     },
     {
       "id": "carree-l",
-      "sha256": "f6b83b3bbeb912d565c8b2ae0b580361e4d90e45c6ce446d68e438b3af7b660a",
-      "source": "07_formes_individuelles/carree-l.png"
+      "sha256": "f6b83b3bbeb912d565c8b2ae0b580361e4d90e45c6ce446d68e438b3af7b660a"
     },
     {
       "id": "carree-xl",
-      "sha256": "6836dddd6d54fdfa34f580934e94ca835545ecde6737cc24a153cd9f1e6eebd6",
-      "source": "07_formes_individuelles/carree-xl.png"
+      "sha256": "6836dddd6d54fdfa34f580934e94ca835545ecde6737cc24a153cd9f1e6eebd6"
     },
     {
       "id": "amande-xs",
-      "sha256": "a4ced5c24f6a64ac7f11845494385efebcb60f83ad5f538abe2dd6cffd4bfade",
-      "source": "16_formes_complementaires/amande-xs.png"
+      "sha256": "a4ced5c24f6a64ac7f11845494385efebcb60f83ad5f538abe2dd6cffd4bfade"
     },
     {
       "id": "amande-s",
-      "sha256": "c100eb0db3bbaac80cba2ab2b793ff05f5828a2bff361311386bf9ac5ad7ecab",
-      "source": "16_formes_complementaires/amande-s-v2.png"
+      "sha256": "c100eb0db3bbaac80cba2ab2b793ff05f5828a2bff361311386bf9ac5ad7ecab"
     },
     {
       "id": "amande-m",
-      "sha256": "8151db45177bc2983a125e5aba5eefdc3f66ff11cb78b68738129d6eb8112af6",
-      "source": "07_formes_individuelles/amande-m.png"
+      "sha256": "8151db45177bc2983a125e5aba5eefdc3f66ff11cb78b68738129d6eb8112af6"
     },
     {
       "id": "amande-l",
-      "sha256": "46cec0b0f844b3dd34c96edfad55c29df82a80eebb62ad60f183c73cd85ca71f",
-      "source": "07_formes_individuelles/amande-l.png"
+      "sha256": "46cec0b0f844b3dd34c96edfad55c29df82a80eebb62ad60f183c73cd85ca71f"
     },
     {
       "id": "amande-xl",
-      "sha256": "a1f2cb15ada8f6de0bc029464ecc3cfec26949dd8393171996d254192eb4c994",
-      "source": "07_formes_individuelles/amande-xl.png"
+      "sha256": "a1f2cb15ada8f6de0bc029464ecc3cfec26949dd8393171996d254192eb4c994"
     },
     {
       "id": "ballerine-xs",
-      "sha256": "32f3fa83537ed0bf2c9013bbd3bd12eab87e3db443f0737fbd00e996e86855bc",
-      "source": "16_formes_complementaires/ballerine-xs.png"
+      "sha256": "32f3fa83537ed0bf2c9013bbd3bd12eab87e3db443f0737fbd00e996e86855bc"
     },
     {
       "id": "ballerine-s",
-      "sha256": "c7c2f484cde0e44927ba33189a0be58a235e75ea518e481ba6cf54bf64680639",
-      "source": "07_formes_individuelles/ballerine-s.png"
+      "sha256": "c7c2f484cde0e44927ba33189a0be58a235e75ea518e481ba6cf54bf64680639"
     },
     {
       "id": "ballerine-m",
-      "sha256": "f9813ac583dfa23eceb08a053452eb0874f46a0cc37ec803e940c4424c22b1ed",
-      "source": "07_formes_individuelles/ballerine-m.png"
+      "sha256": "f9813ac583dfa23eceb08a053452eb0874f46a0cc37ec803e940c4424c22b1ed"
     },
     {
       "id": "ballerine-l",
-      "sha256": "e0ffcee5a80d7a8ffdfb3e06b6c66adc3fb9a9919f8173d782d291456c0ac927",
-      "source": "07_formes_individuelles/ballerine-l.png"
+      "sha256": "e0ffcee5a80d7a8ffdfb3e06b6c66adc3fb9a9919f8173d782d291456c0ac927"
     },
     {
       "id": "ballerine-xl",
-      "sha256": "64732ba4942df40fd1e7187f4113ae020063b372052449b81e3bf011f82001c0",
-      "source": "07_formes_individuelles/ballerine-xl.png"
+      "sha256": "64732ba4942df40fd1e7187f4113ae020063b372052449b81e3bf011f82001c0"
     },
     {
       "id": "stiletto-xs",
-      "sha256": "5fd3fd83e476a4be2c019b55a75d94023c4281058764a605f157b173c15ec911",
-      "source": "16_formes_complementaires/stiletto-xs.png"
+      "sha256": "5fd3fd83e476a4be2c019b55a75d94023c4281058764a605f157b173c15ec911"
     },
     {
       "id": "stiletto-s",
-      "sha256": "34ff1d3a01c0131ee731704587c254cd1a15da057692c4d691d45978345bf719",
-      "source": "16_formes_complementaires/stiletto-s.png"
+      "sha256": "34ff1d3a01c0131ee731704587c254cd1a15da057692c4d691d45978345bf719"
     },
     {
       "id": "stiletto-m",
-      "sha256": "8c5893d17ea6996904733e406d358cdd13517be2a47eebb93892d83b4f158071",
-      "source": "16_formes_complementaires/stiletto-m.png"
+      "sha256": "8c5893d17ea6996904733e406d358cdd13517be2a47eebb93892d83b4f158071"
     },
     {
       "id": "stiletto-l",
-      "sha256": "18cc76d1c1bbd111fe7303b2f380ee9a120907409c4a8cf454da4e40e354c73a",
-      "source": "07_formes_individuelles/stiletto-l.png"
+      "sha256": "18cc76d1c1bbd111fe7303b2f380ee9a120907409c4a8cf454da4e40e354c73a"
     },
     {
       "id": "stiletto-xl",
-      "sha256": "fb1c2c9d0be2efb168b1fcdb206324fa44928bc692b5d16fcbf264afa609e755",
-      "source": "07_formes_individuelles/stiletto-xl.png"
+      "sha256": "fb1c2c9d0be2efb168b1fcdb206324fa44928bc692b5d16fcbf264afa609e755"
     },
     {
       "id": "plaid-bands",
-      "sha256": "41e3acbf5364da7fbd4ac6743e2e1d85c4b35ed5dc1629f7a66bd8e23f61142f",
-      "source": "10_calques_textures/plaid-bands.png"
+      "sha256": "41e3acbf5364da7fbd4ac6743e2e1d85c4b35ed5dc1629f7a66bd8e23f61142f"
     },
     {
       "id": "plaid-lines",
-      "sha256": "ff4c9c4e975c1f0b904280dc4c6b44b4fb7e276650211a0622d3f6ccf323103e",
-      "source": "10_calques_textures/plaid-lines.png"
+      "sha256": "ff4c9c4e975c1f0b904280dc4c6b44b4fb7e276650211a0622d3f6ccf323103e"
     },
     {
       "id": "tortoise-clouds",
-      "sha256": "cce8e51ec6bab7796594730a6316c5a279ef67730b39227244d8471d512b00de",
-      "source": "10_calques_textures/tortoise-clouds.png"
+      "sha256": "cce8e51ec6bab7796594730a6316c5a279ef67730b39227244d8471d512b00de"
     },
     {
       "id": "tortoise-spots",
-      "sha256": "7f03b60e3e025fb8f4b413650d114ad7654dcc3feafe83521508d31442a6b856",
-      "source": "10_calques_textures/tortoise-spots.png"
+      "sha256": "7f03b60e3e025fb8f4b413650d114ad7654dcc3feafe83521508d31442a6b856"
     },
     {
       "id": "marble-veins",
-      "sha256": "30ac08b8b6284b429de33a69059eb897d357b909d40fb1bdb3985aec66659341",
-      "source": "10_calques_textures/marble-veins.png"
+      "sha256": "30ac08b8b6284b429de33a69059eb897d357b909d40fb1bdb3985aec66659341"
     },
     {
       "id": "marble-accent",
-      "sha256": "ede79e1c341f8449198cc1e77362c197d446f47cf691f298ff267d449d42a086",
-      "source": "10_calques_textures/marble-accent.png"
+      "sha256": "ede79e1c341f8449198cc1e77362c197d446f47cf691f298ff267d449d42a086"
     },
     {
       "id": "knit-relief",
-      "sha256": "cc0041f423b8a2fb33a6156d973821b1f3ecb405378e9b61a6627159abb24abf",
-      "source": "10_calques_textures/knit-relief.png"
+      "sha256": "cc0041f423b8a2fb33a6156d973821b1f3ecb405378e9b61a6627159abb24abf"
     },
     {
       "id": "fawn-spots",
-      "sha256": "999c9a7be61ec38c54a857ac62cd14e39ba96f53989ee0aba8a4b53ec9ca94ae",
-      "source": "10_calques_textures/fawn-spots.png"
+      "sha256": "999c9a7be61ec38c54a857ac62cd14e39ba96f53989ee0aba8a4b53ec9ca94ae"
     },
     {
       "id": "dots-pattern",
-      "sha256": "6839f44be4cb10e4048cf38353caa2edac351128a0c2dd33caf480f01c40e258",
-      "source": "10_calques_textures/dots-pattern.png"
+      "sha256": "6839f44be4cb10e4048cf38353caa2edac351128a0c2dd33caf480f01c40e258"
     },
     {
       "id": "zebra-stripes",
-      "sha256": "4453c99bbd41f22e3416aeba4d43559c5e4869d1e5fa46c0e556024d8b2f6033",
-      "source": "10_calques_textures/zebra-stripes.png"
+      "sha256": "4453c99bbd41f22e3416aeba4d43559c5e4869d1e5fa46c0e556024d8b2f6033"
     },
     {
       "id": "cow-spots",
-      "sha256": "4b1ef936ee00e6a3bba6909fc13d67b366f0a3f01870254edc7866e62e6a5d4b",
-      "source": "10_calques_textures/cow-spots.png"
+      "sha256": "4b1ef936ee00e6a3bba6909fc13d67b366f0a3f01870254edc7866e62e6a5d4b"
     },
     {
       "id": "disco-facettes",
-      "sha256": "6c0ca2d04e332b9e9e5247715976fbadc51b8e6f7313e76c2ede8f350dad6d40",
-      "source": "15_variantes_matieres/disco-facettes.png"
+      "sha256": "6c0ca2d04e332b9e9e5247715976fbadc51b8e6f7313e76c2ede8f350dad6d40"
     },
     {
       "id": "candy-rayures",
-      "sha256": "8dbfcd16663526791e4c8dd70f1c074274c30ed08dbfc09facaba2e630bd6235",
-      "source": "15_variantes_matieres/candy-rayures.png"
+      "sha256": "8dbfcd16663526791e4c8dd70f1c074274c30ed08dbfc09facaba2e630bd6235"
     },
     {
       "id": "vagues-voile-a",
-      "sha256": "0c71cbc7b2e300829cb0e75450508f03c77ca987bf4f6876531de130525ee6a0",
-      "source": "15_variantes_matieres/vagues-voile-a.png"
+      "sha256": "0c71cbc7b2e300829cb0e75450508f03c77ca987bf4f6876531de130525ee6a0"
     },
     {
       "id": "vagues-voile-b",
-      "sha256": "a1e93bfd6963bf5a9fc30ffcd63792830747667c2f00480f27acf906e9030036",
-      "source": "15_variantes_matieres/vagues-voile-b.png"
+      "sha256": "a1e93bfd6963bf5a9fc30ffcd63792830747667c2f00480f27acf906e9030036"
     },
     {
       "id": "leopard-centres",
-      "sha256": "174ebb13cbf8fa729f6d1528f32e323ea8d35ba85994430580c40c561fa51d76",
-      "source": "13_calques_matieres/leopard-centres.png"
+      "sha256": "174ebb13cbf8fa729f6d1528f32e323ea8d35ba85994430580c40c561fa51d76"
     },
     {
       "id": "leopard-rosettes",
-      "sha256": "c4d915064b7f0c0e1749c57004911bc75c57357445ab0dbd8ada3412e885dd0c",
-      "source": "13_calques_matieres/leopard-rosettes.png"
+      "sha256": "c4d915064b7f0c0e1749c57004911bc75c57357445ab0dbd8ada3412e885dd0c"
     },
     {
       "id": "snake-accents",
-      "sha256": "67a75f3283341cdedd9d509d1186dd81d1374ee1cb0551dc9b2a74c35d0c2c2c",
-      "source": "13_calques_matieres/snake-accents.png"
+      "sha256": "67a75f3283341cdedd9d509d1186dd81d1374ee1cb0551dc9b2a74c35d0c2c2c"
     },
     {
       "id": "snake-reseau-v2",
-      "sha256": "fb1347780c7c70f18ca8eff81a7a7d5f59b0b2da5b51969deafa0ff67fc8abce",
-      "source": "13_calques_matieres/snake-reseau-v2.png"
+      "sha256": "fb1347780c7c70f18ca8eff81a7a7d5f59b0b2da5b51969deafa0ff67fc8abce"
     },
     {
       "id": "crocodile-sillons",
-      "sha256": "76fdc11e2457a710fa1d35bafe2fdac811687b1abfc161860ea5c2e1fac1fc4f",
-      "source": "13_calques_matieres/crocodile-sillons.png"
+      "sha256": "76fdc11e2457a710fa1d35bafe2fdac811687b1abfc161860ea5c2e1fac1fc4f"
     },
     {
       "id": "stamping-dentelle",
-      "sha256": "9d8e0235f4b497d987084df5f02507b489e17f37bf1238f8e57079c78900ffaa",
-      "source": "13_calques_matieres/stamping-dentelle.png"
+      "sha256": "9d8e0235f4b497d987084df5f02507b489e17f37bf1238f8e57079c78900ffaa"
     },
     {
       "id": "cat-eye-bande",
-      "sha256": "d8a92c8f556dbd1a5f3c1244360240f0866f93b249b98200a67ad780078d6426",
-      "source": "13_calques_matieres/cat-eye-bande.png"
+      "sha256": "d8a92c8f556dbd1a5f3c1244360240f0866f93b249b98200a67ad780078d6426"
     },
     {
       "id": "velvet-particules",
-      "sha256": "76985e5eaf87e0fdb40b531981b56cb9981f16620d3b08f7e17777371548089f",
-      "source": "13_calques_matieres/velvet-particules.png"
+      "sha256": "76985e5eaf87e0fdb40b531981b56cb9981f16620d3b08f7e17777371548089f"
     },
     {
       "id": "chrome-ombres",
-      "sha256": "8b6d60fa2dc56ecc7e54755da676833f75f2211be215a2b334f33ebed9a5f4d0",
-      "source": "13_calques_matieres/chrome-ombres.png"
+      "sha256": "8b6d60fa2dc56ecc7e54755da676833f75f2211be215a2b334f33ebed9a5f4d0"
     },
     {
       "id": "chrome-reflets",
-      "sha256": "49f7ecd16bdc327d9e5af0562c5944c1384add54d61bcd435350da4c60f480ae",
-      "source": "13_calques_matieres/chrome-reflets.png"
+      "sha256": "49f7ecd16bdc327d9e5af0562c5944c1384add54d61bcd435350da4c60f480ae"
     },
     {
       "id": "base-mate",
-      "sha256": "cb3b68bce1e811dd3c9b9e3acac462043b5655368b843d5a14292215a37e172a",
-      "source": "13_calques_matieres/base-mate.png"
+      "sha256": "cb3b68bce1e811dd3c9b9e3acac462043b5655368b843d5a14292215a37e172a"
     },
     {
       "id": "glazed-nacre",
-      "sha256": "bcb8b647d46f20d9011a17a0723113bf29532b2d2cdf0c02aca1207e5d7d3662",
-      "source": "13_calques_matieres/glazed-nacre.png"
+      "sha256": "bcb8b647d46f20d9011a17a0723113bf29532b2d2cdf0c02aca1207e5d7d3662"
     },
     {
       "id": "glitter-poussiere",
-      "sha256": "96fb50df44204c8bebcbcf1aaa27e155de8dbc2b4d386b99d927fff1278c6592",
-      "source": "13_calques_matieres/glitter-poussiere.png"
+      "sha256": "96fb50df44204c8bebcbcf1aaa27e155de8dbc2b4d386b99d927fff1278c6592"
     },
     {
       "id": "glitter-eclats",
-      "sha256": "a226b464c91227c4b44e5cfd09f4775dc79519f3c1876c903480c179d38e65c2",
-      "source": "13_calques_matieres/glitter-eclats.png"
+      "sha256": "a226b464c91227c4b44e5cfd09f4775dc79519f3c1876c903480c179d38e65c2"
     },
     {
       "id": "foil-fragments",
-      "sha256": "0b20a858ab537c7f41757edf1b0360862cd54c98eb9210e383a6b3e6c7ce5ad9",
-      "source": "13_calques_matieres/foil-fragments.png"
+      "sha256": "0b20a858ab537c7f41757edf1b0360862cd54c98eb9210e383a6b3e6c7ce5ad9"
     },
     {
       "id": "aura-diffusion",
-      "sha256": "f71cd3a1c4f75a46ff58f6f46ef998f2f55995623e0e228bf0a473b81c2a3bc7",
-      "source": "13_calques_matieres/aura-diffusion.png"
+      "sha256": "f71cd3a1c4f75a46ff58f6f46ef998f2f55995623e0e228bf0a473b81c2a3bc7"
     },
     {
       "id": "ombre-pigment",
-      "sha256": "70075df38c116952e138b4e3a019929677fdfc7b1b5a4d70bd5371fc8ddbb087",
-      "source": "13_calques_matieres/ombre-pigment.png"
+      "sha256": "70075df38c116952e138b4e3a019929677fdfc7b1b5a4d70bd5371fc8ddbb087"
     },
     {
       "id": "glass-reflets",
-      "sha256": "909eaedaddc3e24f71d5f3b1856020766b3407fbe34a27eee888ff9b00b373b2",
-      "source": "13_calques_matieres/glass-reflets.png"
+      "sha256": "909eaedaddc3e24f71d5f3b1856020766b3407fbe34a27eee888ff9b00b373b2"
     },
     {
       "id": "jelly-pigment",
-      "sha256": "5a69a6699bfc8aab795df85d0033d46dd7d9384dce4dabb11ff8b2a119d645de",
-      "source": "13_calques_matieres/jelly-pigment.png"
+      "sha256": "5a69a6699bfc8aab795df85d0033d46dd7d9384dce4dabb11ff8b2a119d645de"
     },
     {
       "id": "aurora-voile-a",
-      "sha256": "f12463a676683de1997636925f80b7343154b31362f2ec78f1e8b51a658ddd93",
-      "source": "15_variantes_matieres/aurora-voile-a.png"
+      "sha256": "f12463a676683de1997636925f80b7343154b31362f2ec78f1e8b51a658ddd93"
     },
     {
       "id": "aurora-voile-b",
-      "sha256": "437b4695910490e7ad19132f6536323d48e66408bb8cd65c26f8956f4293761f",
-      "source": "15_variantes_matieres/aurora-voile-b.png"
+      "sha256": "437b4695910490e7ad19132f6536323d48e66408bb8cd65c26f8956f4293761f"
     },
     {
       "id": "blooming-pigment",
-      "sha256": "6b36d2f5c404e31c798578e05f45e5645f58b94084106de12d021673fc0c4c30",
-      "source": "15_variantes_matieres/blooming-pigment.png"
+      "sha256": "6b36d2f5c404e31c798578e05f45e5645f58b94084106de12d021673fc0c4c30"
     },
     {
       "id": "milky-voile",
-      "sha256": "5ad04f3e485ac89d8049ecff9daa7def6e29979bcc4652cde0d52e4bf0b96991",
-      "source": "15_variantes_matieres/milky-voile.png"
+      "sha256": "5ad04f3e485ac89d8049ecff9daa7def6e29979bcc4652cde0d52e4bf0b96991"
     },
     {
       "id": "babyboomer-gradient",
-      "sha256": "128723197a46976b8abd7609eb2d2c4d9f3209f8338c1223fb3a72e41d747351",
-      "source": "11_decompositions/babyboomer-gradient.png"
+      "sha256": "128723197a46976b8abd7609eb2d2c4d9f3209f8338c1223fb3a72e41d747351"
     },
     {
       "id": "base-outline",
-      "sha256": "bebdb0e9c89fa52f21f7c04342729fc32b35fef39bde1f5ec297d27cd288fdd8",
-      "source": "11_decompositions/base-outline.png"
+      "sha256": "bebdb0e9c89fa52f21f7c04342729fc32b35fef39bde1f5ec297d27cd288fdd8"
     },
     {
       "id": "flakes-fragments",
-      "sha256": "1f1bcdce9d2c20ff02c17a071dc47d70c6268d937197840dc15d73fa31db6367",
-      "source": "11_decompositions/flakes-fragments.png"
+      "sha256": "1f1bcdce9d2c20ff02c17a071dc47d70c6268d937197840dc15d73fa31db6367"
     },
     {
       "id": "encapsulated-petals",
-      "sha256": "f9ef60cbfcc6261bf3eedcc0975f8696113b71fd981d951248bfa05ed2577572",
-      "source": "11_decompositions/encapsulated-petals.png"
+      "sha256": "f9ef60cbfcc6261bf3eedcc0975f8696113b71fd981d951248bfa05ed2577572"
     },
     {
       "id": "encapsulated-foil",
-      "sha256": "0e6987aec19dc5e8fef01c5ef76b7528e39a3070281f2c3127210f18165170a3",
-      "source": "11_decompositions/encapsulated-foil.png"
+      "sha256": "0e6987aec19dc5e8fef01c5ef76b7528e39a3070281f2c3127210f18165170a3"
     },
     {
       "id": "ronde-xs",
-      "sha256": "ae37461bfd2ed65e14005d3cacfefd1eb9a96132353f00fd7fad7d80531427a3",
-      "source": "07_formes_individuelles/ronde-xs.png"
+      "sha256": "ae37461bfd2ed65e14005d3cacfefd1eb9a96132353f00fd7fad7d80531427a3"
     },
     {
       "id": "ronde-s",
-      "sha256": "a89e8fd8268e1db375aad8bc4a065422a5359bc3640b824f77175283a4481a0e",
-      "source": "07_formes_individuelles/ronde-s.png"
+      "sha256": "a89e8fd8268e1db375aad8bc4a065422a5359bc3640b824f77175283a4481a0e"
     },
     {
       "id": "ronde-m",
-      "sha256": "9dc0a1a3b2c74ef1e86c75396cd39e5bc5479c2eeac3655ab0e01a686cb4ca44",
-      "source": "07_formes_individuelles/ronde-m.png"
+      "sha256": "9dc0a1a3b2c74ef1e86c75396cd39e5bc5479c2eeac3655ab0e01a686cb4ca44"
     },
     {
       "id": "ronde-l",
-      "sha256": "1ef9b55a98afcc5fab1937712266625fdf5c94de0cf97c8ff311b33aebd0b4cb",
-      "source": "07_formes_individuelles/ronde-l.png"
+      "sha256": "1ef9b55a98afcc5fab1937712266625fdf5c94de0cf97c8ff311b33aebd0b4cb"
     },
     {
       "id": "ronde-xl",
-      "sha256": "dd67e5d33eca595520d8fdc14997627dc94e47a060000b826d7640fdb23a3d92",
-      "source": "07_formes_individuelles/ronde-xl.png"
+      "sha256": "dd67e5d33eca595520d8fdc14997627dc94e47a060000b826d7640fdb23a3d92"
     },
     {
       "id": "ovale-xs",
-      "sha256": "30454a93362b2d5744ed35079eeef8492af14e74fd6aa83458bacdea52246ba4",
-      "source": "07_formes_individuelles/ovale-xs.png"
+      "sha256": "30454a93362b2d5744ed35079eeef8492af14e74fd6aa83458bacdea52246ba4"
     },
     {
       "id": "ovale-s",
-      "sha256": "14d1c45a583884b9281a334552be686424768b628900a97cd505b04a50848dc7",
-      "source": "07_formes_individuelles/ovale-s.png"
+      "sha256": "14d1c45a583884b9281a334552be686424768b628900a97cd505b04a50848dc7"
     },
     {
       "id": "ovale-m",
-      "sha256": "6190883987c0c4a3fbca8856f1b62eb96a4e3e28cbc086e878f6fa9555dbdc69",
-      "source": "07_formes_individuelles/ovale-m.png"
+      "sha256": "6190883987c0c4a3fbca8856f1b62eb96a4e3e28cbc086e878f6fa9555dbdc69"
     },
     {
       "id": "ovale-l",
-      "sha256": "9570cd0eab9b35274b400e67b5ef223722e5fd7e767c9c252213bdeffc30d3ad",
-      "source": "07_formes_individuelles/ovale-l.png"
+      "sha256": "9570cd0eab9b35274b400e67b5ef223722e5fd7e767c9c252213bdeffc30d3ad"
     },
     {
       "id": "ovale-xl",
-      "sha256": "5afe9d0a47e4fce71e9e84b049c0fc8b7826e6ba9d2c61a670f11c8308b8cde9",
-      "source": "07_formes_individuelles/ovale-xl.png"
+      "sha256": "5afe9d0a47e4fce71e9e84b049c0fc8b7826e6ba9d2c61a670f11c8308b8cde9"
     },
     {
       "id": "carree-xs",
-      "sha256": "89ffb6269156ba90e7da017528f2b0c5d8d7c3a216ebadba9a60a73b7cbb44ec",
-      "source": "07_formes_individuelles/carree-xs.png"
+      "sha256": "89ffb6269156ba90e7da017528f2b0c5d8d7c3a216ebadba9a60a73b7cbb44ec"
     },
     {
       "id": "carree-s",
-      "sha256": "2de8fcb1d83452c4408e90b9ce74cf907095045c38e79cf51592d00dd0bad15c",
-      "source": "07_formes_individuelles/carree-s.png"
+      "sha256": "2de8fcb1d83452c4408e90b9ce74cf907095045c38e79cf51592d00dd0bad15c"
     },
     {
       "id": "carree-m",
-      "sha256": "12dc1d25f2dd7284739cc74107e15f3103be0790dc90502f9d6690045044f7f2",
-      "source": "07_formes_individuelles/carree-m.png"
+      "sha256": "12dc1d25f2dd7284739cc74107e15f3103be0790dc90502f9d6690045044f7f2"
     },
     {
       "id": "carree-l",
-      "sha256": "ab648e48f9e7fe885977827599e3032ae4936ffbd0fd4a8adfb3ddee82f085e5",
-      "source": "07_formes_individuelles/carree-l.png"
+      "sha256": "ab648e48f9e7fe885977827599e3032ae4936ffbd0fd4a8adfb3ddee82f085e5"
     },
     {
       "id": "carree-xl",
-      "sha256": "0636f30401aa34ebc560518cc61ac69b93ee3c7fde81cd51bec47953c70911aa",
-      "source": "07_formes_individuelles/carree-xl.png"
+      "sha256": "0636f30401aa34ebc560518cc61ac69b93ee3c7fde81cd51bec47953c70911aa"
     },
     {
       "id": "amande-xs",
-      "sha256": "3bb72cc7f1c6ae93e145fbd4fc64e1049ae35bdee4f9e28a3238a97dbafaf7c4",
-      "source": "16_formes_complementaires/amande-xs.png"
+      "sha256": "3bb72cc7f1c6ae93e145fbd4fc64e1049ae35bdee4f9e28a3238a97dbafaf7c4"
     },
     {
       "id": "amande-s",
-      "sha256": "c3f1f622427ab8f52d93f0ca34ca9059b57c968d0462fe1d347059c0d9334eff",
-      "source": "16_formes_complementaires/amande-s-v2.png"
+      "sha256": "c3f1f622427ab8f52d93f0ca34ca9059b57c968d0462fe1d347059c0d9334eff"
     },
     {
       "id": "amande-m",
-      "sha256": "57693c00c28ab25b3a12331a5b69e8a2992daf7536cdb09754648a6da60fdc2d",
-      "source": "07_formes_individuelles/amande-m.png"
+      "sha256": "57693c00c28ab25b3a12331a5b69e8a2992daf7536cdb09754648a6da60fdc2d"
     },
     {
       "id": "amande-l",
-      "sha256": "5964a8898da1184c838693468faf2f69eba4afd5a6bb5920c584c5b38e251e54",
-      "source": "07_formes_individuelles/amande-l.png"
+      "sha256": "5964a8898da1184c838693468faf2f69eba4afd5a6bb5920c584c5b38e251e54"
     },
     {
       "id": "amande-xl",
-      "sha256": "ba4ccf7c30f1404c1f3c3d96cadf8b08742d7e6904968171fb44963a2ccc4ce1",
-      "source": "07_formes_individuelles/amande-xl.png"
+      "sha256": "ba4ccf7c30f1404c1f3c3d96cadf8b08742d7e6904968171fb44963a2ccc4ce1"
     },
     {
       "id": "ballerine-xs",
-      "sha256": "ee89090820ad30998cc80c6767deba6bf5d9a22c79f66cfb909cde555eb08b83",
-      "source": "16_formes_complementaires/ballerine-xs.png"
+      "sha256": "ee89090820ad30998cc80c6767deba6bf5d9a22c79f66cfb909cde555eb08b83"
     },
     {
       "id": "ballerine-s",
-      "sha256": "b7f9144d9f238a9a5e47bbf8443214e96f1d692ea283aa3075064ad6605ce211",
-      "source": "07_formes_individuelles/ballerine-s.png"
+      "sha256": "b7f9144d9f238a9a5e47bbf8443214e96f1d692ea283aa3075064ad6605ce211"
     },
     {
       "id": "ballerine-m",
-      "sha256": "5c32a35b9a559446f681ebf151fd46ffd474619a18a6d330c314c790eca87401",
-      "source": "07_formes_individuelles/ballerine-m.png"
+      "sha256": "5c32a35b9a559446f681ebf151fd46ffd474619a18a6d330c314c790eca87401"
     },
     {
       "id": "ballerine-l",
-      "sha256": "d4689d9a0e144fca067a738d8070f776269ba8d8ccfa29ecd96b523913f6cf4a",
-      "source": "07_formes_individuelles/ballerine-l.png"
+      "sha256": "d4689d9a0e144fca067a738d8070f776269ba8d8ccfa29ecd96b523913f6cf4a"
     },
     {
       "id": "ballerine-xl",
-      "sha256": "91b7def741ed3116d418bf7a2b6339449320b568caa22db4e6724b8f57391989",
-      "source": "07_formes_individuelles/ballerine-xl.png"
+      "sha256": "91b7def741ed3116d418bf7a2b6339449320b568caa22db4e6724b8f57391989"
     },
     {
       "id": "stiletto-xs",
-      "sha256": "dfa22a0ff4e7b8278a510dfb4cc59b809be7741ced977f93378ba344b2e215f2",
-      "source": "16_formes_complementaires/stiletto-xs.png"
+      "sha256": "dfa22a0ff4e7b8278a510dfb4cc59b809be7741ced977f93378ba344b2e215f2"
     },
     {
       "id": "stiletto-s",
-      "sha256": "57ef0b17d84098c80ed343143ee6c10b414f5168f8cf6d4568a0888ca2ea3c57",
-      "source": "16_formes_complementaires/stiletto-s.png"
+      "sha256": "57ef0b17d84098c80ed343143ee6c10b414f5168f8cf6d4568a0888ca2ea3c57"
     },
     {
       "id": "stiletto-m",
-      "sha256": "529a46c42153a5e950f2577837740b386771adf3b709365c906e56458fd9b539",
-      "source": "16_formes_complementaires/stiletto-m.png"
+      "sha256": "529a46c42153a5e950f2577837740b386771adf3b709365c906e56458fd9b539"
     },
     {
       "id": "stiletto-l",
-      "sha256": "7490dd2cceb2b1ae4e7f32152cade3e2eed0f0a16845848fc9a7b749a5bbb993",
-      "source": "07_formes_individuelles/stiletto-l.png"
+      "sha256": "7490dd2cceb2b1ae4e7f32152cade3e2eed0f0a16845848fc9a7b749a5bbb993"
     },
     {
       "id": "stiletto-xl",
-      "sha256": "f06fcb70a87764b5a42d4dd8ad5e68aecf1d03e7f3512fae9633c4f8fd47f055",
-      "source": "07_formes_individuelles/stiletto-xl.png"
+      "sha256": "f06fcb70a87764b5a42d4dd8ad5e68aecf1d03e7f3512fae9633c4f8fd47f055"
     },
     {
       "id": "shallow",
-      "sha256": "06c59324e05058daad8821e27753961b6c58c1997281ed99c30be3ccbd1f3e38",
-      "source": "25_french_adaptables/french-shallow.png"
+      "sha256": "06c59324e05058daad8821e27753961b6c58c1997281ed99c30be3ccbd1f3e38"
     },
     {
       "id": "deep",
-      "sha256": "ca93f2f994f9b2757bf88dd7bc9302cd6320a4edab8dcd22830a3005c7a4d460",
-      "source": "25_french_adaptables/french-deep.png"
+      "sha256": "ca93f2f994f9b2757bf88dd7bc9302cd6320a4edab8dcd22830a3005c7a4d460"
     },
     {
       "id": "v",
-      "sha256": "c0b8908b7dff0ad59b8958e019bdf52dc0ef6ef0b00caae9dc64d36e728492c8",
-      "source": "25_french_adaptables/french-v.png"
+      "sha256": "c0b8908b7dff0ad59b8958e019bdf52dc0ef6ef0b00caae9dc64d36e728492c8"
     },
     {
       "id": "micro-stroke",
-      "sha256": "2a467fab4730421eaa2e0776f9de86ef45186d5b281cfce07c7c1af4ca28fefe",
-      "source": "11_decompositions/micro-french.png"
+      "sha256": "2a467fab4730421eaa2e0776f9de86ef45186d5b281cfce07c7c1af4ca28fefe"
     },
     {
       "id": "reverse-stroke",
-      "sha256": "869797811c127dd1f60c4c15aeef79a2960faf3c49089e90b52336b05f6d2ea9",
-      "source": "11_decompositions/reverse-french.png"
+      "sha256": "869797811c127dd1f60c4c15aeef79a2960faf3c49089e90b52336b05f6d2ea9"
     },
     {
       "id": "double-stroke",
-      "sha256": "9b595ed75fafca88e360bb85fc184238bcbcaf65fa9f6b0b8c42cfb5d0434f7c",
-      "source": "13_calques_matieres/double-french-filet.png"
+      "sha256": "9b595ed75fafca88e360bb85fc184238bcbcaf65fa9f6b0b8c42cfb5d0434f7c"
     },
     {
       "id": "holly-leaves",
-      "sha256": "ada7656a2b3a15185e69b3c99b5ce33baa1c6e2ba906416e956bd8b43788fcf0",
-      "source": "19_motifs_decomposes/holly-leaves.png"
+      "sha256": "ada7656a2b3a15185e69b3c99b5ce33baa1c6e2ba906416e956bd8b43788fcf0"
     },
     {
       "id": "holly-berries",
-      "sha256": "555976eddf973a97a7ac78b74de110ec679460b1884e7243a7f958d54f6048ec",
-      "source": "19_motifs_decomposes/holly-berries.png"
+      "sha256": "555976eddf973a97a7ac78b74de110ec679460b1884e7243a7f958d54f6048ec"
     },
     {
       "id": "gingerbread-icing",
-      "sha256": "7967ba572ab015c8b5137e7d29064a9676ce9eadf5b2bebfb85e44cec00b88a6",
-      "source": "19_motifs_decomposes/gingerbread-icing.png"
+      "sha256": "7967ba572ab015c8b5137e7d29064a9676ce9eadf5b2bebfb85e44cec00b88a6"
     },
     {
       "id": "ribbon",
-      "sha256": "b26d97732da2eb9961fb4a0ea37f9876ef61ca53ef003a4c56152170b8afee3b",
-      "source": "19_motifs_decomposes/ribbon.png"
+      "sha256": "b26d97732da2eb9961fb4a0ea37f9876ef61ca53ef003a4c56152170b8afee3b"
     },
     {
       "id": "peppermint",
-      "sha256": "c5b8e31a38bbaed1c574ed3ae3d6c416b6cc2466e01d859e9192f5f21a1a4d23",
-      "source": "19_motifs_decomposes/peppermint.png"
+      "sha256": "c5b8e31a38bbaed1c574ed3ae3d6c416b6cc2466e01d859e9192f5f21a1a4d23"
     },
     {
       "id": "cream",
-      "sha256": "67c5fc7af73b898168b21eafc21a5543af87d2b8d0c31bd3d55134b693d1fd5b",
-      "source": "19_motifs_decomposes/cream.png"
+      "sha256": "67c5fc7af73b898168b21eafc21a5543af87d2b8d0c31bd3d55134b693d1fd5b"
     },
     {
       "id": "cocoa",
-      "sha256": "b4cf2484ddc858d4a1e717aad572628ad4aa041e72c715980fa82b246eaea983",
-      "source": "19_motifs_decomposes/cocoa.png"
+      "sha256": "b4cf2484ddc858d4a1e717aad572628ad4aa041e72c715980fa82b246eaea983"
     },
     {
       "id": "beads",
-      "sha256": "a05472ccadd1d4e87d5cf57c26a1fae442d1784b80ec0f2240a2e2f22ffaac12",
-      "source": "19_motifs_decomposes/beads.png"
+      "sha256": "a05472ccadd1d4e87d5cf57c26a1fae442d1784b80ec0f2240a2e2f22ffaac12"
     },
     {
       "id": "bat",
-      "sha256": "846d206f93a2e32f0ed62207ebeb257a300db79f1004f4607d80f08487093431",
-      "source": "22_motifs_complementaires/bat.png"
+      "sha256": "846d206f93a2e32f0ed62207ebeb257a300db79f1004f4607d80f08487093431"
     },
     {
       "id": "fangs",
-      "sha256": "5b19f1d4672382e728e961e4a2710add6d5e9c56dcf1047d194765e7beae0913",
-      "source": "22_motifs_complementaires/fangs.png"
+      "sha256": "5b19f1d4672382e728e961e4a2710add6d5e9c56dcf1047d194765e7beae0913"
     },
     {
       "id": "blood-drop",
-      "sha256": "eebdf9a47f01c360e3800c9fc757bf604f34f815b2af928c165dd3d41fe00347",
-      "source": "22_motifs_complementaires/blood-drop.png"
+      "sha256": "eebdf9a47f01c360e3800c9fc757bf604f34f815b2af928c165dd3d41fe00347"
     },
     {
       "id": "goggles",
-      "sha256": "23f91dc32370c0c7dc17550ec8e98045183c75bf66996c47650daba0af3a70fb",
-      "source": "22_motifs_complementaires/goggles.png"
+      "sha256": "23f91dc32370c0c7dc17550ec8e98045183c75bf66996c47650daba0af3a70fb"
     },
     {
       "id": "orb-wings",
-      "sha256": "8c5bcce68b0ff8c8e0606a884329b0866d7a7f4b72fa485916881ce9b289591b",
-      "source": "22_motifs_complementaires/orb-wings.png"
+      "sha256": "8c5bcce68b0ff8c8e0606a884329b0866d7a7f4b72fa485916881ce9b289591b"
     },
     {
       "id": "orb-sphere",
-      "sha256": "93197645cc9cc9f5bca5b17e8676363ffab0a0f5d7356d294fdef113a4a129a5",
-      "source": "22_motifs_complementaires/orb-sphere.png"
+      "sha256": "93197645cc9cc9f5bca5b17e8676363ffab0a0f5d7356d294fdef113a4a129a5"
     },
     {
       "id": "stripe-a",
-      "sha256": "c94c91f42cc387b8d561d9438a5cc50ca790e455b7712241509e48c9bae2c2ad",
-      "source": "22_motifs_complementaires/stripe-a.png"
+      "sha256": "c94c91f42cc387b8d561d9438a5cc50ca790e455b7712241509e48c9bae2c2ad"
     },
     {
       "id": "stripe-b",
-      "sha256": "75eb13ee91088a745ed194bf0884856b87a7514a671d2d11987c810ea0912ee9",
-      "source": "22_motifs_complementaires/stripe-b.png"
+      "sha256": "75eb13ee91088a745ed194bf0884856b87a7514a671d2d11987c810ea0912ee9"
     },
     {
       "id": "gem",
-      "sha256": "9889162d3bd0cf6dfb335ee471db73c74591794e3c6578c61e006d5bc09e6756",
-      "source": "22_motifs_complementaires/gem.png"
+      "sha256": "9889162d3bd0cf6dfb335ee471db73c74591794e3c6578c61e006d5bc09e6756"
     },
     {
       "id": "ronde-xs",
-      "sha256": "ae37461bfd2ed65e14005d3cacfefd1eb9a96132353f00fd7fad7d80531427a3",
-      "source": "07_formes_individuelles/ronde-xs.png"
+      "sha256": "ae37461bfd2ed65e14005d3cacfefd1eb9a96132353f00fd7fad7d80531427a3"
     },
     {
       "id": "ronde-s",
-      "sha256": "a89e8fd8268e1db375aad8bc4a065422a5359bc3640b824f77175283a4481a0e",
-      "source": "07_formes_individuelles/ronde-s.png"
+      "sha256": "a89e8fd8268e1db375aad8bc4a065422a5359bc3640b824f77175283a4481a0e"
     },
     {
       "id": "ronde-m",
-      "sha256": "f905b672598308542681f160bc679f70eaa39e8df6cea08c042491f4922d0814",
-      "source": "07_formes_individuelles/ronde-m.png"
+      "sha256": "f905b672598308542681f160bc679f70eaa39e8df6cea08c042491f4922d0814"
     },
     {
       "id": "ronde-l",
-      "sha256": "3ae5e825bd036409ea10d814b6f5b7c407499e8e27743b72f33661c57d8c8030",
-      "source": "07_formes_individuelles/ronde-l.png"
+      "sha256": "3ae5e825bd036409ea10d814b6f5b7c407499e8e27743b72f33661c57d8c8030"
     },
     {
       "id": "ronde-xl",
-      "sha256": "7c849849ccf9082d6ddbb39c6695280e946976e292f0184fe3eb5df5a07c2d61",
-      "source": "07_formes_individuelles/ronde-xl.png"
+      "sha256": "7c849849ccf9082d6ddbb39c6695280e946976e292f0184fe3eb5df5a07c2d61"
     },
     {
       "id": "ovale-xs",
-      "sha256": "30454a93362b2d5744ed35079eeef8492af14e74fd6aa83458bacdea52246ba4",
-      "source": "07_formes_individuelles/ovale-xs.png"
+      "sha256": "30454a93362b2d5744ed35079eeef8492af14e74fd6aa83458bacdea52246ba4"
     },
     {
       "id": "ovale-s",
-      "sha256": "14d1c45a583884b9281a334552be686424768b628900a97cd505b04a50848dc7",
-      "source": "07_formes_individuelles/ovale-s.png"
+      "sha256": "14d1c45a583884b9281a334552be686424768b628900a97cd505b04a50848dc7"
     },
     {
       "id": "ovale-m",
-      "sha256": "a9128df06cf9aa4534ca0e34562bbf2796651f2f1284b4446823d531842cd632",
-      "source": "07_formes_individuelles/ovale-m.png"
+      "sha256": "a9128df06cf9aa4534ca0e34562bbf2796651f2f1284b4446823d531842cd632"
     },
     {
       "id": "ovale-l",
-      "sha256": "47e2ee1d6870a3c2a647db385c1f2a840317e0d029cbbd0fba9c05d55e27e34a",
-      "source": "07_formes_individuelles/ovale-l.png"
+      "sha256": "47e2ee1d6870a3c2a647db385c1f2a840317e0d029cbbd0fba9c05d55e27e34a"
     },
     {
       "id": "ovale-xl",
-      "sha256": "c9a453565fb9f608c49c758b6a64847cf781bbe4a6a174ce621a0052f238471e",
-      "source": "07_formes_individuelles/ovale-xl.png"
+      "sha256": "c9a453565fb9f608c49c758b6a64847cf781bbe4a6a174ce621a0052f238471e"
     },
     {
       "id": "carree-xs",
-      "sha256": "89ffb6269156ba90e7da017528f2b0c5d8d7c3a216ebadba9a60a73b7cbb44ec",
-      "source": "07_formes_individuelles/carree-xs.png"
+      "sha256": "89ffb6269156ba90e7da017528f2b0c5d8d7c3a216ebadba9a60a73b7cbb44ec"
     },
     {
       "id": "carree-s",
-      "sha256": "9de45633f57e587272a02ce543f53fff708738e3e7b630ea179242eb17207d7a",
-      "source": "07_formes_individuelles/carree-s.png"
+      "sha256": "9de45633f57e587272a02ce543f53fff708738e3e7b630ea179242eb17207d7a"
     },
     {
       "id": "carree-m",
-      "sha256": "db7e10f67f3ba02d0a92f77347bae25acd2d2b2392f0ac6a1ec38707bc33c31c",
-      "source": "07_formes_individuelles/carree-m.png"
+      "sha256": "db7e10f67f3ba02d0a92f77347bae25acd2d2b2392f0ac6a1ec38707bc33c31c"
     },
     {
       "id": "carree-l",
-      "sha256": "f6b83b3bbeb912d565c8b2ae0b580361e4d90e45c6ce446d68e438b3af7b660a",
-      "source": "07_formes_individuelles/carree-l.png"
+      "sha256": "f6b83b3bbeb912d565c8b2ae0b580361e4d90e45c6ce446d68e438b3af7b660a"
     },
     {
       "id": "carree-xl",
-      "sha256": "6836dddd6d54fdfa34f580934e94ca835545ecde6737cc24a153cd9f1e6eebd6",
-      "source": "07_formes_individuelles/carree-xl.png"
+      "sha256": "6836dddd6d54fdfa34f580934e94ca835545ecde6737cc24a153cd9f1e6eebd6"
     },
     {
       "id": "amande-xs",
-      "sha256": "3bb72cc7f1c6ae93e145fbd4fc64e1049ae35bdee4f9e28a3238a97dbafaf7c4",
-      "source": "16_formes_complementaires/amande-xs.png"
+      "sha256": "3bb72cc7f1c6ae93e145fbd4fc64e1049ae35bdee4f9e28a3238a97dbafaf7c4"
     },
     {
       "id": "amande-s",
-      "sha256": "c3f1f622427ab8f52d93f0ca34ca9059b57c968d0462fe1d347059c0d9334eff",
-      "source": "16_formes_complementaires/amande-s-v2.png"
+      "sha256": "c3f1f622427ab8f52d93f0ca34ca9059b57c968d0462fe1d347059c0d9334eff"
     },
     {
       "id": "amande-m",
-      "sha256": "8151db45177bc2983a125e5aba5eefdc3f66ff11cb78b68738129d6eb8112af6",
-      "source": "07_formes_individuelles/amande-m.png"
+      "sha256": "8151db45177bc2983a125e5aba5eefdc3f66ff11cb78b68738129d6eb8112af6"
     },
     {
       "id": "amande-l",
-      "sha256": "46cec0b0f844b3dd34c96edfad55c29df82a80eebb62ad60f183c73cd85ca71f",
-      "source": "07_formes_individuelles/amande-l.png"
+      "sha256": "46cec0b0f844b3dd34c96edfad55c29df82a80eebb62ad60f183c73cd85ca71f"
     },
     {
       "id": "amande-xl",
-      "sha256": "a1f2cb15ada8f6de0bc029464ecc3cfec26949dd8393171996d254192eb4c994",
-      "source": "07_formes_individuelles/amande-xl.png"
+      "sha256": "a1f2cb15ada8f6de0bc029464ecc3cfec26949dd8393171996d254192eb4c994"
     },
     {
       "id": "ballerine-xs",
-      "sha256": "ee89090820ad30998cc80c6767deba6bf5d9a22c79f66cfb909cde555eb08b83",
-      "source": "16_formes_complementaires/ballerine-xs.png"
+      "sha256": "ee89090820ad30998cc80c6767deba6bf5d9a22c79f66cfb909cde555eb08b83"
     },
     {
       "id": "ballerine-s",
-      "sha256": "b7f9144d9f238a9a5e47bbf8443214e96f1d692ea283aa3075064ad6605ce211",
-      "source": "07_formes_individuelles/ballerine-s.png"
+      "sha256": "b7f9144d9f238a9a5e47bbf8443214e96f1d692ea283aa3075064ad6605ce211"
     },
     {
       "id": "ballerine-m",
-      "sha256": "f9813ac583dfa23eceb08a053452eb0874f46a0cc37ec803e940c4424c22b1ed",
-      "source": "07_formes_individuelles/ballerine-m.png"
+      "sha256": "f9813ac583dfa23eceb08a053452eb0874f46a0cc37ec803e940c4424c22b1ed"
     },
     {
       "id": "ballerine-l",
-      "sha256": "e0ffcee5a80d7a8ffdfb3e06b6c66adc3fb9a9919f8173d782d291456c0ac927",
-      "source": "07_formes_individuelles/ballerine-l.png"
+      "sha256": "e0ffcee5a80d7a8ffdfb3e06b6c66adc3fb9a9919f8173d782d291456c0ac927"
     },
     {
       "id": "ballerine-xl",
-      "sha256": "64732ba4942df40fd1e7187f4113ae020063b372052449b81e3bf011f82001c0",
-      "source": "07_formes_individuelles/ballerine-xl.png"
+      "sha256": "64732ba4942df40fd1e7187f4113ae020063b372052449b81e3bf011f82001c0"
     },
     {
       "id": "stiletto-xs",
-      "sha256": "dfa22a0ff4e7b8278a510dfb4cc59b809be7741ced977f93378ba344b2e215f2",
-      "source": "16_formes_complementaires/stiletto-xs.png"
+      "sha256": "dfa22a0ff4e7b8278a510dfb4cc59b809be7741ced977f93378ba344b2e215f2"
     },
     {
       "id": "stiletto-s",
-      "sha256": "57ef0b17d84098c80ed343143ee6c10b414f5168f8cf6d4568a0888ca2ea3c57",
-      "source": "16_formes_complementaires/stiletto-s.png"
+      "sha256": "57ef0b17d84098c80ed343143ee6c10b414f5168f8cf6d4568a0888ca2ea3c57"
     },
     {
       "id": "stiletto-m",
-      "sha256": "8c5893d17ea6996904733e406d358cdd13517be2a47eebb93892d83b4f158071",
-      "source": "16_formes_complementaires/stiletto-m.png"
+      "sha256": "8c5893d17ea6996904733e406d358cdd13517be2a47eebb93892d83b4f158071"
     },
     {
       "id": "stiletto-l",
-      "sha256": "18cc76d1c1bbd111fe7303b2f380ee9a120907409c4a8cf454da4e40e354c73a",
-      "source": "07_formes_individuelles/stiletto-l.png"
+      "sha256": "18cc76d1c1bbd111fe7303b2f380ee9a120907409c4a8cf454da4e40e354c73a"
     },
     {
       "id": "stiletto-xl",
-      "sha256": "fb1c2c9d0be2efb168b1fcdb206324fa44928bc692b5d16fcbf264afa609e755",
-      "source": "07_formes_individuelles/stiletto-xl.png"
+      "sha256": "fb1c2c9d0be2efb168b1fcdb206324fa44928bc692b5d16fcbf264afa609e755"
     },
     {
       "id": "block-gauche",
-      "sha256": "fc2028f57ba21b53345046ff715f523484c8edc4d4f5967537012ba9be3de6e1",
-      "source": "15_variantes_matieres/block-gauche.png"
+      "sha256": "fc2028f57ba21b53345046ff715f523484c8edc4d4f5967537012ba9be3de6e1"
     },
     {
       "id": "block-droite",
-      "sha256": "1be470b68e8c5f96646c689fdf0afb9a85f4c00d94fecb7b09f05208043f6a5a",
-      "source": "15_variantes_matieres/block-droite.png"
+      "sha256": "1be470b68e8c5f96646c689fdf0afb9a85f4c00d94fecb7b09f05208043f6a5a"
     },
     {
       "id": "negative-courbes",
-      "sha256": "5f2fd7900ae29a62e5c968f34f051f4cb6662f2952cd29fdf417bbe8956db0d6",
-      "source": "15_variantes_matieres/negative-courbes.png"
+      "sha256": "5f2fd7900ae29a62e5c968f34f051f4cb6662f2952cd29fdf417bbe8956db0d6"
     },
     {
       "id": "charm-etoile",
-      "sha256": "44606c9dfdf1455c2b1b794bf9e96af9b00ee419c8bcaaaf980e950152bc3020",
-      "source": "15_variantes_matieres/charm-etoile.png"
+      "sha256": "44606c9dfdf1455c2b1b794bf9e96af9b00ee419c8bcaaaf980e950152bc3020"
     },
     {
       "id": "charm-billes",
-      "sha256": "85702417cda906be36d68b679fbeedcaa434cf86e1193c4577970e81effa6c0b",
-      "source": "15_variantes_matieres/charm-billes.png"
+      "sha256": "85702417cda906be36d68b679fbeedcaa434cf86e1193c4577970e81effa6c0b"
     },
     {
       "id": "gel3d-petales",
-      "sha256": "dccdcee8ca64c831ae8f7526c1f84d66262908f13738f447a7d355d7f738b819",
-      "source": "13_calques_matieres/gel3d-petales.png"
+      "sha256": "dccdcee8ca64c831ae8f7526c1f84d66262908f13738f447a7d355d7f738b819"
     },
     {
       "id": "gel3d-coeur",
-      "sha256": "dd6ef8b73802ca9c22db49fc1cc7e35ff198633e89dc43350d62e9baca1d0bed",
-      "source": "13_calques_matieres/gel3d-coeur.png"
+      "sha256": "dd6ef8b73802ca9c22db49fc1cc7e35ff198633e89dc43350d62e9baca1d0bed"
     },
     {
       "id": "strass-trio",
-      "sha256": "6a18669feebbe78d385fce2e67653697a9ff575c84f404a27fb36421d58b162f",
-      "source": "13_calques_matieres/strass-trio.png"
+      "sha256": "6a18669feebbe78d385fce2e67653697a9ff575c84f404a27fb36421d58b162f"
     },
     {
       "id": "half-moon",
-      "sha256": "f0371413c433c99f0f57f20b0bafb5c2c08403dd5c5f5a34aacc42339aa8e235",
-      "source": "11_decompositions/half-moon.png"
+      "sha256": "f0371413c433c99f0f57f20b0bafb5c2c08403dd5c5f5a34aacc42339aa8e235"
     },
     {
       "id": "ruffian",
-      "sha256": "ec1a59e973dfa20b517834b208fdbbfb0c4a0ad3fe1a941349bcf4ec780e7186",
-      "source": "11_decompositions/ruffian.png"
+      "sha256": "ec1a59e973dfa20b517834b208fdbbfb0c4a0ad3fe1a941349bcf4ec780e7186"
     },
     {
       "id": "outline",
-      "sha256": "acca7d2a49dee55113788c6532156cd5a833d1f0510a357a115b56873873c3b5",
-      "source": "11_decompositions/outline.png"
+      "sha256": "acca7d2a49dee55113788c6532156cd5a833d1f0510a357a115b56873873c3b5"
     },
     {
       "id": "one-stroke-leaves",
-      "sha256": "47f846e4d5ed1fce70f1837edea277f9a30641c3c1db96101e147693a25a53d1",
-      "source": "11_decompositions/one-stroke-leaves.png"
+      "sha256": "47f846e4d5ed1fce70f1837edea277f9a30641c3c1db96101e147693a25a53d1"
     },
     {
       "id": "one-stroke-petals",
-      "sha256": "5ae20c24f0459b368f916b545d4b2f3bcf04fa0c0f373aa4ed96658f3379564f",
-      "source": "11_decompositions/one-stroke-petals.png"
+      "sha256": "5ae20c24f0459b368f916b545d4b2f3bcf04fa0c0f373aa4ed96658f3379564f"
     },
     {
       "id": "line-simple-trait",
-      "sha256": "b04459971b5fdbdf29a7456f5e42f24d9209c2376639199b5759c82864efea4d",
-      "source": "11_decompositions/line-simple-trait.png"
+      "sha256": "b04459971b5fdbdf29a7456f5e42f24d9209c2376639199b5759c82864efea4d"
     },
     {
       "id": "line-courbes",
-      "sha256": "a3a4399b9882db8a8f36e92a7d751d865811a7b1367db9dbe9e2744295a19926",
-      "source": "11_decompositions/line-courbes.png"
+      "sha256": "a3a4399b9882db8a8f36e92a7d751d865811a7b1367db9dbe9e2744295a19926"
     },
     {
       "id": "motif-snowflake",
-      "sha256": "854d6252a91de5506b327eda69dcc0e8a5624a1fdd7ff1c794cf1bfc277ddc72",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/gris/snowflake.png"
+      "sha256": "854d6252a91de5506b327eda69dcc0e8a5624a1fdd7ff1c794cf1bfc277ddc72"
     },
     {
       "id": "motif-star",
-      "sha256": "3f55d7f082c7e2732052142679b4e088abf872a82878efdd92862b3066ef5f5d",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/gris/star.png"
+      "sha256": "3f55d7f082c7e2732052142679b4e088abf872a82878efdd92862b3066ef5f5d"
     },
     {
       "id": "motif-moon",
-      "sha256": "eeeac5144d956889201b6adb24ef5e4e2458631497459f916244f3ba9aed2056",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/gris/moon.png"
+      "sha256": "eeeac5144d956889201b6adb24ef5e4e2458631497459f916244f3ba9aed2056"
     },
     {
       "id": "motif-branch",
-      "sha256": "ab828879d84194d4fa7c13a630a24e6ccaa148ba77b4f9d704d7bb3b0546b3fc",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/couleur/frost-branch.png"
+      "sha256": "ab828879d84194d4fa7c13a630a24e6ccaa148ba77b4f9d704d7bb3b0546b3fc"
     },
     {
       "id": "motif-reindeer",
-      "sha256": "58d48821d332564e8677c87cb348fc68e5333a279df4031ed6e9b330b02cef5f",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/couleur/reindeer.png"
+      "sha256": "58d48821d332564e8677c87cb348fc68e5333a279df4031ed6e9b330b02cef5f"
     },
     {
       "id": "motif-mug",
-      "sha256": "30130eeed37451f76de3da18e6f672fa3d455ac0f68817b62d5a0f7b5d26db13",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/couleur/mug.png"
+      "sha256": "30130eeed37451f76de3da18e6f672fa3d455ac0f68817b62d5a0f7b5d26db13"
     },
     {
       "id": "motif-garland",
-      "sha256": "2f17368fe27699c4859e174c1b6e26ef2424f42ee13896fdd56d99fe857e4f9b",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/couleur/garland.png"
+      "sha256": "2f17368fe27699c4859e174c1b6e26ef2424f42ee13896fdd56d99fe857e4f9b"
     },
     {
       "id": "motif-firework",
-      "sha256": "8126efd72d250fdb8e1004b65baef7af8855d0e77b60c971c5783903cba453dc",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/couleur/firework.png"
+      "sha256": "8126efd72d250fdb8e1004b65baef7af8855d0e77b60c971c5783903cba453dc"
     },
     {
       "id": "motif-constellation",
-      "sha256": "50883e5e584f6fd9395fa72a02cd23bb0f054ca3b863d438d9962d77106d2bcc",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/gris/constellation.png"
+      "sha256": "50883e5e584f6fd9395fa72a02cd23bb0f054ca3b863d438d9962d77106d2bcc"
     },
     {
       "id": "motif-crystal",
-      "sha256": "1cbbbc399bf897ed1271ee7e266d13e0dade74992ceee6f06f756551bdf65e0b",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/couleur/crystal.png"
+      "sha256": "1cbbbc399bf897ed1271ee7e266d13e0dade74992ceee6f06f756551bdf65e0b"
     },
     {
       "id": "motif-flower",
-      "sha256": "0d53254e60b9fab97f60606397cd8ebb6aa69271b381f12dd8765004160a31d2",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/couleur/flower.png"
+      "sha256": "0d53254e60b9fab97f60606397cd8ebb6aa69271b381f12dd8765004160a31d2"
     },
     {
       "id": "motif-heart",
-      "sha256": "3d67619cdb7af226f5473ecdd4c1e3f8991c0c186be1e027de09b754b8da28ca",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/gris/heart.png"
+      "sha256": "3d67619cdb7af226f5473ecdd4c1e3f8991c0c186be1e027de09b754b8da28ca"
     },
     {
       "id": "motif-bow",
-      "sha256": "020b6cf0d3ab3e78c3ec40b5c5444e77cae43df0aac46a3cdae4cedbfaac1f6a",
-      "source": "reprise-20261109/NailMoods_Refonte_Crayonnes/06_detourages/gris/bow.png"
+      "sha256": "020b6cf0d3ab3e78c3ec40b5c5444e77cae43df0aac46a3cdae4cedbfaac1f6a"
     }
   ]
 }
