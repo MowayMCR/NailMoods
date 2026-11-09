@@ -8,15 +8,15 @@ bebc75379987158d16cbb1313f061e3653e17104a6b869c024c1af88ad9c264c  ./assets/bwip-
 43d4b9510a4d96fc4efea3c974775b6e673b222a52b4b35115cff1d4e6c4a80e  ./assets/definitions-CNHmjX7M.js
 b781dbcb68acb6f0e2c82c3c8dc14d1dc3cd075bccc0a72259519390b54f4842  ./assets/dist-DoiJDmL8.js
 f0418eb2f2eb20cffc09d6a09a63b8c9750f30a13bedb0fd4c4f04c87b50f4c4  ./assets/dist-DqFGeSPt.js
-0c5549a011b1817f0dc8cc66a9574e7f643bb953cf58280bd38f1946bb2c1e08  ./assets/entry-k1XcXQFo.js
+f3c09879e7f8a1583d700bf605fd266da09cc6281cdd6897d455e701b6a545f5  ./assets/entry-C_drKUaO.js
 dddb07c080ce30e271b5797dcd37ca5280d525c6bce9dc9179ec7df353e7c077  ./assets/esm-B2bClAYB.js
 e603f122732e864035d135c5228a98468fa68b2c7f2a682180e524b3d711a1e4  ./assets/esm-B3DWFOR_.js
 28a5be4d5b4341d9e9f4e04d22ea5016a47cc9551ae4c1b2bb8831b767008675  ./assets/esm-CuCEkA2i.js
 341a09c845babb52ed38ca6d175af2d67f2ad7aa4e687e0186463f7490672167  ./assets/esm-D6Exhw9z.js
 d5732b281b849c5072958ce1c2d8c1ef0af148edf1f3c75e0aad7cda1dcb062e  ./assets/exceljs.min-C1j2HQXe.js
-73c7327ef921bb88120147ae5c8c69cce51e9f15f86954c1eb3763f170b18702  ./assets/index-Dk5HrjpG.js
+7315bb3d6bbdb5222d689a428ebb60f46cde274dee72029615fc880f30634912  ./assets/index-Bh3GrCbm.js
 f127830e0fae45af50a4e4cb941e58a4c9d0968751f0ebba44680cdebbc2d421  ./assets/main-BkOsPXaw.css
-3a732c73b80f7e8dad93e618399ba86061eb87aaab311471ddfb1a341225d7bb  ./assets/main-RKd9JIaN.js
+44b717759ea9af9cb931f12e0856b2aac5c48245bc43e2535b37a3208e2ca4d4  ./assets/main-g0_WeGpO.js
 c1df40bf22b4840f82788e6203829bd50ac122ff38180892338aef722e8990f6  ./assets/material-QUZTjgB5.js
 8820987e6a8afb54d776f21e305917e1ecf83cef678b4db38c2e5a405d04a8bf  ./assets/preload-helper-BZ1Pz5am.js
 0ccc5ac8beebd2f8c2fad853de639f1c38eb46c67864a947f53d2200ce1113c4  ./assets/reader-Cx5cFgjW.js
@@ -531,7 +531,7 @@ de319362281848eb5ed96720b462340af977b4fc9de7ee95173c339aaef40890  ./icons/README
 d739a5baff665635d58b1a22ee75d4a6fc9f05ee98fd988d53a44def659a9751  ./icons/nailmoods-effects-themes.png
 cdc151d4e4e1c8c40e577aed2f0ca6bc073739ef691130bce45b7602ca28fcae  ./icons/nailmoods-styles.png
 1fe5cf66e7340f9589c2b1b384ef5bf3326639cb419b1bb26100da89550751d0  ./icons/nailmoods-techniques.png
-62f70c365ddc55ebe7f33b101287c327ff2842499fa2e49f136fa1dad5f079f5  ./index.html
+7f635b4f531f2165c4a3bb5e5a96f414a3cd917aeb42889f0cd4878fee3eeb71  ./index.html
 8c5dadc47afb77a3072f0afa41871bc8d3b492d10cfc663b2a4a3786b9a00742  ./legal/archives/2026-09-22/conditions-0.3-beta.html
 a9091f3a1c202178780aac68f5949d3583e2abd05a38a24b8d8b32e59e1b10d8  ./legal/archives/2026-09-22/confidentialite-0.4-beta.html
 b201e10b67e886660383746265b1dc7de5e3de69f883c3839899416cbc0bd266  ./legal/archives/2026-09-22/editor.js
@@ -606,4 +606,4 @@ c7f5ace62ac0ad065e71e9c6725f1d7cdf82e7eda8fba532cbb9563964da7098  ./recognition/
 0bc6ce3e5fbbd0cd89706cf2fd70960e3372f4f01ee24265b26990808aaeb286  ./recognition/tesseract-core.wasm.js
 576b7df7e3393e137e51849357c9adb53fe7ac1bb69bfa06cf3d61520f182c6d  ./recognition/worker.min.js
 e8af31edb56d0522f4de74495839385ef019ba8bc90d38e5ecb2f18795d86fb2  ./recognition/zxing_reader.wasm
-015dc1f81b5b9dfe84e78649b71f397958c5a492aa62e3bcf23fbdd788a797f1  ./release.json
+6d36354ab12f1df529cb03de5df1cc5fb6b47f7fb1527f181daf8b074cb17cb7  ./release.json
