@@ -598,7 +598,6 @@ d2fc6d83e7e4171bf67d7c2cf819b22bc47c50c3a809feb1418f48bf87306dea  ./nailmoods-lo
 71735c1d8cdccead5276574a835eb37359d8d845baf3ccb50977e2ad3fc45bbf  ./realistic-multitechnique.png
 2fec3c7210bf9b6dd86a9111fe51f0a611c0daf5031a812eaafa0720daa91920  ./realistic-relief-jewels.png
 161ca4309efdaf738d22f774d478c66f6fe9c9b8fa86a96ebc2fd6c10961a3d2  ./realistic-special-finishes.png
-7b18d528cb0222cbb65e8ec9e82512fb34e6dedf6311c1f3d9c8de5edccea8b0  ./recognition/.tesseract-core-relaxedsimd-lstm.wasm.LF5zXJ
 c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08  ./recognition/LICENSE
 45b4cb346724ac1774f1c36f42f182b887bcdb28ebe63e6fff90ac41f3fcff91  ./recognition/eng.traineddata.gz
 d611139672b3752c7097e671e4a1d9209dfd37f2aeb081ef6487fba3351e9255  ./recognition/fra.traineddata.gz
