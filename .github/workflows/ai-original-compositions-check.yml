@@ -1,0 +1,22 @@
+name: NailMoods AI — server composition library checks
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/nailmoods-ai/compositionLibrary.mjs'
+      - 'supabase/functions/nailmoods-ai/provider.mjs'
+      - 'tests/ai-original-compositions.test.js'
+      - '.github/workflows/ai-original-compositions-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  composition-library:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Static tests — server only (no builds)
+        run: node --test tests/ai-original-compositions.test.js
