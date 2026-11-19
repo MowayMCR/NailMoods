@@ -1,0 +1,30 @@
+name: EU release preparation — localized UI pilot checks
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/i18n/**'
+      - 'src/main.jsx'
+      - 'src/ProfileView.jsx'
+      - 'tests/i18n.test.js'
+      - 'public/legal/editor.json'
+      - 'docs/release/EU_RELEASE_1_LOCALIZATION_LEGAL_AUDIT_2026-10-12.md'
+      - '.github/workflows/eu-i18n-release-prep-checks.yml'
+permissions:
+  contents: read
+jobs:
+  localization-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Compile optional six-language pilot (no deployment)
+        env:
+          VITE_I18N_BETA_ENABLED: 'true'
+        run: npm run build
