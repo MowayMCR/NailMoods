@@ -10,6 +10,8 @@ def inspect(app, signed=False):
     assert info['CFBundleDisplayName'] == 'NailMoods', 'Unexpected display name'
     assert info['CFBundleVersion'] == os.environ['NAILMOODS_IOS_BUILD_NUMBER'], 'Build number mismatch'
     assert info['ITSAppUsesNonExemptEncryption'] is False
+    expected_storekit = os.environ.get('NAILMOODS_STOREKIT_ENVIRONMENT', 'Automatic')
+    assert info.get('NailMoodsStoreKitEnvironment') == expected_storekit, 'StoreKit routing mismatch'
     for key in ['NSCameraUsageDescription', 'NSPhotoLibraryUsageDescription', 'NSPhotoLibraryAddUsageDescription']:
         assert isinstance(info.get(key), str) and info[key].strip(), 'Missing camera SDK purpose string: ' + key
     assert 'NSUserTrackingUsageDescription' not in info, 'Unexpected ATT'
@@ -49,6 +51,7 @@ def inspect(app, signed=False):
         assert entitlements.get('get-task-allow',False) is False
     return {'bundle':info['CFBundleIdentifier'],'version':info['CFBundleShortVersionString'],
             'build':info['CFBundleVersion'],'sdk':info['DTSDKName'],'devices':info['UIDeviceFamily'],
+            'storekitEnvironment':info['NailMoodsStoreKitEnvironment'],
             'sdkPrivacyManifests':len(sdk_manifests),'privacyResources':privacy_resources,
             'admobAppId':info.get('GADApplicationIdentifier'),'admobMeasurementDelayed':info.get('GADDelayAppMeasurementInit'),'signatureVerified':signed,'IAPlus':'compiled closed'}
 

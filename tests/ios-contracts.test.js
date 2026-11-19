@@ -20,8 +20,15 @@ test('iOS includes camera SDK purpose strings without requesting broad photo acc
  assert.doesNotMatch(media,/requestPermissions\(\s*\)/);
 });
 test('billing transaction is finished only after successful server delivery',()=>{
- const source=read('src/cloud/appleBilling.js');assert.ok(source.indexOf('if(!result.ok||!result.entitlement)')<source.indexOf('await AppleBilling.finish'));
+ const source=read('src/cloud/appleBilling.js');assert.ok(source.indexOf('if(!result.ok||!result.entitlement)')<source.indexOf('await store.finish'));
  assert.equal(read('ios/App/App/NailMoodsStoreKitPlugin.swift').includes('await transaction.finish()'),false);
+});
+test('TestFlight environment loading does not refresh or synchronize Apple authentication',()=>{
+ const native=read('ios/App/App/NailMoodsStoreKitPlugin.swift');
+ const environment=native.slice(native.indexOf('@objc func getEnvironment'),native.indexOf('@objc func getProducts'));
+ assert.doesNotMatch(environment,/AppTransaction\.refresh|AppStore\.sync/);
+ assert.match(environment,/NailMoodsStoreKitEnvironment/);
+ assert.match(read('.github/workflows/ios-testflight.yml'),/NAILMOODS_STOREKIT_ENVIRONMENT: Sandbox/);
 });
 
 test('iOS auth URL scheme matches the already established mobile PKCE callback',()=>{
