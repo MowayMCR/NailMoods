@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-10-11T15:16:48.307746+00:00",
+  "rows": [
+    {
+      "platform": "android",
+      "enabled": true,
+      "test_only": true,
+      "daily_limit": 1
+    },
+    {
+      "platform": "ios",
+      "enabled": false,
+      "test_only": true,
+      "daily_limit": 1
+    }
+  ],
+  "mutation": "ios.enabled true -> false only",
+  "verification": "separate read-only query",
+  "accountsOrAIRightsModified": false
+}

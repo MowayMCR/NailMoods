@@ -1,0 +1,70 @@
+    // NailMoods ATT/UMP native guard v1
+    // Sessions expire on backgrounding or consent changes. No persisted ATT grant.
+    private var nmSession = false
+    private var nmObservers: [NSObjectProtocol] = []
+    private var nmConsentFingerprint = ""
+
+    private func nmTCF(_ key: String) -> String {
+        return UserDefaults.standard.string(forKey: key) ?? ""
+    }
+    private func nmBit(_ value: String, _ position: Int) -> Bool {
+        let bits = Array(value)
+        return position > 0 && bits.count >= position && bits[position - 1] == "1"
+    }
+    private func nmFingerprint() -> String {
+        return [nmTCF("IABTCF_TCString"), nmTCF("IABTCF_PurposeConsents"), nmTCF("IABTCF_VendorConsents"), String(ConsentInformation.shared.consentStatus.rawValue)].joined(separator: "|")
+    }
+    private func nmUMPTrackingAllowed() -> Bool {
+        guard ConsentInformation.shared.canRequestAds else { return false }
+        if ConsentInformation.shared.consentStatus == .notRequired { return true }
+        // canRequestAds can be true after Reject All (limited ads). This candidate
+        // requires affirmative Google vendor + storage + targeting consents.
+        guard ConsentInformation.shared.consentStatus == .obtained else { return false }
+        let purpose = nmTCF("IABTCF_PurposeConsents")
+        return nmBit(purpose, 1) && nmBit(purpose, 3) && nmBit(purpose, 4)
+            && nmBit(nmTCF("IABTCF_VendorConsents"), 755)
+    }
+    func nmAdSessionAllowed() -> Bool {
+        return nmSession && UIApplication.shared.applicationState == .active
+            && ATTrackingManager.trackingAuthorizationStatus == .authorized
+            && nmUMPTrackingAllowed() && nmConsentFingerprint == nmFingerprint()
+    }
+    private func nmSuspend() {
+        nmSession = false
+        bannerExecutor.removeBannerViewToView()
+    }
+    private func nmObservePrivacy() {
+        nmObservers.append(NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: .main) { [weak self] _ in self?.nmSuspend() })
+        nmObservers.append(NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            guard let self = self else { return }
+            if self.nmSession && !self.nmAdSessionAllowed() { self.nmSuspend() }
+        })
+    }
+    deinit { for observer in nmObservers { NotificationCenter.default.removeObserver(observer) } }
+    @objc func privacySnapshot(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let status: String
+            switch ATTrackingManager.trackingAuthorizationStatus {
+            case .authorized: status = "authorized"
+            case .denied: status = "denied"
+            case .restricted: status = "restricted"
+            case .notDetermined: status = "notDetermined"
+            @unknown default: status = "unknown"
+            }
+            call.resolve(["att": status, "umpTrackingAllowed": self.nmUMPTrackingAllowed()])
+        }
+    }
+    @objc func authorizeAdSession(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            self.nmSuspend()
+            guard UIApplication.shared.applicationState == .active,
+                  ATTrackingManager.trackingAuthorizationStatus == .authorized,
+                  self.nmUMPTrackingAllowed() else { call.reject("ads_privacy_required"); return }
+            self.nmConsentFingerprint = self.nmFingerprint()
+            self.nmSession = true
+            call.resolve()
+        }
+    }
+    @objc func suspendAdSession(_ call: CAPPluginCall) {
+        DispatchQueue.main.async { self.nmSuspend(); call.resolve() }
+    }

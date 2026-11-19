@@ -1,0 +1,19 @@
+{
+  "artifactId": 11707303577,
+  "artifactSHA256": "2b58c331a168079b1583169ddefe4d26a8d8f552da8a8dfa2c487539cb8005f7",
+  "source": "134c1287dec9b7a2042453a6379a59c0ea9ca197",
+  "version": "0.8.1",
+  "build": "30006",
+  "fullArchiveRetained": true,
+  "attDescription": "Avec ton accord, Google peut utiliser l’identifiant publicitaire de cet appareil pour relier l’activité publicitaire à celle d’autres apps et sites et mesurer l’efficacité des annonces. Le refus ne change pas ton accès à NailMoods.",
+  "measurementDelayed": true,
+  "signatureVerified": true,
+  "devices": [
+    1,
+    2
+  ],
+  "manifestCount": 5,
+  "dataTypesUnion": 19,
+  "notOrganizerReport": true,
+  "notRuntimeProof": true
+}

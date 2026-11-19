@@ -1,0 +1,15 @@
+Running altool at path '/Applications/Xcode_26.3.app/Contents/SharedFrameworks/ContentDelivery.framework/Resources/altool'...
+
+2026-10-11 15:54:15.883  INFO: [ContentDelivery.Uploader.600001F144C0] 
+==========================================
+VERIFY SUCCEEDED with no errors
+==========================================
+{
+  "details" : {
+
+  },
+  "os-version" : "Version 15.7.9 (Build 24G830)",
+  "success-message" : "No errors validating archive at 'artifacts/ios/export/App.ipa'.",
+  "tool-path" : "/Applications/Xcode_26.3.app/Contents/SharedFrameworks/ContentDelivery.framework/Resources",
+  "tool-version" : "26.10.1 (171001)"
+}

@@ -1,0 +1,22 @@
+{
+  "tests": {
+    "passed": 63,
+    "failed": 0,
+    "scope": [
+      "privacy",
+      "ad-policy",
+      "ad-controller",
+      "ios-contracts",
+      "cloud-store"
+    ]
+  },
+  "webBuild": "passed",
+  "pythonCompilation": "passed",
+  "ipaVsAppReport": "passed",
+  "manifestParsing": "passed",
+  "diffCheck": "passed",
+  "nativeRebuild": "not performed in Linux environment",
+  "runtimeSdkTracking": "not tested",
+  "xcodeOrganizerReport": "not available",
+  "publicPolicyDeployment": "not performed"
+}

@@ -1,0 +1,18 @@
+Running altool at path '/Applications/Xcode_26.3.app/Contents/SharedFrameworks/ContentDelivery.framework/Resources/altool'...
+
+2026-10-11 15:54:58.407  INFO: [ContentDelivery.Uploader.6000024244C0] 
+==========================================
+UPLOAD SUCCEEDED with no errors
+Delivery UUID: e1754c59-e81f-4af4-a8da-957d253e7823
+Transferred 48539571 bytes in 0.721 seconds (67.3MB/s, 538.591Mbps)
+==========================================
+{
+  "details" : {
+    "delivery-uuid" : "e1754c59-e81f-4af4-a8da-957d253e7823",
+    "transferred" : "48539571 bytes in 0.721 seconds (67.3MB/s, 538.591Mbps)"
+  },
+  "os-version" : "Version 15.7.9 (Build 24G830)",
+  "success-message" : "No errors uploading archive at 'artifacts/ios/export/App.ipa'.",
+  "tool-path" : "/Applications/Xcode_26.3.app/Contents/SharedFrameworks/ContentDelivery.framework/Resources",
+  "tool-version" : "26.10.1 (171001)"
+}
