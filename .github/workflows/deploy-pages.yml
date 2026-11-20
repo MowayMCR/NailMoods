@@ -81,3 +81,46 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+  verify-served:
+    if: github.event_name != 'pull_request'
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22}
+      - name: Verify production revision and served entry bytes
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs/promises';
+          import crypto from 'node:crypto';
+          const expected=JSON.parse(await fs.readFile('web-release/release.json','utf8'));
+          const origin='https://nailmoods.com',checked=[];
+          const request=async path=>{const r=await fetch(origin+path+'?verify='+process.env.GITHUB_SHA,{cache:'no-store'});if(!r.ok)throw Error(path+' HTTP '+r.status);return Buffer.from(await r.arrayBuffer());};
+          const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+          let served,last;
+          for(let attempt=0;attempt<24;attempt++){
+            try{served=JSON.parse((await request('/release.json')).toString());if(served.sourceCommit===expected.sourceCommit&&served.journeyRevision===expected.journeyRevision)break;last='CDN still serves another revision';}catch(e){last=e.message;}
+            await new Promise(r=>setTimeout(r,5000));
+          }
+          if(served?.sourceCommit!==expected.sourceCommit||served?.journeyRevision!==expected.journeyRevision)throw Error(last||'Revision mismatch');
+          const paths=['/index.html','/atelier-v41/index.html','/atelier-v41/release.json'];
+          for(const entry of ['/index.html','/atelier-v41/index.html']){
+            const html=await fs.readFile('web-release'+entry,'utf8');
+            paths.push(...[...html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)"/g)].map(m=>m[1]));
+          }
+          for(const path of [...new Set(paths)]){
+            const [actual,local]=await Promise.all([request(path),fs.readFile('web-release'+path)]);
+            if(sha(actual)!==sha(local))throw Error('Served bytes differ: '+path);
+            checked.push({path,sha256:sha(actual)});
+          }
+          const result={url:origin,revision:served.journeyRevision,sourceCommit:served.sourceCommit,publicCommit:process.env.GITHUB_SHA,rollout:served.rollout,checked,verifiedAt:new Date().toISOString()};
+          await fs.writeFile('production-verification.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
+          JS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NailMoods-production-served-verification
+          path: production-verification.json
+          retention-days: 30
