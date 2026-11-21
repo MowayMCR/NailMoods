@@ -106,7 +106,7 @@ jobs:
             await new Promise(r=>setTimeout(r,5000));
           }
           if(served?.sourceCommit!==expected.sourceCommit||served?.journeyRevision!==expected.journeyRevision)throw Error(last||'Revision mismatch');
-          const paths=['/index.html','/atelier-v41/index.html','/atelier-v41/release.json'];
+          const paths=['/index.html','/atelier-v41/index.html','/atelier-v41/release.json',...(expected.entryAssets||[])];
           for(const entry of ['/index.html','/atelier-v41/index.html']){
             const html=await fs.readFile('web-release'+entry,'utf8');
             paths.push(...[...html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)"/g)].map(m=>m[1]));

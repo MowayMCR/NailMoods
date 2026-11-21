@@ -28,6 +28,7 @@ f3c09879e7f8a1583d700bf605fd266da09cc6281cdd6897d455e701b6a545f5  ./assets/entry
 01d2a38a7e687678d896fc0f9c340ca099b04457360599984d976f66efb79c05  ./assets/entry-Ch8U-ZUX.js
 77b08897190b465fa46f392a64adfc99db76575e9f8b28dd26e8fc970c39f8b0  ./assets/entry-CkYEGkqb.js
 34ead66a71a90334ed3326677483a2c9fed3afbfaab436cf1e95b7e7c5af2ee9  ./assets/entry-ClJBSOs9.js
+4146ff26f613f528a850cf193d7bf64fb74745a3cd8e3af193a918f4d87e2f28  ./assets/entry-CplUX5yv.js
 57c8b84bf2e908af8686d7f0355a3ca7b527554091f8f74a6b686bb39b5b4273  ./assets/entry-CqsUnZpZ.js
 95d473082a492c9a9f6ab17dc366c226c8672714d03f78f0a1452765e3261432  ./assets/entry-D69UK5x-.js
 b9d1eca9922d8d77b431bae957bdd05917d19b29927d4c32a279d2e7dfc481dd  ./assets/entry-DHqYhSPd.js
@@ -52,6 +53,7 @@ c536ac2a7b0250336d7ae6273cea4a4721c0fc1eff2b28ca53be9ec7702d7426  ./assets/esm-C
 341a09c845babb52ed38ca6d175af2d67f2ad7aa4e687e0186463f7490672167  ./assets/esm-D6Exhw9z.js
 58743d5afe3155a5367af537c7267816f0711a5d0fc77f81fa59abcbc67b3e14  ./assets/esm-DbuutJ8T.js
 d5732b281b849c5072958ce1c2d8c1ef0af148edf1f3c75e0aad7cda1dcb062e  ./assets/exceljs.min-C1j2HQXe.js
+8f81ad39e2fec44cc0d5211e6d4c3c52bde0a618ad76626338b9c9d16b7b5b9e  ./assets/index-5M4kIXdn.js
 605edc2645db59b7db9bff0c02702a7c66916e7fd650877810b0c8b4c83a034a  ./assets/index-AbnAMhcF.js
 a8e0271462b3d619a927aeb60ae97db88e0ab631cc95cec2d410020679d6abb8  ./assets/index-B4PR5zFu.js
 53f5fde33bc1705c72f850973630d6fe6ae892ae3499718250133f846755ef9d  ./assets/index-BEcuI2kb.js
@@ -108,6 +110,7 @@ b9cd5d6ad231f9e63409ecc11e3b0f3aa9334a9d03b968d3796631b9f05973b5  ./assets/main-
 a8e2056dd699c7bba744b931efc217538b7d265578a81ea83471acfbc83dea3a  ./assets/main-CKIioEfB.js
 c14d25556f099cdba0bc75c5aeee4302507f9f0607e1cd3c9ef95fce90b71fcc  ./assets/main-CL1sfJgu.css
 9588be85f438ca13dfbdf5c75eecf165dd62d4e91a5038cf360c9b00f094f3d1  ./assets/main-CYWe2m4U.css
+caccdcf5a37acd8aa28230b2f1238f9322c42340a4b4bd39afbcf94ea4299469  ./assets/main-CZEY9WP7.js
 b8945a83169752e49b25d3159e4c2357819912d20bd32a4bf95e008039a9cb4e  ./assets/main-CcETv-Xj.css
 2ca3de32f26105774d2ae5c837d84ad212272f17bf3dd72aefe841413c57b088  ./assets/main-Cda8Olh0.js
 7e708823a536eed5382b4ef069d25675035cfdb9c432e5208591b2db5e22e4d3  ./assets/main-Cdf2fUl2.js
@@ -135,6 +138,7 @@ c0e3338d5b64f0c8245e946fa579429e95b50a6e1d9a3ac8de062eb476527899  ./assets/main-
 3a732c73b80f7e8dad93e618399ba86061eb87aaab311471ddfb1a341225d7bb  ./assets/main-RKd9JIaN.js
 ab9aa965f87d1fbba0c150312c5e20cbd53cd1e9e8e59f016bac94c51924b68d  ./assets/main-Y3AsSalt.js
 5e3b3e5aa45eff776a6436b93f0aaa67c90d2626113cf4408a659e96ed227824  ./assets/main-bL0_W6e4.js
+b52d48afa5fc8a27b54fa6b079df759f429ffeda9bc8e2979f6da7b3eba505b4  ./assets/main-dG8DsaiU.css
 44b717759ea9af9cb931f12e0856b2aac5c48245bc43e2535b37a3208e2ca4d4  ./assets/main-g0_WeGpO.js
 f7fd242328c5834a10777446b26a5a80c19634019435c50ad264e81f0f75c19f  ./assets/main-jRzMx5tm.js
 03dc1318d3c61876a3ad039e5342f200fdf01268a21be7af491f712e441ddf6c  ./assets/main-k5YE_UgR.js
@@ -167,8 +171,8 @@ c4beb4ba922f21793d7a3e1fbd43f74bee24757f07d5366da12f9feb1541060e  ./assets/web-C
 0b60401317df76eb9e96d728b88cb35bc31bf307ec5dc57495cfdd4757cdafc7  ./assets/web-DVeRcnmY.js
 dadbca4e5465d6cd7612380e8367218ba0584725d1dc689384e55db40df33ac1  ./assets/web-DfILK0gy.js
 6cc2320d6ad766ec97597e4b16eeb08899722114a3d30cad2d6ffc5b3232a53f  ./assets/web-DoTp-idO.js
-a623a73a1bb1fde3d0149032e1e13222d56713916e5426392c83f718ad244d9c  ./atelier-v41/index.html
-a770b91ac294c30d3d0207d9e5322897ed265e759d2c4eabe05e9e68944394c9  ./atelier-v41/release.json
+eee5a7c09ac395217a3e80ad4bf700b00de771c9358645fcc0323061b7ba99a9  ./atelier-v41/index.html
+87a92451dd21da6dfab52f0b57351a7fe14454ecfede42966f501116bf482b58  ./atelier-v41/release.json
 0c48865167b750043260b0c74ab699142bcfab681a9bed384692f4bea41ff046  ./atelier/collection-v2/bottle.webp
 03cb0b9c5d768b355b6d780d9970c8c4aaeeba8892e43388203d776f974be6e9  ./atelier/collection-v2/flowers.webp
 646fd08d2d5104e854128507534a24c9f4ae01b73cc6d6f8c6cb72423cb89020  ./atelier/collection-v2/frame.webp
@@ -723,7 +727,7 @@ de319362281848eb5ed96720b462340af977b4fc9de7ee95173c339aaef40890  ./icons/README
 d739a5baff665635d58b1a22ee75d4a6fc9f05ee98fd988d53a44def659a9751  ./icons/nailmoods-effects-themes.png
 cdc151d4e4e1c8c40e577aed2f0ca6bc073739ef691130bce45b7602ca28fcae  ./icons/nailmoods-styles.png
 1fe5cf66e7340f9589c2b1b384ef5bf3326639cb419b1bb26100da89550751d0  ./icons/nailmoods-techniques.png
-a623a73a1bb1fde3d0149032e1e13222d56713916e5426392c83f718ad244d9c  ./index.html
+eee5a7c09ac395217a3e80ad4bf700b00de771c9358645fcc0323061b7ba99a9  ./index.html
 8c5dadc47afb77a3072f0afa41871bc8d3b492d10cfc663b2a4a3786b9a00742  ./legal/archives/2026-09-22/conditions-0.3-beta.html
 a9091f3a1c202178780aac68f5949d3583e2abd05a38a24b8d8b32e59e1b10d8  ./legal/archives/2026-09-22/confidentialite-0.4-beta.html
 b201e10b67e886660383746265b1dc7de5e3de69f883c3839899416cbc0bd266  ./legal/archives/2026-09-22/editor.js
@@ -790,4 +794,4 @@ d2fc6d83e7e4171bf67d7c2cf819b22bc47c50c3a809feb1418f48bf87306dea  ./nailmoods-lo
 71735c1d8cdccead5276574a835eb37359d8d845baf3ccb50977e2ad3fc45bbf  ./realistic-multitechnique.png
 2fec3c7210bf9b6dd86a9111fe51f0a611c0daf5031a812eaafa0720daa91920  ./realistic-relief-jewels.png
 161ca4309efdaf738d22f774d478c66f6fe9c9b8fa86a96ebc2fd6c10961a3d2  ./realistic-special-finishes.png
-a770b91ac294c30d3d0207d9e5322897ed265e759d2c4eabe05e9e68944394c9  ./release.json
+87a92451dd21da6dfab52f0b57351a7fe14454ecfede42966f501116bf482b58  ./release.json
