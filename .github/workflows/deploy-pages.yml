@@ -102,11 +102,11 @@ jobs:
           const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
           let served,last;
           for(let attempt=0;attempt<24;attempt++){
-            try{served=JSON.parse((await request('/release.json')).toString());if(served.sourceCommit===expected.sourceCommit&&served.journeyRevision===expected.journeyRevision)break;last='CDN still serves another revision';}catch(e){last=e.message;}
+            try{served=JSON.parse((await request('/release.json')).toString());if(served.sourceCommit===expected.sourceCommit&&served.journeyRevision===expected.journeyRevision&&served.validation?.sourceCommit===expected.validation?.sourceCommit)break;last='CDN still serves another revision';}catch(e){last=e.message;}
             await new Promise(r=>setTimeout(r,5000));
           }
-          if(served?.sourceCommit!==expected.sourceCommit||served?.journeyRevision!==expected.journeyRevision)throw Error(last||'Revision mismatch');
-          const paths=['/index.html','/atelier-v41/index.html','/atelier-v41/release.json',...(expected.entryAssets||[])];
+          if(served?.sourceCommit!==expected.sourceCommit||served?.journeyRevision!==expected.journeyRevision||served?.validation?.sourceCommit!==expected.validation?.sourceCommit)throw Error(last||'Revision mismatch');
+          const paths=['/index.html','/atelier-v41/index.html','/atelier-v41/release.json',...(expected.entryAssets||[]),...(expected.validation?['/atelier-v44/index.html','/atelier-v44/release.json',...expected.validation.entryAssets]:[])];
           for(const entry of ['/index.html','/atelier-v41/index.html']){
             const html=await fs.readFile('web-release'+entry,'utf8');
             paths.push(...[...html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)"/g)].map(m=>m[1]));
@@ -116,7 +116,7 @@ jobs:
             if(sha(actual)!==sha(local))throw Error('Served bytes differ: '+path);
             checked.push({path,sha256:sha(actual)});
           }
-          const result={url:origin,revision:served.journeyRevision,sourceCommit:served.sourceCommit,publicCommit:process.env.GITHUB_SHA,rollout:served.rollout,checked,verifiedAt:new Date().toISOString()};
+          const result={url:origin,revision:served.journeyRevision,sourceCommit:served.sourceCommit,publicCommit:process.env.GITHUB_SHA,rollout:served.rollout,validation:served.validation,checked,verifiedAt:new Date().toISOString()};
           await fs.writeFile('production-verification.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
           JS
       - uses: actions/upload-artifact@v4
