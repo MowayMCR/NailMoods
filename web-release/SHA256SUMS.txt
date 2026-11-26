@@ -30,6 +30,7 @@ f3c09879e7f8a1583d700bf605fd266da09cc6281cdd6897d455e701b6a545f5  ./assets/entry
 34ead66a71a90334ed3326677483a2c9fed3afbfaab436cf1e95b7e7c5af2ee9  ./assets/entry-ClJBSOs9.js
 4146ff26f613f528a850cf193d7bf64fb74745a3cd8e3af193a918f4d87e2f28  ./assets/entry-CplUX5yv.js
 57c8b84bf2e908af8686d7f0355a3ca7b527554091f8f74a6b686bb39b5b4273  ./assets/entry-CqsUnZpZ.js
+d629da96ea5e38c506d2301363599890fcf170977df13168e6860d310a9e5226  ./assets/entry-D4YYygYQ.js
 95d473082a492c9a9f6ab17dc366c226c8672714d03f78f0a1452765e3261432  ./assets/entry-D69UK5x-.js
 d29dd45c58ca8e0bed8a88bc57f6cd9c5a797a840240bcd2ff632b48d94c4d88  ./assets/entry-D9Ca-WDt.js
 51d658237982246e368c4cddf4bc79591213d20d7caf6cc3fb49fe891c98f61c  ./assets/entry-DHS0UMbO.js
@@ -73,6 +74,7 @@ d1a2567701455c1a42d4001eadadf395108aa234b24c7b346b4aed939683e3ce  ./assets/index
 316f94a8a86cdfba3ec9eb000d700fd4b4bc6e37df6bd33138879b64cf1ab22d  ./assets/index-CSSFv2n_.js
 c4dbe315b64896fc78ce112589522cd4b9d136b452c108ba43ab6889e1678182  ./assets/index-CUZsq75d.js
 ef867835146fe2759143523508bfd546cda80759408080cd77705cec5f3eb7b1  ./assets/index-CkYOFB6H.js
+624bc46712fd8838f4659b2018597e6a05479233dfa561ddbb1579455d0b4560  ./assets/index-D1oJuF2F.js
 f63df6f57d7731203848c1f05127d862ecd377a31e61f9e2a1db3d5201b49bd7  ./assets/index-D31JI60n.js
 dd430480ccf357dc205a869f15bdfa2e0d393101372693fb7b557bd49f134033  ./assets/index-D5VON7Kk.js
 00be194ac2729d071eadcf5a0f8c2fe31517d7053f8a06252fbb9778c9da74fd  ./assets/index-D7AEDur2.js
@@ -94,12 +96,14 @@ ccc7c3f87b839ceb96219300108e99ca67c40dd7d2156b06aa04dfec08622db6  ./assets/index
 f7094099a4ce0d3e462c21cd8d351416934656661b3c55d5da53bab3b68ce771  ./assets/index-oz7BZgmx.js
 af58a1fea45212570e7fe7149f10fc667ba658575900f7080ca6b33ff017d0fa  ./assets/index-wmkJsLxz.js
 74f07bca5cf3590a8b91542007a504bb1bfb7198559dc6610f6b15523495a574  ./assets/library-C04MKcBP.js
+9421b1531a648690d73cf25fce9644545e88d36a9db2d319d78b15626d40494e  ./assets/library-CxZdbRec.js
 6b41d10fc03fc6eb26c48209d5637cb78e4af7abd2cd5536929ff0d5782cc10a  ./assets/main--V-fffF2.css
 1b320e21ce1e8998121d7f7b0a417b31f14f86460bb5f6382fc6dc49a1d8f5fc  ./assets/main-2weGvmtd.css
 b3da62dcf862058e61dc45e379b056a10d80737f4bda93d1a83b54b397369151  ./assets/main-6TC9ReoQ.js
 bede38e73aaf21e10e71a0b3189a6469ae1d021ae36e339ec8a78312949a9f12  ./assets/main-AgD7zgsZ.js
 945b2c0fab557725639ddefb6d9258ce425a5abc85b6e4d4b6d39cae4af1b394  ./assets/main-B0HsbmRT.css
 89e40ef69bb3b95b5cc98e502559756b5537d5feaf22c2a9a1b854119024c773  ./assets/main-B3RlkaeS.css
+80566768d45693e14b0fad24cc22726bde0a41734c5ba10388a43837a6796549  ./assets/main-B4AFnJZs.js
 ab4f8d52280ab3637c94c5a29e744d2357ea39765d8ed5a26f48526a94b7707d  ./assets/main-B4Ur1tpz.js
 1ad3de10f22110db3739685c5f2d1187930467ad739d43ff9311bdffc4b367f2  ./assets/main-B6lPKGsV.css
 1dcb4e2a267f4b66ba32df6720db92f64db1848779bd78bfb4a4b92c98e61e91  ./assets/main-BAFoExRM.css
@@ -121,6 +125,7 @@ b9cd5d6ad231f9e63409ecc11e3b0f3aa9334a9d03b968d3796631b9f05973b5  ./assets/main-
 4c6e7b6f6a86626dc6486815ebccf522493a0b220e2e8da3df31ca73e13baf27  ./assets/main-CFbBvyF8.css
 a8e2056dd699c7bba744b931efc217538b7d265578a81ea83471acfbc83dea3a  ./assets/main-CKIioEfB.js
 c14d25556f099cdba0bc75c5aeee4302507f9f0607e1cd3c9ef95fce90b71fcc  ./assets/main-CL1sfJgu.css
+06ea78d6a21a7c59f9f185a3c96c9f28cfbf6d888997a3db56fcc6aac9c40086  ./assets/main-CMfKrW4P.css
 39c03b07bfc52343ebea9428e579bfd6e7617e266784477fc0acea7d7f95e139  ./assets/main-CTXWUTpg.js
 9588be85f438ca13dfbdf5c75eecf165dd62d4e91a5038cf360c9b00f094f3d1  ./assets/main-CYWe2m4U.css
 caccdcf5a37acd8aa28230b2f1238f9322c42340a4b4bd39afbcf94ea4299469  ./assets/main-CZEY9WP7.js
@@ -166,6 +171,7 @@ b2ca46fa8d7e5f3d83d46dee7a6e236e9194115f7e11b1c276d3eedeb3411792  ./assets/mater
 aab8cac6ce6154926ecfb954b7f9b4d8185d20402c0d114e27252d7a8cce5b93  ./assets/material-DFkZqaR9.js
 c1df40bf22b4840f82788e6203829bd50ac122ff38180892338aef722e8990f6  ./assets/material-QUZTjgB5.js
 c30bb980ccca4c581e597fb0f5311e4213ee403e246a535f442ec5e5a7d7b32e  ./assets/paint-CehtBpX8.js
+5ad52e08869dcd56ea7c15fb67157a1d3c901535653524e4d62a74caeb7c5809  ./assets/paint-DMcwjKdk.js
 a92ecca059c6fb8230dba34b696eabee9b51ade63afc1e5123bf32cd24646dd3  ./assets/pilot-assets-DI-tRrHJ.js
 aef084cfc35ee5339b1b71ebfe9d5a00371d119adbba99111e7c8d9df5f50f71  ./assets/pilot-assets-cFfhTc24.js
 8b6d7a5550651c6b50fc23f0e6a1a0d1c98c1efd1cc146263063f0b9f795ca1e  ./assets/pilot-raster-DKku5t-c.js
@@ -174,6 +180,7 @@ aef084cfc35ee5339b1b71ebfe9d5a00371d119adbba99111e7c8d9df5f50f71  ./assets/pilot
 349c91c851f74cfba4739b4bc5f709613211c23bbe9fc8e129299f6e6a5aa15a  ./assets/recipe-CJnysap0.js
 f9d7fb8abe0b002990aaa5888f5c09b6b3bf7d3127e898d65dfdce80e32b6125  ./assets/render-BJ0VvIbR.js
 4dffe7f7388270bc214dba49ec9dc0c8a15545196121c1b1c76ebe201c1e15a5  ./assets/render-BYObTjzN.js
+9cc71e206763c9465e014133f0d23a184e7a5ee770a36b5ce8f5c690704d7d79  ./assets/render-CWVwQ2XZ.js
 f5e6aebb04ff016075d5621620ff137f76750c87be8c08084584ebb7f2c9b174  ./assets/render-Cpy717Zr.js
 12905f5022e41ba0b72cb57efded9e176078d5b0f2139974f8d86ea09fd4a779  ./assets/render-DiVDHCeq.js
 f44b425b5c8f87d362c01468b94a2283bb5a1ca7b61f0cb8dd629f559967c4b1  ./assets/render-Ds2euW-C.js
@@ -780,7 +787,7 @@ de319362281848eb5ed96720b462340af977b4fc9de7ee95173c339aaef40890  ./icons/README
 d739a5baff665635d58b1a22ee75d4a6fc9f05ee98fd988d53a44def659a9751  ./icons/nailmoods-effects-themes.png
 cdc151d4e4e1c8c40e577aed2f0ca6bc073739ef691130bce45b7602ca28fcae  ./icons/nailmoods-styles.png
 1fe5cf66e7340f9589c2b1b384ef5bf3326639cb419b1bb26100da89550751d0  ./icons/nailmoods-techniques.png
-20f946da0e4f7fa01c0bf2dcf9f9d1e3d4878a1ce0015cfe2677cc998a18e04e  ./index.html
+90e4ba9b5d044e84dca6a1403c5db8e0b8eb4f4c1b3922c9c58d08505f55dcc8  ./index.html
 8c5dadc47afb77a3072f0afa41871bc8d3b492d10cfc663b2a4a3786b9a00742  ./legal/archives/2026-09-22/conditions-0.3-beta.html
 a9091f3a1c202178780aac68f5949d3583e2abd05a38a24b8d8b32e59e1b10d8  ./legal/archives/2026-09-22/confidentialite-0.4-beta.html
 b201e10b67e886660383746265b1dc7de5e3de69f883c3839899416cbc0bd266  ./legal/archives/2026-09-22/editor.js
@@ -847,5 +854,5 @@ d2fc6d83e7e4171bf67d7c2cf819b22bc47c50c3a809feb1418f48bf87306dea  ./nailmoods-lo
 71735c1d8cdccead5276574a835eb37359d8d845baf3ccb50977e2ad3fc45bbf  ./realistic-multitechnique.png
 2fec3c7210bf9b6dd86a9111fe51f0a611c0daf5031a812eaafa0720daa91920  ./realistic-relief-jewels.png
 161ca4309efdaf738d22f774d478c66f6fe9c9b8fa86a96ebc2fd6c10961a3d2  ./realistic-special-finishes.png
-1674d5b67359280da432d3d3de52ad282bd4747f34d26fe1f227c3f4467bf454  ./release.json
+d8193aafeb271edf4c89c7217626335e3a245e7c0f78ba3f871c2601fa41a176  ./release.json
 0c87e9378f1d88f3d2c5aa3cbda81074d5d6b891b5b52d1444c8596576066b2b  ./winter-recette/index.html
