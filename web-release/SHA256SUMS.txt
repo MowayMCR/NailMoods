@@ -848,3 +848,4 @@ d2fc6d83e7e4171bf67d7c2cf819b22bc47c50c3a809feb1418f48bf87306dea  ./nailmoods-lo
 2fec3c7210bf9b6dd86a9111fe51f0a611c0daf5031a812eaafa0720daa91920  ./realistic-relief-jewels.png
 161ca4309efdaf738d22f774d478c66f6fe9c9b8fa86a96ebc2fd6c10961a3d2  ./realistic-special-finishes.png
 1674d5b67359280da432d3d3de52ad282bd4747f34d26fe1f227c3f4467bf454  ./release.json
+0c87e9378f1d88f3d2c5aa3cbda81074d5d6b891b5b52d1444c8596576066b2b  ./winter-recette/index.html
